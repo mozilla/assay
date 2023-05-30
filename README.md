@@ -1,10 +1,13 @@
-# assay README
+# Assay README
 
 Welcome to **Assay**!
 
 > Assay: The testing of a metal (Addon) or ore (Addon) to determine its ingredients (functionalities) and quality (quality).
 
 ## Features
+
+1. Downloads and extracts addons into a new workspace based on guid, slug, or url.
+2. A workspace consists of an addon version with a link in the status bar to the review page.
 
 ```ts
 Work in progress
@@ -14,26 +17,9 @@ Work in progress
 
 You certainly need [Node](https://nodejs.org/en/) 16.x. Use `npm i` upon install to install the dependencies.
 
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
 ## Known Issues
 
-There's no code!
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-
+There's not enough code!
 
 ---
 
