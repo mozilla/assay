@@ -17,11 +17,15 @@ export async function extractAddon(
     }
   );
 
-  // check if extracted folder exists
   if (!fs.existsSync(workspaceFolder + "/" + addonSlug)) {
     vscode.window.showErrorMessage("Extraction failed");
     return;
   }
   vscode.window.showInformationMessage("Extraction complete");
-  fs.unlinkSync(compressedFilePath);
+  fs.unlinkSync(compressedFilePath); // remove xpi
+
+  // make files read-only
+  // fs.readdirSync(workspaceFolder + "/" + addonSlug).forEach((file) => {
+  //   fs.chmodSync(workspaceFolder + "/" + addonSlug + "/" + file, 0o444);
+  // });
 }

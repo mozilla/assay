@@ -12,4 +12,7 @@ export interface AddonInfoResponse {
   };
   // eslint-disable-next-line @typescript-eslint/naming-convention
   default_locale: string;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  review_url: string;
+  guid: string;
 }
