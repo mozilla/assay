@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 
 import { downloadAddon } from "../../AddonDownload";
 import { extractAddon } from "../../AddonExtract";
+import { getAddonVersions } from "../../AddonVersions";
 import { getAddonInfo } from "../../AddonInfo";
 
 import { AddonInfoResponse } from "../../interfaces";
@@ -67,7 +68,6 @@ suite("Extension Test Suite", () => {
     });
 
     it("should extract the addon, remove the xpi", async () => {
-      // get path to test_workspace
       const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
       if (!fs.existsSync(workspaceFolder)) {
         fs.mkdirSync(workspaceFolder);
@@ -85,73 +85,76 @@ suite("Extension Test Suite", () => {
       });
 
       // extract xpi
-      const addonSlug = "test-addon";
+      const addonGUID = "test-addon";
+      const addonVersion = "1.0.0";
       const extractedworkspaceFolder = path.resolve(
         workspaceFolder,
         "test-addon"
       );
-      await extractAddon(compressedFilePath, workspaceFolder, addonSlug);
+      const extractedVersionFolder = path.resolve(
+        extractedworkspaceFolder,
+        addonVersion
+      );
+      await extractAddon(
+        compressedFilePath,
+        workspaceFolder,
+        addonGUID,
+        addonVersion
+      );
 
-      // check if extracted folder exists
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
-
-      // check if xpi file was removed
+      expect(fs.existsSync(extractedVersionFolder)).to.be.true;
       expect(fs.existsSync(compressedFilePath)).to.be.false;
 
       // remove created folders
       fs.rmSync(extractedworkspaceFolder, { recursive: true });
     });
+  });
+  
+  describe("Addon Download", async () => {
+    afterEach(() => {
+      sinon.restore();
+    });
 
-    describe("Addon Download", async () => {
-      afterEach(() => {
-        sinon.restore();
-      });
+    it("should download the xpi of the addon", async () => {
+      // mock response
+      const fakeResponse = {
+        ok: true,
+        buffer: () => {
+          return "test data";
+        },
+      };
 
-      it("should download the xpi of the addon", async () => {
-        // make a function that returns a fake response and passes it to downloadAddon
-        const fakeResponse = {
-          ok: true,
-          buffer: () => {
-            return "test data";
-          },
-        };
+      const stub: sinon.SinonStub<any[], any> = sinon.stub();
+      stub.resolves(fakeResponse);
+      sinon.replace(fetch, "default", stub as any);
 
-        const stub: sinon.SinonStub<any[], any> = sinon.stub();
-        stub.resolves(fakeResponse);
-        sinon.replace(fetch, "default", stub as any);
+      const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
+      if (!fs.existsSync(workspaceFolder)) {
+        fs.mkdirSync(workspaceFolder);
+      }
 
-        // get the relative path to test_workspace
-        const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
-        if (!fs.existsSync(workspaceFolder)) {
-          fs.mkdirSync(workspaceFolder);
-        }
+      const addonId = "123456";
+      const addonSlug = "test-addon";
+      const downloadedFilePath = path.resolve(
+        workspaceFolder,
+        `${addonSlug}.xpi`
+      );
 
-        const addonId = "123456";
-        const addonSlug = "test-addon";
-        const downloadedFilePath = path.resolve(
-          workspaceFolder,
-          `${addonSlug}.xpi`
-        );
+      await downloadAddon(addonId, downloadedFilePath);
 
-        await downloadAddon(addonId, downloadedFilePath);
+      expect(stub.calledOnce).to.be.true;
+      expect(
+        stub.calledWith(
+          `https://addons.mozilla.org/firefox/downloads/file/${addonId}`
+        )
+      ).to.be.true;
 
-        expect(stub.calledOnce).to.be.true;
-        expect(
-          stub.calledWith(
-            `https://addons.mozilla.org/firefox/downloads/file/${addonId}`
-          )
-        ).to.be.true;
+      // wait for file to be written (there should be a better way to do this)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      expect(fs.existsSync(downloadedFilePath)).to.be.true;
 
-        for (let i = 0; i < 5; i++) {
-          if (fs.existsSync(downloadedFilePath)) {
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-        expect(fs.existsSync(downloadedFilePath)).to.be.true;
-
-        fs.rmSync(downloadedFilePath, { recursive: true });
-      });
+      fs.rmSync(downloadedFilePath, { recursive: true });
     });
   });
 });

@@ -2,11 +2,12 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import fetch from "node-fetch";
 
-import { getAddonInfo } from "./AddonInfo";
+import { getVersionChoice } from "./AddonVersions";
 import { downloadAddon } from "./AddonDownload";
 import { extractAddon } from "./AddonExtract";
+import { getAddonInfo } from "./AddonInfo";
 
-import { AddonInfoResponse } from "./interfaces";
+import { AddonInfoResponse, AddonVersion } from "./interfaces";
 
 export async function activate(context: vscode.ExtensionContext) {
   let openReviewPage = vscode.commands.registerCommand(
@@ -20,11 +21,21 @@ export async function activate(context: vscode.ExtensionContext) {
     "assay.get",
     async function () {
       const input: string | undefined = await vscode.window.showInputBox({
-        prompt: "Enter Addon Slug or URL",
+        prompt: "Enter Addon Slug, GUID, or URL",
         title: "Assay",
       });
 
-      // Get addon info
+      if (!input) {
+        return;
+      }
+
+      // Retrieve version
+      const versionInfo = await getVersionChoice(input);
+      if (!versionInfo) {
+        return;
+      }
+
+      // Retrieve metadata
       const json: AddonInfoResponse = await getAddonInfo(input);
       console.log(json);
       if (!json) {
@@ -32,16 +43,17 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const addonFileId = json.current_version.file.id;
+      const addonFileId = versionInfo.fileID;
       const addonName = json.name[json.default_locale];
       const addonSlug = json.slug;
-      const addonVersion = json.current_version.version;
+      const addonVersion = versionInfo.version;
       const reviewUrl = json.review_url;
+      console.log(reviewUrl);
       const addonGUID =
         json.guid[0] === "{" ? json.guid.slice(1, -1) : json.guid;
       const workspaceFolder = vscode.workspace.workspaceFolders![0].uri.fsPath;
       const compressedFilePath =
-        workspaceFolder + "/" + addonSlug + "_" + addonVersion + ".xpi";
+        workspaceFolder + "/" + addonGUID + "_" + addonVersion + ".xpi";
 
       // Download
       await vscode.window.withProgress(
@@ -68,20 +80,28 @@ export async function activate(context: vscode.ExtensionContext) {
             message: "Extracting",
           });
 
-          await extractAddon(compressedFilePath, workspaceFolder, addonSlug);
+          await extractAddon(
+            compressedFilePath,
+            workspaceFolder,
+            addonGUID,
+            addonVersion
+          );
         }
       );
 
-      if (!fs.existsSync(workspaceFolder + "/" + addonSlug)) {
+      if (
+        !fs.existsSync(workspaceFolder + "/" + addonGUID + "/" + addonVersion)
+      ) {
         vscode.window.showErrorMessage("Extraction failed");
         return;
       }
 
-      // make a status bar item with the name and version of the addon
+      // make a status bar item in the new window
       const statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Left,
         100
       );
+      
       statusBarItem.text = addonGUID + " " + addonName + " " + addonVersion;
       statusBarItem.tooltip = reviewUrl;
       statusBarItem.command = {
@@ -89,6 +109,7 @@ export async function activate(context: vscode.ExtensionContext) {
         arguments: [reviewUrl],
         title: "Review",
       };
+
       statusBarItem.show();
     }
   );
@@ -96,5 +117,5 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(downloadAndExtract);
 }
 
-// This method is called when your extension is deactivated
+
 export function deactivate() {}

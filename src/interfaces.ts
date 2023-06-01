@@ -16,3 +16,14 @@ export interface AddonInfoResponse {
   review_url: string;
   guid: string;
 }
+
+export interface AddonVersion {
+  map(
+    arg0: (version: any) => any
+  ): readonly string[] | Thenable<readonly string[]>;
+  id: string;
+  version: string;
+  file: {
+    id: string;
+  };
+}
