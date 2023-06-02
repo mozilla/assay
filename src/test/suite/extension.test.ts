@@ -1,10 +1,10 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
 
-import { downloadAddon } from "../../AddonDownload";
-import { extractAddon } from "../../AddonExtract";
-import { getAddonVersions } from "../../AddonVersions";
-import { getAddonInfo } from "../../AddonInfo";
+import { downloadAddon } from "../../utils/AddonDownload";
+import { extractAddon } from "../../utils/AddonExtract";
+import { getAddonVersions } from "../../utils/AddonVersions";
+import { getAddonInfo } from "../../utils/AddonInfo";
 
 import { AddonInfoResponse } from "../../interfaces";
 

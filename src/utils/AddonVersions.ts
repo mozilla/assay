@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { AddonVersion } from "./interfaces";
+import { AddonVersion } from "../interfaces";
 import * as vscode from "vscode";
 
 export async function getAddonVersions(

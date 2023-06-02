@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome To Assay</h1>
+    <a href="#" id="fetchAddon">Download an Addon</a>
+
+    <script>
+      const fetchAddon = document.getElementById("fetchAddon");
+      fetchAddon.addEventListener("click", () => {
+
+        vscode.postMessage(
+          "command"
+        )
+      });
+    </script>
+  </body>
+</html>
