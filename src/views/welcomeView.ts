@@ -40,10 +40,10 @@ export class WelcomeView {
 
   private _messageListener() {
     this._panel.webview.onDidReceiveMessage((message) => {
-    console.log("received message");
+      console.log("received message");
       switch (message.command) {
         case "fetchAddon":
-            console.log("executing command");
+          console.log("executing command");
           vscode.commands.executeCommand("assay.get");
           return;
       }
@@ -54,7 +54,7 @@ export class WelcomeView {
     return new Promise((resolve) => {
       const htmlPath = vscode.Uri.joinPath(
         this._extensionUri,
-        "src",
+        "src/views/templates",
         "welcome.html"
       );
 

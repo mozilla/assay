@@ -15,14 +15,15 @@ export async function getAddonVersions(
   if (!input) {
     return;
   } else if (input.includes("/")) {
+    // only for links
     const slug = input.split("addon/")[1].split("/")[0];
     const url = `https://addons.mozilla.org/api/v5/addons/addon/${slug}/versions/`;
     const response = await fetch(url);
     const json = await response.json();
     return json;
-  } else if (input.includes("-")) {
-    const slug = input;
-    const url = `https://addons.mozilla.org/api/v5/addons/addon/${slug}/versions/`;
+  } else {
+    // other identifiers work here
+    const url = `https://addons.mozilla.org/api/v5/addons/addon/${input}/versions/`;
     const response = await fetch(url);
     const json = await response.json();
     return json;

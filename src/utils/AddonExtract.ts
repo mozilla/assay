@@ -44,7 +44,12 @@ export async function extractAddon(
   vscode.window.showInformationMessage("Extraction complete");
 
   // make files read-only
-  fs.readdirSync(workspaceFolder + "/" + addonGUID + "/" + addonVersion).forEach((file) => {
-    fs.chmodSync(workspaceFolder + "/" + addonGUID + "/" + addonVersion + "/" + file, 0o444);
+  fs.readdirSync(
+    workspaceFolder + "/" + addonGUID + "/" + addonVersion
+  ).forEach((file) => {
+    fs.chmodSync(
+      workspaceFolder + "/" + addonGUID + "/" + addonVersion + "/" + file,
+      0o444
+    );
   });
 }

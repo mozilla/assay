@@ -21,6 +21,7 @@ export const downloadAndExtract = vscode.commands.registerCommand(
 
     // Retrieve version
     const versionInfo = await getVersionChoice(input);
+    // TODO: handle errors
     if (!versionInfo) {
       return;
     }

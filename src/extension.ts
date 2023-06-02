@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { downloadAndExtract } from "./command/fetch";
-import { WelcomeView } from "./welcomeView";
+import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
   // Open review page from status bar
