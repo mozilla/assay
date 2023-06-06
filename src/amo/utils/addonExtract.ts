@@ -17,7 +17,7 @@ export async function extractAddon(
     const choice = await vscode.window.showQuickPick(["Yes", "No"], {
       placeHolder: "Addon already exists. Overwrite?",
     });
-    if (choice === "No") {
+    if (choice === "No" || !choice) {
       fs.unlinkSync(compressedFilePath);
       return;
     }

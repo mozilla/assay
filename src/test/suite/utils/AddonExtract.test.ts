@@ -1,4 +1,4 @@
-import { extractAddon } from "../../../utils/AddonExtract";
+import { extractAddon } from "../../../amo/utils/addonExtract";
 
 import { expect } from "chai";
 import { afterEach, describe, it } from "mocha";

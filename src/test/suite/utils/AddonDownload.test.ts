@@ -1,4 +1,4 @@
-import { downloadAddon } from "../../../utils/AddonDownload";
+import { downloadAddon } from "../../../amo/utils/addonDownload";
 
 import { expect } from "chai";
 import { afterEach, describe, it } from "mocha";
@@ -7,7 +7,7 @@ import * as fetch from "node-fetch";
 import * as fs from "fs";
 import path = require("path");
 
-describe("AddonDownload.ts", async () => {
+describe("addonDownload.ts", async () => {
   afterEach(() => {
     sinon.restore();
   });

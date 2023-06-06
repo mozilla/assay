@@ -2,10 +2,10 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 
 import { AddonInfoResponse } from "../interfaces";
-import { getVersionChoice } from "../utils/AddonVersions";
-import { getAddonInfo } from "../utils/AddonInfo";
-import { downloadAddon } from "../utils/AddonDownload";
-import { extractAddon } from "../utils/AddonExtract";
+import { getVersionChoice } from "../utils/addonVersions";
+import { getAddonInfo } from "../utils/addonInfo";
+import { downloadAddon } from "../utils/addonDownload";
+import { extractAddon } from "../utils/addonExtract";
 
 export const downloadAndExtract = vscode.commands.registerCommand(
   "assay.get",
@@ -85,21 +85,5 @@ export const downloadAndExtract = vscode.commands.registerCommand(
       vscode.window.showErrorMessage("Extraction failed");
       return;
     }
-
-    // make a status bar item in the new window
-    const statusBarItem = vscode.window.createStatusBarItem(
-      vscode.StatusBarAlignment.Left,
-      100
-    );
-
-    statusBarItem.text = addonGUID + " " + addonName + " " + addonVersion;
-    statusBarItem.tooltip = reviewUrl;
-    statusBarItem.command = {
-      command: "assay.review",
-      arguments: [reviewUrl],
-      title: "Review",
-    };
-
-    statusBarItem.show();
   }
 );

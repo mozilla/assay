@@ -1,6 +1,6 @@
-import { getAddonInfo } from "../../../utils/AddonInfo";
+import { getAddonInfo } from "../../../amo/utils/addonInfo";
 
-import { AddonInfoResponse } from "../../../interfaces";
+import { AddonInfoResponse } from "../../../amo/interfaces";
 
 import { expect } from "chai";
 import { afterEach, describe, it } from "mocha";

@@ -12,14 +12,18 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "assayCommands",
+          "name": "Assay"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "assay.welcome",
-        "title": "Assay"
-      },
-      {
-        "command": "assay.get",
-        "title": "Fetch Addon"
+        "title": "Assay Introduction"
       }
     ]
   },
