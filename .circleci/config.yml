@@ -2,15 +2,16 @@ version: 2.1
 
 orbs:
   node: circleci/node@4.7
+  codecov: codecov/codecov@3.2.5
 
 jobs:
-  build:
+  build-test-coverage:
     docker:
-      - image: circleci/node:16.10
+      - image: cimg/node:16.10
 
     steps:
       - checkout
-
+      
       - run:
           name: Install headless VSCode dependencies
           command: |
@@ -25,5 +26,17 @@ jobs:
           command: npm install typescript --no-save
 
       - run:
+          name: Install c8 package
+          command: npm install --save-dev c8
+          
+      - run:
           name: Run Tests
           command: xvfb-run npm test
+
+      - codecov/upload:
+          file: ./coverage/lcov.info
+
+workflows:
+  build-test-coverage:
+    jobs:
+      - build-test-coverage
