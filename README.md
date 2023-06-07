@@ -1,4 +1,4 @@
-![Untitled_Artwork](https://github.com/GregSherman/assay/assets/63402349/4213f3cd-36dd-4aef-bed4-6973666c0ed5)
+![Untitled_Artwork](https://github.com/GregSherman/assay/assets/63402349/f3146473-48cf-4b93-aa98-bc29929aec5f)
 
 # Welcome to **Assay**!
 
@@ -7,20 +7,18 @@
 
 ## Features
 
-1. Downloads and extracts addons into a new workspace based on guid, slug, or url.
-2. A workspace consists of an addon version with a link in the status bar to the review page.
+1. Downloads and extracts addons based on guid, slug, or url.
+2. Accessible sidebar in the explore view for quick actions.
+
 
 ```ts
 Work in progress
 ```
 
+
 ## Requirements
 
 You certainly need [Node](https://nodejs.org/en/) 16.x. Use `npm i` upon install to install the dependencies.
-
-## Known Issues
-
-There's not enough code!
 
 ---
 
