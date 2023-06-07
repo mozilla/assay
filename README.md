@@ -1,6 +1,7 @@
-# Assay README
+![Untitled_Artwork](https://github.com/GregSherman/assay/assets/63402349/4213f3cd-36dd-4aef-bed4-6973666c0ed5)
 
-Welcome to **Assay**!
+# Welcome to **Assay**!
+
 
 > Assay: The testing of a metal (Addon) or ore (Addon) to determine its ingredients (functionalities) and quality (quality).
 
@@ -22,4 +23,5 @@ You certainly need [Node](https://nodejs.org/en/) 16.x. Use `npm i` upon install
 There's not enough code!
 
 ---
+
 
