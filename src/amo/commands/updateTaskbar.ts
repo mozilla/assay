@@ -12,13 +12,13 @@ statusBarItem.text = "Assay";
 export async function updateTaskbar(storagePath: string) {
   const activeEditor = vscode.window.activeTextEditor;
   if (!activeEditor) {
-    return;
+    return 0;
   }
   const doc = activeEditor.document;
   const path = doc.uri.fsPath;
   const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   if (!rootFolder) {
-    return;
+    return 1;
   }
 
   const relativePath = filePath.replace(rootFolder, "");
