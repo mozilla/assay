@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
+import fetch from "node-fetch";
 
-const statusBarItem = vscode.window.createStatusBarItem(
+export const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
   100
 );
@@ -9,17 +10,13 @@ statusBarItem.text = "Assay";
 export async function updateTaskbar() {
   const activeEditor = vscode.window.activeTextEditor;
   if (!activeEditor) {
-    return;
+    return 0;
   }
   const doc = activeEditor.document;
-  if (doc.uri.scheme !== "file") {
-    return;
-  }
-
   const path = doc.uri.fsPath;
   const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   if (!rootFolder) {
-    return;
+    return 1;
   }
   const relativePath = path.replace(rootFolder, "");
   const pathParts = relativePath.split("/");
@@ -27,7 +24,7 @@ export async function updateTaskbar() {
   const version = pathParts[2];
 
   if (!guid || !version) {
-    return;
+    return 2;
   }
 
   if (
@@ -44,7 +41,7 @@ export async function updateTaskbar() {
   const reviewUrl = `https://reviewers.addons-dev.allizom.org/en-US/reviewers/review/${guid}`;
   const response = await fetch(reviewUrl);
   if (response.status === 404) {
-    return;
+    return 3;
   }
 
   statusBarItem.text = guid + " " + version;

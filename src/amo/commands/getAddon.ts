@@ -28,7 +28,6 @@ export const downloadAndExtract = vscode.commands.registerCommand(
 
     // Retrieve metadata
     const json: AddonInfoResponse = await getAddonInfo(input);
-    console.log(json);
     if (!json) {
       vscode.window.showErrorMessage("No addon found");
       return;
@@ -39,7 +38,6 @@ export const downloadAndExtract = vscode.commands.registerCommand(
     const addonSlug = json.slug;
     const addonVersion = versionInfo.version;
     const reviewUrl = json.review_url;
-    console.log(reviewUrl);
     const addonGUID = json.guid[0] === "{" ? json.guid.slice(1, -1) : json.guid;
     const workspaceFolder = vscode.workspace.workspaceFolders![0].uri.fsPath;
     const compressedFilePath =

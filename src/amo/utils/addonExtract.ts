@@ -27,11 +27,6 @@ export async function extractAddon(
   await extract(
     compressedFilePath,
     { dir: workspaceFolder + "/" + addonGUID + "/" + addonVersion },
-    function (err: any) {
-      if (err) {
-        console.log(err);
-      }
-    }
   );
 
   fs.unlinkSync(compressedFilePath); // remove xpi
