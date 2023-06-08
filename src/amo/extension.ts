@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-
-import { downloadAndExtract } from "./commands/fetch";
-import { updateTaskbar } from "./commands/updateTaskbar";
+import fetch from "node-fetch";
+import { downloadAndExtract } from "./commands/getAddon";
+import { WelcomeView } from "./views/welcomeView";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 

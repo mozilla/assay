@@ -39,10 +39,8 @@ export class WelcomeView {
 
   private _messageListener() {
     this._panel.webview.onDidReceiveMessage((message) => {
-      console.log("received message");
       switch (message.command) {
         case "fetchAddon":
-          console.log("executing command");
           vscode.commands.executeCommand("assay.get");
           return;
       }

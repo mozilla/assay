@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
+import fetch from "node-fetch";
 
 import { addonInfoFromCache } from "../utils/addonCache";
 
@@ -12,17 +13,13 @@ statusBarItem.text = "Assay";
 export async function updateTaskbar(storagePath: string) {
   const activeEditor = vscode.window.activeTextEditor;
   if (!activeEditor) {
-    return;
+    return 0;
   }
   const doc = activeEditor.document;
-  if (doc.uri.scheme !== "file") {
-    return;
-  }
-
-  const filePath = doc.uri.fsPath;
+  const path = doc.uri.fsPath;
   const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   if (!rootFolder) {
-    return;
+    return 1;
   }
 
   const relativePath = filePath.replace(rootFolder, "");

@@ -32,7 +32,6 @@ export async function getVersionChoice(
     if (next || init) {
       init = false;
       const res = await getAddonVersions(input, next);
-      console.log(res);
       versions.push(...res.results);
       next = res.next;
     }
