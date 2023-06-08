@@ -7,12 +7,13 @@
 ## Features
 
 1. Dropdown menu inside the explore view with the ability to download an addon version using the GUID, URL, or slug of the addon.
-(video)
-2. Open the review page of the addon in the browser from the taskbar.
-(video)
-3. Automatically switch focus to a different addon upon opening a file from the addon.
-(video)
+![step 1](https://github.com/mozilla/assay/assets/63402349/23f1eb88-b35f-4955-8a20-872b3cf7e9dc)
 
+2. Open the review page of the addon in the browser from the taskbar.
+![step 2](https://github.com/mozilla/assay/assets/63402349/8c60a686-d78b-4b12-9b87-baa4418a9fc0)
+
+3. Automatically switch focus to a different addon upon opening a file from the addon.
+![step 3](https://github.com/mozilla/assay/assets/63402349/7dc374cc-403a-4f14-9c98-ad1cb9da9d56)
 
 ## Requirements
 
