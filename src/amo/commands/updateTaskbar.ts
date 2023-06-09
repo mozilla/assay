@@ -10,13 +10,13 @@ statusBarItem.text = "Assay";
 export async function updateTaskbar() {
   const activeEditor = vscode.window.activeTextEditor;
   if (!activeEditor) {
-    return 0;
+    return;
   }
   const doc = activeEditor.document;
   const path = doc.uri.fsPath;
   const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   if (!rootFolder) {
-    return 1;
+    return;
   }
   const relativePath = path.replace(rootFolder, "");
   const pathParts = relativePath.split("/");
@@ -24,7 +24,7 @@ export async function updateTaskbar() {
   const version = pathParts[2];
 
   if (!guid || !version) {
-    return 2;
+    return;
   }
 
   if (
@@ -41,7 +41,7 @@ export async function updateTaskbar() {
   const reviewUrl = `https://reviewers.addons-dev.allizom.org/en-US/reviewers/review/${guid}`;
   const response = await fetch(reviewUrl);
   if (response.status === 404) {
-    return 3;
+    return;
   }
 
   statusBarItem.text = guid + " " + version;

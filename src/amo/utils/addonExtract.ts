@@ -24,10 +24,9 @@ export async function extractAddon(
   }
 
   const extract = require("extract-zip");
-  await extract(
-    compressedFilePath,
-    { dir: workspaceFolder + "/" + addonGUID + "/" + addonVersion },
-  );
+  await extract(compressedFilePath, {
+    dir: workspaceFolder + "/" + addonGUID + "/" + addonVersion,
+  });
 
   fs.unlinkSync(compressedFilePath); // remove xpi
 
