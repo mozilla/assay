@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import fetch from "node-fetch";
 import { downloadAndExtract } from "./commands/getAddon";
 import { WelcomeView } from "./views/welcomeView";
 import { AssayTreeDataProvider } from "./views/sidebarView";
