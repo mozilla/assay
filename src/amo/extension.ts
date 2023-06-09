@@ -5,7 +5,6 @@ import { AssayTreeDataProvider } from "./views/sidebarView";
 import { updateTaskbar } from "./commands/updateTaskbar";
 
 export async function activate(context: vscode.ExtensionContext) {
-
   vscode.commands.registerCommand("assay.review", async function (url: string) {
     vscode.env.openExternal(vscode.Uri.parse(url));
   });
@@ -25,5 +24,4 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 }
 
-export function deactivate() {
-}
+export function deactivate() {}
