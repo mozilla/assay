@@ -16,13 +16,27 @@ export async function downloadAndExtract() {
   if (!input) {
     return;
   }
+  if (!input) {
+    return;
+  }
 
   // Retrieve version
   const versionInfo = await getVersionChoice(input);
   if (!versionInfo) {
     return;
   }
+  // Retrieve version
+  const versionInfo = await getVersionChoice(input);
+  if (!versionInfo) {
+    return;
+  }
 
+  // Retrieve metadata
+  const json: AddonInfoResponse = await getAddonInfo(input);
+  if (!json) {
+    vscode.window.showErrorMessage("Cannot retrieve addon metadata");
+    return;
+  }
   // Retrieve metadata
   const json: AddonInfoResponse = await getAddonInfo(input);
   if (!json) {
