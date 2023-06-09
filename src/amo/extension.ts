@@ -13,12 +13,18 @@ export async function activate(context: vscode.ExtensionContext) {
     WelcomeView.createOrShow(context.extensionUri);
   });
 
+  vscode.commands.registerCommand(
+    "assay.get",
+    () => {
+      downloadAndExtract();
+    }
+  );
+
   const sidebar = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
   context.subscriptions.push(
-    downloadAndExtract,
     sidebar,
     vscode.window.onDidChangeActiveTextEditor(updateTaskbar)
   );
