@@ -13,7 +13,5 @@ export async function downloadAddon(fileId: string, path: string) {
     dest.write(await response.buffer());
     dest.close();
     vscode.window.showInformationMessage("Download complete");
-  } else {
-    console.error("Request failed:", response.status);
   }
 }
