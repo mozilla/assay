@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
-import { AddonInfoResponse } from "../interfaces";
+import { addonInfoResponse } from "../types";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
@@ -27,7 +27,7 @@ export const downloadAndExtract = vscode.commands.registerCommand(
     }
 
     // Retrieve metadata
-    const json: AddonInfoResponse = await getAddonInfo(input);
+    const json: addonInfoResponse = await getAddonInfo(input);
     console.log(json);
     if (!json) {
       vscode.window.showErrorMessage("No addon found");
@@ -38,7 +38,7 @@ export const downloadAndExtract = vscode.commands.registerCommand(
     const addonVersion = versionInfo.version;
     const reviewUrl = json.review_url;
     console.log(reviewUrl);
-    const addonGUID = json.guid[0] === "{" ? json.guid.slice(1, -1) : json.guid;
+    const addonGUID = json.guid;
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const compressedFilePath =
       workspaceFolder + "/" + addonGUID + "_" + addonVersion + ".xpi";

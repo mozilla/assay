@@ -1,5 +1,8 @@
 import fetch from "node-fetch";
+import * as path from "path";
 import * as vscode from "vscode";
+
+import constants from "../../config/config";
 
 const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
@@ -17,38 +20,46 @@ export async function updateTaskbar() {
     return;
   }
 
-  const path = doc.uri.fsPath;
+  const filePath = doc.uri.fsPath;
   const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   if (!rootFolder) {
     return;
   }
-  const relativePath = path.replace(rootFolder, "");
-  const pathParts = relativePath.split("/");
-  let guid = pathParts[1];
+  const relativePath = filePath.replace(rootFolder, "");
+  const pathParts = relativePath.split(path.sep);
+  const guid = pathParts[1];
   const version = pathParts[2];
 
   if (!guid || !version) {
     return;
   }
 
-  if (
-    guid.length === 36 &&
-    guid[8] === "-" &&
-    guid[13] === "-" &&
-    guid[18] === "-" &&
-    guid[23] === "-"
-  ) {
-    // looks like a guid
-    guid = "{" + guid + "}";
-  }
+  const reviewUrl = `${constants.reviewBaseURL}${guid}`;
+  try {
+    const response = await Promise.race([
+      fetch(reviewUrl),
+      new Promise<Response>((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), 2000)
+      ) as Promise<Response>,
+    ]);
 
-  const reviewUrl = `https://reviewers.addons-dev.allizom.org/en-US/reviewers/review/${guid}`;
-  const response = await fetch(reviewUrl);
-  if (response.status === 404) {
+    if (response.status === 404) {
+      // not a review page
+      return;
+    } else if (response.status === 403) {
+      // not authed
+      return;
+    } else if (response.status !== 200) {
+      // other errors
+      return;
+    }
+  } catch (error) {
+    // timed out
+    console.error(error);
     return;
   }
 
-  statusBarItem.text = guid + " " + version;
+  statusBarItem.text = `${guid} ${version}`;
   statusBarItem.tooltip = reviewUrl;
   statusBarItem.command = {
     command: "assay.review",

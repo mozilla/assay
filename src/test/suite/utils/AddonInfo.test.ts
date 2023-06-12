@@ -3,15 +3,16 @@ import { afterEach, describe, it } from "mocha";
 import * as fetch from "node-fetch";
 import * as sinon from "sinon";
 
-import { AddonInfoResponse } from "../../../amo/interfaces";
+import { addonInfoResponse } from "../../../amo/types";
 import { getAddonInfo } from "../../../amo/utils/addonInfo";
+import constants from "../../../config/config";
 
 describe("AddonInfo.ts", () => {
   afterEach(() => {
     sinon.restore();
   });
 
-  const expected: AddonInfoResponse = {
+  const expected: addonInfoResponse = {
     slug: "test-addon",
     name: {
       en: "Test addon",
@@ -30,7 +31,7 @@ describe("AddonInfo.ts", () => {
     guid: "gee you eye dee",
   };
 
-  it("should return a json object of type AddonInfoResponse if input is a slug", async () => {
+  it("should return a json object of type addonInfoResponse if input is a slug", async () => {
     const input = "test-addon";
     const stub = sinon.stub();
     stub.resolves({
@@ -41,12 +42,10 @@ describe("AddonInfo.ts", () => {
     const actual = await getAddonInfo(input);
     expect(actual).to.deep.equal(expected);
     expect(stub.calledOnce).to.be.true;
-    expect(
-      stub.calledWith(`https://addons.mozilla.org/api/v5/addons/addon/${input}`)
-    ).to.be.true;
+    expect(stub.calledWith(`${constants.apiBaseURL}${input}`)).to.be.true;
   });
 
-  it("should return a json object of type AddonInfoResponse if input is an id", async () => {
+  it("should return a json object of type addonInfoResponse if input is an id", async () => {
     const input = "123456";
     const stub = sinon.stub();
     stub.resolves({
@@ -57,12 +56,10 @@ describe("AddonInfo.ts", () => {
     const actual = await getAddonInfo(input);
     expect(actual).to.deep.equal(expected);
     expect(stub.calledOnce).to.be.true;
-    expect(
-      stub.calledWith(`https://addons.mozilla.org/api/v5/addons/addon/${input}`)
-    ).to.be.true;
+    expect(stub.calledWith(`${constants.apiBaseURL}${input}`)).to.be.true;
   });
 
-  it("should return a json object of type AddonInfoResponse if input is a url", async () => {
+  it("should return a json object of type addonInfoResponse if input is a url", async () => {
     const input = "https://addons.mozilla.org/en-US/firefox/addon/test-addon";
     const stub = sinon.stub();
     stub.resolves({
@@ -73,11 +70,8 @@ describe("AddonInfo.ts", () => {
     const actual = await getAddonInfo(input);
     expect(actual).to.deep.equal(expected);
     expect(stub.calledOnce).to.be.true;
-    expect(
-      stub.calledWith(
-        `https://addons.mozilla.org/api/v5/addons/addon/${expected.slug}`
-      )
-    ).to.be.true;
+    expect(stub.calledWith(`${constants.apiBaseURL}${expected.slug}`)).to.be
+      .true;
   });
 
   it("should throw an error if the response is not ok", async () => {

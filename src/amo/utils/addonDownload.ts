@@ -2,8 +2,10 @@ import * as fs from "fs";
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
-export async function downloadAddon(id: string, path: string) {
-  const url = `https://addons.mozilla.org/firefox/downloads/file/${id}`;
+import constants from "../../config/config";
+
+export async function downloadAddon(fileId: string, path: string) {
+  const url = `${constants.downloadBaseURL}${fileId}`;
   const response = await fetch(url);
 
   if (response.ok) {
