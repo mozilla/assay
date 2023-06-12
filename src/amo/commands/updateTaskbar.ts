@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
 import fetch from "node-fetch";
+import * as vscode from "vscode";
 
 const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,

@@ -1,11 +1,10 @@
-import { getAddonInfo } from "../../../amo/utils/addonInfo";
-
-import { AddonInfoResponse } from "../../../amo/interfaces";
-
 import { expect } from "chai";
 import { afterEach, describe, it } from "mocha";
-import * as sinon from "sinon";
 import * as fetch from "node-fetch";
+import * as sinon from "sinon";
+
+import { AddonInfoResponse } from "../../../amo/interfaces";
+import { getAddonInfo } from "../../../amo/utils/addonInfo";
 
 describe("AddonInfo.ts", () => {
   afterEach(() => {
@@ -33,7 +32,7 @@ describe("AddonInfo.ts", () => {
 
   it("should return a json object of type AddonInfoResponse if input is a slug", async () => {
     const input = "test-addon";
-    const stub: sinon.SinonStub<any[], any> = sinon.stub();
+    const stub = sinon.stub();
     stub.resolves({
       json: () => expected,
     });
@@ -49,7 +48,7 @@ describe("AddonInfo.ts", () => {
 
   it("should return a json object of type AddonInfoResponse if input is an id", async () => {
     const input = "123456";
-    const stub: sinon.SinonStub<any[], any> = sinon.stub();
+    const stub = sinon.stub();
     stub.resolves({
       json: () => expected,
     });
@@ -65,7 +64,7 @@ describe("AddonInfo.ts", () => {
 
   it("should return a json object of type AddonInfoResponse if input is a url", async () => {
     const input = "https://addons.mozilla.org/en-US/firefox/addon/test-addon";
-    const stub: sinon.SinonStub<any[], any> = sinon.stub();
+    const stub = sinon.stub();
     stub.resolves({
       json: () => expected,
     });
