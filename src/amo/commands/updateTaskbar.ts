@@ -15,7 +15,7 @@ export async function updateTaskbar(storagePath: string) {
     return;
   }
   const doc = activeEditor.document;
-  const path = doc.uri.fsPath;
+  const filePath = doc.uri.fsPath;
   const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   if (!rootFolder) {
     return;
