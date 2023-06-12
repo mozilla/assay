@@ -1,4 +1,5 @@
-export interface AddonInfoResponse {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type addonInfoResponse = {
   slug: string;
   name: {
     [key: string]: string;
@@ -15,9 +16,10 @@ export interface AddonInfoResponse {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   review_url: string;
   guid: string;
-}
+};
 
-export interface AddonVersion {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type addonVersion = {
   map(
     arg0: (version: any) => any
   ): readonly string[] | Thenable<readonly string[]>;
@@ -26,4 +28,11 @@ export interface AddonVersion {
   file: {
     id: string;
   };
-}
+};
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type configConstants = {
+  apiBaseURL: string;
+  reviewBaseURL: string;
+  downloadBaseURL: string;
+};

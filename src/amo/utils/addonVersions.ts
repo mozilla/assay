@@ -1,40 +1,29 @@
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
-import { AddonVersion } from "../interfaces";
+import constants from "../../config/config";
+import { addonVersion } from "../types";
 
-export async function getAddonVersions(
-  input: string | undefined,
-  next?: string
-) {
+export async function getAddonVersions(input: string, next?: string) {
   if (next) {
     const url = next;
     const response = await fetch(url);
     const json = await response.json();
     return json;
   }
-  if (!input) {
-    return;
-  } else if (input.includes("/")) {
-    // only for links
-    const slug = input.split("addon/")[1].split("/")[0];
-    const url = `https://addons.mozilla.org/api/v5/addons/addon/${slug}/versions/`;
-    const response = await fetch(url);
-    const json = await response.json();
-    return json;
-  } else {
-    // other identifiers work here
-    const url = `https://addons.mozilla.org/api/v5/addons/addon/${input}/versions/`;
-    const response = await fetch(url);
-    const json = await response.json();
-    return json;
-  }
+  const slug: string = input.includes("/")
+    ? input.split("addon/")[1].split("/")[0]
+    : input;
+  const url = `${constants.apiBaseURL}${slug}/versions/`;
+  const response = await fetch(url);
+  const json = await response.json();
+  return json;
 }
 
 export async function getVersionChoice(
   input: string
 ): Promise<{ fileID: string; version: string } | undefined> {
-  const versions: AddonVersion[] = [];
+  const versions: addonVersion[] = [];
   let next: string | undefined = undefined;
   let init = true;
 

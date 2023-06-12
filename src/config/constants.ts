@@ -1,0 +1,18 @@
+export const DEV = {
+  apiBaseURL: "https://addons-dev.allizom.org/api/v5/",
+  reviewBaseURL:
+    "https://reviewers.addons-dev.allizom.org/en-US/reviewers/review/",
+  downloadBaseURL: "https://addons-dev.allizom.org/firefox/downloads/file/",
+};
+
+export const STAGE = {
+  apiBaseURL: "https://addons.allizom.org/api/v5/",
+  reviewBaseURL: "https://reviewers.addons.allizom.org/en-US/reviewers/review/",
+  downloadBaseURL: "https://addons.allizom.org/firefox/downloads/file/",
+};
+
+export const PROD = {
+  apiBaseURL: "https://addons.mozilla.org/api/v5/",
+  reviewBaseURL: "https://reviewers.addons.mozilla.org/en-US/reviewers/review/",
+  downloadBaseURL: "https://addons.mozilla.org/firefox/downloads/file/",
+};
