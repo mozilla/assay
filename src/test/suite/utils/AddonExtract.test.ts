@@ -1,11 +1,11 @@
-import { extractAddon } from "../../../amo/utils/addonExtract";
-
 import { expect } from "chai";
-import { afterEach, describe, it } from "mocha";
-import * as sinon from "sinon";
-import * as jszip from "jszip";
 import * as fs from "fs";
+import * as jszip from "jszip";
+import { afterEach, describe, it } from "mocha";
 import path = require("path");
+import * as sinon from "sinon";
+
+import { extractAddon } from "../../../amo/utils/addonExtract";
 
 describe("AddonExtract.ts", async () => {
   afterEach(() => {

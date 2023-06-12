@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
-import { downloadAndExtract } from "./commands/getAddon";
-import { WelcomeView } from "./views/welcomeView";
-import { AssayTreeDataProvider } from "./views/sidebarView";
+
+import { downloadAndExtract } from "./commands/fetch";
 import { updateTaskbar } from "./commands/updateTaskbar";
+import { AssayTreeDataProvider } from "./views/sidebarView";
+import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand("assay.review", async function (url: string) {
@@ -30,4 +31,6 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 }
 
-export function deactivate() {}
+export function deactivate() {
+  // Nothing to do yet
+}

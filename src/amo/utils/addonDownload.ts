@@ -1,6 +1,6 @@
 import * as fs from "fs";
-import * as vscode from "vscode";
 import fetch from "node-fetch";
+import * as vscode from "vscode";
 
 export async function downloadAddon(id: string, path: string) {
   const url = `https://addons.mozilla.org/firefox/downloads/file/${id}`;
