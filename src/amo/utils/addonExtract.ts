@@ -1,5 +1,6 @@
-import * as vscode from "vscode";
+import * as extract from "extract-zip";
 import * as fs from "fs";
+import * as vscode from "vscode";
 
 export async function extractAddon(
   compressedFilePath: string,
@@ -23,16 +24,9 @@ export async function extractAddon(
     }
   }
 
-  const extract = require("extract-zip");
-  await extract(
-    compressedFilePath,
-    { dir: workspaceFolder + "/" + addonGUID + "/" + addonVersion },
-    function (err: any) {
-      if (err) {
-        console.log(err);
-      }
-    }
-  );
+  await extract(compressedFilePath, {
+    dir: workspaceFolder + "/" + addonGUID + "/" + addonVersion,
+  });
 
   fs.unlinkSync(compressedFilePath); // remove xpi
 

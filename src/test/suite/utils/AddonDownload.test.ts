@@ -1,11 +1,11 @@
-import { downloadAddon } from "../../../amo/utils/addonDownload";
-
 import { expect } from "chai";
-import { afterEach, describe, it } from "mocha";
-import * as sinon from "sinon";
-import * as fetch from "node-fetch";
 import * as fs from "fs";
+import { afterEach, describe, it } from "mocha";
+import * as fetch from "node-fetch";
 import path = require("path");
+import * as sinon from "sinon";
+
+import { downloadAddon } from "../../../amo/utils/addonDownload";
 
 describe("addonDownload.ts", async () => {
   afterEach(() => {
@@ -21,7 +21,7 @@ describe("addonDownload.ts", async () => {
       },
     };
 
-    const stub: sinon.SinonStub<any[], any> = sinon.stub();
+    const stub = sinon.stub();
     stub.resolves(fakeResponse);
     sinon.replace(fetch, "default", stub as any);
 
@@ -61,7 +61,7 @@ describe("addonDownload.ts", async () => {
       },
     };
 
-    const stub: sinon.SinonStub<any[], any> = sinon.stub();
+    const stub = sinon.stub();
     stub.resolves(fakeResponse);
     sinon.replace(fetch, "default", stub as any);
 

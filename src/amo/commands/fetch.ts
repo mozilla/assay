@@ -1,11 +1,11 @@
-import * as vscode from "vscode";
 import * as fs from "fs";
+import * as vscode from "vscode";
 
 import { AddonInfoResponse } from "../interfaces";
-import { getVersionChoice } from "../utils/addonVersions";
-import { getAddonInfo } from "../utils/addonInfo";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
+import { getAddonInfo } from "../utils/addonInfo";
+import { getVersionChoice } from "../utils/addonVersions";
 
 export const downloadAndExtract = vscode.commands.registerCommand(
   "assay.get",
@@ -35,15 +35,18 @@ export const downloadAndExtract = vscode.commands.registerCommand(
     }
 
     const addonFileId = versionInfo.fileID;
-    const addonName = json.name[json.default_locale];
-    const addonSlug = json.slug;
     const addonVersion = versionInfo.version;
     const reviewUrl = json.review_url;
     console.log(reviewUrl);
     const addonGUID = json.guid[0] === "{" ? json.guid.slice(1, -1) : json.guid;
-    const workspaceFolder = vscode.workspace.workspaceFolders![0].uri.fsPath;
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const compressedFilePath =
       workspaceFolder + "/" + addonGUID + "_" + addonVersion + ".xpi";
+
+    if (!workspaceFolder) {
+      vscode.window.showErrorMessage("No workspace folder found");
+      return;
+    }
 
     // Download
     await vscode.window.withProgress(

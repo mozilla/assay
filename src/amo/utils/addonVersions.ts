@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
-import { AddonVersion } from "../interfaces";
 import * as vscode from "vscode";
+
+import { AddonVersion } from "../interfaces";
 
 export async function getAddonVersions(
   input: string | undefined,
@@ -33,7 +34,7 @@ export async function getAddonVersions(
 export async function getVersionChoice(
   input: string
 ): Promise<{ fileID: string; version: string } | undefined> {
-  let versions: AddonVersion[] = [];
+  const versions: AddonVersion[] = [];
   let next: string | undefined = undefined;
   let init = true;
 
@@ -72,5 +73,6 @@ export async function getVersionChoice(
     } else {
       break;
     }
+    // eslint-disable-next-line no-constant-condition
   } while (true);
 }
