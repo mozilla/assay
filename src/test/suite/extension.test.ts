@@ -18,4 +18,10 @@ describe("extension.ts", () => {
     expect(commands).to.include.members(["assay.review"]);
     expect(context.subscriptions.length).to.equal(2);
   });
+
+  it("should deactivate and return undefined", async () => {
+    // placeholder due to blank deactivate function
+    const result = deactivate();
+    expect(result).to.be.undefined;
+  });
 });
