@@ -1,10 +1,9 @@
 import * as path from "path";
 import * as vscode from "vscode";
-import fetch from "node-fetch";
 
 import { addonInfoFromCache } from "../utils/addonCache";
 
-const statusBarItem = vscode.window.createStatusBarItem(
+export const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
   100
 );
