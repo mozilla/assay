@@ -16,12 +16,9 @@ export async function activate(context: vscode.ExtensionContext) {
     WelcomeView.createOrShow(context.extensionUri);
   });
 
-  vscode.commands.registerCommand(
-    "assay.get",
-    () => {
-      downloadAndExtract();
-    }
-  );
+  vscode.commands.registerCommand("assay.get", () => {
+    downloadAndExtract();
+  });
 
   const sidebar = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),

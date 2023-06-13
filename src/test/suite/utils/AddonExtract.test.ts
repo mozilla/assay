@@ -4,6 +4,7 @@ import * as jszip from "jszip";
 import { afterEach, describe, it } from "mocha";
 import path = require("path");
 import * as sinon from "sinon";
+import * as vscode from "vscode";
 
 import { extractAddon } from "../../../amo/utils/addonExtract";
 
@@ -95,7 +96,7 @@ describe("AddonExtract.ts", async () => {
     // make a stub for the quickpick and force it to say yes
     const stub = sinon.stub();
     stub.onCall(0).returns("Yes");
-    sinon.replace(require("vscode").window, "showQuickPick", stub);
+    sinon.replace(vscode.window, "showQuickPick", stub);
 
     await extractAddon(
       compressedFilePath,
@@ -157,7 +158,7 @@ describe("AddonExtract.ts", async () => {
     // make a stub for the quickpick and force it to say no
     const stub = sinon.stub();
     stub.onCall(0).returns("No");
-    sinon.replace(require("vscode").window, "showQuickPick", stub);
+    sinon.replace(vscode.window, "showQuickPick", stub);
 
     await extractAddon(
       compressedFilePath,

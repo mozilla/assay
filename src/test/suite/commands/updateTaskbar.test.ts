@@ -1,8 +1,6 @@
 import { expect } from "chai";
-import * as fs from "fs";
 import { afterEach, describe, it } from "mocha";
 import * as fetch from "node-fetch";
-import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 

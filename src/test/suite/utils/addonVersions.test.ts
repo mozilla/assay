@@ -1,16 +1,14 @@
+import { expect } from "chai";
+import { afterEach, describe, it } from "mocha";
+import * as fetch from "node-fetch";
+import * as sinon from "sinon";
+import * as vscode from "vscode";
+
+import { AddonVersion } from "../../../amo/interfaces";
 import {
   getAddonVersions,
   getVersionChoice,
 } from "../../../amo/utils/addonVersions";
-import { expect } from "chai";
-import * as sinon from "sinon";
-import { afterEach, describe, it } from "mocha";
-import * as fs from "fs";
-import * as path from "path";
-import * as vscode from "vscode";
-import * as fetch from "node-fetch";
-import { AddonVersion } from "../../../amo/interfaces";
-import exp = require("constants");
 
 describe("addonVersions.ts", () => {
   afterEach(() => {
