@@ -1,11 +1,11 @@
-import * as vscode from "vscode";
 import * as fs from "fs";
+import * as vscode from "vscode";
 
 import { AddonInfoResponse } from "../interfaces";
-import { getVersionChoice } from "../utils/addonVersions";
-import { getAddonInfo } from "../utils/addonInfo";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
+import { getAddonInfo } from "../utils/addonInfo";
+import { getVersionChoice } from "../utils/addonVersions";
 
 export async function downloadAndExtract() {
   const input: string | undefined = await vscode.window.showInputBox({
@@ -16,27 +16,13 @@ export async function downloadAndExtract() {
   if (!input) {
     return;
   }
-  if (!input) {
-    return;
-  }
 
   // Retrieve version
   const versionInfo = await getVersionChoice(input);
   if (!versionInfo) {
     return;
   }
-  // Retrieve version
-  const versionInfo = await getVersionChoice(input);
-  if (!versionInfo) {
-    return;
-  }
 
-  // Retrieve metadata
-  const json: AddonInfoResponse = await getAddonInfo(input);
-  if (!json) {
-    vscode.window.showErrorMessage("Cannot retrieve addon metadata");
-    return;
-  }
   // Retrieve metadata
   const json: AddonInfoResponse = await getAddonInfo(input);
   if (!json) {
