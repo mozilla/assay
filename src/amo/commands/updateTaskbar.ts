@@ -21,11 +21,9 @@ export async function updateTaskbar() {
   if (!rootFolder) {
     return;
   }
-  const relativePath = filePath.replace(rootFolder, "");
-  const pathParts = relativePath.split(path.sep);
-  const guid = pathParts[1];
-  const version = pathParts[2];
 
+  const relativePath = filePath.replace(rootFolder, "");
+  const [guid, version] = relativePath.split(path.sep).splice(-2);
   if (!guid || !version) {
     return;
   }
