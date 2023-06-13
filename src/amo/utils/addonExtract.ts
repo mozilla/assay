@@ -2,19 +2,23 @@ import * as extract from "extract-zip";
 import * as fs from "fs";
 import * as vscode from "vscode";
 
+function dirExistsOrMake(dir: string) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+    return false;
+  } else {
+    return true;
+  }
+}
+
 export async function extractAddon(
   compressedFilePath: string,
-  workspaceFolder: string,
-  addonGUID: string,
-  addonVersion: string
+  addonFolderPath: string,
+  addonVersionFolderPath: string
 ) {
-  if (!fs.existsSync(workspaceFolder + "/" + addonGUID)) {
-    fs.mkdirSync(workspaceFolder + "/" + addonGUID);
-  }
+  dirExistsOrMake(addonFolderPath);
 
-  if (!fs.existsSync(workspaceFolder + "/" + addonGUID + "/" + addonVersion)) {
-    fs.mkdirSync(workspaceFolder + "/" + addonGUID + "/" + addonVersion);
-  } else {
+  if (dirExistsOrMake(addonVersionFolderPath)) {
     const choice = await vscode.window.showQuickPick(["Yes", "No"], {
       placeHolder: "Addon already exists. Overwrite?",
     });
@@ -25,12 +29,12 @@ export async function extractAddon(
   }
 
   await extract(compressedFilePath, {
-    dir: workspaceFolder + "/" + addonGUID + "/" + addonVersion,
+    dir: addonVersionFolderPath,
   });
 
   fs.unlinkSync(compressedFilePath); // remove xpi
 
-  if (!fs.existsSync(workspaceFolder + "/" + addonGUID + "/" + addonVersion)) {
+  if (!fs.existsSync(addonVersionFolderPath)) {
     vscode.window.showErrorMessage("Extraction failed");
     return;
   }
@@ -38,12 +42,7 @@ export async function extractAddon(
   vscode.window.showInformationMessage("Extraction complete");
 
   // make files read-only
-  fs.readdirSync(
-    workspaceFolder + "/" + addonGUID + "/" + addonVersion
-  ).forEach((file) => {
-    fs.chmodSync(
-      workspaceFolder + "/" + addonGUID + "/" + addonVersion + "/" + file,
-      0o444
-    );
+  fs.readdirSync(addonVersionFolderPath).forEach((file) => {
+    fs.chmodSync(`${addonVersionFolderPath}/${file}`, 0o444);
   });
 }
