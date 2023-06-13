@@ -45,14 +45,16 @@ export async function downloadAndExtract() {
   }
 
   const addonFileId = versionInfo.fileID;
-  const addonName = json.name[json.default_locale];
-  const addonSlug = json.slug;
   const addonVersion = versionInfo.version;
-  const reviewUrl = json.review_url;
   const addonGUID = json.guid[0] === "{" ? json.guid.slice(1, -1) : json.guid;
-  const workspaceFolder = vscode.workspace.workspaceFolders![0].uri.fsPath;
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   const compressedFilePath =
     workspaceFolder + "/" + addonGUID + "_" + addonVersion + ".xpi";
+
+  if (!workspaceFolder) {
+    vscode.window.showErrorMessage("No workspace folder found");
+    return;
+  }
 
   // Download
   await vscode.window.withProgress(

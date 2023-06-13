@@ -1,7 +1,9 @@
-import { describe, it, afterEach } from "mocha";
 import { expect } from "chai";
+import * as fs from "fs";
+import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
+
 import { downloadAndExtract } from "../../../amo/commands/getAddon";
 
 describe("getAddon.ts", () => {
@@ -75,11 +77,11 @@ describe("getAddon.ts", () => {
 
     const stub3 = sinon.stub(vscode.workspace, "workspaceFolders");
     stub3.value([
-        {
-            uri: {
-                fsPath: "test"
-            }
-        }
+      {
+        uri: {
+          fsPath: "test",
+        },
+      },
     ]);
 
     const result = await downloadAndExtract();
@@ -118,14 +120,14 @@ describe("getAddon.ts", () => {
 
     const stub3 = sinon.stub(vscode.workspace, "workspaceFolders");
     stub3.value([
-        {
-            uri: {
-                fsPath: "test"
-            }
-        }
+      {
+        uri: {
+          fsPath: "test",
+        },
+      },
     ]);
 
-    const stub4 = sinon.stub(require("fs"), "existsSync");
+    const stub4 = sinon.stub(fs, "existsSync");
     stub4.onFirstCall().returns(true);
     stub4.onSecondCall().returns(false);
 

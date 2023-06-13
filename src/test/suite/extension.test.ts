@@ -1,8 +1,7 @@
-import { describe, it, afterEach } from "mocha";
 import { expect } from "chai";
-import * as sinon from "sinon";
-import * as fetch from "node-fetch";
+import { describe, it } from "mocha";
 import * as vscode from "vscode";
+
 import { activate, deactivate } from "../../amo/extension";
 
 describe("extension.ts", () => {
