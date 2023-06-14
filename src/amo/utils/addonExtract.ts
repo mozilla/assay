@@ -5,8 +5,6 @@ import * as vscode from "vscode";
 function dirExistsOrMake(dir: string) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
-    return false;
-  } else {
     return true;
   }
 }
@@ -18,7 +16,7 @@ export async function extractAddon(
 ) {
   dirExistsOrMake(addonFolderPath);
 
-  if (dirExistsOrMake(addonVersionFolderPath)) {
+  if (!dirExistsOrMake(addonVersionFolderPath)) {
     const choice = await vscode.window.showQuickPick(["Yes", "No"], {
       placeHolder: "Addon already exists. Overwrite?",
     });

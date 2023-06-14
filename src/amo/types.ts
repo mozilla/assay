@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export type addonInfoResponse = {
   slug: string;
   name: {
@@ -18,7 +17,6 @@ export type addonInfoResponse = {
   guid: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export type addonVersion = {
   map(
     arg0: (version: any) => any
@@ -30,7 +28,6 @@ export type addonVersion = {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export type configConstants = {
   apiBaseURL: string;
   reviewBaseURL: string;
