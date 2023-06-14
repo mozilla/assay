@@ -23,34 +23,28 @@ export async function updateTaskbar() {
   }
 
   const relativePath = filePath.replace(rootFolder, "");
-  const [guid, version] = relativePath.split(path.sep).splice(-2);
+  const [guid, version] = relativePath.split(path.sep).splice(1);
   if (!guid || !version) {
     return;
   }
 
   const reviewUrl = `${constants.reviewBaseURL}${guid}`;
-  try {
-    const response = await Promise.race([
-      fetch(reviewUrl),
-      new Promise<Response>((_, reject) =>
-        setTimeout(() => reject(new Error("Request timed out")), 2000)
-      ) as Promise<Response>,
-    ]);
 
-    if (response.status === 404) {
-      // not a review page
-      return;
-    } else if (response.status === 403) {
-      // not authed
-      return;
-    } else if (response.status !== 200) {
-      // other errors
-      return;
+  const AbortController =
+    globalThis.AbortController || (await import("abort-controller"));
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 2000);
+
+  try {
+    const response = await fetch(reviewUrl, { signal: controller.signal });
+    if (response.status !== 200) {
+      throw new Error("Request failed. Status: " + response.status);
     }
   } catch (error) {
-    // timed out
     console.error(error);
     return;
+  } finally {
+    clearTimeout(timeout);
   }
 
   statusBarItem.text = `${guid} ${version}`;

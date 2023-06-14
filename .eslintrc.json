@@ -14,7 +14,13 @@
     "plugin:import/typescript"
   ],
   "rules": {
-    "@typescript-eslint/naming-convention": "warn",
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": "typeLike",
+        "format": ["PascalCase", "camelCase"]
+      }
+    ],
     "@typescript-eslint/semi": "warn",
     "import/no-unresolved": [
       "error",
