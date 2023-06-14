@@ -14,6 +14,7 @@ describe("addonDownload.ts", async () => {
   });
 
   it("should download the xpi of the addon", async () => {
+    console.log(constants.downloadBaseURL + "\n\n\n");
     // mock response
     const fakeResponse = {
       ok: true,

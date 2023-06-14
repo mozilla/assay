@@ -28,20 +28,21 @@ You certainly need [Node](https://nodejs.org/en/) 16.x. Development is done with
 
 ## Running the Extension
 1. Navigate to the debug view in the sidebar of VSCode
-2. Select `Run Extension` from the dropdown menu
-3. Click the green play button to start the extension
+2. From the dropdown menu beside the green play button, select one of the following options:
+    - `Run Assay (Development)`
+    - `Run Assay (Staging)`
+    - `Run Assay (Production)`
+3. Click the green play button to run the extension
 
-## Running Tests
-1. Run `npm test` in the root directory
+Each of these options will run the extension with different constants defined in `src/config/constants.ts`.
 
-## Development
+## Testing the Extension
+- Run the following commands to test the extension with the different constants defined in `src/config/constants.ts`:
+    - `npm run test:dev`
+    - `npm run test:stage`
+    - `npm run test:prod`
 
-To change development environment settings, edit the `extensionConfig` in `webpack.config.js` and change `mode` to one of the following:
-- `development`
-- `staging`
-- `production`
-
-Each mode currently controls where each environment points to. For example, `development` points to `https://addons-dev.allizom.org` and `production` points to `https://addons.mozilla.org`.
+###### *Note: Any command not configured to run with a specific environment variable will run with the development constants.*
 
 ---
 
