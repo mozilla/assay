@@ -10,7 +10,7 @@ const statusBarItem = vscode.window.createStatusBarItem(
 );
 statusBarItem.text = "Assay";
 
-export async function updateTaskbar() {
+export async function updateTaskbar(storagePath: string) {
   const activeEditor = vscode.window.activeTextEditor;
   if (!activeEditor) {
     return;
@@ -27,31 +27,40 @@ export async function updateTaskbar() {
   }
 
   const relativePath = filePath.replace(rootFolder, "");
-  const [guid, version] = relativePath.split(path.sep).splice(1);
-  if (!guid || !version) {
-    return;
-  }
+  const relativePathParts = relativePath.split(path.sep);
 
-  const reviewUrl = `${constants.reviewBaseURL}${guid}`;
+  let guid: string | undefined;
+  let reviewUrl: string | undefined;
 
-  const AbortController =
-    globalThis.AbortController || (await import("abort-controller"));
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 2000);
+  const cachePath = path.join(storagePath, ".cache");
+  const cacheFiles = await vscode.workspace.fs.readDirectory(
+    vscode.Uri.file(cachePath)
+  );
 
-  try {
-    const response = await fetch(reviewUrl, { signal: controller.signal });
-    if (response.status !== 200) {
-      throw new Error("Request failed. Status: " + response.status);
+  console.log("Cache Path: ", cachePath);
+  console.log("Cache Files: ", cacheFiles);
+  const cacheFileNames = cacheFiles.map((file) => file[0]);
+
+  // cache file names are guids that store data about the addon. Find the file and get the reviewURL
+  for (const part of relativePathParts) {
+    console.log("Part: ", `${part}.json`);
+    if (cacheFileNames.includes(`${part}.json`)) {
+      guid = part;
+      const cacheFile = await vscode.workspace.fs.readFile(
+        vscode.Uri.file(`${cachePath}/${part}.json`)
+      );
+      const cacheFileJSON = JSON.parse(cacheFile.toString());
+      reviewUrl = cacheFileJSON.reviewURL;
+      break;
     }
-  } catch (error) {
-    console.error(error);
-    return;
-  } finally {
-    clearTimeout(timeout);
   }
 
-  statusBarItem.text = `${guid} ${version}`;
+  if (!guid) {
+    statusBarItem.hide();
+    return;
+  }
+
+  statusBarItem.text = `${guid} - Review Page`;
   statusBarItem.tooltip = reviewUrl;
   statusBarItem.command = {
     command: "assay.review",
