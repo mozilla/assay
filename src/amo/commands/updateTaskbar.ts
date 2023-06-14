@@ -44,6 +44,8 @@ export async function updateTaskbar(storagePath: string) {
   if (!guid) {
     statusBarItem.hide();
     return;
+  } finally {
+    clearTimeout(timeout);
   }
 
   const reviewUrl = await addonInfoFromCache(storagePath, guid, "reviewUrl");
