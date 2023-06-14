@@ -1,11 +1,21 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
-import { AddonInfoResponse } from "../interfaces";
+import { addonInfoResponse } from "../types";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
 import { getVersionChoice } from "../utils/addonVersions";
+
+export function getAddonFolderPaths(
+  guid: string,
+  version: string,
+  workspaceFolder: string
+) {
+  const addonFolderPath = `${workspaceFolder}/${guid}`;
+  const addonVersionFolderPath = `${addonFolderPath}/${version}`;
+  return { addonFolderPath, addonVersionFolderPath };
+}
 
 export const downloadAndExtract = vscode.commands.registerCommand(
   "assay.get",
@@ -27,7 +37,7 @@ export const downloadAndExtract = vscode.commands.registerCommand(
     }
 
     // Retrieve metadata
-    const json: AddonInfoResponse = await getAddonInfo(input);
+    const json: addonInfoResponse = await getAddonInfo(input);
     console.log(json);
     if (!json) {
       vscode.window.showErrorMessage("No addon found");
@@ -36,17 +46,19 @@ export const downloadAndExtract = vscode.commands.registerCommand(
 
     const addonFileId = versionInfo.fileID;
     const addonVersion = versionInfo.version;
-    const reviewUrl = json.review_url;
-    console.log(reviewUrl);
-    const addonGUID = json.guid[0] === "{" ? json.guid.slice(1, -1) : json.guid;
+    const addonGUID = json.guid;
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-    const compressedFilePath =
-      workspaceFolder + "/" + addonGUID + "_" + addonVersion + ".xpi";
-
     if (!workspaceFolder) {
       vscode.window.showErrorMessage("No workspace folder found");
       return;
     }
+
+    const compressedFilePath = `${workspaceFolder}/${addonGUID}_${addonVersion}.xpi`;
+    const { addonFolderPath, addonVersionFolderPath } = getAddonFolderPaths(
+      addonGUID,
+      addonVersion,
+      workspaceFolder
+    );
 
     // Download
     await vscode.window.withProgress(
@@ -75,16 +87,13 @@ export const downloadAndExtract = vscode.commands.registerCommand(
 
         await extractAddon(
           compressedFilePath,
-          workspaceFolder,
-          addonGUID,
-          addonVersion
+          addonFolderPath,
+          addonVersionFolderPath
         );
       }
     );
 
-    if (
-      !fs.existsSync(workspaceFolder + "/" + addonGUID + "/" + addonVersion)
-    ) {
+    if (!fs.existsSync(addonVersionFolderPath)) {
       vscode.window.showErrorMessage("Extraction failed");
       return;
     }

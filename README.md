@@ -34,6 +34,15 @@ You certainly need [Node](https://nodejs.org/en/) 16.x. Development is done with
 ## Running Tests
 1. Run `npm test` in the root directory
 
+## Development
+
+To change development environment settings, edit the `extensionConfig` in `webpack.config.js` and change `mode` to one of the following:
+- `development`
+- `staging`
+- `production`
+
+Each mode currently controls where each environment points to. For example, `development` points to `https://addons-dev.allizom.org` and `production` points to `https://addons.mozilla.org`.
+
 ---
 
 

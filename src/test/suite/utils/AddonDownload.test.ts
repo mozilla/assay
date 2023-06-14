@@ -6,6 +6,7 @@ import path = require("path");
 import * as sinon from "sinon";
 
 import { downloadAddon } from "../../../amo/utils/addonDownload";
+import constants from "../../../config/config";
 
 describe("addonDownload.ts", async () => {
   afterEach(() => {
@@ -40,11 +41,8 @@ describe("addonDownload.ts", async () => {
     await downloadAddon(addonId, downloadedFilePath);
 
     expect(stub.calledOnce).to.be.true;
-    expect(
-      stub.calledWith(
-        `https://addons.mozilla.org/firefox/downloads/file/${addonId}`
-      )
-    ).to.be.true;
+    expect(stub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
+      .true;
 
     // wait for file to be written (there should be a better way to do this)
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -79,11 +77,8 @@ describe("addonDownload.ts", async () => {
 
     await downloadAddon(addonId, downloadedFilePath);
     expect(stub.calledOnce).to.be.true;
-    expect(
-      stub.calledWith(
-        `https://addons.mozilla.org/firefox/downloads/file/${addonId}`
-      )
-    ).to.be.true;
+    expect(stub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
+      .true;
 
     await new Promise((resolve) => setTimeout(resolve, 500));
     expect(fs.existsSync(downloadedFilePath)).to.be.false;
