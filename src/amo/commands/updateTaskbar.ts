@@ -1,8 +1,7 @@
-import fetch from "node-fetch";
 import * as path from "path";
 import * as vscode from "vscode";
 
-import constants from "../../config/config";
+import { addonInfoFromCache } from "../utils/addonCache";
 
 const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
@@ -30,27 +29,18 @@ export async function updateTaskbar(storagePath: string) {
   const relativePathParts = relativePath.split(path.sep);
 
   let guid: string | undefined;
-  let reviewUrl: string | undefined;
 
   const cachePath = path.join(storagePath, ".cache");
   const cacheFiles = await vscode.workspace.fs.readDirectory(
     vscode.Uri.file(cachePath)
   );
-
-  console.log("Cache Path: ", cachePath);
-  console.log("Cache Files: ", cacheFiles);
   const cacheFileNames = cacheFiles.map((file) => file[0]);
 
-  // cache file names are guids that store data about the addon. Find the file and get the reviewURL
+  // find the guid, cache is stored as guid.json
   for (const part of relativePathParts) {
     console.log("Part: ", `${part}.json`);
     if (cacheFileNames.includes(`${part}.json`)) {
       guid = part;
-      const cacheFile = await vscode.workspace.fs.readFile(
-        vscode.Uri.file(`${cachePath}/${part}.json`)
-      );
-      const cacheFileJSON = JSON.parse(cacheFile.toString());
-      reviewUrl = cacheFileJSON.reviewURL;
       break;
     }
   }
@@ -59,6 +49,8 @@ export async function updateTaskbar(storagePath: string) {
     statusBarItem.hide();
     return;
   }
+
+  const reviewUrl = await addonInfoFromCache(storagePath, guid, "reviewUrl");
 
   statusBarItem.text = `${guid} - Review Page`;
   statusBarItem.tooltip = reviewUrl;

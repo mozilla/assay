@@ -61,7 +61,7 @@ export async function downloadAndExtract(storagePath: string) {
   );
 
   // Cache
-  await addonInfoToCache(storagePath, addonGUID, addonReviewURL);
+  await addonInfoToCache(storagePath, addonGUID, "reviewUrl", addonReviewURL);
 
   // Download
   await vscode.window.withProgress(
