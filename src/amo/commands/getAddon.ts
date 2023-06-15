@@ -32,7 +32,7 @@ export async function downloadAndExtract() {
 
   const addonFileId = versionInfo.fileID;
   const addonVersion = versionInfo.version;
-  const addonGUID = json.guid[0] === "{" ? json.guid.slice(1, -1) : json.guid;
+  const addonGUID = json.guid;
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   const compressedFilePath =
     workspaceFolder + "/" + addonGUID + "_" + addonVersion + ".xpi";
@@ -70,12 +70,12 @@ export async function downloadAndExtract() {
       await extractAddon(
         compressedFilePath,
         `${workspaceFolder}/${addonGUID}`,
-        `${workspaceFolder}/${addonGUID}/${addonVersion}}`
+        `${workspaceFolder}/${addonGUID}/${addonVersion}`
       );
     }
   );
 
-  if (!fs.existsSync(workspaceFolder + "/" + addonGUID + "/" + addonVersion)) {
+  if (!fs.existsSync(`${workspaceFolder}/${addonGUID}/${addonVersion}`)) {
     vscode.window.showErrorMessage("Extraction failed");
     return;
   }
