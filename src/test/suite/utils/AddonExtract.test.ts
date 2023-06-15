@@ -75,10 +75,7 @@ describe("AddonExtract.ts", async () => {
     // extract xpi
     const addonGUID = "test-addon";
     const addonVersion = "1.0.0";
-    const extractedworkspaceFolder = path.resolve(
-      workspaceFolder,
-      "test-addon"
-    );
+    const extractedworkspaceFolder = path.resolve(workspaceFolder, addonGUID);
     const extractedVersionFolder = path.resolve(
       extractedworkspaceFolder,
       addonVersion
@@ -136,10 +133,7 @@ describe("AddonExtract.ts", async () => {
     // extract xpi
     const addonGUID = "test-addon";
     const addonVersion = "1.0.0";
-    const extractedworkspaceFolder = path.resolve(
-      workspaceFolder,
-      "test-addon"
-    );
+    const extractedworkspaceFolder = path.resolve(workspaceFolder, addonGUID);
     const extractedVersionFolder = path.resolve(
       extractedworkspaceFolder,
       addonVersion
