@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
-import { AddonInfoResponse } from "../interfaces";
+import { addonInfoResponse } from "../types";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
@@ -24,7 +24,7 @@ export async function downloadAndExtract() {
   }
 
   // Retrieve metadata
-  const json: AddonInfoResponse = await getAddonInfo(input);
+  const json: addonInfoResponse = await getAddonInfo(input);
   if (!json) {
     vscode.window.showErrorMessage("Cannot retrieve addon metadata");
     return;
@@ -69,9 +69,8 @@ export async function downloadAndExtract() {
 
       await extractAddon(
         compressedFilePath,
-        workspaceFolder,
-        addonGUID,
-        addonVersion
+        `${workspaceFolder}/${addonGUID}`,
+        `${workspaceFolder}/${addonGUID}/${addonVersion}}`
       );
     }
   );

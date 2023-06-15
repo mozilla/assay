@@ -8,6 +8,7 @@ import {
   statusBarItem,
   updateTaskbar,
 } from "../../../amo/commands/updateTaskbar";
+import constants from "../../../config/config";
 
 describe("updateTaskbar.ts", async () => {
   afterEach(() => {
@@ -25,7 +26,7 @@ describe("updateTaskbar.ts", async () => {
   const fakeActiveEditor2 = {
     document: {
       uri: {
-        fsPath: "root/12345678-1234-1234-1234-123456789abc/version/test.js",
+        fsPath: "root/{12345678-1234-1234-1234-123456789abc}/version/test.js",
       },
     },
   };
@@ -103,7 +104,7 @@ describe("updateTaskbar.ts", async () => {
       "{12345678-1234-1234-1234-123456789abc} version"
     );
     expect(statusBarItem.tooltip).to.equal(
-      "https://reviewers.addons-dev.allizom.org/en-US/reviewers/review/{12345678-1234-1234-1234-123456789abc}"
+      `${constants.reviewBaseURL}{12345678-1234-1234-1234-123456789abc}`
     );
   });
 });

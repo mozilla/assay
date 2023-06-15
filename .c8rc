@@ -1,7 +1,7 @@
 {
   "all": true,
   "include": ["out/**"],
-  "exclude": ["**/node_modules/**", "**/test/**", "out/amo/interfaces.js", "out/amo/views/welcomeView.js", "**/config/**"],
+  "exclude": ["**/node_modules/**", "**/test/**", "out/amo/types.js", "out/amo/views/welcomeView.js", "**/config/**"],
   "reporter": ["lcov", "text"],
   "lines": 5
 }
