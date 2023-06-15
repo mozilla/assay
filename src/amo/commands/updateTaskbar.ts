@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 
 import constants from "../../config/config";
 
-const statusBarItem = vscode.window.createStatusBarItem(
+export const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
   100
 );

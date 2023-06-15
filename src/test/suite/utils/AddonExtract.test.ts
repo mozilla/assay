@@ -100,9 +100,8 @@ describe("AddonExtract.ts", async () => {
 
     await extractAddon(
       compressedFilePath,
-      workspaceFolder,
-      addonGUID,
-      addonVersion
+      extractedworkspaceFolder,
+      extractedVersionFolder
     );
 
     expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
@@ -162,9 +161,8 @@ describe("AddonExtract.ts", async () => {
 
     await extractAddon(
       compressedFilePath,
-      workspaceFolder,
-      addonGUID,
-      addonVersion
+      extractedworkspaceFolder,
+      extractedVersionFolder
     );
 
     expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;

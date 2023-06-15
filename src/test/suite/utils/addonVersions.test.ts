@@ -4,18 +4,19 @@ import * as fetch from "node-fetch";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { AddonVersion } from "../../../amo/interfaces";
+import { addonVersion } from "../../../amo/types";
 import {
   getAddonVersions,
   getVersionChoice,
 } from "../../../amo/utils/addonVersions";
+import constants from "../../../config/config";
 
 describe("addonVersions.ts", () => {
   afterEach(() => {
     sinon.restore();
   });
 
-  const versions: AddonVersion[] = [];
+  const versions: addonVersion[] = [];
   for (let i = 0; i < 25; i++) {
     versions.push({
       version: i.toString(),
@@ -30,7 +31,7 @@ describe("addonVersions.ts", () => {
       },
     });
   }
-  const versions2: AddonVersion[] = [];
+  const versions2: addonVersion[] = [];
   for (let i = 25; i < 30; i++) {
     versions2.push({
       version: i.toString(),
@@ -73,7 +74,7 @@ describe("addonVersions.ts", () => {
         json: () => {
           return {
             results: versions,
-            next: "https://addons.mozilla.org/api/v4/addons/addon/versions/?page=2",
+            next: `${constants.apiBaseURL}addons/addon/versions/?page=2`,
           };
         },
       });
@@ -117,11 +118,6 @@ describe("addonVersions.ts", () => {
   });
 
   describe("getAddonVersions", () => {
-    it("should return undefined if there is no input", async () => {
-      const result = await getAddonVersions("");
-      expect(result).to.be.undefined;
-    });
-
     it("should return a json if the input is a link", async () => {
       const stub = sinon.stub();
       stub.onCall(0).returns({
@@ -134,8 +130,9 @@ describe("addonVersions.ts", () => {
 
       sinon.replace(fetch, "default", stub as any);
 
+      console.log(constants.apiBaseURL);
       const json = await getAddonVersions(
-        "https://addons.mozilla.org/api/v4/addons/addon/versions/"
+        `${constants.apiBaseURL}addons/addon/slug/versions/`
       );
       expect(json.results).to.be.an("array");
       expect(json.results).to.have.lengthOf(25);

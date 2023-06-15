@@ -14,7 +14,7 @@ export async function getAddonVersions(input: string, next?: string) {
   const slug: string = input.includes("/")
     ? input.split("addon/")[1].split("/")[0]
     : input;
-  const url = `${constants.apiBaseURL}${slug}/versions/`;
+  const url = `${constants.apiBaseURL}addons/addon/${slug}/versions/`;
   const response = await fetch(url);
   const json = await response.json();
   return json;
