@@ -56,3 +56,11 @@ export async function addonInfoFromCache(
 
   return cacheFileJSON[key];
 }
+
+export async function clearCache(storagePath: string) {
+  const cacheFolderPath = path.join(storagePath, ".cache");
+  if (fs.existsSync(cacheFolderPath)) {
+    fs.rmSync(cacheFolderPath, { recursive: true });
+    return true;
+  }
+}
