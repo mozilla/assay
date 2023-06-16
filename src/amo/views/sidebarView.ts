@@ -49,7 +49,7 @@ export class AssayTreeDataProvider
   }
 }
 
-class AssayTreeItem extends vscode.TreeItem {
+export class AssayTreeItem extends vscode.TreeItem {
   constructor(
     label: string,
     collapsibleState?: vscode.TreeItemCollapsibleState,

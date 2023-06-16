@@ -42,7 +42,8 @@ describe("AddonInfo.ts", () => {
     const actual = await getAddonInfo(input);
     expect(actual).to.deep.equal(expected);
     expect(stub.calledOnce).to.be.true;
-    expect(stub.calledWith(`${constants.apiBaseURL}${input}`)).to.be.true;
+    expect(stub.calledWith(`${constants.apiBaseURL}addons/addon/${input}`)).to
+      .be.true;
   });
 
   it("should return a json object of type addonInfoResponse if input is an id", async () => {
@@ -56,7 +57,8 @@ describe("AddonInfo.ts", () => {
     const actual = await getAddonInfo(input);
     expect(actual).to.deep.equal(expected);
     expect(stub.calledOnce).to.be.true;
-    expect(stub.calledWith(`${constants.apiBaseURL}${input}`)).to.be.true;
+    expect(stub.calledWith(`${constants.apiBaseURL}addons/addon/${input}`)).to
+      .be.true;
   });
 
   it("should return a json object of type addonInfoResponse if input is a url", async () => {
@@ -70,8 +72,9 @@ describe("AddonInfo.ts", () => {
     const actual = await getAddonInfo(input);
     expect(actual).to.deep.equal(expected);
     expect(stub.calledOnce).to.be.true;
-    expect(stub.calledWith(`${constants.apiBaseURL}${expected.slug}`)).to.be
-      .true;
+    expect(
+      stub.calledWith(`${constants.apiBaseURL}addons/addon/${expected.slug}`)
+    ).to.be.true;
   });
 
   it("should throw an error if the response is not ok", async () => {

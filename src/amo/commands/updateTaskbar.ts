@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 
 import constants from "../../config/config";
 
-const statusBarItem = vscode.window.createStatusBarItem(
+export const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
   100
 );
@@ -16,10 +16,6 @@ export async function updateTaskbar() {
     return;
   }
   const doc = activeEditor.document;
-  if (doc.uri.scheme !== "file") {
-    return;
-  }
-
   const filePath = doc.uri.fsPath;
   const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   if (!rootFolder) {
