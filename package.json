@@ -38,7 +38,14 @@
     "lint": "eslint src --ext ts --fix",
     "test": "c8 --check-coverage node ./out/test/runTest.js",
     "prettier": "prettier --write \"src/**/*.ts\"",
-    "format": "npm run prettier && npm run lint"
+    "format": "npm run prettier && npm run lint",
+    "test:dev": "cross-env NODE_ENV=development npm run test",
+    "test:prod": "cross-env NODE_ENV=production npm run test",
+    "test:stage": "cross-env NODE_ENV=staging npm run test",
+    "test-all": "npm run test-dev && npm run test-prod && npm run test-stage",
+    "compile:dev": "cross-env NODE_ENV=development npm run compile",
+    "compile:prod": "cross-env NODE_ENV=production npm run compile",
+    "compile:stage": "cross-env NODE_ENV=staging npm run compile"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",
@@ -53,6 +60,7 @@
     "@vscode/test-electron": "^2.3.0",
     "c8": "^7.14.0",
     "chai": "^4.3.7",
+    "cross-env": "^7.0.3",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-import-resolver-node": "^0.3.7",

@@ -10,7 +10,8 @@ const path = require('path');
 /** @type WebpackConfig & { mode?: 'staging' | 'none' | 'development' | 'production' }*/
 const extensionConfig = {
   target: 'node', // VS Code extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
-	mode: 'development', // can be 'staging', 'none', 'development' or 'production'. 'none' changes to 'production' when packaging
+	mode: 'none', // can be 'staging', 'none', 'development' or 'production'. 'none' defaults to 'development'
+                // keep this at none during development, this will override the NODE_ENV used by the debugger
 
   entry: './src/amo/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
