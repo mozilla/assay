@@ -78,7 +78,6 @@ describe("getAddon.ts", () => {
     const module3 = await import("../../../amo/utils/addonCache");
     const addonInfoToCacheStub = sinon.stub(module3, "addonInfoToCache");
     addonInfoToCacheStub.resolves(undefined);
-
     const stub3 = sinon.stub(vscode.workspace, "workspaceFolders");
     stub3.value([
       {
@@ -125,7 +124,6 @@ describe("getAddon.ts", () => {
     const module3 = await import("../../../amo/utils/addonCache");
     const addonInfoToCacheStub = sinon.stub(module3, "addonInfoToCache");
     addonInfoToCacheStub.resolves(undefined);
-
     const stub3 = sinon.stub(vscode.workspace, "workspaceFolders");
     stub3.value([
       {

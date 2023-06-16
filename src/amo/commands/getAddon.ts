@@ -8,6 +8,7 @@ import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
 import { getVersionChoice } from "../utils/addonVersions";
 
+
 export async function downloadAndExtract(storagePath: string) {
   const input: string | undefined = await vscode.window.showInputBox({
     prompt: "Enter Addon Slug, GUID, or URL",

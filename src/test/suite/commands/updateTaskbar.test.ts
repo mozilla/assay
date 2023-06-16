@@ -16,7 +16,7 @@ describe("updateTaskbar.ts", async () => {
   });
 
   const guid = "guid";
-
+  
   const fakeActiveEditor = {
     document: {
       uri: {
