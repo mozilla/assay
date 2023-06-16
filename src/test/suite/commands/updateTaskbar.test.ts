@@ -129,7 +129,7 @@ describe("updateTaskbar.ts", async () => {
       }
 
       const stub: sinon.SinonStub = sinon.stub();
-      stub.returns(["guid"]);
+      stub.returns(["guid.json"]);
       sinon.replace(fs, "readdirSync", stub as any);
 
       expect(await findGuidInCache("", ["guid"])).to.equal("guid");

@@ -23,7 +23,7 @@ export async function findGuidInCache(
 
   // find the guid, cache is stored as guid.json
   for (const part of pathParts) {
-    if (cacheFiles.includes(`${part}`)) {
+    if (cacheFiles.includes(`${part}.json`)) {
       return part;
     }
   }
