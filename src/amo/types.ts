@@ -16,7 +16,6 @@ export type addonInfoResponse = {
   review_url: string;
   guid: string;
 };
-};
 
 export type addonVersion = {
   map(
@@ -27,7 +26,7 @@ export type addonVersion = {
   file: {
     id: string;
   };
-}
+};
 
 export type configConstants = {
   apiBaseURL: string;

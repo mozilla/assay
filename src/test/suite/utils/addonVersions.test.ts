@@ -129,8 +129,6 @@ describe("addonVersions.ts", () => {
       });
 
       sinon.replace(fetch, "default", stub as any);
-
-      console.log(constants.apiBaseURL);
       const json = await getAddonVersions(
         `${constants.apiBaseURL}addons/addon/slug/versions/`
       );

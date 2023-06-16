@@ -2,12 +2,13 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { addonInfoResponse } from "../types";
+import { addonInfoToCache } from "../utils/addonCache";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
 import { getVersionChoice } from "../utils/addonVersions";
 
-export async function downloadAndExtract() {
+export async function downloadAndExtract(storagePath: string) {
   const input: string | undefined = await vscode.window.showInputBox({
     prompt: "Enter Addon Slug, GUID, or URL",
     title: "Assay",
@@ -41,6 +42,9 @@ export async function downloadAndExtract() {
     vscode.window.showErrorMessage("No workspace folder found");
     return;
   }
+
+  // Cache
+  await addonInfoToCache(storagePath, addonGUID, "reviewUrl", json.review_url);
 
   // Download
   await vscode.window.withProgress(

@@ -13,7 +13,7 @@ describe("getAddon.ts", () => {
 
   it("should return undefined if no input is provided", async () => {
     sinon.stub(vscode.window, "showInputBox").resolves(undefined);
-    const result = await downloadAndExtract();
+    const result = await downloadAndExtract("");
     expect(result).to.be.undefined;
   });
 
@@ -25,7 +25,7 @@ describe("getAddon.ts", () => {
     const getVersionChoiceStub = sinon.stub(module, "getVersionChoice");
     getVersionChoiceStub.resolves(undefined);
 
-    const result = await downloadAndExtract();
+    const result = await downloadAndExtract("");
     expect(result).to.be.undefined;
   });
 
@@ -41,7 +41,7 @@ describe("getAddon.ts", () => {
     const addonInfoStub = sinon.stub(module2, "getAddonInfo");
     addonInfoStub.resolves(undefined);
 
-    const result = await downloadAndExtract();
+    const result = await downloadAndExtract("");
     expect(result).to.be.undefined;
   });
 
@@ -75,6 +75,10 @@ describe("getAddon.ts", () => {
       },
     });
 
+    const module3 = await import("../../../amo/utils/addonCache");
+    const addonInfoToCacheStub = sinon.stub(module3, "addonInfoToCache");
+    addonInfoToCacheStub.resolves(undefined);
+
     const stub3 = sinon.stub(vscode.workspace, "workspaceFolders");
     stub3.value([
       {
@@ -84,7 +88,7 @@ describe("getAddon.ts", () => {
       },
     ]);
 
-    const result = await downloadAndExtract();
+    const result = await downloadAndExtract("");
     expect(result).to.be.undefined;
   });
 
@@ -118,6 +122,10 @@ describe("getAddon.ts", () => {
       },
     });
 
+    const module3 = await import("../../../amo/utils/addonCache");
+    const addonInfoToCacheStub = sinon.stub(module3, "addonInfoToCache");
+    addonInfoToCacheStub.resolves(undefined);
+
     const stub3 = sinon.stub(vscode.workspace, "workspaceFolders");
     stub3.value([
       {
@@ -131,7 +139,7 @@ describe("getAddon.ts", () => {
     stub4.onFirstCall().returns(true);
     stub4.onSecondCall().returns(false);
 
-    const result = await downloadAndExtract();
+    const result = await downloadAndExtract("");
     expect(result).to.be.undefined;
   });
 });

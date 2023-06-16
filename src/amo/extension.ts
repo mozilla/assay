@@ -17,15 +17,11 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.commands.registerCommand("assay.get", () => {
-    downloadAndExtract();
+    downloadAndExtract(storagePath);
   });
 
   const sidebar = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),
-  });
-
-  vscode.commands.registerCommand("assay.get", () => {
-    downloadAndExtract(storagePath);
   });
 
   context.subscriptions.push(

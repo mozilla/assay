@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
@@ -8,6 +9,25 @@ export const statusBarItem = vscode.window.createStatusBarItem(
   100
 );
 statusBarItem.text = "Assay";
+
+export async function findGuidInCache(
+  storagePath: string,
+  pathParts: string[]
+) {
+  const cachePath = path.join(storagePath, ".cache");
+  if (!fs.existsSync(cachePath)) {
+    throw new Error(`No cache found at ${cachePath}`);
+  }
+  const cacheFiles = fs.readdirSync(cachePath);
+  console.log("\n\n\ncacheFiles ", cacheFiles);
+
+  // find the guid, cache is stored as guid.json
+  for (const part of pathParts) {
+    if (cacheFiles.includes(`${part}`)) {
+      return part;
+    }
+  }
+}
 
 export async function updateTaskbar(storagePath: string) {
   const activeEditor = vscode.window.activeTextEditor;
@@ -23,29 +43,14 @@ export async function updateTaskbar(storagePath: string) {
 
   const relativePath = filePath.replace(rootFolder, "");
   const relativePathParts = relativePath.split(path.sep);
-
-  let guid: string | undefined;
-
-  const cachePath = path.join(storagePath, ".cache");
-  const cacheFiles = await vscode.workspace.fs.readDirectory(
-    vscode.Uri.file(cachePath)
+  const guid: string | undefined = await findGuidInCache(
+    storagePath,
+    relativePathParts
   );
-  const cacheFileNames = cacheFiles.map((file) => file[0]);
-
-  // find the guid, cache is stored as guid.json
-  for (const part of relativePathParts) {
-    console.log("Part: ", `${part}.json`);
-    if (cacheFileNames.includes(`${part}.json`)) {
-      guid = part;
-      break;
-    }
-  }
 
   if (!guid) {
     statusBarItem.hide();
     return;
-  } finally {
-    clearTimeout(timeout);
   }
 
   const reviewUrl = await addonInfoFromCache(storagePath, guid, "reviewUrl");

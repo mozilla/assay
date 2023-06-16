@@ -35,8 +35,6 @@ export async function addonInfoToCache(
     cacheFileJSON[key] = value;
     fs.writeFileSync(cacheFilePath, JSON.stringify(cacheFileJSON));
   }
-
-  console.log("\nAddon info cached at " + cacheFilePath);
 }
 
 export async function addonInfoFromCache(
