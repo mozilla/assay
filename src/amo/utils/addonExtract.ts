@@ -13,49 +13,74 @@ export async function extractAddon(
   compressedFilePath: string,
   addonFolderPath: string,
   addonVersionFolderPath: string
-) {
-  vscode.window.withProgress(
+): Promise<void> {
+  return vscode.window.withProgress(
     { title: "Assay", location: vscode.ProgressLocation.Notification },
     function (progress) {
-      progress.report({
-        message: "Extracting",
-      });
+      progress.report({ message: "Extracting" });
+      return startExtracting(
+        compressedFilePath,
+        addonFolderPath,
+        addonVersionFolderPath
+      );
+    }
+  );
+}
 
-      return new Promise((resolve, reject) => {
-        dirExistsOrMake(addonFolderPath);
-        if (!dirExistsOrMake(addonVersionFolderPath)) {
-          vscode.window
-            .showQuickPick(["Yes", "No"], {
-              placeHolder: "Addon already exists. Overwrite?",
-            })
-            .then((choice) => {
-              if (choice === "No" || !choice) {
-                fs.unlinkSync(compressedFilePath);
-                reject(new Error("Extraction cancelled"));
-              }
-            });
-        }
-
-
-        extract(compressedFilePath, {
-          dir: addonVersionFolderPath,
-        }).then(() => {
-          fs.unlinkSync(compressedFilePath); // remove xpi
-
-          if (!fs.existsSync(addonVersionFolderPath)) {
-            vscode.window.showErrorMessage("Extraction failed");
-            return Promise.reject(new Error("Extraction failed"));
+function startExtracting(
+  compressedFilePath: string,
+  addonFolderPath: string,
+  addonVersionFolderPath: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    dirExistsOrMake(addonFolderPath);
+    if (!dirExistsOrMake(addonVersionFolderPath)) {
+      askForOverwriteConfirmation()
+        .then((shouldOverwrite) => {
+          if (!shouldOverwrite) {
+            fs.unlinkSync(compressedFilePath);
+            reject(new Error("Extraction cancelled"));
+          } else {
+            continueExtraction(compressedFilePath, addonVersionFolderPath)
+              .then(resolve)
+              .catch(reject);
           }
+        })
+        .catch(reject);
+    } else {
+      continueExtraction(compressedFilePath, addonVersionFolderPath)
+        .then(resolve)
+        .catch(reject);
+    }
+  });
+}
 
-          vscode.window.showInformationMessage("Extraction complete");
+async function askForOverwriteConfirmation(): Promise<boolean> {
+  return vscode.window
+    .showQuickPick(["Yes", "No"], {
+      placeHolder: "Addon already exists. Overwrite?",
+    })
+    .then((choice) => choice === "Yes");
+}
 
-          // make files read-only
-          fs.readdirSync(addonVersionFolderPath).forEach((file) => {
-            fs.chmodSync(`${addonVersionFolderPath}/${file}`, 0o444);
-          });
+async function continueExtraction(
+  compressedFilePath: string,
+  addonVersionFolderPath: string
+): Promise<void> {
+  return extract(compressedFilePath, { dir: addonVersionFolderPath }).then(
+    () => {
+      fs.unlinkSync(compressedFilePath); // remove xpi
 
-          resolve(null);
-        });
+      if (!fs.existsSync(addonVersionFolderPath)) {
+        vscode.window.showErrorMessage("Extraction failed");
+        return Promise.reject(new Error("Extraction failed"));
+      }
+
+      vscode.window.showInformationMessage("Extraction complete");
+
+      // make files read-only
+      fs.readdirSync(addonVersionFolderPath).forEach((file) => {
+        fs.chmodSync(`${addonVersionFolderPath}/${file}`, 0o444);
       });
     }
   );
