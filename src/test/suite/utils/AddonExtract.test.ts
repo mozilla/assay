@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import exp = require("constants");
 import * as fs from "fs";
 import * as jszip from "jszip";
 import { afterEach, describe, it } from "mocha";

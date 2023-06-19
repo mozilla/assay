@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import exp = require("constants");
 import { afterEach, describe, it } from "mocha";
 import * as fetch from "node-fetch";
 import * as sinon from "sinon";
@@ -100,7 +99,7 @@ describe("addonVersions.ts", () => {
       });
     });
 
-    it("should error if no version is selected", async () => {
+    it("should error if no addon does not exist", async () => {
       const stub = sinon.stub();
       stub.onCall(0).returns({
         json: () => {
@@ -119,7 +118,7 @@ describe("addonVersions.ts", () => {
         await getVersionChoice("addon-slug-or-guid");
         expect.fail("Should have thrown an error");
       } catch (e: any) {
-        expect(e.message).to.equal("No version choice selected");
+        expect(e.message).to.equal("Failed to fetch addon");
       }
     });
   });
@@ -133,6 +132,7 @@ describe("addonVersions.ts", () => {
             results: versions,
           };
         },
+        ok: true,
       });
 
       sinon.replace(fetch, "default", stub as any);
@@ -152,6 +152,7 @@ describe("addonVersions.ts", () => {
             results: versions,
           };
         },
+        ok: true,
       });
 
       sinon.replace(fetch, "default", stub as any);
@@ -170,6 +171,7 @@ describe("addonVersions.ts", () => {
             next: "next-page-url",
           };
         },
+        ok: true,
       });
       stub.onCall(1).returns({
         json: () => {
@@ -177,6 +179,7 @@ describe("addonVersions.ts", () => {
             results: versions2,
           };
         },
+        ok: true,
       });
 
       sinon.replace(fetch, "default", stub as any);

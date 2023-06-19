@@ -33,8 +33,25 @@ export async function extractAddon(
   fs.unlinkSync(compressedFilePath); // remove xpi
 
   if (!fs.existsSync(addonVersionFolderPath)) {
-    vscode.window.showErrorMessage("Extraction failed");
-    return;
+    vscode.window
+      .showErrorMessage(
+        `Extraction failed. Could not find ${addonVersionFolderPath}`,
+        { modal: true },
+        "Try Again",
+        "Fetch New Addon"
+      )
+      .then((action) => {
+        if (action === "Try Again") {
+          extractAddon(
+            compressedFilePath,
+            addonFolderPath,
+            addonVersionFolderPath
+          );
+        } else if (action === "Fetch New Addon") {
+          vscode.commands.executeCommand("assay.get");
+        }
+      });
+    throw new Error("Extraction failed");
   }
 
   vscode.window.showInformationMessage("Extraction complete");
