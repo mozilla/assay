@@ -25,54 +25,47 @@ export async function getAddonVersions(input: string, next?: string) {
   }
 }
 
-export function getVersionChoice(
+export async function getVersionChoice(
   input: string
 ): Promise<{ fileID: string; version: string }> {
-  return new Promise((resolve, reject) => {
-    const versions: addonVersion[] = [];
-    let next: string | undefined = undefined;
-    let init = true;
+  const versions: addonVersion[] = [];
+  let next: string | undefined = undefined;
+  let init = true;
 
-    const processNextVersion = () => {
-      if (next || init) {
-        init = false;
-        getAddonVersions(input, next).then((res) => {
-          versions.push(...res.results);
-          next = res.next;
-          promptVersionChoice();
-        });
+  do {
+    if (next || init) {
+      init = false;
+      const res = await getAddonVersions(input, next);
+      versions.push(...res.results);
+      next = res.next;
+    }
+
+    const versionItems = versions.map((version) => version.version);
+    next ? versionItems.push("More") : null;
+
+    const choice = await vscode.window.showQuickPick(versionItems, {
+      placeHolder: "Choose a version",
+    });
+
+    if (choice === "More") {
+      continue;
+    } else if (choice) {
+      const chosenVersion = versions.find(
+        (version) => version.version === choice
+      );
+
+      if (chosenVersion) {
+        return {
+          fileID: chosenVersion.file.id,
+          version: chosenVersion.version,
+        };
       } else {
-        promptVersionChoice();
+        vscode.window.showErrorMessage("No version file found");
+        throw new Error("No version file found");
       }
-    };
-
-    const promptVersionChoice = () => {
-      const versionItems = versions.map((version) => version.version);
-      next ? versionItems.push("More") : null;
-
-      vscode.window
-        .showQuickPick(versionItems, { placeHolder: "Choose a version" })
-        .then((choice) => {
-          if (choice === "More") {
-            processNextVersion();
-          } else if (choice) {
-            const chosenVersion = versions.find(
-              (version) => version.version === choice
-            );
-
-            if (chosenVersion) {
-              resolve({
-                fileID: chosenVersion.file.id,
-                version: chosenVersion.version,
-              });
-            } else {
-              reject(new Error("No version file found"));
-            }
-          } else {
-            reject(new Error("No version choice provided"));
-          }
-        });
-    };
-    processNextVersion();
-  });
+    } else {
+      throw new Error("No version choice selected");
+    }
+    // eslint-disable-next-line no-constant-condition
+  } while (true);
 }

@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { downloadAddon } from "../utils/addonDownload";
@@ -6,21 +5,25 @@ import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
 import { getVersionChoice } from "../utils/addonVersions";
 
-export function getInput(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    vscode.window
-      .showInputBox({
-        prompt: "Enter Addon Slug, GUID, or URL",
-        title: "Assay",
-      })
-      .then((input) => {
-        if (!input) {
-          reject(new Error("No input provided"));
-        } else {
-          resolve(input);
-        }
-      });
+export async function getInput(): Promise<string> {
+  const input = await vscode.window.showInputBox({
+    prompt: "Enter Addon Slug, GUID, or URL",
+    title: "Assay",
   });
+
+  if (!input) {
+    throw new Error("No input provided");
+  }
+  return input;
+}
+
+export function getWorkspaceFolder(): string {
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+  if (!workspaceFolder) {
+    vscode.window.showErrorMessage("No workspace folder found");
+    throw new Error("No workspace folder found");
+  }
+  return workspaceFolder;
 }
 
 export async function downloadAndExtract() {
@@ -34,12 +37,8 @@ export async function downloadAndExtract() {
     const json = await getAddonInfo(input);
     const addonGUID = json.guid;
 
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-    if (!workspaceFolder) {
-      vscode.window.showErrorMessage("No workspace folder found");
-      throw new Error("No workspace folder found");
-    }
-    const compressedFilePath = `${workspaceFolder}/${addonGUID}_${addonVersion}.zip`;
+    const workspaceFolder = getWorkspaceFolder();
+    const compressedFilePath = `${workspaceFolder}/${addonGUID}_${addonVersion}.xpi`;
 
     await downloadAddon(addonFileId, compressedFilePath);
     await extractAddon(

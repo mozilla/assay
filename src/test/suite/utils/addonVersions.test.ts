@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import exp = require("constants");
 import { afterEach, describe, it } from "mocha";
 import * as fetch from "node-fetch";
 import * as sinon from "sinon";
@@ -63,9 +64,10 @@ describe("addonVersions.ts", () => {
       stub2.onCall(0).returns("1");
       sinon.replace(vscode.window, "showQuickPick", stub2);
 
-      const version = await getVersionChoice("addon-slug-or-guid");
-      expect(version?.fileID).to.equal("1");
-      expect(version?.version).to.equal("1");
+      getVersionChoice("addon-slug-or-guid").then((version) => {
+        expect(version?.fileID).to.equal("1");
+        expect(version?.version).to.equal("1");
+      });
     });
 
     it("should paginate if there are more than 25 versions", async () => {
@@ -92,12 +94,13 @@ describe("addonVersions.ts", () => {
       stub2.onCall(1).returns("26");
       sinon.replace(vscode.window, "showQuickPick", stub2);
 
-      const version = await getVersionChoice("addon-slug-or-guid");
-      expect(version?.fileID).to.equal("26");
-      expect(version?.version).to.equal("26");
+      getVersionChoice("addon-slug-or-guid").then((version) => {
+        expect(version?.fileID).to.equal("26");
+        expect(version?.version).to.equal("26");
+      });
     });
 
-    it("should return undefined if the version chosen is undefined", async () => {
+    it("should error if no version is selected", async () => {
       const stub = sinon.stub();
       stub.onCall(0).returns({
         json: () => {
@@ -109,11 +112,15 @@ describe("addonVersions.ts", () => {
       sinon.replace(fetch, "default", stub as any);
 
       const stub2 = sinon.stub();
-      stub2.onCall(0).returns(undefined);
+      stub2.onCall(0).returns("");
       sinon.replace(vscode.window, "showQuickPick", stub2);
 
-      const version = await getVersionChoice("addon-slug-or-guid");
-      expect(version).to.be.undefined;
+      try {
+        await getVersionChoice("addon-slug-or-guid");
+        expect.fail("Should have thrown an error");
+      } catch (e: any) {
+        expect(e.message).to.equal("No version choice selected");
+      }
     });
   });
 
@@ -130,7 +137,6 @@ describe("addonVersions.ts", () => {
 
       sinon.replace(fetch, "default", stub as any);
 
-      console.log(constants.apiBaseURL);
       const json = await getAddonVersions(
         `${constants.apiBaseURL}addons/addon/slug/versions/`
       );

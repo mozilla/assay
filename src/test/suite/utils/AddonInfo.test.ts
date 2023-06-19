@@ -35,6 +35,7 @@ describe("AddonInfo.ts", () => {
     const input = "test-addon";
     const stub = sinon.stub();
     stub.resolves({
+      ok: true,
       json: () => expected,
     });
     sinon.replace(fetch, "default", stub as any);
@@ -51,6 +52,7 @@ describe("AddonInfo.ts", () => {
     const stub = sinon.stub();
     stub.resolves({
       json: () => expected,
+      ok: true,
     });
     sinon.replace(fetch, "default", stub as any);
 
@@ -66,6 +68,7 @@ describe("AddonInfo.ts", () => {
     const stub = sinon.stub();
     stub.resolves({
       json: () => expected,
+      ok: true,
     });
     sinon.replace(fetch, "default", stub as any);
 
@@ -78,6 +81,18 @@ describe("AddonInfo.ts", () => {
   });
 
   it("should throw an error if the response is not ok", async () => {
-    expect(true).to.be.true; // TODO
+    const input = "test-addon";
+    const stub = sinon.stub();
+    stub.resolves({
+      ok: false,
+      json: () => expected,
+    });
+    sinon.replace(fetch, "default", stub as any);
+
+    try {
+      await getAddonInfo(input);
+    } catch (e: any) {
+      expect(e.message).to.equal("Failed to fetch addon info");
+    }
   });
 });

@@ -11,6 +11,10 @@ import constants from "../../../config/config";
 describe("addonDownload.ts", async () => {
   afterEach(() => {
     sinon.restore();
+    const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
+    if (fs.existsSync(workspaceFolder)) {
+      fs.rmSync(workspaceFolder, { recursive: true });
+    }
   });
 
   it("should download the xpi of the addon", async () => {
@@ -21,10 +25,6 @@ describe("addonDownload.ts", async () => {
         return "test data";
       },
     };
-
-    const stub = sinon.stub();
-    stub.resolves(fakeResponse);
-    sinon.replace(fetch, "default", stub as any);
 
     const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
     if (!fs.existsSync(workspaceFolder)) {
@@ -38,14 +38,23 @@ describe("addonDownload.ts", async () => {
       `${addonSlug}.xpi`
     );
 
+    const stub = sinon.stub();
+    stub.resolves(fakeResponse);
+    sinon.replace(fetch, "default", stub as any);
+
+    const stub2 = sinon.stub();
+    stub2.resolves(true);
+    sinon.replace(fs, "existsSync", stub2 as any);
+
     await downloadAddon(addonId, downloadedFilePath);
+    sinon.restore();
 
     expect(stub.calledOnce).to.be.true;
     expect(stub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
       .true;
 
     // wait for file to be written (there should be a better way to do this)
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     expect(fs.existsSync(downloadedFilePath)).to.be.true;
 
     fs.rmSync(downloadedFilePath, { recursive: true });
@@ -59,10 +68,6 @@ describe("addonDownload.ts", async () => {
       },
     };
 
-    const stub = sinon.stub();
-    stub.resolves(fakeResponse);
-    sinon.replace(fetch, "default", stub as any);
-
     const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
     if (!fs.existsSync(workspaceFolder)) {
       fs.mkdirSync(workspaceFolder);
@@ -75,12 +80,21 @@ describe("addonDownload.ts", async () => {
       `${addonSlug}.xpi`
     );
 
-    await downloadAddon(addonId, downloadedFilePath);
-    expect(stub.calledOnce).to.be.true;
-    expect(stub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
-      .true;
+    const stub = sinon.stub();
+    stub.resolves(fakeResponse);
+    sinon.replace(fetch, "default", stub as any);
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    expect(fs.existsSync(downloadedFilePath)).to.be.false;
+    try {
+      await downloadAddon(addonId, downloadedFilePath);
+      expect.fail("Should have thrown an error");
+    } catch (e: any) {
+      expect(e.message).to.equal("Request failed");
+      expect(stub.calledOnce).to.be.true;
+      expect(stub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
+        .true;
+
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(fs.existsSync(downloadedFilePath)).to.be.false;
+    }
   });
 });

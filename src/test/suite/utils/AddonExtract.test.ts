@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import exp = require("constants");
 import * as fs from "fs";
 import * as jszip from "jszip";
 import { afterEach, describe, it } from "mocha";
@@ -40,12 +41,12 @@ describe("AddonExtract.ts", async () => {
       extractedworkspaceFolder,
       addonVersion
     );
+
     await extractAddon(
       compressedFilePath,
       extractedworkspaceFolder,
       extractedVersionFolder
     );
-
     expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
     expect(fs.existsSync(extractedVersionFolder)).to.be.true;
     expect(fs.existsSync(compressedFilePath)).to.be.false;
@@ -53,9 +54,6 @@ describe("AddonExtract.ts", async () => {
       path.resolve(extractedVersionFolder, "test.txt")
     );
     expect(fileStats.mode).to.equal(0o100444);
-
-    // remove created folders
-    fs.rmSync(extractedworkspaceFolder, { recursive: true });
   });
 
   it("should overwrite an existing addon", async () => {
@@ -100,7 +98,6 @@ describe("AddonExtract.ts", async () => {
       extractedworkspaceFolder,
       extractedVersionFolder
     );
-
     expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
     expect(fs.existsSync(extractedVersionFolder)).to.be.true;
     expect(fs.existsSync(compressedFilePath)).to.be.false;
@@ -153,20 +150,24 @@ describe("AddonExtract.ts", async () => {
     stub.onCall(0).returns("No");
     sinon.replace(vscode.window, "showQuickPick", stub);
 
-    await extractAddon(
-      compressedFilePath,
-      extractedworkspaceFolder,
-      extractedVersionFolder
-    );
+    try {
+      await extractAddon(
+        compressedFilePath,
+        extractedworkspaceFolder,
+        extractedVersionFolder
+      );
+      expect.fail("Should have thrown an error");
+    } catch (e: any) {
+      expect(e.message).to.equal("Extraction cancelled");
+      expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
+      expect(fs.existsSync(extractedVersionFolder)).to.be.true;
+      expect(fs.existsSync(compressedFilePath)).to.be.false;
 
-    expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
-    expect(fs.existsSync(extractedVersionFolder)).to.be.true;
-    expect(fs.existsSync(compressedFilePath)).to.be.false;
-
-    const fileContent = fs.readFileSync(
-      path.resolve(extractedVersionFolder, "test.txt"),
-      "utf-8"
-    );
-    expect(fileContent).to.equal("replace me");
+      const fileContent = fs.readFileSync(
+        path.resolve(extractedVersionFolder, "test.txt"),
+        "utf-8"
+      );
+      expect(fileContent).to.equal("replace me");
+    }
   });
 });
