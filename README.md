@@ -1,4 +1,4 @@
-![Untitled_Artwork](https://github.com/GregSherman/assay/assets/63402349/f3146473-48cf-4b93-aa98-bc29929aec5f)
+![Untitled_Artwork](https://github.com/mozilla/assay/assets/63402349/19f10519-d74c-4d3e-ab7a-e9dbb5091918)
 
 # Welcome to **Assay**!
 
