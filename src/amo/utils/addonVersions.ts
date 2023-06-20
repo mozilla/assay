@@ -8,21 +8,23 @@ async function getPaginatedVersions(input: string, next: string) {
   const url = next;
   const response = await fetch(url);
   if (!response.ok) {
-    vscode.window
+    await vscode.window
       .showErrorMessage(
         `(Status ${response.status}): Could not fetch versions.`,
         { modal: true },
-        "Try Again",
-        "Fetch New Addon"
+        { title: "Try Again" },
+        { title: "Fetch New Addon" }
       )
-      .then((action) => {
-        if (action === "Try Again") {
-          getAddonVersions(input, next);
-        } else if (action === "Fetch New Addon") {
+      .then(async (action) => {
+        if (action?.title === "Try Again") {
+          return await getAddonVersions(input, next);
+        } else if (action?.title === "Fetch New Addon") {
           vscode.commands.executeCommand("assay.get");
+          throw new Error("Process restarted");
+        } else {
+          throw new Error("Failed to fetch versions");
         }
       });
-    throw new Error("Failed to fetch versions");
   }
   const json = await response.json();
   return json;
@@ -35,18 +37,23 @@ async function getFirstVersions(input: string) {
   const url = `${constants.apiBaseURL}addons/addon/${slug}/versions/`;
   const response = await fetch(url);
   if (!response.ok) {
-    vscode.window
+    await vscode.window
       .showErrorMessage(
         `(Status ${response.status}) Addon ${slug} not found.`,
         { modal: true },
-        "Try Again"
+        { title: "Try Again" },
+        { title: "Fetch New Addon" }
       )
-      .then((action) => {
-        if (action === "Try Again") {
+      .then(async (action) => {
+        if (action?.title === "Try Again") {
+          return await getAddonVersions(input);
+        } else if (action?.title === "Fetch New Addon") {
           vscode.commands.executeCommand("assay.get");
+          throw new Error("Process restarted");
+        } else {
+          throw new Error("Failed to fetch addon");
         }
       });
-    throw new Error("Failed to fetch addon");
   }
   const json = await response.json();
   return json;

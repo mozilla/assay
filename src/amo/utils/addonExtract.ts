@@ -2,7 +2,7 @@ import * as extract from "extract-zip";
 import * as fs from "fs";
 import * as vscode from "vscode";
 
-function dirExistsOrMake(dir: string) {
+export function dirExistsOrMake(dir: string) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
     return true;
@@ -33,25 +33,27 @@ export async function extractAddon(
   fs.unlinkSync(compressedFilePath); // remove xpi
 
   if (!fs.existsSync(addonVersionFolderPath)) {
-    vscode.window
+    await vscode.window
       .showErrorMessage(
         `Extraction failed. Could not find ${addonVersionFolderPath}`,
         { modal: true },
-        "Try Again",
-        "Fetch New Addon"
+        { title: "Try Again" },
+        { title: "Fetch New Addon" }
       )
-      .then((action) => {
-        if (action === "Try Again") {
-          extractAddon(
+      .then(async (action) => {
+        if (action?.title === "Try Again") {
+          return await extractAddon(
             compressedFilePath,
             addonFolderPath,
             addonVersionFolderPath
           );
-        } else if (action === "Fetch New Addon") {
+        } else if (action?.title === "Fetch New Addon") {
           vscode.commands.executeCommand("assay.get");
+          throw new Error("Process restarted");
+        } else {
+          throw new Error("Extraction failed");
         }
       });
-    throw new Error("Extraction failed");
   }
 
   vscode.window.showInformationMessage("Extraction complete");
