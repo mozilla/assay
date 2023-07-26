@@ -23,6 +23,7 @@ export async function showErrorMessage(
         }
         return tryAgainFunction(...tryAgainFunctionParams);
       } else if (action?.title === fetchNewAddonButton.title) {
+        // restart the process, but also throw an error to end the current process
         vscode.commands.executeCommand("assay.get");
         throw new Error("Process restarted");
       } else {
