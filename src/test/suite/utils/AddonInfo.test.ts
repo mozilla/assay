@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { afterEach, describe, it } from "mocha";
 import * as fetch from "node-fetch";
 import * as sinon from "sinon";
+import * as vscode from "vscode";
 
 import { addonInfoResponse } from "../../../amo/types";
 import { getAddonInfo } from "../../../amo/utils/addonInfo";
@@ -88,6 +89,9 @@ describe("AddonInfo.ts", () => {
       json: () => expected,
     });
     sinon.replace(fetch, "default", stub as any);
+
+    const stub2 = sinon.stub(vscode.window, "showErrorMessage");
+    stub2.resolves({ title: "Cancel" });
 
     try {
       await getAddonInfo(input);

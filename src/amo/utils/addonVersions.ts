@@ -1,70 +1,36 @@
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
+import { showErrorMessage } from "./processErrors";
 import constants from "../../config/config";
 import { addonVersion } from "../types";
 
-async function getPaginatedVersions(input: string, next: string) {
-  const url = next;
-  const response = await fetch(url);
-  if (!response.ok) {
-    await vscode.window
-      .showErrorMessage(
-        `(Status ${response.status}): Could not fetch versions.`,
-        { modal: true },
-        { title: "Try Again" },
-        { title: "Fetch New Addon" }
-      )
-      .then(async (action) => {
-        if (action?.title === "Try Again") {
-          return await getAddonVersions(input, next);
-        } else if (action?.title === "Fetch New Addon") {
-          vscode.commands.executeCommand("assay.get");
-          throw new Error("Process restarted");
-        } else {
-          throw new Error("Failed to fetch versions");
-        }
-      });
-  }
-  const json = await response.json();
-  return json;
-}
-
-async function getFirstVersions(input: string) {
+export async function getAddonVersions(input: string, next?: string) {
   const slug: string = input.includes("/")
     ? input.split("addon/")[1].split("/")[0]
     : input;
-  const url = `${constants.apiBaseURL}addons/addon/${slug}/versions/`;
+  const url = next
+    ? next
+    : `${constants.apiBaseURL}addons/addon/${slug}/versions/`;
   const response = await fetch(url);
+
   if (!response.ok) {
-    await vscode.window
-      .showErrorMessage(
-        `(Status ${response.status}) Addon ${slug} not found.`,
-        { modal: true },
-        { title: "Try Again" },
-        { title: "Fetch New Addon" }
-      )
-      .then(async (action) => {
-        if (action?.title === "Try Again") {
-          return await getAddonVersions(input);
-        } else if (action?.title === "Fetch New Addon") {
-          vscode.commands.executeCommand("assay.get");
-          throw new Error("Process restarted");
-        } else {
-          throw new Error("Failed to fetch addon");
-        }
-      });
+    const errMsgWindow = next
+      ? "Could not fetch more versions"
+      : `Addon ${slug} not found`;
+    const errMsgThrown = next
+      ? "Failed to fetch versions"
+      : "Failed to fetch addon";
+
+    await showErrorMessage(
+      `(Status ${response.status}) ${errMsgWindow}.`,
+      errMsgThrown,
+      getAddonVersions,
+      [input, next]
+    );
   }
   const json = await response.json();
   return json;
-}
-
-export async function getAddonVersions(input: string, next?: string) {
-  if (next) {
-    return getPaginatedVersions(input, next);
-  } else {
-    return getFirstVersions(input);
-  }
 }
 
 export async function getVersionChoice(
