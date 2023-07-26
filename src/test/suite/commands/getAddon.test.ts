@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import * as fs from "fs";
-import { describe, it, afterEach } from "mocha";
+import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
@@ -9,6 +9,12 @@ import { downloadAndExtract } from "../../../amo/commands/getAddon";
 describe("getAddon.ts", () => {
   afterEach(() => {
     sinon.restore();
+  });
+
+  beforeEach(() => {
+    const stub = sinon.stub(vscode.window, "showOpenDialog");
+    const uri = vscode.Uri.file("test");
+    stub.resolves([uri]);
   });
 
   it("should return undefined if no input is provided", async () => {

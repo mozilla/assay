@@ -7,7 +7,11 @@ import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
 import { getVersionChoice } from "../utils/addonVersions";
-
+import {
+  getRootFolderPath,
+  selectRootFolder,
+  storeRootFolderSetting,
+} from "../utils/reviewRootDir";
 
 export async function downloadAndExtract(storagePath: string) {
   const input: string | undefined = await vscode.window.showInputBox({
@@ -35,7 +39,7 @@ export async function downloadAndExtract(storagePath: string) {
   const addonFileId = versionInfo.fileID;
   const addonVersion = versionInfo.version;
   const addonGUID = json.guid;
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+  const workspaceFolder = await getRootFolderPath();
   const compressedFilePath =
     workspaceFolder + "/" + addonGUID + "_" + addonVersion + ".xpi";
 

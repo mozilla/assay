@@ -19,7 +19,6 @@ export async function findGuidInCache(
     throw new Error(`No cache found at ${cachePath}`);
   }
   const cacheFiles = fs.readdirSync(cachePath);
-  console.log("\n\n\ncacheFiles ", cacheFiles);
 
   // find the guid, cache is stored as guid.json
   for (const part of pathParts) {

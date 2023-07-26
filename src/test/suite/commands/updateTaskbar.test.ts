@@ -15,8 +15,8 @@ describe("updateTaskbar.ts", async () => {
     sinon.restore();
   });
 
-  const guid = "guid";
-  
+  const guid = "emailguid@guid.com";
+
   const fakeActiveEditor = {
     document: {
       uri: {
