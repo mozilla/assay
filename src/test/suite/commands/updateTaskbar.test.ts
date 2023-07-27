@@ -4,11 +4,7 @@ import { afterEach, describe, it } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import {
-  findGuidInCache,
-  statusBarItem,
-  updateTaskbar,
-} from "../../../amo/commands/updateTaskbar";
+import { updateTaskbar } from "../../../amo/commands/updateTaskbar";
 
 describe("updateTaskbar.ts", async () => {
   afterEach(() => {
@@ -20,7 +16,7 @@ describe("updateTaskbar.ts", async () => {
   const fakeActiveEditor = {
     document: {
       uri: {
-        fsPath: "test",
+        fsPath: "/test",
       },
     },
   };
@@ -28,14 +24,14 @@ describe("updateTaskbar.ts", async () => {
   const fakeActiveEditor2 = {
     document: {
       uri: {
-        fsPath: `root/${guid}/version/test.js`,
+        fsPath: `/root/${guid}/version/test.js`,
       },
     },
   };
 
   const fakeWorkspaceFolder = {
     uri: {
-      fsPath: "root",
+      fsPath: "/root",
     },
   };
 
@@ -45,95 +41,76 @@ describe("updateTaskbar.ts", async () => {
       expect(await updateTaskbar("")).to.be.undefined;
     });
 
-    it("should return undefined if there is no root workspaceFolder", async () => {
-      const stub: sinon.SinonStub = sinon.stub();
-      stub.returns(fakeActiveEditor);
-      sinon.replaceGetter(vscode.window, "activeTextEditor", stub as any);
+    it("should throw error if the folder is not in the root", async () => {
+      const stub = sinon.stub(vscode.workspace, "getConfiguration");
+      stub.returns({
+        get: () => {
+          return "/test";
+        },
+      } as any);
 
-      const stub2: sinon.SinonStub = sinon.stub();
-      stub2.returns(undefined);
-      sinon.replaceGetter(vscode.workspace, "workspaceFolders", stub2 as any);
+      const stub2 = sinon.stub();
+      stub2.returns(fakeActiveEditor2);
+      sinon.replaceGetter(vscode.window, "activeTextEditor", stub2 as any);
 
-      expect(await updateTaskbar("")).to.be.undefined;
-    });
+      const stub3 = sinon.stub(fs, "existsSync");
+      stub3.returns(true);
 
-    it("should return undefined if there is no guid", async () => {
-      const stub: sinon.SinonStub = sinon.stub();
-      stub.returns(fakeActiveEditor);
-      sinon.replaceGetter(vscode.window, "activeTextEditor", stub as any);
-
-      const stub2: sinon.SinonStub = sinon.stub();
-      stub2.returns([fakeWorkspaceFolder]);
-      sinon.replaceGetter(vscode.workspace, "workspaceFolders", stub2 as any);
-
-      // // does not seem to work
-      // const module = await import("../../../amo/commands/updateTaskbar");
-      // const findGuidInCacheStub = sinon.stub(module, "findGuidInCache");
-      // findGuidInCacheStub.resolves(undefined);
-
-      // expect(await updateTaskbar("")).to.be.undefined;
-      expect(true).to.be.true;
-    });
-
-    it("should update the statusBarItem with default guid structure", async () => {
-      const stub: sinon.SinonStub = sinon.stub();
-      stub.returns(fakeActiveEditor2);
-      sinon.replaceGetter(vscode.window, "activeTextEditor", stub as any);
-
-      const stub2: sinon.SinonStub = sinon.stub();
-      stub2.returns([fakeWorkspaceFolder]);
-      sinon.replaceGetter(vscode.workspace, "workspaceFolders", stub2 as any);
-
-      // // does not seem to work
-      // const module = await import("../../../amo/commands/updateTaskbar");
-      // const findGuidInCacheStub = sinon.stub(module, "findGuidInCache");
-      // findGuidInCacheStub.resolves(undefined);
-
-      // // does not seem to work
-      // const module2 = await import("../../../amo/utils/addonCache");
-      // const addonInfoFromCacheStub = sinon.stub(module2, "addonInfoFromCache");
-      // addonInfoFromCacheStub.resolves("reviewUrl");
-
-      // expect(await updateTaskbar("")).to.be.undefined;
-      // expect(statusBarItem.text).to.equal(`${guid} version`);
-      // expect(statusBarItem.tooltip).to.equal("reviewUrl");
-      expect(true).to.be.true;
-    });
-  });
-
-  describe("findGuidInCache", () => {
-    it("should throw an error if there is no cachePath", async () => {
-      expect(await findGuidInCache("", [""]).catch((e) => e.message)).to.equal(
-        "No cache found at .cache"
-      );
-    });
-
-    it("should return undefined if there are no files in the cachePath", async () => {
-      // make .cache folder
-      if (!fs.existsSync(".cache")) {
-        fs.mkdirSync(".cache");
+      try {
+        await updateTaskbar("");
+        expect.fail("No error thrown");
+      } catch (err: any) {
+        expect(err.message).to.equal("File is not in the root folder");
       }
-
-      const stub: sinon.SinonStub = sinon.stub();
-      stub.returns([]);
-      sinon.replace(fs, "readdirSync", stub as any);
-
-      expect(await findGuidInCache("", [""])).to.be.undefined;
-
-      fs.rmdirSync(".cache");
     });
 
-    it("should return the guid if there is a file in the cachePath", async () => {
-      if (!fs.existsSync(".cache")) {
-        fs.mkdirSync(".cache");
+    it("should throw an error if there is no guid in the path", async () => {
+      const stub = sinon.stub(vscode.workspace, "getConfiguration");
+      stub.returns({
+        get: () => {
+          return "/test";
+        },
+      } as any);
+
+      const stub2 = sinon.stub();
+      stub2.returns(fakeActiveEditor);
+      sinon.replaceGetter(vscode.window, "activeTextEditor", stub2 as any);
+
+      const stub3 = sinon.stub(fs, "existsSync");
+      stub3.returns(true);
+
+      try {
+        await updateTaskbar("");
+        expect.fail("No error thrown");
+      } catch (err: any) {
+        expect(err.message).to.equal("No guid found");
       }
+    });
 
-      const stub: sinon.SinonStub = sinon.stub();
-      stub.returns(["guid.json"]);
-      sinon.replace(fs, "readdirSync", stub as any);
+    it("should return true if the taskbar is updated", async () => {
+      const stub = sinon.stub(vscode.workspace, "getConfiguration");
+      stub.returns({
+        get: () => {
+          return "/root";
+        },
+      } as any);
 
-      expect(await findGuidInCache("", ["guid"])).to.equal("guid");
-      fs.rmdirSync(".cache");
+      const stub2 = sinon.stub();
+      stub2.returns(fakeActiveEditor2);
+      sinon.replaceGetter(vscode.window, "activeTextEditor", stub2 as any);
+
+      const stub3 = sinon.stub(fs, "existsSync");
+      stub3.returns(true);
+
+      const stub4 = sinon.stub();
+      stub4.returns(fakeWorkspaceFolder);
+      sinon.replaceGetter(vscode.workspace, "workspaceFolders", stub4 as any);
+
+      const stub5 = sinon.stub(fs, "readFileSync");
+      stub5.returns(`{"reviewUrl":"test"}`);
+
+      const result = await updateTaskbar("");
+      expect(result).to.be.true;
     });
   });
 });

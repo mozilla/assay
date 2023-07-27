@@ -1,11 +1,10 @@
 import { expect } from "chai";
 import * as fs from "fs";
-import { describe, it, beforeEach, afterEach } from "mocha";
+import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import {
-  storeRootFolderSetting,
   getRootFolderPath,
   selectRootFolder,
 } from "../../../amo/utils/reviewRootDir";

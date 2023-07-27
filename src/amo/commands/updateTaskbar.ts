@@ -1,8 +1,8 @@
-import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
 import { addonInfoFromCache } from "../utils/addonCache";
+import { getRootFolderPath } from "../utils/reviewRootDir";
 
 export const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
@@ -10,46 +10,27 @@ export const statusBarItem = vscode.window.createStatusBarItem(
 );
 statusBarItem.text = "Assay";
 
-export async function findGuidInCache(
-  storagePath: string,
-  pathParts: string[]
-) {
-  const cachePath = path.join(storagePath, ".cache");
-  if (!fs.existsSync(cachePath)) {
-    throw new Error(`No cache found at ${cachePath}`);
-  }
-  const cacheFiles = fs.readdirSync(cachePath);
-
-  // find the guid, cache is stored as guid.json
-  for (const part of pathParts) {
-    if (cacheFiles.includes(`${part}.json`)) {
-      return part;
-    }
-  }
-}
-
 export async function updateTaskbar(storagePath: string) {
+  console.log("starting");
   const activeEditor = vscode.window.activeTextEditor;
   if (!activeEditor) {
     return;
   }
+
   const doc = activeEditor.document;
   const filePath = doc.uri.fsPath;
-  const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-  if (!rootFolder) {
-    return;
+  const rootFolder = await getRootFolderPath();
+  if (!filePath.startsWith(rootFolder)) {
+    statusBarItem.hide();
+    throw new Error("File is not in the root folder");
   }
 
   const relativePath = filePath.replace(rootFolder, "");
-  const relativePathParts = relativePath.split(path.sep);
-  const guid: string | undefined = await findGuidInCache(
-    storagePath,
-    relativePathParts
-  );
+  const guid = relativePath.split(path.sep)[1];
 
   if (!guid) {
     statusBarItem.hide();
-    return;
+    throw new Error("No guid found");
   }
 
   const reviewUrl = await addonInfoFromCache(storagePath, guid, "reviewUrl");
@@ -63,4 +44,5 @@ export async function updateTaskbar(storagePath: string) {
   };
 
   statusBarItem.show();
+  return true;
 }
