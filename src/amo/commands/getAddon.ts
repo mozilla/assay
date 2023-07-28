@@ -8,7 +8,6 @@ import { getAddonInfo } from "../utils/addonInfo";
 import { getVersionChoice } from "../utils/addonVersions";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-
 export async function getInput(): Promise<string> {
   const input = await vscode.window.showInputBox({
     prompt: "Enter Addon Slug, GUID, or URL",
@@ -25,14 +24,16 @@ export async function downloadAndExtract(storagePath: string) {
   try {
     const input = await getInput();
 
+    const json: addonInfoResponse = await getAddonInfo(input);
+
     const versionInfo = await getVersionChoice(input);
     const addonFileId = versionInfo.fileID;
     const addonVersion = versionInfo.version;
     const addonGUID = json.guid;
-    
+
     const workspaceFolder = await getRootFolderPath();
     const compressedFilePath = `${workspaceFolder}/${addonGUID}_${addonVersion}.xpi`;
-    
+
     await addToCache(storagePath, addonGUID, "reviewUrl", json.review_url);
 
     await downloadAddon(addonFileId, compressedFilePath);
