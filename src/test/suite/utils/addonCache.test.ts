@@ -4,13 +4,13 @@ import { describe, it } from "mocha";
 import path = require("path");
 
 import {
-  addonInfoToCache,
-  addonInfoFromCache,
+  addToCache,
+  getFromCache,
   clearCache,
 } from "../../../amo/utils/addonCache";
 
 describe("addonCache.ts", async () => {
-  describe("addonInfoToCache", async () => {
+  describe("addToCache", async () => {
     it("should create the cache folder, file, and add data if it does not exist", async () => {
       const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
       if (!fs.existsSync(workspaceFolder)) {
@@ -21,12 +21,7 @@ describe("addonCache.ts", async () => {
         fs.rmSync(storagePath, { recursive: true });
       }
 
-      await addonInfoToCache(
-        storagePath,
-        "test-guid",
-        "test-key",
-        "test-value"
-      );
+      await addToCache(storagePath, "test-guid", "test-key", "test-value");
       const cachePath = path.resolve(storagePath, ".cache");
       const filePath = path.resolve(cachePath, "test-guid.json");
 
@@ -57,12 +52,7 @@ describe("addonCache.ts", async () => {
       }
       fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
 
-      await addonInfoToCache(
-        storagePath,
-        "test-guid",
-        "test-key",
-        "test-value-2"
-      );
+      await addToCache(storagePath, "test-guid", "test-key", "test-value-2");
 
       const data = fs.readFileSync(filePath, "utf8");
       expect(data).to.equal(`{"test-key":"test-value-2"}`);
@@ -71,7 +61,7 @@ describe("addonCache.ts", async () => {
     });
   });
 
-  describe("addonInfoFromCache", async () => {
+  describe("getFromCache", async () => {
     it("should return undefined if the cache file does not exist", async () => {
       const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
       if (!fs.existsSync(workspaceFolder)) {
@@ -82,11 +72,7 @@ describe("addonCache.ts", async () => {
         fs.rmSync(storagePath, { recursive: true });
       }
 
-      const result = await addonInfoFromCache(
-        storagePath,
-        "test-guid",
-        "test-key"
-      );
+      const result = await getFromCache(storagePath, "test-guid", "test-key");
 
       expect(result).to.be.undefined;
     });
@@ -108,11 +94,7 @@ describe("addonCache.ts", async () => {
       }
       fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
 
-      const result = await addonInfoFromCache(
-        storagePath,
-        "test-guid",
-        "test-key"
-      );
+      const result = await getFromCache(storagePath, "test-guid", "test-key");
 
       expect(result).to.equal("test-value");
 

@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { addonInfoResponse } from "../types";
-import { addonInfoToCache } from "../utils/addonCache";
+import { addToCache } from "../utils/addonCache";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
@@ -45,7 +45,7 @@ export async function downloadAndExtract(storagePath: string) {
   }
 
   // Cache
-  await addonInfoToCache(storagePath, addonGUID, "reviewUrl", json.review_url);
+  await addToCache(storagePath, addonGUID, "reviewUrl", json.review_url);
 
   // Download
   await vscode.window.withProgress(

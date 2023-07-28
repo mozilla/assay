@@ -106,8 +106,8 @@ describe("updateTaskbar.ts", async () => {
       stub4.returns(fakeWorkspaceFolder);
       sinon.replaceGetter(vscode.workspace, "workspaceFolders", stub4 as any);
 
-      const stub5 = sinon.stub(fs, "readFileSync");
-      stub5.returns(`{"reviewUrl":"test"}`);
+      const stub5 = sinon.stub(fs.promises, "readFile");
+      stub5.resolves(`{"reviewUrl":"test"}`);
 
       const result = await updateTaskbar("");
       expect(result).to.be.true;

@@ -10,7 +10,7 @@ import * as path from "path";
  *
  * The folder undefined_publisher.assay will continue to exist after this.
  */
-export async function addonInfoToCache(
+export async function addToCache(
   storagePath: string,
   addonGUID: string,
   key: string,
@@ -20,24 +20,25 @@ export async function addonInfoToCache(
   const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
 
   if (!fs.existsSync(storagePath)) {
-    fs.mkdirSync(storagePath);
+    await fs.promises.mkdir(storagePath);
   }
 
   if (!fs.existsSync(cacheFolderPath)) {
-    fs.mkdirSync(cacheFolderPath);
+    await fs.promises.mkdir(cacheFolderPath);
   }
 
-  if (!fs.existsSync(cacheFilePath)) {
-    fs.writeFileSync(cacheFilePath, JSON.stringify({ [key]: value }));
-  } else {
-    const cacheFile = fs.readFileSync(cacheFilePath, "utf-8");
-    const cacheFileJSON = JSON.parse(cacheFile);
-    cacheFileJSON[key] = value;
-    fs.writeFileSync(cacheFilePath, JSON.stringify(cacheFileJSON));
+  let cacheFileJSON: { [key: string]: string } = {};
+  try {
+    const cacheFile = await fs.promises.readFile(cacheFilePath, "utf-8");
+    cacheFileJSON = JSON.parse(cacheFile);
+  } catch (err) {
+    console.log("No cache file found");
   }
+  cacheFileJSON[key] = value;
+  await fs.promises.writeFile(cacheFilePath, JSON.stringify(cacheFileJSON));
 }
 
-export async function addonInfoFromCache(
+export async function getFromCache(
   storagePath: string,
   addonGUID: string,
   key: string
@@ -49,7 +50,7 @@ export async function addonInfoFromCache(
     return;
   }
 
-  const cacheFile = fs.readFileSync(cacheFilePath, "utf-8");
+  const cacheFile = await fs.promises.readFile(cacheFilePath, "utf-8");
   const cacheFileJSON = JSON.parse(cacheFile);
 
   return cacheFileJSON[key];
@@ -58,7 +59,7 @@ export async function addonInfoFromCache(
 export async function clearCache(storagePath: string) {
   const cacheFolderPath = path.join(storagePath, ".cache");
   if (fs.existsSync(cacheFolderPath)) {
-    fs.rmSync(cacheFolderPath, { recursive: true });
+    await fs.promises.rm(cacheFolderPath, { recursive: true });
     return true;
   }
 }

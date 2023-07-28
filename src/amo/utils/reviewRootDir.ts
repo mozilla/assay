@@ -11,11 +11,8 @@ export async function selectRootFolder() {
 
   const selectedFolders = await vscode.window.showOpenDialog(options);
   if (selectedFolders && selectedFolders.length > 0) {
-    const rootFolder = selectedFolders[0].fsPath;
-    return rootFolder;
+    return selectedFolders[0].fsPath;
   }
-
-  return undefined;
 }
 
 export async function storeRootFolderSetting(rootFolder: string) {
