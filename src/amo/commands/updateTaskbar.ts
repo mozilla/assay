@@ -1,8 +1,8 @@
-import fetch from "node-fetch";
 import * as path from "path";
 import * as vscode from "vscode";
 
-import constants from "../../config/config";
+import { getFromCache } from "../utils/addonCache";
+import { getRootFolderPath } from "../utils/reviewRootDir";
 
 export const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
@@ -10,44 +10,31 @@ export const statusBarItem = vscode.window.createStatusBarItem(
 );
 statusBarItem.text = "Assay";
 
-export async function updateTaskbar() {
+export async function updateTaskbar(storagePath: string) {
   const activeEditor = vscode.window.activeTextEditor;
   if (!activeEditor) {
     return;
   }
+
   const doc = activeEditor.document;
   const filePath = doc.uri.fsPath;
-  const rootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-  if (!rootFolder) {
-    return;
+  const rootFolder = await getRootFolderPath();
+  if (!filePath.startsWith(rootFolder)) {
+    statusBarItem.hide();
+    throw new Error("File is not in the root folder");
   }
 
   const relativePath = filePath.replace(rootFolder, "");
-  const [guid, version] = relativePath.split(path.sep).splice(1);
-  if (!guid || !version) {
-    return;
+  const guid = relativePath.split(path.sep)[1];
+
+  if (!guid) {
+    statusBarItem.hide();
+    throw new Error("No guid found");
   }
 
-  const reviewUrl = `${constants.reviewBaseURL}${guid}`;
+  const reviewUrl = await getFromCache(storagePath, guid, "reviewUrl");
 
-  const AbortController =
-    globalThis.AbortController || (await import("abort-controller"));
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 2000);
-
-  try {
-    const response = await fetch(reviewUrl, { signal: controller.signal });
-    if (response.status !== 200) {
-      throw new Error("Request failed. Status: " + response.status);
-    }
-  } catch (error) {
-    console.error(error);
-    return;
-  } finally {
-    clearTimeout(timeout);
-  }
-
-  statusBarItem.text = `${guid} ${version}`;
+  statusBarItem.text = `${guid} - Review Page`;
   statusBarItem.tooltip = reviewUrl;
   statusBarItem.command = {
     command: "assay.review",
@@ -56,4 +43,5 @@ export async function updateTaskbar() {
   };
 
   statusBarItem.show();
+  return true;
 }

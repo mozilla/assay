@@ -1,9 +1,12 @@
 import * as vscode from "vscode";
 
+import { addonInfoResponse } from "../types";
+import { addToCache } from "../utils/addonCache";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
 import { getVersionChoice } from "../utils/addonVersions";
+import { getRootFolderPath } from "../utils/reviewRootDir";
 
 export async function getInput(): Promise<string> {
   const input = await vscode.window.showInputBox({
@@ -17,28 +20,21 @@ export async function getInput(): Promise<string> {
   return input;
 }
 
-export function getWorkspaceFolder(): string {
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-  if (!workspaceFolder) {
-    vscode.window.showErrorMessage("No workspace folder found");
-    throw new Error("No workspace folder found");
-  }
-  return workspaceFolder;
-}
-
-export async function downloadAndExtract() {
+export async function downloadAndExtract(storagePath: string) {
   try {
     const input = await getInput();
+
+    const json: addonInfoResponse = await getAddonInfo(input);
 
     const versionInfo = await getVersionChoice(input);
     const addonFileId = versionInfo.fileID;
     const addonVersion = versionInfo.version;
-
-    const json = await getAddonInfo(input);
     const addonGUID = json.guid;
 
-    const workspaceFolder = getWorkspaceFolder();
+    const workspaceFolder = await getRootFolderPath();
     const compressedFilePath = `${workspaceFolder}/${addonGUID}_${addonVersion}.xpi`;
+
+    await addToCache(storagePath, addonGUID, "reviewUrl", json.review_url);
 
     await downloadAddon(addonFileId, compressedFilePath);
     await extractAddon(

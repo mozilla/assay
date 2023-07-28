@@ -6,6 +6,8 @@ import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
+  const storagePath: string = context.globalStorageUri.fsPath;
+
   vscode.commands.registerCommand("assay.review", async function (url: string) {
     vscode.env.openExternal(vscode.Uri.parse(url));
   });
@@ -15,7 +17,7 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.commands.registerCommand("assay.get", () => {
-    downloadAndExtract();
+    downloadAndExtract(storagePath);
   });
 
   const sidebar = vscode.window.createTreeView("assayCommands", {
@@ -24,7 +26,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     sidebar,
-    vscode.window.onDidChangeActiveTextEditor(updateTaskbar)
+    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar(storagePath))
   );
 }
 

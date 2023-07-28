@@ -7,6 +7,7 @@ import { activate, deactivate } from "../../amo/extension";
 describe("extension.ts", () => {
   const context = {
     subscriptions: [] as vscode.Disposable[],
+    globalStorageUri: vscode.Uri.parse("test"),
   } as vscode.ExtensionContext;
 
   it("should activate and register commands and have 3 subscriptions", async () => {

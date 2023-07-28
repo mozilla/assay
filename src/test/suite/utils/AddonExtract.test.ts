@@ -211,8 +211,8 @@ describe("AddonExtract.ts", async () => {
       const stub3 = sinon.stub(vscode.window, "showQuickPick");
       stub3.resolves({ label: "Yes" });
 
-      const stub4 = sinon.stub(fs, "unlinkSync");
-      stub4.returns();
+      const stub4 = sinon.stub(fs.promises, "unlink");
+      stub4.resolves();
 
       await extractAddon(
         compressedFilePath,
@@ -232,7 +232,7 @@ describe("AddonExtract.ts", async () => {
         fs.mkdirSync(workspaceFolder);
       }
 
-      const res = dirExistsOrMake(extractedworkspaceFolder);
+      const res = await dirExistsOrMake(extractedworkspaceFolder);
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(res).to.be.true;
     });
@@ -244,7 +244,7 @@ describe("AddonExtract.ts", async () => {
 
       fs.mkdirSync(extractedworkspaceFolder);
 
-      const res = dirExistsOrMake(extractedworkspaceFolder);
+      const res = await dirExistsOrMake(extractedworkspaceFolder);
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(res).to.be.undefined;
     });

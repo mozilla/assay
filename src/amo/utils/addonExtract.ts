@@ -4,9 +4,9 @@ import * as vscode from "vscode";
 
 import { showErrorMessage } from "./processErrors";
 
-export function dirExistsOrMake(dir: string) {
+export async function dirExistsOrMake(dir: string) {
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
+    await fs.promises.mkdir(dir);
     return true;
   }
 }
@@ -16,14 +16,14 @@ export async function extractAddon(
   addonFolderPath: string,
   addonVersionFolderPath: string
 ) {
-  dirExistsOrMake(addonFolderPath);
+  await dirExistsOrMake(addonFolderPath);
 
-  if (!dirExistsOrMake(addonVersionFolderPath)) {
+  if (!(await dirExistsOrMake(addonVersionFolderPath))) {
     const choice = await vscode.window.showQuickPick(["Yes", "No"], {
       placeHolder: "Addon already exists. Overwrite?",
     });
     if (choice === "No" || !choice) {
-      fs.unlinkSync(compressedFilePath);
+      await fs.promises.unlink(compressedFilePath);
       throw new Error("Extraction cancelled");
     }
   }
@@ -32,7 +32,7 @@ export async function extractAddon(
     dir: addonVersionFolderPath,
   });
 
-  fs.unlinkSync(compressedFilePath); // remove xpi
+  await fs.promises.unlink(compressedFilePath); // remove xpi
 
   if (!fs.existsSync(addonVersionFolderPath)) {
     await showErrorMessage(
@@ -46,7 +46,7 @@ export async function extractAddon(
   vscode.window.showInformationMessage("Extraction complete");
 
   // make files read-only
-  fs.readdirSync(addonVersionFolderPath).forEach((file) => {
+  (await fs.promises.readdir(addonVersionFolderPath)).forEach((file) => {
     fs.chmodSync(`${addonVersionFolderPath}/${file}`, 0o444);
   });
 }
