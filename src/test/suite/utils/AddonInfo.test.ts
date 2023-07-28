@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { afterEach, describe, it } from "mocha";
 import * as fetch from "node-fetch";
 import * as sinon from "sinon";
+import * as vscode from "vscode";
 
 import { addonInfoResponse } from "../../../amo/types";
 import { getAddonInfo } from "../../../amo/utils/addonInfo";
@@ -35,6 +36,7 @@ describe("AddonInfo.ts", () => {
     const input = "test-addon";
     const stub = sinon.stub();
     stub.resolves({
+      ok: true,
       json: () => expected,
     });
     sinon.replace(fetch, "default", stub as any);
@@ -51,6 +53,7 @@ describe("AddonInfo.ts", () => {
     const stub = sinon.stub();
     stub.resolves({
       json: () => expected,
+      ok: true,
     });
     sinon.replace(fetch, "default", stub as any);
 
@@ -66,6 +69,7 @@ describe("AddonInfo.ts", () => {
     const stub = sinon.stub();
     stub.resolves({
       json: () => expected,
+      ok: true,
     });
     sinon.replace(fetch, "default", stub as any);
 
@@ -78,6 +82,21 @@ describe("AddonInfo.ts", () => {
   });
 
   it("should throw an error if the response is not ok", async () => {
-    expect(true).to.be.true; // TODO
+    const input = "test-addon";
+    const stub = sinon.stub();
+    stub.resolves({
+      ok: false,
+      json: () => expected,
+    });
+    sinon.replace(fetch, "default", stub as any);
+
+    const stub2 = sinon.stub(vscode.window, "showErrorMessage");
+    stub2.resolves({ title: "Cancel" });
+
+    try {
+      await getAddonInfo(input);
+    } catch (e: any) {
+      expect(e.message).to.equal("Failed to fetch addon info");
+    }
   });
 });

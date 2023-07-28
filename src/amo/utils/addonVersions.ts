@@ -1,28 +1,41 @@
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
+import { showErrorMessage } from "./processErrors";
 import constants from "../../config/config";
 import { addonVersion } from "../types";
 
 export async function getAddonVersions(input: string, next?: string) {
-  if (next) {
-    const url = next;
-    const response = await fetch(url);
-    const json = await response.json();
-    return json;
-  }
   const slug: string = input.includes("/")
     ? input.split("addon/")[1].split("/")[0]
     : input;
-  const url = `${constants.apiBaseURL}addons/addon/${slug}/versions/`;
+  const url = next
+    ? next
+    : `${constants.apiBaseURL}addons/addon/${slug}/versions/`;
   const response = await fetch(url);
+
+  if (!response.ok) {
+    const errMsgWindow = next
+      ? "Could not fetch more versions"
+      : `Addon ${slug} not found`;
+    const errMsgThrown = next
+      ? "Failed to fetch versions"
+      : "Failed to fetch addon";
+
+    await showErrorMessage(
+      `(Status ${response.status}) ${errMsgWindow}.`,
+      errMsgThrown,
+      getAddonVersions,
+      [input, next]
+    );
+  }
   const json = await response.json();
   return json;
 }
 
 export async function getVersionChoice(
   input: string
-): Promise<{ fileID: string; version: string } | undefined> {
+): Promise<{ fileID: string; version: string }> {
   const versions: addonVersion[] = [];
   let next: string | undefined = undefined;
   let init = true;
@@ -56,10 +69,10 @@ export async function getVersionChoice(
         };
       } else {
         vscode.window.showErrorMessage("No version file found");
-        return;
+        throw new Error("No version file found");
       }
     } else {
-      break;
+      throw new Error("No version choice selected");
     }
     // eslint-disable-next-line no-constant-condition
   } while (true);
