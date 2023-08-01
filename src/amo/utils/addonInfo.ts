@@ -22,6 +22,5 @@ export async function getAddonInfo(input: string): Promise<addonInfoResponse> {
     );
   }
   const json = await response.json();
-  console.log(json);
   return json;
 }

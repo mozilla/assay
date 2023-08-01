@@ -15,11 +15,9 @@ export async function getAddonVersions(input: string, next?: string) {
     : `${constants.apiBaseURL}addons/addon/${slug}/versions?filter=all_with_unlisted`;
 
   const headers = await makeAuthHeader();
-
   const response = await fetch(url, { headers });
 
   if (!response.ok) {
-    console.log(response.json());
     const errMsgWindow = next
       ? "Could not fetch more versions"
       : `Addon ${slug} not found`;

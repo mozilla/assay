@@ -11,7 +11,6 @@ async function fetchDownloadFile(fileId: string) {
   const headers = await makeAuthHeader();
   const response = await fetch(url, { headers });
   if (!response.ok) {
-    console.log(response);
     await showErrorMessage(
       `(Status ${response.status}): Could not fetch addon info.`,
       "Request failed",
