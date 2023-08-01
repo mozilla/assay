@@ -1,22 +1,28 @@
 import { expect } from "chai";
 import * as fs from "fs";
-import { afterEach, describe, it } from "mocha";
+import { afterEach, describe, it, beforeEach } from "mocha";
 import * as fetch from "node-fetch";
 import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { downloadAddon } from "../../../amo/utils/addonDownload";
+import * as authUtils from "../../../amo/utils/requestAuth";
 import constants from "../../../config/config";
 
 describe("addonDownload.ts", async () => {
   const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
 
-  afterEach(() => {
+  afterEach(async () => {
     sinon.restore();
     if (fs.existsSync(workspaceFolder)) {
-      fs.rmSync(workspaceFolder, { recursive: true });
+      await fs.promises.rm(workspaceFolder, { recursive: true });
     }
+  });
+
+  beforeEach(() => {
+    const authStub = sinon.stub(authUtils, "makeAuthHeader");
+    authStub.resolves({ Authorization: "test" });
   });
 
   const badResponse = {
