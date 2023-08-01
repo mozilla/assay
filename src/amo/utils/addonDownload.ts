@@ -3,12 +3,15 @@ import fetch from "node-fetch";
 import * as vscode from "vscode";
 
 import { showErrorMessage } from "./processErrors";
+import { makeAuthHeader } from "./requestAuth";
 import constants from "../../config/config";
 
 async function fetchDownloadFile(fileId: string) {
   const url = `${constants.downloadBaseURL}${fileId}`;
-  const response = await fetch(url);
+  const headers = await makeAuthHeader();
+  const response = await fetch(url, { headers });
   if (!response.ok) {
+    console.log(response);
     await showErrorMessage(
       `(Status ${response.status}): Could not fetch addon info.`,
       "Request failed",

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { downloadAndExtract } from "./commands/getAddon";
+import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
@@ -18,6 +19,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
   vscode.commands.registerCommand("assay.get", () => {
     downloadAndExtract(storagePath);
+  });
+
+  vscode.commands.registerCommand("assay.getApiKey", () => {
+    getApiKeyFromUser();
+  });
+
+  vscode.commands.registerCommand("assay.getSecret", () => {
+    getSecretFromUser();
   });
 
   const sidebar = vscode.window.createTreeView("assayCommands", {

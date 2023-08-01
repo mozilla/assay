@@ -59,6 +59,7 @@
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/glob": "^8.1.0",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
     "@types/node-fetch": "^2.6.4",

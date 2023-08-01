@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
-import * as vscode from "vscode";
 
 import { showErrorMessage } from "./processErrors";
+import { makeAuthHeader } from "./requestAuth";
 import constants from "../../config/config";
 import { addonInfoResponse } from "../types";
 
@@ -10,7 +10,9 @@ export async function getAddonInfo(input: string): Promise<addonInfoResponse> {
     ? input.split("addon/")[1].split("/")[0]
     : input;
   const url = `${constants.apiBaseURL}addons/addon/${slug}`;
-  const response = await fetch(url);
+  const headers = await makeAuthHeader();
+
+  const response = await fetch(url, { headers: headers });
   if (!response.ok) {
     await showErrorMessage(
       `(Status ${response.status}): Could not fetch addon info.`,
@@ -20,5 +22,6 @@ export async function getAddonInfo(input: string): Promise<addonInfoResponse> {
     );
   }
   const json = await response.json();
+  console.log(json);
   return json;
 }

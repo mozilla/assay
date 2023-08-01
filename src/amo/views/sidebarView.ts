@@ -34,6 +34,22 @@ export class AssayTreeDataProvider
           }
         ),
         new AssayTreeItem(
+          "Enter API Key",
+          vscode.TreeItemCollapsibleState.None,
+          {
+            command: "assay.getApiKey",
+            title: "Enter AMO API Key",
+          }
+        ),
+        new AssayTreeItem(
+          "Enter API Secret",
+          vscode.TreeItemCollapsibleState.None,
+          {
+            command: "assay.getSecret",
+            title: "Enter AMO API Secret",
+          }
+        ),
+        new AssayTreeItem(
           "View Documentation",
           vscode.TreeItemCollapsibleState.None,
           {
