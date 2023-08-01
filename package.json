@@ -60,6 +60,7 @@
     "@types/chai": "^4.3.5",
     "@types/glob": "^8.1.0",
     "@types/jsonwebtoken": "^9.0.2",
+    "@types/keytar": "^4.4.2",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
     "@types/node-fetch": "^2.6.4",
@@ -91,6 +92,7 @@
     "@types/request": "^2.48.8",
     "extract-zip": "^2.0.1",
     "jszip": "^3.10.1",
+    "keytar": "^7.9.0",
     "pretest": "^1.1.0",
     "test": "^3.3.0"
   }
