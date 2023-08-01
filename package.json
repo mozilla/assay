@@ -91,6 +91,7 @@
   "dependencies": {
     "@types/request": "^2.48.8",
     "extract-zip": "^2.0.1",
+    "jsonwebtoken": "^9.0.1",
     "jszip": "^3.10.1",
     "keytar": "^7.9.0",
     "pretest": "^1.1.0",
