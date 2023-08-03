@@ -1,7 +1,6 @@
 import { expect } from "chai";
-import { describe, it, afterEach, beforeEach } from "mocha";
+import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
-import * as vscode from "vscode";
 
 import * as credUtils from "../../../amo/commands/getApiCreds";
 import { makeToken, makeAuthHeader } from "../../../amo/utils/requestAuth";
