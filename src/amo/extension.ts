@@ -5,9 +5,11 @@ import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
+import { setExtensionSecretStorage } from "../config/globals";
 
 export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
+  setExtensionSecretStorage(context.secrets);
 
   vscode.commands.registerCommand("assay.review", async function (url: string) {
     vscode.env.openExternal(vscode.Uri.parse(url));

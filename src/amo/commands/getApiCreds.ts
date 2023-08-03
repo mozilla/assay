@@ -1,6 +1,6 @@
-import * as keytar from "keytar";
 import * as vscode from "vscode";
 
+import { getExtensionSecretStorage } from "../../config/globals";
 import { showErrorMessage } from "../utils/processErrors";
 
 export async function getApiKeyFromUser() {
@@ -13,7 +13,9 @@ export async function getApiKeyFromUser() {
     throw new Error("No API Key provided");
   }
 
-  await keytar.setPassword("assay", "amoApiKey", apiKey);
+  const secrets = getExtensionSecretStorage();
+
+  await secrets.store("amoApiKey", apiKey);
   return true;
 }
 
@@ -28,7 +30,8 @@ export async function getSecretFromUser() {
     throw new Error("No API Secret provided");
   }
 
-  await keytar.setPassword("assay", "amoApiSecret", apiSecret);
+  const secrets = getExtensionSecretStorage();
+  await secrets.store("amoApiSecret", apiSecret);
   return true;
 }
 
@@ -36,11 +39,12 @@ export async function getCredsFromStorage(): Promise<{
   apiKey: string;
   secret: string;
 }> {
-  const apiKey = await keytar.getPassword("assay", "amoApiKey");
-  const secret = await keytar.getPassword("assay", "amoApiSecret");
+  const secrets = getExtensionSecretStorage();
+  const apiKey = await secrets.get("amoApiKey");
+  const secret = await secrets.get("amoApiSecret");
 
   if (!apiKey || !secret) {
-    await showErrorMessage(
+    return await showErrorMessage(
       {
         window: {
           other: "No API Key or Secret found",
@@ -52,7 +56,6 @@ export async function getCredsFromStorage(): Promise<{
       "other",
       getCredsFromStorage
     );
-    return { apiKey: "", secret: "" };
   }
 
   return { apiKey, secret };

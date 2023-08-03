@@ -15,7 +15,7 @@ export async function showErrorMessage(
   const cancelMessage =
     errorMessages.thrown[status] || errorMessages.thrown.other;
 
-  await vscode.window
+  return await vscode.window
     .showErrorMessage(
       message,
       { modal: true },
