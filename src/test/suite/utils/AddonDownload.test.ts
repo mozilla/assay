@@ -85,7 +85,7 @@ describe("addonDownload.ts", async () => {
       await downloadAddon(addonId, downloadedFilePath);
       expect(false).to.be.true;
     } catch (e: any) {
-      expect(e.message).to.equal("Request failed");
+      expect(e.message).to.equal("Download request failed");
       expect(stub.calledOnce).to.be.true;
       expect(stub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
         .true;

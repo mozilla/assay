@@ -33,3 +33,12 @@ export type configConstants = {
   reviewBaseURL: string;
   downloadBaseURL: string;
 };
+
+export type errorMessages = {
+  window: {
+    [code: string]: string;
+  };
+  thrown: {
+    [code: string]: string;
+  };
+};

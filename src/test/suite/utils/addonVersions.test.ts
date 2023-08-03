@@ -156,6 +156,8 @@ describe("addonVersions.ts", () => {
             results: versions,
           };
         },
+        ok: false,
+        status: 404,
       });
       stub.onCall(1).returns({
         json: () => {
@@ -232,7 +234,7 @@ describe("addonVersions.ts", () => {
         await getAddonVersions("addon-slug-or-guid");
         expect(false).to.be.true;
       } catch (e: any) {
-        expect(e.message).to.equal("Failed to fetch addon");
+        expect(e.message).to.equal("Failed to fetch versions");
       }
     });
 

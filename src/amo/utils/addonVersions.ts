@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { showErrorMessage } from "./processErrors";
 import { makeAuthHeader } from "./requestAuth";
 import constants from "../../config/config";
-import { addonVersion } from "../types";
+import { addonVersion, errorMessages } from "../types";
 
 export async function getAddonVersions(input: string, next?: string) {
   const slug: string = input.includes("/")
@@ -18,19 +18,27 @@ export async function getAddonVersions(input: string, next?: string) {
   const response = await fetch(url, { headers });
 
   if (!response.ok) {
-    const errMsgWindow = next
-      ? "Could not fetch more versions"
-      : `Addon ${slug} not found`;
-    const errMsgThrown = next
-      ? "Failed to fetch versions"
-      : "Failed to fetch addon";
+    const errorMessages: errorMessages = {
+      window: {
+        404: next
+          ? `(Status ${response.status}): "Could not fetch more versions"`
+          : `(Status ${response.status}): Addon not found`,
+        401: `(Status ${response.status}): Unauthorized request`,
+        403: `(Status ${response.status}): Forbidden request`,
+        other: `(Status ${response.status}): Could not fetch versions`,
+      },
+      thrown: {
+        404: next ? "Failed to fetch versions" : "Failed to fetch addon",
+        401: "Unauthorized request",
+        403: "Forbidden request",
+        other: "Failed to fetch versions",
+      },
+    };
 
-    await showErrorMessage(
-      `(Status ${response.status}) ${errMsgWindow}.`,
-      errMsgThrown,
-      getAddonVersions,
-      [input, next]
-    );
+    await showErrorMessage(errorMessages, response.status, getAddonVersions, [
+      input,
+      next,
+    ]);
   }
   const json = await response.json();
   return json;

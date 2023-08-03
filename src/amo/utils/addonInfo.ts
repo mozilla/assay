@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import { showErrorMessage } from "./processErrors";
 import { makeAuthHeader } from "./requestAuth";
 import constants from "../../config/config";
-import { addonInfoResponse } from "../types";
+import { addonInfoResponse, errorMessages } from "../types";
 
 export async function getAddonInfo(input: string): Promise<addonInfoResponse> {
   const slug: string = input.includes("/")
@@ -14,12 +14,24 @@ export async function getAddonInfo(input: string): Promise<addonInfoResponse> {
 
   const response = await fetch(url, { headers: headers });
   if (!response.ok) {
-    await showErrorMessage(
-      `(Status ${response.status}): Could not fetch addon info.`,
-      "Failed to fetch addon info",
-      getAddonInfo,
-      [input]
-    );
+    const errorMessages: errorMessages = {
+      window: {
+        404: `(Status ${response.status}): Addon not found`,
+        401: `(Status ${response.status}): Unauthorized request`,
+        403: `(Status ${response.status}): Forbidden request`,
+        other: `(Status ${response.status}): Could not fetch addon info`,
+      },
+      thrown: {
+        404: "Failed to fetch addon info",
+        401: "Unauthorized request",
+        403: "Forbidden request",
+        other: "Failed to fetch addon info",
+      },
+    };
+
+    await showErrorMessage(errorMessages, response.status, getAddonInfo, [
+      input,
+    ]);
   }
   const json = await response.json();
   return json;

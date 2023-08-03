@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { showErrorMessage } from "./processErrors";
+import { errorMessages } from "../types";
 
 export async function dirExistsOrMake(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -35,12 +36,20 @@ export async function extractAddon(
   await fs.promises.unlink(compressedFilePath); // remove xpi
 
   if (!fs.existsSync(addonVersionFolderPath)) {
-    await showErrorMessage(
-      `Extraction failed. Could not find ${addonVersionFolderPath}`,
-      "Extraction failed",
-      extractAddon,
-      [compressedFilePath, addonFolderPath, addonVersionFolderPath]
-    );
+    const errorMessages: errorMessages = {
+      window: {
+        other: `Extraction failed. Could not find ${addonVersionFolderPath}`,
+      },
+      thrown: {
+        other: "Extraction failed",
+      },
+    };
+
+    await showErrorMessage(errorMessages, "other", extractAddon, [
+      compressedFilePath,
+      addonFolderPath,
+      addonVersionFolderPath,
+    ]);
   }
 
   vscode.window.showInformationMessage("Extraction complete");

@@ -1,6 +1,8 @@
 import * as keytar from "keytar";
 import * as vscode from "vscode";
 
+import { showErrorMessage } from "../utils/processErrors";
+
 export async function getApiKeyFromUser() {
   const apiKey = await vscode.window.showInputBox({
     prompt: "Enter your AMO API Key (IE: user:12345678:123)",
@@ -12,6 +14,7 @@ export async function getApiKeyFromUser() {
   }
 
   await keytar.setPassword("assay", "amoApiKey", apiKey);
+  return true;
 }
 
 export async function getSecretFromUser() {
@@ -26,6 +29,7 @@ export async function getSecretFromUser() {
   }
 
   await keytar.setPassword("assay", "amoApiSecret", apiSecret);
+  return true;
 }
 
 export async function getCredsFromStorage(): Promise<{
@@ -35,12 +39,20 @@ export async function getCredsFromStorage(): Promise<{
   const apiKey = await keytar.getPassword("assay", "amoApiKey");
   const secret = await keytar.getPassword("assay", "amoApiSecret");
 
-  if (!apiKey) {
-    await getApiKeyFromUser();
-    return await getCredsFromStorage();
-  } else if (!secret) {
-    await getSecretFromUser();
-    return await getCredsFromStorage();
+  if (!apiKey || !secret) {
+    await showErrorMessage(
+      {
+        window: {
+          other: "No API Key or Secret found",
+        },
+        thrown: {
+          other: "No API Key or Secret found",
+        },
+      },
+      "other",
+      getCredsFromStorage
+    );
+    return { apiKey: "", secret: "" };
   }
 
   return { apiKey, secret };
