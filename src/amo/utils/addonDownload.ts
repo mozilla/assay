@@ -14,10 +14,10 @@ async function fetchDownloadFile(fileId: string) {
   if (!response.ok) {
     const errorMessages: errorMessages = {
       window: {
-        404: `(Status ${response.status}): Addon download file not found`,
-        401: `(Status ${response.status}): Unauthorized request for download file`,
-        403: `(Status ${response.status}): Forbidden request for download file`,
-        other: `(Status ${response.status}): Could not fetch download file`,
+        404: `(Status ${response.status}): XPI download file not found`,
+        401: `(Status ${response.status}): Unauthorized request for XPI file`,
+        403: `(Status ${response.status}): Inadequate permissions for XPI file`,
+        other: `(Status ${response.status}): Could not fetch XPI file`,
       },
       thrown: {
         404: "Download file not found",

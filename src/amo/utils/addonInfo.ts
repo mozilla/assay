@@ -18,7 +18,7 @@ export async function getAddonInfo(input: string): Promise<addonInfoResponse> {
       window: {
         404: `(Status ${response.status}): Addon not found`,
         401: `(Status ${response.status}): Unauthorized request`,
-        403: `(Status ${response.status}): Forbidden request`,
+        403: `(Status ${response.status}): Inadequate permissions`,
         other: `(Status ${response.status}): Could not fetch addon info`,
       },
       thrown: {

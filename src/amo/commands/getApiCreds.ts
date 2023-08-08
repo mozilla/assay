@@ -5,7 +5,7 @@ import { showErrorMessage } from "../utils/processErrors";
 
 export async function getApiKeyFromUser() {
   const apiKey = await vscode.window.showInputBox({
-    prompt: "Enter your AMO API Key (IE: user:12345678:123)",
+    prompt: "Enter your AMO API Key (e.g. user:12345678:123)",
     title: "AMO API Key",
   });
 

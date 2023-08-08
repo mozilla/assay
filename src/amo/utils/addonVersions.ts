@@ -12,7 +12,7 @@ export async function getAddonVersions(input: string, next?: string) {
     : input;
   const url = next
     ? next
-    : `${constants.apiBaseURL}addons/addon/${slug}/versions?filter=all_with_unlisted`;
+    : `${constants.apiBaseURL}addons/addon/${slug}/versions?filter=all_with_deleted`;
 
   const headers = await makeAuthHeader();
   const response = await fetch(url, { headers });
@@ -24,7 +24,7 @@ export async function getAddonVersions(input: string, next?: string) {
           ? `(Status ${response.status}): "Could not fetch more versions"`
           : `(Status ${response.status}): Addon not found`,
         401: `(Status ${response.status}): Unauthorized request`,
-        403: `(Status ${response.status}): Forbidden request`,
+        403: `(Status ${response.status}): Inadequate permissions`,
         other: `(Status ${response.status}): Could not fetch versions`,
       },
       thrown: {
