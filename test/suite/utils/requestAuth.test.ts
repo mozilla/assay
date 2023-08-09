@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 
-import * as credUtils from "../../../amo/commands/getApiCreds";
-import { makeToken, makeAuthHeader } from "../../../amo/utils/requestAuth";
+import * as credUtils from "../../../src/commands/getApiCreds";
+import { makeToken, makeAuthHeader } from "../../../src/utils/requestAuth";
 
 describe("requestAuth.ts", () => {
   afterEach(() => {

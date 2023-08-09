@@ -4,10 +4,10 @@ import * as fetch from "node-fetch";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { addonInfoResponse } from "../../../amo/types";
-import { getAddonInfo } from "../../../amo/utils/addonInfo";
-import * as authUtils from "../../../amo/utils/requestAuth";
-import constants from "../../../config/config";
+import constants from "../../../src/config/config";
+import { addonInfoResponse } from "../../../src/types";
+import { getAddonInfo } from "../../../src/utils/addonInfo";
+import * as authUtils from "../../../src/utils/requestAuth";
 
 describe("AddonInfo.ts", () => {
   afterEach(() => {

@@ -4,7 +4,7 @@ import { afterEach, describe, it } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { updateTaskbar } from "../../../amo/commands/updateTaskbar";
+import { updateTaskbar } from "../../../src/commands/updateTaskbar";
 
 describe("updateTaskbar.ts", async () => {
   afterEach(() => {

@@ -3,9 +3,9 @@ import * as vscode from "vscode";
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { updateTaskbar } from "./commands/updateTaskbar";
+import { setExtensionSecretStorage } from "./config/globals";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
-import { setExtensionSecretStorage } from "../config/globals";
 
 export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;

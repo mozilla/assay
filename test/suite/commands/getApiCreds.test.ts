@@ -7,8 +7,8 @@ import {
   getCredsFromStorage,
   getApiKeyFromUser,
   getSecretFromUser,
-} from "../../../amo/commands/getApiCreds";
-import * as authUtils from "../../../config/globals";
+} from "../../../src/commands/getApiCreds";
+import * as authUtils from "../../../src/config/globals";
 
 describe("getApiCreds.ts", async () => {
   afterEach(() => {

@@ -4,7 +4,7 @@ import { describe, it } from "mocha";
 import {
   AssayTreeDataProvider,
   AssayTreeItem,
-} from "../../../amo/views/sidebarView";
+} from "../../../src/views/sidebarView";
 
 describe("sidebarView.ts", () => {
   const sidebarView = new AssayTreeDataProvider();

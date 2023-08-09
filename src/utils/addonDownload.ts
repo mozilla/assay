@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 
 import { showErrorMessage } from "./processErrors";
 import { makeAuthHeader } from "./requestAuth";
-import constants from "../../config/config";
+import constants from "../config/config";
 import { errorMessages } from "../types";
 
 async function fetchDownloadFile(fileId: string) {

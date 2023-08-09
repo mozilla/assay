@@ -6,7 +6,7 @@ import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { extractAddon, dirExistsOrMake } from "../../../amo/utils/addonExtract";
+import { extractAddon, dirExistsOrMake } from "../../../src/utils/addonExtract";
 
 describe("AddonExtract.ts", async () => {
   const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");

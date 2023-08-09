@@ -13,7 +13,7 @@ const extensionConfig = {
 	mode: 'none', // can be 'staging', 'none', 'development' or 'production'. 'none' defaults to 'development'
                 // keep this at none during development, this will override the NODE_ENV used by the debugger
 
-  entry: './src/amo/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+  entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
     // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
     path: path.resolve(__dirname, 'dist'),

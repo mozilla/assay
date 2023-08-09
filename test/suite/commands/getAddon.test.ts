@@ -3,7 +3,7 @@ import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { getInput } from "../../../amo/commands/getAddon";
+import { getInput } from "../../../src/commands/getAddon";
 
 describe("getAddon.ts", async () => {
   afterEach(() => {

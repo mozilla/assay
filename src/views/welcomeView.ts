@@ -51,7 +51,7 @@ export class WelcomeView {
     return new Promise((resolve) => {
       const htmlPath = vscode.Uri.joinPath(
         this._extensionUri,
-        "src/amo/views/templates",
+        "src/views/templates",
         "welcome.html"
       );
 

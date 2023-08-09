@@ -1,5 +1,5 @@
 import { DEV, STAGE, PROD } from "./constants";
-import { configConstants } from "../amo/types";
+import { configConstants } from "../types";
 
 const environment = process.env.NODE_ENV;
 

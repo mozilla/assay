@@ -4,13 +4,13 @@ import * as fetch from "node-fetch";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { addonVersion } from "../../../amo/types";
+import constants from "../../../src/config/config";
+import { addonVersion } from "../../../src/types";
 import {
   getAddonVersions,
   getVersionChoice,
-} from "../../../amo/utils/addonVersions";
-import * as authUtils from "../../../amo/utils/requestAuth";
-import constants from "../../../config/config";
+} from "../../../src/utils/addonVersions";
+import * as authUtils from "../../../src/utils/requestAuth";
 
 describe("addonVersions.ts", () => {
   afterEach(() => {

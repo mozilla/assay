@@ -6,9 +6,9 @@ import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { downloadAddon } from "../../../amo/utils/addonDownload";
-import * as authUtils from "../../../amo/utils/requestAuth";
-import constants from "../../../config/config";
+import { downloadAddon } from "../../../src//utils/addonDownload";
+import constants from "../../../src/config/config";
+import * as authUtils from "../../../src/utils/requestAuth";
 
 describe("addonDownload.ts", async () => {
   const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
