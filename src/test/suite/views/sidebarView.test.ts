@@ -18,9 +18,9 @@ describe("sidebarView.ts", () => {
 
     const tabChildren = await sidebarView.getChildren(tab);
     expect(tabChildren).to.be.an("array");
-    expect(tabChildren).to.have.lengthOf(2);
+    expect(tabChildren).to.have.lengthOf(4);
     expect(tabChildren[0].label).to.equal("Review New Addon Version");
-    expect(tabChildren[1].label).to.equal("View Documentation");
+    expect(tabChildren[3].label).to.equal("View Documentation");
   });
 
   it("should get the tree item", async () => {

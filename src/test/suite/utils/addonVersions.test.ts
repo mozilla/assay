@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { afterEach, describe, it } from "mocha";
+import { afterEach, describe, it, beforeEach } from "mocha";
 import * as fetch from "node-fetch";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
@@ -9,11 +9,17 @@ import {
   getAddonVersions,
   getVersionChoice,
 } from "../../../amo/utils/addonVersions";
+import * as authUtils from "../../../amo/utils/requestAuth";
 import constants from "../../../config/config";
 
 describe("addonVersions.ts", () => {
   afterEach(() => {
     sinon.restore();
+  });
+
+  beforeEach(() => {
+    const authStub = sinon.stub(authUtils, "makeAuthHeader");
+    authStub.resolves({ Authorization: "test" });
   });
 
   const versions: addonVersion[] = [];
@@ -150,6 +156,8 @@ describe("addonVersions.ts", () => {
             results: versions,
           };
         },
+        ok: false,
+        status: 404,
       });
       stub.onCall(1).returns({
         json: () => {
@@ -226,7 +234,7 @@ describe("addonVersions.ts", () => {
         await getAddonVersions("addon-slug-or-guid");
         expect(false).to.be.true;
       } catch (e: any) {
-        expect(e.message).to.equal("Failed to fetch addon");
+        expect(e.message).to.equal("Failed to fetch versions");
       }
     });
 
