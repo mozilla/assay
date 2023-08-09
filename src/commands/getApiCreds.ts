@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { getExtensionSecretStorage } from "../../config/globals";
+import { getExtensionSecretStorage } from "../config/globals";
 import { showErrorMessage } from "../utils/processErrors";
 
 export async function getApiKeyFromUser() {

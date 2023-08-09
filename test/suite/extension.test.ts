@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { describe, it } from "mocha";
 import * as vscode from "vscode";
 
-import { activate, deactivate } from "../../amo/extension";
+import { activate, deactivate } from "../../src/extension";
 
 describe("extension.ts", () => {
   const context = {

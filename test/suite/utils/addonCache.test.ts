@@ -7,7 +7,7 @@ import {
   addToCache,
   getFromCache,
   clearCache,
-} from "../../../amo/utils/addonCache";
+} from "../../../src/utils/addonCache";
 
 describe("addonCache.ts", async () => {
   describe("addToCache", async () => {

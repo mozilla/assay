@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 import {
   getRootFolderPath,
   selectRootFolder,
-} from "../../../amo/utils/reviewRootDir";
+} from "../../../src/utils/reviewRootDir";
 
 describe("reviewRootDir.ts", async () => {
   afterEach(() => {

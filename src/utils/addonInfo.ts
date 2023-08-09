@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 
 import { showErrorMessage } from "./processErrors";
 import { makeAuthHeader } from "./requestAuth";
-import constants from "../../config/config";
+import constants from "../config/config";
 import { addonInfoResponse, errorMessages } from "../types";
 
 export async function getAddonInfo(input: string): Promise<addonInfoResponse> {

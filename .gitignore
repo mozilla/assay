@@ -5,3 +5,4 @@ node_modules
 *.vsix
 .nyc_output/
 coverage/
+.DS_Store
