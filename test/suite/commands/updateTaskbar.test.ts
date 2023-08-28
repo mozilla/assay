@@ -5,6 +5,7 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { updateTaskbar } from "../../../src/commands/updateTaskbar";
+import { setExtensionStoragePath } from "../../../src/config/globals";
 
 describe("updateTaskbar.ts", async () => {
   afterEach(() => {
@@ -38,7 +39,7 @@ describe("updateTaskbar.ts", async () => {
   describe("updateTaskbar", () => {
     it("should return undefined if there is no activeTextEditor", async () => {
       // by default, vscode.window.activeTextEditor is undefined
-      expect(await updateTaskbar("")).to.be.undefined;
+      expect(await updateTaskbar()).to.be.undefined;
     });
 
     it("should throw error if the folder is not in the root", async () => {
@@ -57,7 +58,7 @@ describe("updateTaskbar.ts", async () => {
       stub3.returns(true);
 
       try {
-        await updateTaskbar("");
+        await updateTaskbar();
         expect.fail("No error thrown");
       } catch (err: any) {
         expect(err.message).to.equal("File is not in the root folder");
@@ -80,7 +81,7 @@ describe("updateTaskbar.ts", async () => {
       stub3.returns(true);
 
       try {
-        await updateTaskbar("");
+        await updateTaskbar();
         expect.fail("No error thrown");
       } catch (err: any) {
         expect(err.message).to.equal("No guid found");
@@ -109,7 +110,9 @@ describe("updateTaskbar.ts", async () => {
       const stub5 = sinon.stub(fs.promises, "readFile");
       stub5.resolves(`{"reviewUrl":"test"}`);
 
-      const result = await updateTaskbar("");
+      setExtensionStoragePath("");
+
+      const result = await updateTaskbar();
       expect(result).to.be.true;
     });
   });

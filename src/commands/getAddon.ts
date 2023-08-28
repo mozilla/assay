@@ -20,7 +20,7 @@ export async function getInput(): Promise<string> {
   return input;
 }
 
-export async function downloadAndExtract(storagePath: string) {
+export async function downloadAndExtract() {
   try {
     const input = await getInput();
 
@@ -34,7 +34,7 @@ export async function downloadAndExtract(storagePath: string) {
     const workspaceFolder = await getRootFolderPath();
     const compressedFilePath = `${workspaceFolder}/${addonGUID}_${addonVersion}.xpi`;
 
-    await addToCache(storagePath, addonGUID, "reviewUrl", json.review_url);
+    await addToCache(addonGUID, "reviewUrl", json.review_url);
 
     await downloadAddon(addonFileId, compressedFilePath);
     await extractAddon(

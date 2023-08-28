@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import { getExtensionStoragePath } from "../config/globals";
+
 /***
  * The cache folder is stored at
  * ../Code/User/globalStorage/undefined_publisher.assay/.cache
@@ -11,11 +13,12 @@ import * as path from "path";
  * The folder undefined_publisher.assay will continue to exist after this.
  */
 export async function addToCache(
-  storagePath: string,
   addonGUID: string,
   key: string,
   value: string
 ) {
+  const storagePath = getExtensionStoragePath();
+
   const cacheFolderPath = path.join(storagePath, ".cache");
   const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
 
