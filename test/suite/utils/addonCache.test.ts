@@ -3,6 +3,7 @@ import * as fs from "fs";
 import { describe, it } from "mocha";
 import path = require("path");
 
+import { setExtensionStoragePath } from "../../../src/config/globals";
 import {
   addToCache,
   getFromCache,
@@ -21,7 +22,9 @@ describe("addonCache.ts", async () => {
         fs.rmSync(storagePath, { recursive: true });
       }
 
-      await addToCache(storagePath, "test-guid", "test-key", "test-value");
+      setExtensionStoragePath(storagePath);
+
+      await addToCache("test-guid", "test-key", "test-value");
       const cachePath = path.resolve(storagePath, ".cache");
       const filePath = path.resolve(cachePath, "test-guid.json");
 
@@ -44,6 +47,7 @@ describe("addonCache.ts", async () => {
       if (!fs.existsSync(storagePath)) {
         fs.mkdirSync(storagePath);
       }
+      setExtensionStoragePath(storagePath);
 
       const cachePath = path.resolve(storagePath, ".cache");
       const filePath = path.resolve(cachePath, "test-guid.json");
@@ -52,7 +56,7 @@ describe("addonCache.ts", async () => {
       }
       fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
 
-      await addToCache(storagePath, "test-guid", "test-key", "test-value-2");
+      await addToCache("test-guid", "test-key", "test-value-2");
 
       const data = fs.readFileSync(filePath, "utf8");
       expect(data).to.equal(`{"test-key":"test-value-2"}`);

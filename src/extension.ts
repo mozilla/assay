@@ -3,12 +3,16 @@ import * as vscode from "vscode";
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { updateTaskbar } from "./commands/updateTaskbar";
-import { setExtensionSecretStorage } from "./config/globals";
+import {
+  setExtensionSecretStorage,
+  setExtensionStoragePath,
+} from "./config/globals";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
+  setExtensionStoragePath(storagePath);
   setExtensionSecretStorage(context.secrets);
 
   vscode.commands.registerCommand("assay.review", async function (url: string) {
@@ -20,7 +24,7 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.commands.registerCommand("assay.get", () => {
-    downloadAndExtract(storagePath);
+    downloadAndExtract();
   });
 
   vscode.commands.registerCommand("assay.getApiKey", () => {
@@ -37,7 +41,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     sidebar,
-    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar(storagePath))
+    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar())
   );
 }
 
