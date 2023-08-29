@@ -27,9 +27,12 @@ async function fetchDownloadFile(fileId: string) {
       },
     };
 
-    await showErrorMessage(errorMessages, response.status, fetchDownloadFile, [
-      fileId,
-    ]);
+    return await showErrorMessage(
+      errorMessages,
+      response.status,
+      fetchDownloadFile,
+      [fileId]
+    );
   }
   return response;
 }
@@ -56,7 +59,7 @@ export async function downloadAddon(fileId: string, path: string) {
           },
         };
 
-        await showErrorMessage(errorMessages, "other", downloadAddon, [
+        return await showErrorMessage(errorMessages, "other", downloadAddon, [
           fileId,
           path,
         ]);

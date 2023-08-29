@@ -10,31 +10,33 @@ import {
 } from "../../../src/commands/getApiCreds";
 import * as authUtils from "../../../src/config/globals";
 
-describe("getApiCreds.ts", async () => {
-  afterEach(() => {
-    sinon.restore();
-  });
+const secretsStubReturn = {
+  get: async () => {
+    return "test";
+  },
+  store: async () => {
+    return;
+  },
+  delete: function (key: string): Thenable<void> {
+    throw new Error("Function not implemented.");
+  },
+  onDidChange: function (
+    listener: (e: vscode.SecretStorageChangeEvent) => any,
+    thisArgs?: any,
+    disposables?: vscode.Disposable[] | undefined
+  ): vscode.Disposable {
+    throw new Error("Function not implemented.");
+  },
+};
 
+describe("getApiCreds.ts", async () => {
   beforeEach(() => {
     const secretsStub = sinon.stub(authUtils, "getExtensionSecretStorage");
-    secretsStub.returns({
-      get: async () => {
-        return "test";
-      },
-      store: async () => {
-        return;
-      },
-      delete: function (key: string): Thenable<void> {
-        throw new Error("Function not implemented.");
-      },
-      onDidChange: function (
-        listener: (e: vscode.SecretStorageChangeEvent) => any,
-        thisArgs?: any,
-        disposables?: vscode.Disposable[] | undefined
-      ): vscode.Disposable {
-        throw new Error("Function not implemented.");
-      },
-    });
+    secretsStub.returns(secretsStubReturn);
+  });
+
+  afterEach(() => {
+    sinon.restore();
   });
 
   describe("getCredsFromStorage()", () => {
@@ -45,32 +47,21 @@ describe("getApiCreds.ts", async () => {
     });
 
     it("should error if the creds don't exist", async () => {
-      // update the get of secretstub to return undefined
       sinon.restore();
+
       const secretsStub = sinon.stub(authUtils, "getExtensionSecretStorage");
-      secretsStub.returns({
-        get: async () => {
-          return undefined;
-        },
-        store: async () => {
-          return;
-        },
-        delete: function (key: string): Thenable<void> {
-          throw new Error("Function not implemented.");
-        },
-        onDidChange: function (
-          listener: (e: vscode.SecretStorageChangeEvent) => any,
-          thisArgs?: any,
-          disposables?: vscode.Disposable[] | undefined
-        ): vscode.Disposable {
-          throw new Error("Function not implemented.");
-        },
-      });
+      const secretsStubReturnUndefined = secretsStubReturn;
+      secretsStubReturnUndefined.get = async () => {
+        return "";
+      };
+      secretsStub.returns(secretsStubReturnUndefined);
+
       const errorMessageWindowStub = sinon.stub(
         vscode.window,
         "showErrorMessage"
       );
       errorMessageWindowStub.resolves({ title: "Cancel" });
+
       try {
         await getCredsFromStorage();
       } catch (error: any) {
