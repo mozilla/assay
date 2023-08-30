@@ -4,12 +4,12 @@ import * as vscode from "vscode";
 
 import { activate, deactivate } from "../../src/extension";
 
-describe("extension.ts", () => {
-  const context = {
-    subscriptions: [] as vscode.Disposable[],
-    globalStorageUri: vscode.Uri.parse("test"),
-  } as vscode.ExtensionContext;
+const context = {
+  subscriptions: [] as vscode.Disposable[],
+  globalStorageUri: vscode.Uri.parse("test"),
+} as vscode.ExtensionContext;
 
+describe("extension.ts", () => {
   it("should activate and register commands and have 3 subscriptions", async () => {
     await activate(context);
     const commands = await vscode.commands.getCommands(true);

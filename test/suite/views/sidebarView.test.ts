@@ -6,9 +6,9 @@ import {
   AssayTreeItem,
 } from "../../../src/views/sidebarView";
 
-describe("sidebarView.ts", () => {
-  const sidebarView = new AssayTreeDataProvider();
+const sidebarView = new AssayTreeDataProvider();
 
+describe("sidebarView.ts", () => {
   it("should get the children", async () => {
     const children = await sidebarView.getChildren();
     const tab = children[0];

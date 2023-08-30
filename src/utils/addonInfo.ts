@@ -29,9 +29,12 @@ export async function getAddonInfo(input: string): Promise<addonInfoResponse> {
       },
     };
 
-    await showErrorMessage(errorMessages, response.status, getAddonInfo, [
-      input,
-    ]);
+    return await showErrorMessage(
+      errorMessages,
+      response.status,
+      getAddonInfo,
+      [input]
+    );
   }
   const json = await response.json();
   return json;

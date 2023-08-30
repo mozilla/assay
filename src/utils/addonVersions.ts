@@ -35,10 +35,12 @@ export async function getAddonVersions(input: string, next?: string) {
       },
     };
 
-    await showErrorMessage(errorMessages, response.status, getAddonVersions, [
-      input,
-      next,
-    ]);
+    return await showErrorMessage(
+      errorMessages,
+      response.status,
+      getAddonVersions,
+      [input, next]
+    );
   }
   const json = await response.json();
   return json;

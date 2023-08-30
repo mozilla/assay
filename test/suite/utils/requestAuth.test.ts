@@ -32,7 +32,6 @@ describe("requestAuth.ts", () => {
       const getCredsStub = sinon.stub(credUtils, "getCredsFromStorage");
       getCredsStub.resolves(creds);
       const result = await makeAuthHeader();
-      // expect it to have a key called authorization
       expect(result).to.have.property("Authorization");
     });
   });

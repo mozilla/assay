@@ -45,7 +45,7 @@ export async function extractAddon(
       },
     };
 
-    await showErrorMessage(errorMessages, "other", extractAddon, [
+    return await showErrorMessage(errorMessages, "other", extractAddon, [
       compressedFilePath,
       addonFolderPath,
       addonVersionFolderPath,

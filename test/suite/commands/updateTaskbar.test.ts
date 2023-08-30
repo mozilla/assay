@@ -7,55 +7,62 @@ import * as vscode from "vscode";
 import { updateTaskbar } from "../../../src/commands/updateTaskbar";
 import { setExtensionStoragePath } from "../../../src/config/globals";
 
+const guid = "emailguid@guid.com";
+
+const fakeActiveEditor = {
+  document: {
+    uri: {
+      fsPath: "/test",
+    },
+  },
+};
+
+const fakeActiveEditorWithGuid = {
+  document: {
+    uri: {
+      fsPath: `/root/${guid}/version/test.js`,
+    },
+  },
+};
+
+const fakeWorkspaceFolder = {
+  uri: {
+    fsPath: "/root",
+  },
+};
+
 describe("updateTaskbar.ts", async () => {
   afterEach(() => {
     sinon.restore();
   });
 
-  const guid = "emailguid@guid.com";
-
-  const fakeActiveEditor = {
-    document: {
-      uri: {
-        fsPath: "/test",
-      },
-    },
-  };
-
-  const fakeActiveEditor2 = {
-    document: {
-      uri: {
-        fsPath: `/root/${guid}/version/test.js`,
-      },
-    },
-  };
-
-  const fakeWorkspaceFolder = {
-    uri: {
-      fsPath: "/root",
-    },
-  };
-
-  describe("updateTaskbar", () => {
+  describe("updateTaskbar()", () => {
     it("should return undefined if there is no activeTextEditor", async () => {
       // by default, vscode.window.activeTextEditor is undefined
       expect(await updateTaskbar()).to.be.undefined;
     });
 
     it("should throw error if the folder is not in the root", async () => {
-      const stub = sinon.stub(vscode.workspace, "getConfiguration");
-      stub.returns({
+      const getConfigurationStub = sinon.stub(
+        vscode.workspace,
+        "getConfiguration"
+      );
+      getConfigurationStub.returns({
         get: () => {
           return "/test";
         },
       } as any);
 
-      const stub2 = sinon.stub();
-      stub2.returns(fakeActiveEditor2);
-      sinon.replaceGetter(vscode.window, "activeTextEditor", stub2 as any);
+      const activeTextEditorStub = sinon.stub();
+      activeTextEditorStub.returns(fakeActiveEditorWithGuid);
+      sinon.replaceGetter(
+        vscode.window,
+        "activeTextEditor",
+        activeTextEditorStub as any
+      );
 
-      const stub3 = sinon.stub(fs, "existsSync");
-      stub3.returns(true);
+      const existsSyncStub = sinon.stub(fs, "existsSync");
+      existsSyncStub.returns(true);
 
       try {
         await updateTaskbar();
@@ -66,19 +73,26 @@ describe("updateTaskbar.ts", async () => {
     });
 
     it("should throw an error if there is no guid in the path", async () => {
-      const stub = sinon.stub(vscode.workspace, "getConfiguration");
-      stub.returns({
+      const getConfigurationStub = sinon.stub(
+        vscode.workspace,
+        "getConfiguration"
+      );
+      getConfigurationStub.returns({
         get: () => {
           return "/test";
         },
       } as any);
 
-      const stub2 = sinon.stub();
-      stub2.returns(fakeActiveEditor);
-      sinon.replaceGetter(vscode.window, "activeTextEditor", stub2 as any);
+      const activeTextEditorStub = sinon.stub();
+      activeTextEditorStub.returns(fakeActiveEditor);
+      sinon.replaceGetter(
+        vscode.window,
+        "activeTextEditor",
+        activeTextEditorStub as any
+      );
 
-      const stub3 = sinon.stub(fs, "existsSync");
-      stub3.returns(true);
+      const existsSyncStub = sinon.stub(fs, "existsSync");
+      existsSyncStub.returns(true);
 
       try {
         await updateTaskbar();
@@ -89,26 +103,37 @@ describe("updateTaskbar.ts", async () => {
     });
 
     it("should return true if the taskbar is updated", async () => {
-      const stub = sinon.stub(vscode.workspace, "getConfiguration");
-      stub.returns({
+      const getConfigurationStub = sinon.stub(
+        vscode.workspace,
+        "getConfiguration"
+      );
+      getConfigurationStub.returns({
         get: () => {
           return "/root";
         },
       } as any);
 
-      const stub2 = sinon.stub();
-      stub2.returns(fakeActiveEditor2);
-      sinon.replaceGetter(vscode.window, "activeTextEditor", stub2 as any);
+      const activeTextEditorStub = sinon.stub();
+      activeTextEditorStub.returns(fakeActiveEditorWithGuid);
+      sinon.replaceGetter(
+        vscode.window,
+        "activeTextEditor",
+        activeTextEditorStub as any
+      );
 
-      const stub3 = sinon.stub(fs, "existsSync");
-      stub3.returns(true);
+      const existsSyncStub = sinon.stub(fs, "existsSync");
+      existsSyncStub.returns(true);
 
-      const stub4 = sinon.stub();
-      stub4.returns(fakeWorkspaceFolder);
-      sinon.replaceGetter(vscode.workspace, "workspaceFolders", stub4 as any);
+      const workspaceFoldersStub = sinon.stub();
+      workspaceFoldersStub.returns(fakeWorkspaceFolder);
+      sinon.replaceGetter(
+        vscode.workspace,
+        "workspaceFolders",
+        workspaceFoldersStub as any
+      );
 
-      const stub5 = sinon.stub(fs.promises, "readFile");
-      stub5.resolves(`{"reviewUrl":"test"}`);
+      const readFileStub = sinon.stub(fs.promises, "readFile");
+      readFileStub.resolves(`{"reviewUrl":"test"}`);
 
       setExtensionStoragePath("");
 
