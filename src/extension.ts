@@ -51,7 +51,6 @@ export async function activate(context: vscode.ExtensionContext) {
       const config = vscode.workspace.getConfiguration("assay");
       let diffCommand = config.get<string>("diffTool");
 
-
       if (!diffCommand) {
         const input = await vscode.window.showInputBox({
           prompt: "Please enter your diff tool command (e.g. diff -rq).",
@@ -62,7 +61,6 @@ export async function activate(context: vscode.ExtensionContext) {
         await config.update("diffTool", input, true);
         diffCommand = input;
       }
-
 
       const terminal = vscode.window.createTerminal("External Diff Tool");
       terminal.sendText(`${diffCommand} ${leftPath} ${rightPath}`);
