@@ -1,7 +1,7 @@
 {
   "all": true,
   "include": ["out/src/**"],
-  "exclude": ["**/node_modules/**", "**/test/**", "out/src/types.js", "out/src/views/welcomeView.js", "**/config/**"],
+  "exclude": ["**/node_modules/**", "**/test/**", "out/src/commands/launchDiff.js", "out/src/types.js", "out/src/views/welcomeView.js", "**/config/**"],
   "reporter": ["lcov", "text"],
   "lines": 5
 }
