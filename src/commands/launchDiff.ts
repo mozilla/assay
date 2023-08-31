@@ -10,6 +10,9 @@ export async function openInDiffTool(uris: [vscode.Uri, vscode.Uri]) {
   const rightPath = rightUri.fsPath;
 
   const diffCommand = await getDiffCommand();
+  if (!diffCommand) {
+    return;
+  }
 
   const terminal = vscode.window.createTerminal("External Diff Tool");
   terminal.sendText(`${diffCommand} ${leftPath} ${rightPath}`);
