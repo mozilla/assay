@@ -55,7 +55,7 @@ export async function extractAddon(
   vscode.window.showInformationMessage("Extraction complete");
 
   // make files read-only
-  (await fs.promises.readdir(addonVersionFolderPath)).forEach((file) => {
-    fs.chmodSync(`${addonVersionFolderPath}/${file}`, 0o444);
-  });
+  // (await fs.promises.readdir(addonVersionFolderPath)).forEach((file) => {
+  //   fs.chmodSync(`${addonVersionFolderPath}/${file}`, 0o444);
+  // });
 }
