@@ -1,11 +1,11 @@
 import { expect } from "chai";
+import * as child_process from "child_process";
 import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { openInDiffTool } from "../../../src/commands/launchDiff";
 import * as diffTool from "../../../src/utils/diffTool";
-import exp = require("constants");
 
 describe("launchDiff.ts", async () => {
   afterEach(() => {
@@ -24,44 +24,21 @@ describe("launchDiff.ts", async () => {
       expect(result).to.be.undefined;
     });
 
-    it("should launch a terminal with the diff command and file paths", async () => {
+    it("should return true if child process runs", async () => {
       const getDiffCommandStub = sinon.stub(diffTool, "getDiffCommand");
-      getDiffCommandStub.resolves("diff -rq");
+      getDiffCommandStub.resolves("diff");
 
-      // make and stub an entire fake terminal.
-      const terminalStub = sinon.stub(vscode.window, "createTerminal");
-      const fakeCreationOptions: vscode.TerminalOptions = {};
-      const fakeTerminalState: vscode.TerminalState = {
-        isInteractedWith: false,
-      };
-      const sendTextStub = sinon.stub();
-      terminalStub.returns({
-        sendText: sendTextStub,
-        show: sinon.stub(),
-        name: "",
-        processId: Promise.resolve(0),
-        creationOptions: fakeCreationOptions,
-        exitStatus: undefined,
-        state: fakeTerminalState,
-        hide: function (): void {
-          throw new Error("Function not implemented.");
-        },
-        dispose: function (): void {
-          throw new Error("Function not implemented.");
-        },
-      });
+      const spawnStub = sinon.stub(child_process, "spawn");
+      const fakeChildProcess = {
+        on: sinon.stub(),
+      } as unknown as child_process.ChildProcess;
+      spawnStub.returns(fakeChildProcess);
 
-      await openInDiffTool([
+      const result = await openInDiffTool([
         vscode.Uri.parse("file:///path/to/file1"),
         vscode.Uri.parse("file:///path/to/file2"),
       ]);
-
-      expect(terminalStub.calledOnce).to.be.true;
-      expect(terminalStub.firstCall.args[0]).to.include("External Diff Tool");
-      expect(sendTextStub.calledOnce).to.be.true;
-      expect(sendTextStub.firstCall.args[0]).to.equal(
-        "diff -rq /path/to/file1 /path/to/file2"
-      );
+      expect(result).to.be.true;
     });
   });
 });

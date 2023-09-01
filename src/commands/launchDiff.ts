@@ -1,3 +1,4 @@
+import { spawn } from "child_process";
 import * as vscode from "vscode";
 
 import { getDiffCommand } from "../utils/diffTool";
@@ -14,7 +15,12 @@ export async function openInDiffTool(uris: [vscode.Uri, vscode.Uri]) {
     return;
   }
 
-  const terminal = vscode.window.createTerminal("External Diff Tool");
-  terminal.sendText(`${diffCommand} ${leftPath} ${rightPath}`);
-  terminal.show();
+  const diffProcess = spawn(diffCommand, [leftPath, rightPath]);
+  diffProcess.on("error", (err) => {
+    vscode.window.showErrorMessage(
+      `External Diff Tool failed to launch: ${err.message}`
+    );
+    return;
+  });
+  return true;
 }
