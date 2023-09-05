@@ -1,7 +1,9 @@
 import * as vscode from "vscode";
+import { Uri } from "vscode";
 
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
+import { openInDiffTool } from "./commands/launchDiff";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
   setExtensionSecretStorage,
@@ -34,6 +36,16 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand("assay.getSecret", () => {
     getSecretFromUser();
   });
+
+  vscode.commands.registerCommand(
+    "assay.openInDiffTool",
+    async (_e: Uri, uris?: [Uri, Uri]) => {
+      if (!uris) {
+        return;
+      }
+      await openInDiffTool(uris);
+    }
+  );
 
   const sidebar = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),

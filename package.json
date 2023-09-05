@@ -18,8 +18,21 @@
         "assay.rootFolder": {
           "type": "string",
           "default": ""
+        },
+        "assay.diffTool": {
+          "type": "string",
+          "default": ""
         }
       }
+    },
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "explorerResourceIsFolder && listDoubleSelection",
+          "command": "assay.openInDiffTool",
+          "group": "navigation"
+        }
+      ]
     },
     "views": {
       "explorer": [
@@ -33,6 +46,10 @@
       {
         "command": "assay.welcome",
         "title": "Assay Introduction"
+      },
+      {
+        "command": "assay.openInDiffTool",
+        "title": "(Assay) Open in Diff Tool"
       }
     ]
   },
