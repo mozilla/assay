@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 export async function setDiffCommand(config: vscode.WorkspaceConfiguration) {
   const input = await vscode.window.showInputBox({
-    prompt: "Please enter your diff tool command (e.g. diff -rq).",
+    prompt: "Please enter your diff tool command (e.g. bcomp @script.bc).",
   });
   if (!input) {
     return;
