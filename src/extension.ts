@@ -9,6 +9,7 @@ import {
   setExtensionSecretStorage,
   setExtensionStoragePath,
 } from "./config/globals";
+import { getLineInfo } from "./utils/lineComment";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
@@ -17,27 +18,27 @@ export async function activate(context: vscode.ExtensionContext) {
   setExtensionStoragePath(storagePath);
   setExtensionSecretStorage(context.secrets);
 
-  vscode.commands.registerCommand("assay.review", async function (url: string) {
+  const reviewDisposable = vscode.commands.registerCommand("assay.review", async function (url: string) {
     vscode.env.openExternal(vscode.Uri.parse(url));
   });
 
-  vscode.commands.registerCommand("assay.welcome", () => {
+  const welcomeDisposable = vscode.commands.registerCommand("assay.welcome", () => {
     WelcomeView.createOrShow(context.extensionUri);
   });
 
-  vscode.commands.registerCommand("assay.get", () => {
+  const getDisposable = vscode.commands.registerCommand("assay.get", () => {
     downloadAndExtract();
   });
 
-  vscode.commands.registerCommand("assay.getApiKey", () => {
+  const apiKeyDisposable = vscode.commands.registerCommand("assay.getApiKey", () => {
     getApiKeyFromUser();
   });
 
-  vscode.commands.registerCommand("assay.getSecret", () => {
+  const apiSecretDisposable = vscode.commands.registerCommand("assay.getSecret", () => {
     getSecretFromUser();
   });
 
-  vscode.commands.registerCommand(
+  const diffDisposable = vscode.commands.registerCommand(
     "assay.openInDiffTool",
     async (_e: Uri, uris?: [Uri, Uri]) => {
       if (!uris) {
@@ -47,13 +48,25 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const sidebar = vscode.window.createTreeView("assayCommands", {
+  const commentDisposable = vscode.commands.registerCommand("assay.codeComment", () => {
+    const lineInfo = getLineInfo();
+    // now launch the comment view
+  });
+
+  const sidebarDisposable = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
   context.subscriptions.push(
-    sidebar,
-    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar())
+    reviewDisposable,
+    welcomeDisposable,
+    getDisposable,
+    apiKeyDisposable,
+    apiSecretDisposable,
+    diffDisposable,
+    commentDisposable,
+    sidebarDisposable,
+    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar()),
   );
 }
 

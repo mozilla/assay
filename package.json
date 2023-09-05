@@ -32,6 +32,13 @@
           "command": "assay.openInDiffTool",
           "group": "navigation"
         }
+      ],
+      "editor/context": [
+        {
+          "when": "editorTextFocus",
+          "command": "assay.codeComment",
+          "group": "navigation"
+        }
       ]
     },
     "views": {
@@ -50,6 +57,10 @@
       {
         "command": "assay.openInDiffTool",
         "title": "(Assay) Open in Diff Tool"
+      },
+      {
+        "command": "assay.codeComment",
+        "title": "(Assay) Add Comment"
       }
     ]
   },
