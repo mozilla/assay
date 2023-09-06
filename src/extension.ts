@@ -4,12 +4,12 @@ import { Uri } from "vscode";
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
+import { makeComment } from "./commands/makeComment";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
   setExtensionSecretStorage,
   setExtensionStoragePath,
 } from "./config/globals";
-import { getLineInfo } from "./utils/lineComment";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
@@ -48,9 +48,8 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const commentDisposable = vscode.commands.registerCommand("assay.codeComment", () => {
-    const lineInfo = getLineInfo();
-    // now launch the comment view
+  const commentDisposable = vscode.commands.registerCommand("assay.codeComment", async () => {
+    await makeComment(context.extensionUri);
   });
 
   const sidebarDisposable = vscode.window.createTreeView("assayCommands", {
