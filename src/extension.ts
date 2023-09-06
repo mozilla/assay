@@ -18,25 +18,37 @@ export async function activate(context: vscode.ExtensionContext) {
   setExtensionStoragePath(storagePath);
   setExtensionSecretStorage(context.secrets);
 
-  const reviewDisposable = vscode.commands.registerCommand("assay.review", async function (url: string) {
-    vscode.env.openExternal(vscode.Uri.parse(url));
-  });
+  const reviewDisposable = vscode.commands.registerCommand(
+    "assay.review",
+    async function (url: string) {
+      vscode.env.openExternal(vscode.Uri.parse(url));
+    }
+  );
 
-  const welcomeDisposable = vscode.commands.registerCommand("assay.welcome", () => {
-    WelcomeView.createOrShow(context.extensionUri);
-  });
+  const welcomeDisposable = vscode.commands.registerCommand(
+    "assay.welcome",
+    () => {
+      WelcomeView.createOrShow(context.extensionUri);
+    }
+  );
 
   const getDisposable = vscode.commands.registerCommand("assay.get", () => {
     downloadAndExtract();
   });
 
-  const apiKeyDisposable = vscode.commands.registerCommand("assay.getApiKey", () => {
-    getApiKeyFromUser();
-  });
+  const apiKeyDisposable = vscode.commands.registerCommand(
+    "assay.getApiKey",
+    () => {
+      getApiKeyFromUser();
+    }
+  );
 
-  const apiSecretDisposable = vscode.commands.registerCommand("assay.getSecret", () => {
-    getSecretFromUser();
-  });
+  const apiSecretDisposable = vscode.commands.registerCommand(
+    "assay.getSecret",
+    () => {
+      getSecretFromUser();
+    }
+  );
 
   const diffDisposable = vscode.commands.registerCommand(
     "assay.openInDiffTool",
@@ -48,9 +60,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const commentDisposable = vscode.commands.registerCommand("assay.codeComment", async () => {
-    await makeComment(context.extensionUri);
-  });
+  const commentDisposable = vscode.commands.registerCommand(
+    "assay.codeComment",
+    async () => {
+      await makeComment();
+    }
+  );
 
   const sidebarDisposable = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),
@@ -65,7 +80,7 @@ export async function activate(context: vscode.ExtensionContext) {
     diffDisposable,
     commentDisposable,
     sidebarDisposable,
-    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar()),
+    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar())
   );
 }
 

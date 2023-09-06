@@ -14,8 +14,8 @@ import { getExtensionStoragePath } from "../config/globals";
  */
 export async function addToCache(
   addonGUID: string,
-  key: string,
-  value: string
+  keys: string[],
+  value: any
 ) {
   const storagePath = getExtensionStoragePath();
 
@@ -30,33 +30,50 @@ export async function addToCache(
     await fs.promises.mkdir(cacheFolderPath);
   }
 
-  let cacheFileJSON: { [key: string]: string } = {};
+  let cacheFileJSON: any = {};
   try {
     const cacheFile = await fs.promises.readFile(cacheFilePath, "utf-8");
     cacheFileJSON = JSON.parse(cacheFile);
   } catch (err) {
     console.log("No cache file found");
   }
-  cacheFileJSON[key] = value;
-  await fs.promises.writeFile(cacheFilePath, JSON.stringify(cacheFileJSON));
+
+  let currentLevel = cacheFileJSON;
+  for (const key of keys) {
+    currentLevel[key] = currentLevel[key] || {};
+    currentLevel = currentLevel[key];
+  }
+
+  const lastKey = keys[keys.length - 1];
+  currentLevel[lastKey] = value;
+
+  await fs.promises.writeFile(
+    cacheFilePath,
+    JSON.stringify(cacheFileJSON, null, 2)
+  );
 }
 
-export async function getFromCache(
-  storagePath: string,
-  addonGUID: string,
-  key: string
-) {
+export async function getFromCache(addonGUID: string, keys: string[]) {
+  const storagePath = getExtensionStoragePath();
   const cacheFolderPath = path.join(storagePath, ".cache");
   const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
 
   if (!fs.existsSync(cacheFilePath)) {
-    return;
+    return undefined;
   }
 
   const cacheFile = await fs.promises.readFile(cacheFilePath, "utf-8");
   const cacheFileJSON = JSON.parse(cacheFile);
 
-  return cacheFileJSON[key];
+  let currentLevel = cacheFileJSON;
+  for (const key of keys) {
+    if (!(key in currentLevel)) {
+      return undefined;
+    }
+    currentLevel = currentLevel[key];
+  }
+
+  return currentLevel;
 }
 
 export async function clearCache(storagePath: string) {

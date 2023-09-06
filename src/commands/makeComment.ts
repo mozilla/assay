@@ -1,14 +1,16 @@
 import * as vscode from "vscode";
 
+import { addToCache, getFromCache } from "../utils/addonCache";
 import { getLineInfo } from "../utils/lineComment";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-export async function makeComment(extensionURI: vscode.Uri) {
-  const lineInfo = getLineInfo();
-  if (!lineInfo) {
-    return;
-  }
-
+export async function makePanel(
+  guid: string,
+  version: string,
+  filepath: string,
+  lineNumber: string,
+  existingComment: string
+) {
   const panel = vscode.window.createWebviewPanel(
     "assay.comment",
     "Make a Comment",
@@ -18,29 +20,55 @@ export async function makeComment(extensionURI: vscode.Uri) {
     }
   );
 
-  panel.webview.onDidReceiveMessage((message) => {
-    switch (message.command) {
-      case "closePanel":
-        panel.dispose();
-        console.log("comment: ", message.comment);
-        return;
-    }
+  panel.webview.onDidReceiveMessage(async (message) => {
+    panel.dispose();
+    await addToCache(guid, [version, filepath, lineNumber], message.comment);
   });
 
-  panel.webview.html = await getCommentHTML(lineInfo);
+  panel.webview.html = await getCommentHTML(
+    guid,
+    version,
+    filepath,
+    lineNumber,
+    existingComment
+  );
 }
 
-export async function getCommentHTML(lineInfo: {
-  filepath: string;
-  selectedText: string;
-  lineStart: number;
-  lineEnd: number;
-}) {
-  const rootDir = await getRootFolderPath();
-  const filepath = lineInfo.filepath.replace(rootDir, "");
-  const guid = filepath.split("/")[1];
-  const version = filepath.split("/")[2];
+export async function makeComment() {
+  const lineInfo = getLineInfo();
+  if (!lineInfo) {
+    return;
+  }
+  const fullpath = lineInfo.fullpath;
+  const lineNumber = lineInfo.lineNumber;
 
+  const rootDir = await getRootFolderPath();
+  const relativePath = fullpath.replace(rootDir, "");
+  const guid = relativePath.split("/")[1];
+  const version = relativePath.split("/")[2];
+  const filepath = relativePath.split(version)[1];
+
+  const existingCommentObj = await getFromCache(guid, [
+    version,
+    filepath,
+    lineNumber,
+  ]);
+
+  let existingComment;
+  if (existingCommentObj) {
+    existingComment = existingCommentObj[lineNumber];
+  }
+
+  await makePanel(guid, version, filepath, lineNumber, existingComment);
+}
+
+export async function getCommentHTML(
+  guid: string,
+  version: string,
+  filepath: string,
+  lineNumber: string,
+  existingComment: string
+) {
   return `
   <html>
     <head>
@@ -48,14 +76,12 @@ export async function getCommentHTML(lineInfo: {
     </head>
     <body>
       <h1>Make a Comment</h1>
-      <p>GUID: ${guid}</p>
-        <p>Version: ${version}</p>
-        <p>Filepath: ${filepath.split(version)[1]}</p>
-        <p>Line Numbers: ${lineInfo.lineStart}:${lineInfo.lineEnd}</p>
-        <p>Selected Text:</p>
-        <pre>${lineInfo.selectedText}</pre>
+      <p>GUID: ${guid} | VERSION: ${version}</p>
+        <p>FILEPATH: ${filepath} | LINE NUMBER: ${lineNumber}</p>
       <p>Comment:</p>
-      <textarea id="comment" rows="10" cols="50"></textarea>
+      <textarea id="comment" rows="10" cols="50">${
+        existingComment || ""
+      }</textarea>
         <br />
       <button id="submit">Submit</button>
       <script>
