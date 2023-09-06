@@ -48,17 +48,12 @@ export async function makeComment() {
   const version = relativePath.split("/")[2];
   const filepath = relativePath.split(version)[1];
 
-  const existingCommentObj = await getFromCache(guid, [
+  const existingComment = await getFromCache(guid, [
     version,
     filepath,
     lineNumber,
   ]);
-
-  let existingComment;
-  if (existingCommentObj) {
-    existingComment = existingCommentObj[lineNumber];
-  }
-
+  
   await makePanel(guid, version, filepath, lineNumber, existingComment);
 }
 

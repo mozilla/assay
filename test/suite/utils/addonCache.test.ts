@@ -43,8 +43,9 @@ describe("addonCache.ts", async () => {
       expect(fs.existsSync(cachePath)).to.be.true;
       expect(fs.existsSync(filePath)).to.be.true;
 
-      const data = fs.readFileSync(filePath, "utf8");
-      expect(data).to.equal(`{"test-key":"test-value"}`);
+      const json = fs.readFileSync(filePath, "utf8");
+      const data = JSON.parse(json);
+      expect(data).to.deep.equal({ "test-key": "test-value" });
     });
 
     it("should modify the data in the cache file if it does exist", async () => {
@@ -57,8 +58,9 @@ describe("addonCache.ts", async () => {
 
       await addToCache("test-guid", ["test-key"], "test-value-2");
 
-      const data = fs.readFileSync(filePath, "utf8");
-      expect(data).to.equal(`{"test-key":"test-value-2"}`);
+      const json = fs.readFileSync(filePath, "utf8");
+      const data = JSON.parse(json);
+      expect(data).to.deep.equal({ "test-key": "test-value-2" });
     });
   });
 
