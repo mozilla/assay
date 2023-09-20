@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { exportCommentsFromFile, exportCommentsFromFolderPath } from "./commands/exportComments";
+import {
+  exportCommentsFromFile,
+  exportCommentsFromFolderPath,
+} from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
