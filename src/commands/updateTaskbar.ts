@@ -1,7 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
-import { getExtensionStoragePath } from "../config/globals";
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 

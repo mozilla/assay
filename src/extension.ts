@@ -4,6 +4,7 @@ import { Uri } from "vscode";
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
+import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -80,7 +81,8 @@ export async function activate(context: vscode.ExtensionContext) {
     diffDisposable,
     commentDisposable,
     sidebarDisposable,
-    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar())
+    vscode.window.onDidChangeActiveTextEditor(async () => await updateTaskbar()),
+    vscode.window.onDidChangeActiveTextEditor(async () => await loadFileComments()),
   );
 }
 
