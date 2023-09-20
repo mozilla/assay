@@ -26,10 +26,25 @@
       }
     },
     "menus": {
+      "commandPalette": [
+        {
+          "command": "assay.exportCommentsFromFolder",
+          "when": "false"
+        },
+        {
+          "command": "assay.openInDiffTool",
+          "when": "false"
+        }
+      ],
       "explorer/context": [
         {
           "when": "explorerResourceIsFolder && listDoubleSelection",
           "command": "assay.openInDiffTool",
+          "group": "navigation"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "assay.exportCommentsFromFolder",
           "group": "navigation"
         }
       ],
@@ -61,6 +76,14 @@
       {
         "command": "assay.codeComment",
         "title": "(Assay) Add Comment"
+      },
+      {
+        "command": "assay.exportCommentsFromFile",
+        "title": "(Assay) Export Version Comments"
+      },
+      {
+        "command": "assay.exportCommentsFromFolder",
+        "title": "(Assay) Export Comments"
       }
     ]
   },

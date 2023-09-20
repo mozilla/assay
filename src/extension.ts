@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
+import { exportCommentsFromFile, exportCommentsFromFolderPath } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
@@ -72,6 +73,20 @@ export async function activate(context: vscode.ExtensionContext) {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
+  const exportCommentsFileDisposable = vscode.commands.registerCommand(
+    "assay.exportCommentsFromFile",
+    async () => {
+      await exportCommentsFromFile();
+    }
+  );
+
+  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
+    "assay.exportCommentsFromFolder",
+    async (uri: Uri) => {
+      await exportCommentsFromFolderPath(uri);
+    }
+  );
+
   context.subscriptions.push(
     reviewDisposable,
     welcomeDisposable,
@@ -81,8 +96,14 @@ export async function activate(context: vscode.ExtensionContext) {
     diffDisposable,
     commentDisposable,
     sidebarDisposable,
-    vscode.window.onDidChangeActiveTextEditor(async () => await updateTaskbar()),
-    vscode.window.onDidChangeActiveTextEditor(async () => await loadFileComments()),
+    vscode.window.onDidChangeActiveTextEditor(
+      async () => await updateTaskbar()
+    ),
+    vscode.window.onDidChangeActiveTextEditor(
+      async () => await loadFileComments()
+    ),
+    exportCommentsFileDisposable,
+    exportCommentsFolderDisposable
   );
 }
 

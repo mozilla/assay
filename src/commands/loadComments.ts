@@ -1,8 +1,16 @@
+import path = require("path");
 import * as vscode from "vscode";
 
-import { commentDecoration } from "../config/globals";
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
+
+const commentDecoration: vscode.TextEditorDecorationType =
+  vscode.window.createTextEditorDecorationType({
+    gutterIconPath: vscode.Uri.file(
+      path.join(__dirname, "..", "media", "comment.svg")
+    ),
+    gutterIconSize: "contain",
+  });
 
 export async function loadFileComments() {
   // get the current file path
@@ -12,8 +20,6 @@ export async function loadFileComments() {
   }
   const doc = editor.document;
   const fullPath = doc.uri.fsPath;
-
-  // get the relative path using the root folder
   const rootFolder = await getRootFolderPath();
   if (!fullPath.startsWith(rootFolder)) {
     throw new Error("File is not in the root folder");
@@ -24,7 +30,6 @@ export async function loadFileComments() {
   const version = relativePath.split("/")[2];
   const filepath = relativePath.split(version)[1];
 
-  // get the comments from the cache
   const comments = await getFromCache(guid, [version, filepath]);
   if (!comments) {
     return;

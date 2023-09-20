@@ -5,7 +5,6 @@ import { addToCache, getFromCache } from "../utils/addonCache";
 import { getLineInfo } from "../utils/lineComment";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-
 async function makePanel(
   guid: string,
   version: string,
@@ -24,7 +23,6 @@ async function makePanel(
 
   panel.webview.onDidReceiveMessage(async (message) => {
     panel.dispose();
-    console.log("pre-storage", await getFromCache(guid, [version]));
     await addToCache(guid, [version, filepath, lineNumber], message.comment);
     await loadFileComments();
   });

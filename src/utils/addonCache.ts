@@ -61,7 +61,7 @@ export async function getFromCache(addonGUID: string, keys: string[]) {
   const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
 
   if (!fs.existsSync(cacheFilePath)) {
-    return undefined;
+    return;
   }
 
   const cacheFile = await fs.promises.readFile(cacheFilePath, "utf-8");
