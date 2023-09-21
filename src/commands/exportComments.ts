@@ -49,6 +49,7 @@ export async function exportComments(fullPath: string) {
   }
 }
 
+// This one is called from the command palette
 export async function exportCommentsFromFile() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
@@ -59,6 +60,7 @@ export async function exportCommentsFromFile() {
   await exportComments(fullPath);
 }
 
+// This one is called from the context menu
 export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
   const fullPath = uri.fsPath;
 

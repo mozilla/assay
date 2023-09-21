@@ -13,7 +13,6 @@ const commentDecoration: vscode.TextEditorDecorationType =
   });
 
 export async function loadFileComments() {
-  // get the current file path
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
