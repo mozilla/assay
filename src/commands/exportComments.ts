@@ -29,9 +29,7 @@ export async function compileComments(fullPath: string) {
   return compiledComments;
 }
 
-export async function exportComments(fullPath: string) {
-  const compiledComments = await compileComments(fullPath);
-
+export async function exportComments(compiledComments: string) {
   const panel = vscode.window.createWebviewPanel(
     "assay.export",
     "Export Comments",
@@ -57,7 +55,9 @@ export async function exportCommentsFromFile() {
   }
   const doc = editor.document;
   const fullPath = doc.uri.fsPath;
-  await exportComments(fullPath);
+
+  const comments = await compileComments(fullPath);
+  await exportComments(comments);
 }
 
 // This one is called from the context menu
@@ -80,12 +80,12 @@ export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
     throw new Error("No guid or version found");
   }
 
-  await exportComments(fullPath);
+  const comments = await compileComments(fullPath);
+  await exportComments(comments);
 }
 
 export async function getExportHTML(compiledComments: string) {
   compiledComments = compiledComments ? compiledComments : "No comments found.";
-  console.log(compiledComments);
   return `
     <!DOCTYPE html>
     <html lang="en">

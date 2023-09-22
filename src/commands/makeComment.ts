@@ -5,7 +5,7 @@ import { addToCache, getFromCache } from "../utils/addonCache";
 import { getLineInfo } from "../utils/lineComment";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-async function makePanel(
+export async function makePanel(
   guid: string,
   version: string,
   filepath: string,
@@ -59,7 +59,7 @@ export async function makeComment() {
   await makePanel(guid, version, filepath, lineNumber, existingComment);
 }
 
-async function getCommentHTML(
+export async function getCommentHTML(
   guid: string,
   version: string,
   filepath: string,
