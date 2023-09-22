@@ -15,7 +15,7 @@ import { getExtensionStoragePath } from "../config/globals";
 export async function addToCache(
   addonGUID: string,
   keys: string[],
-  value: any
+  value: string
 ) {
   const storagePath = getExtensionStoragePath();
 
