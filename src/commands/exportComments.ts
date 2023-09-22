@@ -75,7 +75,7 @@ export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
 
   if (!guid || !version) {
     vscode.window.showErrorMessage(
-      "Not a valid path. Ensure you are at least as deep as the version folder."
+      "Not inside an add-on. Select a version folder, or sub folder."
     );
     throw new Error("No guid or version found");
   }
