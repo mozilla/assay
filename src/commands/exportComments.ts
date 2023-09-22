@@ -3,16 +3,7 @@ import * as vscode from "vscode";
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-export async function compileComments(fullPath: string) {
-  const rootFolder = await getRootFolderPath();
-  if (!fullPath.startsWith(rootFolder)) {
-    throw new Error("File is not in the root folder");
-  }
-
-  const relativePath = fullPath.replace(rootFolder, "");
-  const guid = relativePath.split("/")[1];
-  const version = relativePath.split("/")[2];
-
+export async function compileComments(guid: string, version: string) {
   const comments = await getFromCache(guid, [version]);
   let compiledComments = "";
 
@@ -56,7 +47,23 @@ export async function exportCommentsFromFile() {
   const doc = editor.document;
   const fullPath = doc.uri.fsPath;
 
-  const comments = await compileComments(fullPath);
+  const rootFolder = await getRootFolderPath();
+  if (!fullPath.startsWith(rootFolder)) {
+    throw new Error("File is not in the root folder");
+  }
+
+  const relativePath = fullPath.replace(rootFolder, "");
+  const guid = relativePath.split("/")[1];
+  const version = relativePath.split("/")[2];
+
+  if (!guid || !version) {
+    vscode.window.showErrorMessage(
+      "Not a valid path. Ensure you are at least as deep as the version folder."
+    );
+    throw new Error("No guid or version found");
+  }
+
+  const comments = await compileComments(guid, version);
   await exportComments(comments);
 }
 
@@ -80,7 +87,7 @@ export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
     throw new Error("No guid or version found");
   }
 
-  const comments = await compileComments(fullPath);
+  const comments = await compileComments(guid, version);
   await exportComments(comments);
 }
 

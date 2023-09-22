@@ -37,20 +37,10 @@ describe("exportComments.ts", () => {
         },
       });
 
-      const fullPath = "/test-root/test-guid/test-version/test-filepath";
-      const result = await compileComments(fullPath);
+      const result = await compileComments("guid", "version");
       expect(result).to.contain("test-filepath");
       expect(result).to.contain("1");
       expect(result).to.contain("test-comment");
-    });
-
-    it("should throw an error if the file is not in the root folder", async () => {
-      const fullPath = "/test-filepath";
-      try {
-        await compileComments(fullPath);
-      } catch (err: any) {
-        expect(err.message).to.equal("File is not in the root folder");
-      }
     });
   });
 
@@ -69,6 +59,40 @@ describe("exportComments.ts", () => {
     it("should return if there is no active text editor", async () => {
       const result = await exportCommentsFromFile();
       expect(result).to.be.undefined;
+    });
+
+    it("should throw an error if the file is not in the root folder", async () => {
+      const editor = {
+        document: {
+          uri: {
+            fsPath: "/test-filepath",
+          },
+        },
+      } as vscode.TextEditor;
+      sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
+
+      try {
+        await exportCommentsFromFile();
+      } catch (err: any) {
+        expect(err.message).to.equal("File is not in the root folder");
+      }
+    });
+
+    it("should throw an error if there is no guid or version", async () => {
+      const editor = {
+        document: {
+          uri: {
+            fsPath: "/test-root",
+          },
+        },
+      } as vscode.TextEditor;
+      sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
+
+      try {
+        await exportCommentsFromFile();
+      } catch (err: any) {
+        expect(err.message).to.equal("No guid or version found");
+      }
     });
   });
 
