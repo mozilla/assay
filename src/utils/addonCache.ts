@@ -39,11 +39,12 @@ export async function addToCache(
   }
 
   let currentLevel = cacheFileJSON;
-  
-  for (const key of keys) {
+
+  for (const key of keys.slice(0, -1)) {
     currentLevel = currentLevel[key] = currentLevel[key] || {};
   }
-  currentLevel[keys.at(-1)] = value;  
+
+  currentLevel[keys[keys.length - 1]] = value;
 
   await fs.promises.writeFile(
     cacheFilePath,
