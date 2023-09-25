@@ -1,7 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
-import { getExtensionStoragePath } from "../config/globals";
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
@@ -12,8 +11,6 @@ export const statusBarItem = vscode.window.createStatusBarItem(
 statusBarItem.text = "Assay";
 
 export async function updateTaskbar() {
-  const storagePath = getExtensionStoragePath();
-
   const activeEditor = vscode.window.activeTextEditor;
   if (!activeEditor) {
     return;
@@ -35,7 +32,7 @@ export async function updateTaskbar() {
     throw new Error("No guid found");
   }
 
-  const reviewUrl = await getFromCache(storagePath, guid, "reviewUrl");
+  const reviewUrl = await getFromCache(guid, ["reviewUrl"]);
 
   statusBarItem.text = `${guid} - Review Page`;
   statusBarItem.tooltip = reviewUrl;

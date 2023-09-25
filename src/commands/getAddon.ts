@@ -34,7 +34,7 @@ export async function downloadAndExtract() {
     const workspaceFolder = await getRootFolderPath();
     const compressedFilePath = `${workspaceFolder}/${addonGUID}_${addonVersion}.xpi`;
 
-    await addToCache(addonGUID, "reviewUrl", json.review_url);
+    await addToCache(addonGUID, ["reviewUrl"], json.review_url);
 
     await downloadAddon(addonFileId, compressedFilePath);
     await extractAddon(

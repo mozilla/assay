@@ -1,9 +1,15 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
+import {
+  exportCommentsFromFile,
+  exportCommentsFromFolderPath,
+} from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
+import { loadFileComments } from "./commands/loadComments";
+import { makeComment } from "./commands/makeComment";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
   setExtensionSecretStorage,
@@ -17,27 +23,39 @@ export async function activate(context: vscode.ExtensionContext) {
   setExtensionStoragePath(storagePath);
   setExtensionSecretStorage(context.secrets);
 
-  vscode.commands.registerCommand("assay.review", async function (url: string) {
-    vscode.env.openExternal(vscode.Uri.parse(url));
-  });
+  const reviewDisposable = vscode.commands.registerCommand(
+    "assay.review",
+    async function (url: string) {
+      vscode.env.openExternal(vscode.Uri.parse(url));
+    }
+  );
 
-  vscode.commands.registerCommand("assay.welcome", () => {
-    WelcomeView.createOrShow(context.extensionUri);
-  });
+  const welcomeDisposable = vscode.commands.registerCommand(
+    "assay.welcome",
+    () => {
+      WelcomeView.createOrShow(context.extensionUri);
+    }
+  );
 
-  vscode.commands.registerCommand("assay.get", () => {
+  const getDisposable = vscode.commands.registerCommand("assay.get", () => {
     downloadAndExtract();
   });
 
-  vscode.commands.registerCommand("assay.getApiKey", () => {
-    getApiKeyFromUser();
-  });
+  const apiKeyDisposable = vscode.commands.registerCommand(
+    "assay.getApiKey",
+    () => {
+      getApiKeyFromUser();
+    }
+  );
 
-  vscode.commands.registerCommand("assay.getSecret", () => {
-    getSecretFromUser();
-  });
+  const apiSecretDisposable = vscode.commands.registerCommand(
+    "assay.getSecret",
+    () => {
+      getSecretFromUser();
+    }
+  );
 
-  vscode.commands.registerCommand(
+  const diffDisposable = vscode.commands.registerCommand(
     "assay.openInDiffTool",
     async (_e: Uri, uris?: [Uri, Uri]) => {
       if (!uris) {
@@ -47,13 +65,48 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const sidebar = vscode.window.createTreeView("assayCommands", {
+  const commentDisposable = vscode.commands.registerCommand(
+    "assay.codeComment",
+    async () => {
+      await makeComment();
+    }
+  );
+
+  const sidebarDisposable = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
+  const exportCommentsFileDisposable = vscode.commands.registerCommand(
+    "assay.exportCommentsFromFile",
+    async () => {
+      await exportCommentsFromFile();
+    }
+  );
+
+  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
+    "assay.exportCommentsFromFolder",
+    async (uri: Uri) => {
+      await exportCommentsFromFolderPath(uri);
+    }
+  );
+
   context.subscriptions.push(
-    sidebar,
-    vscode.window.onDidChangeActiveTextEditor(() => updateTaskbar())
+    reviewDisposable,
+    welcomeDisposable,
+    getDisposable,
+    apiKeyDisposable,
+    apiSecretDisposable,
+    diffDisposable,
+    commentDisposable,
+    sidebarDisposable,
+    vscode.window.onDidChangeActiveTextEditor(
+      async () => await updateTaskbar()
+    ),
+    vscode.window.onDidChangeActiveTextEditor(
+      async () => await loadFileComments()
+    ),
+    exportCommentsFileDisposable,
+    exportCommentsFolderDisposable
   );
 }
 

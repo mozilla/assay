@@ -26,10 +26,32 @@
       }
     },
     "menus": {
+      "commandPalette": [
+        {
+          "command": "assay.exportCommentsFromFolder",
+          "when": "false"
+        },
+        {
+          "command": "assay.openInDiffTool",
+          "when": "false"
+        }
+      ],
       "explorer/context": [
         {
           "when": "explorerResourceIsFolder && listDoubleSelection",
           "command": "assay.openInDiffTool",
+          "group": "navigation"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "assay.exportCommentsFromFolder",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "editorTextFocus",
+          "command": "assay.codeComment",
           "group": "navigation"
         }
       ]
@@ -50,6 +72,18 @@
       {
         "command": "assay.openInDiffTool",
         "title": "(Assay) Open in Diff Tool"
+      },
+      {
+        "command": "assay.codeComment",
+        "title": "(Assay) Add/Edit Comment"
+      },
+      {
+        "command": "assay.exportCommentsFromFile",
+        "title": "(Assay) Export Version Comments"
+      },
+      {
+        "command": "assay.exportCommentsFromFolder",
+        "title": "(Assay) Export Comments"
       }
     ]
   },

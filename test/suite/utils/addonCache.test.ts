@@ -37,14 +37,15 @@ describe("addonCache.ts", async () => {
     it("should create the cache folder, file, and add data if it does not exist", async () => {
       setExtensionStoragePath(storagePath);
 
-      await addToCache("test-guid", "test-key", "test-value");
+      await addToCache("test-guid", ["test-key"], "test-value");
 
       expect(fs.existsSync(storagePath)).to.be.true;
       expect(fs.existsSync(cachePath)).to.be.true;
       expect(fs.existsSync(filePath)).to.be.true;
 
-      const data = fs.readFileSync(filePath, "utf8");
-      expect(data).to.equal(`{"test-key":"test-value"}`);
+      const json = fs.readFileSync(filePath, "utf8");
+      const data = JSON.parse(json);
+      expect(data).to.deep.equal({ "test-key": "test-value" });
     });
 
     it("should modify the data in the cache file if it does exist", async () => {
@@ -55,16 +56,17 @@ describe("addonCache.ts", async () => {
       }
       fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
 
-      await addToCache("test-guid", "test-key", "test-value-2");
+      await addToCache("test-guid", ["test-key"], "test-value-2");
 
-      const data = fs.readFileSync(filePath, "utf8");
-      expect(data).to.equal(`{"test-key":"test-value-2"}`);
+      const json = fs.readFileSync(filePath, "utf8");
+      const data = JSON.parse(json);
+      expect(data).to.deep.equal({ "test-key": "test-value-2" });
     });
   });
 
   describe("getFromCache()", async () => {
     it("should return undefined if the cache file does not exist", async () => {
-      const result = await getFromCache(storagePath, "test-guid", "test-key");
+      const result = await getFromCache("test-guid", ["test-key"]);
       expect(result).to.be.undefined;
     });
 
@@ -74,7 +76,7 @@ describe("addonCache.ts", async () => {
       }
       fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
 
-      const result = await getFromCache(storagePath, "test-guid", "test-key");
+      const result = await getFromCache("test-guid", ["test-key"]);
 
       expect(result).to.equal("test-value");
     });
