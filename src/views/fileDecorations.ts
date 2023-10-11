@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import * as vscode from "vscode";
 import { Event } from "vscode";
 
@@ -5,9 +6,6 @@ import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
 async function hasComment(uri: vscode.Uri) {
-  if (uri.scheme !== "file") {
-    return false;
-  }
   const fullpath = uri.fsPath;
   const rootFolder = await getRootFolderPath();
 
@@ -17,9 +15,12 @@ async function hasComment(uri: vscode.Uri) {
   const file = filepath.split(version)[1];
 
   const comments = await getFromCache(guid, [version, file]);
-  if (comments) {
-    return true;
+  console.log("comments", comments);
+  // check if comments map is empty or not defined
+  if (!comments || Object.keys(comments).length === 0) {
+    return false;
   }
+  return true;
 }
 
 export class CustomFileDecorationProvider {
@@ -33,7 +34,7 @@ export class CustomFileDecorationProvider {
   async provideFileDecoration(uri: vscode.Uri) {
     // if its a file and has a comment, return the decoration
     // Also if it's a folder of a file that has a comment, return the decoration
-    if ((await hasComment(uri)) || this._folderCommentPaths.has(uri.fsPath)) {
+    if (this._folderCommentPaths.has(uri.fsPath) || (await hasComment(uri))) {
       // update the decoration of the parent folder
       const parentFolder = uri.with({
         path: uri.path.split("/").slice(0, -1).join("/"),
@@ -50,7 +51,10 @@ export class CustomFileDecorationProvider {
   }
 
   updateDecorations(uri: vscode.Uri) {
-    this._folderCommentPaths.add(uri.fsPath); // maybe a better way to do this?
+    // check if uri is a folder using fs.stat
+    if (fs.lstatSync(uri.fsPath).isDirectory()) {
+      this._folderCommentPaths.add(uri.fsPath);
+    }
     this._onDidChangeFileDecorations.fire(uri);
   }
 }

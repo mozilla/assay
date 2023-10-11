@@ -15,7 +15,7 @@ import { getExtensionStoragePath } from "../config/globals";
 export async function addToCache(
   addonGUID: string,
   keys: string[],
-  value: string
+  value: string | undefined
 ) {
   const storagePath = getExtensionStoragePath();
 
@@ -44,7 +44,12 @@ export async function addToCache(
     currentLevel = currentLevel[key] = currentLevel[key] || {};
   }
 
-  currentLevel[keys[keys.length - 1]] = value;
+  // if value is undefined, delete the key
+  if (!value) {
+    delete currentLevel[keys[keys.length - 1]];
+  } else {
+    currentLevel[keys[keys.length - 1]] = value;
+  }
 
   await fs.promises.writeFile(
     cacheFilePath,

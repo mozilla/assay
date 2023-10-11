@@ -30,6 +30,8 @@ export async function loadFileComments() {
   const version = relativePath.split("/")[2];
   const filepath = relativePath.split(version)[1];
 
+  const fileDecorator = getFileDecorator();
+  fileDecorator.updateDecorations(doc.uri);
   const comments = await getFromCache(guid, [version, filepath]);
   if (!comments) {
     return;
@@ -46,9 +48,4 @@ export async function loadFileComments() {
     }
   }
   editor.setDecorations(commentDecoration, decorations);
-
-  console.log("setting file decoration");
-  // set the decoration in the filetree
-  const fileDecorator = getFileDecorator();
-  fileDecorator.updateDecorations(doc.uri);
 }
