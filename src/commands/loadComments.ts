@@ -1,6 +1,7 @@
 import path = require("path");
 import * as vscode from "vscode";
 
+import { getFileDecorator } from "../config/globals";
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
@@ -45,4 +46,9 @@ export async function loadFileComments() {
     }
   }
   editor.setDecorations(commentDecoration, decorations);
+
+  console.log("setting file decoration");
+  // set the decoration in the filetree
+  const fileDecorator = getFileDecorator();
+  fileDecorator.updateDecorations(doc.uri);
 }
