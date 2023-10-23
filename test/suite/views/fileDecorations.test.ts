@@ -3,8 +3,8 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 import * as addonCache from "../../../src/utils/addonCache";
+import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 import {
   fileHasComment,
   folderHasComment,

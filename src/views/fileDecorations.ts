@@ -32,6 +32,11 @@ export async function folderHasComment(uri: vscode.Uri) {
   const guid = splitPath[1];
   const keys = splitPath.slice(2);
 
+  // if there no keys, then we are at the guid path. return false
+  if (keys.length === 0) {
+    return false;
+  }
+
   const comments = await getFromCache(guid, keys);
   // check if comments map is empty or not defined
   if (!comments || Object.keys(comments).length === 0) {

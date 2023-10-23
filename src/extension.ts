@@ -27,6 +27,9 @@ export async function activate(context: vscode.ExtensionContext) {
   setExtensionStoragePath(storagePath);
   setExtensionSecretStorage(context.secrets);
 
+  // load comments on startup/reload
+  await loadFileComments();
+
   const reviewDisposable = vscode.commands.registerCommand(
     "assay.review",
     async function (url: string) {
