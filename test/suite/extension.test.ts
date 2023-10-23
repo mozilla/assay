@@ -16,7 +16,7 @@ describe("extension.ts", () => {
     expect(commands).to.include.members(["assay.get"]);
     expect(commands).to.include.members(["assay.welcome"]);
     expect(commands).to.include.members(["assay.review"]);
-    expect(context.subscriptions.length).to.equal(12);
+    expect(context.subscriptions.length).to.equal(13);
   });
 
   it("should deactivate and return undefined", async () => {

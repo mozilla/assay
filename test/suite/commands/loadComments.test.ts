@@ -1,13 +1,24 @@
 import { expect } from "chai";
-import { describe, it, afterEach } from "mocha";
+import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { loadFileComments } from "../../../src/commands/loadComments";
+import * as constants from "../../../src/config/globals";
 import * as cacheFunctions from "../../../src/utils/addonCache";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 describe("loadComments.ts", async () => {
+  beforeEach(() => {
+    const getFileDecoratorStub = sinon.stub(
+      constants,
+      "getFileDecorator"
+    );
+    getFileDecoratorStub.returns({
+      updateDecorations: sinon.stub(),
+    } as any);
+  });
+
   afterEach(async () => {
     sinon.restore();
   });
@@ -56,6 +67,7 @@ describe("loadComments.ts", async () => {
               "test-root-folder-path/test-guid/test-version/test-filepath",
           },
         },
+        setDecorations: sinon.stub(),
       });
 
       const getRootFolderPathStub = sinon.stub(

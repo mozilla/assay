@@ -92,4 +92,19 @@ describe("addonCache.ts", async () => {
       expect(fs.existsSync(cachePath)).to.be.false;
     });
   });
+
+  describe("removeEmptyObjectsFromCache()", async () => {
+    it("should remove empty objects from the cache", async () => {
+      // all of this should be deleted since there is no actual data, just keys
+      await addToCache("test-guid", ["test-key", "test-key-2", "test-key-3"], "");
+
+      expect(fs.existsSync(filePath)).to.be.true;
+
+      const json = fs.readFileSync(filePath, "utf8");
+      const data = JSON.parse(json);
+      expect(data).to.deep.equal({});
+    });
+
+    
+  });
 });

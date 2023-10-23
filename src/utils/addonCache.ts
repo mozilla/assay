@@ -39,22 +39,38 @@ export async function addToCache(
   }
 
   let currentLevel = cacheFileJSON;
+  const levelObjects = [];
 
   for (const key of keys.slice(0, -1)) {
+    levelObjects.push([currentLevel, key]);
     currentLevel = currentLevel[key] = currentLevel[key] || {};
   }
 
-  // if value is undefined, delete the key
   if (!value) {
     delete currentLevel[keys[keys.length - 1]];
   } else {
     currentLevel[keys[keys.length - 1]] = value;
   }
 
+  removeEmptyObjectsFromCache(levelObjects);
+
+  console.log("cacheFileJSON", cacheFileJSON);
   await fs.promises.writeFile(
     cacheFilePath,
     JSON.stringify(cacheFileJSON, null, 2)
   );
+}
+
+// Upon removing comments, we need to remove empty objects from the cache
+// so that our file tree indicators are correct
+export function removeEmptyObjectsFromCache(levelObjects: any[]) {
+  while (levelObjects.length > 0) {
+    const levelObject = levelObjects.pop();
+    const [parentObject, key] = levelObject;
+    if (parentObject && Object.keys(parentObject[key]).length === 0) {
+      delete parentObject[key];
+    }
+  }
 }
 
 export async function getFromCache(addonGUID: string, keys: string[]) {
@@ -72,11 +88,10 @@ export async function getFromCache(addonGUID: string, keys: string[]) {
   let currentLevel = cacheFileJSON;
   for (const key of keys) {
     if (!(key in currentLevel)) {
-      return undefined;
+      return;
     }
     currentLevel = currentLevel[key];
   }
-
   return currentLevel;
 }
 

@@ -27,13 +27,14 @@ export async function loadFileComments() {
 
   const relativePath = fullPath.replace(rootFolder, "");
   const guid = relativePath.split("/")[1];
-  const version = relativePath.split("/")[2];
-  const filepath = relativePath.split(version)[1];
+  const keys = relativePath.split("/").slice(2);
 
   const fileDecorator = getFileDecorator();
   fileDecorator.updateDecorations(doc.uri);
-  const comments = await getFromCache(guid, [version, filepath]);
+
+  const comments = await getFromCache(guid, keys);
   if (!comments) {
+    editor.setDecorations(commentDecoration, []);
     return;
   }
 
