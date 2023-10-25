@@ -34,6 +34,10 @@
         {
           "command": "assay.openInDiffTool",
           "when": "false"
+        },
+        {
+          "command": "assay.welcome",
+          "when": "false"
         }
       ],
       "explorer/context": [
@@ -53,6 +57,11 @@
           "when": "editorTextFocus",
           "command": "assay.codeComment",
           "group": "navigation"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "assay.deleteComment",
+          "group": "navigation"
         }
       ]
     },
@@ -67,7 +76,7 @@
     "commands": [
       {
         "command": "assay.welcome",
-        "title": "Assay Introduction"
+        "title": "(Assay) Introduction"
       },
       {
         "command": "assay.openInDiffTool",
@@ -84,6 +93,10 @@
       {
         "command": "assay.exportCommentsFromFolder",
         "title": "(Assay) Export Comments"
+      },
+      {
+        "command": "assay.deleteComment",
+        "title": "(Assay) Delete Comment"
       }
     ]
   },
