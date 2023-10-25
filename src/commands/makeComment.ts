@@ -23,7 +23,12 @@ export async function makePanel(
 
   panel.webview.onDidReceiveMessage(async (message) => {
     panel.dispose();
-    await addToCache(guid, [version, filepath, lineNumber], message.comment);
+    const pathParts = filepath.split("/").slice(1);
+    await addToCache(
+      guid,
+      [version, ...pathParts, lineNumber],
+      message.comment
+    );
     await loadFileComments();
   });
 
@@ -49,12 +54,9 @@ export async function makeComment() {
   const guid = relativePath.split("/")[1];
   const version = relativePath.split("/")[2];
   const filepath = relativePath.split(version)[1];
+  const keys = relativePath.split("/").slice(2);
 
-  const existingComment = await getFromCache(guid, [
-    version,
-    filepath,
-    lineNumber,
-  ]);
+  const existingComment = await getFromCache(guid, [...keys, lineNumber]);
 
   await makePanel(guid, version, filepath, lineNumber, existingComment);
 }

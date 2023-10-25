@@ -14,14 +14,21 @@ import { updateTaskbar } from "./commands/updateTaskbar";
 import {
   setExtensionSecretStorage,
   setExtensionStoragePath,
+  setFileDecorator,
 } from "./config/globals";
+import { CustomFileDecorationProvider } from "./views/fileDecorations";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
+  const fileDecorator = new CustomFileDecorationProvider();
+  setFileDecorator(fileDecorator);
   setExtensionStoragePath(storagePath);
   setExtensionSecretStorage(context.secrets);
+
+  // load comments on startup/reload
+  await loadFileComments();
 
   const reviewDisposable = vscode.commands.registerCommand(
     "assay.review",
@@ -106,7 +113,8 @@ export async function activate(context: vscode.ExtensionContext) {
       async () => await loadFileComments()
     ),
     exportCommentsFileDisposable,
-    exportCommentsFolderDisposable
+    exportCommentsFolderDisposable,
+    vscode.window.registerFileDecorationProvider(fileDecorator)
   );
 }
 

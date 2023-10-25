@@ -69,7 +69,7 @@ describe("makeComment.ts", async () => {
       expect(getFromCacheStub.args[0][0]).to.equal("test-guid");
       expect(getFromCacheStub.args[0][1]).to.deep.equal([
         "test-version",
-        "/test-filepath",
+        "test-filepath",
         "test-lineNumber",
       ]);
     });
