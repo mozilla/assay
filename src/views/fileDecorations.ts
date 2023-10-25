@@ -17,7 +17,6 @@ export async function fileHasComment(uri: vscode.Uri) {
   const comments = await getFromCache(guid, keys);
   // check if comments map is empty or not defined
   if (!comments || Object.keys(comments).length === 0) {
-    console.log("returning false");
     return false;
   }
   return true;
@@ -69,7 +68,7 @@ export class CustomFileDecorationProvider {
       (fs.lstatSync(uri.fsPath).isDirectory() && (await folderHasComment(uri)))
     ) {
       return {
-        badge: "C",
+        badge: "✎",
         color: new vscode.ThemeColor("charts.green"),
       };
     }

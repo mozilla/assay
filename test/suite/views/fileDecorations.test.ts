@@ -100,5 +100,14 @@ describe("fileDecorations.ts", async () => {
             ])
             ).to.be.true;
         });
+
+        it("should return false if the folder is the guid folder", async () => {
+            const result = await folderHasComment(
+                vscode.Uri.file(
+                    "test-root-folder-path/test-guid"
+                )
+            );
+            expect(result).to.be.false;
+        });
     });
 });

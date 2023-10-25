@@ -54,7 +54,6 @@ export async function addToCache(
 
   removeEmptyObjectsFromCache(levelObjects);
 
-  console.log("cacheFileJSON", cacheFileJSON);
   await fs.promises.writeFile(
     cacheFilePath,
     JSON.stringify(cacheFileJSON, null, 2)
