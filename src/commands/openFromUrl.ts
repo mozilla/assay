@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { downloadAndExtract } from "./getAddon";
@@ -8,7 +9,7 @@ export async function handleReviewUrl(guid: string, version: string) {
   const rootPath = await getRootFolderPath();
   const addonVersionManifestPath = `${rootPath}/${guid}/${version}/manifest.json`;
   try {
-    await vscode.workspace.fs.stat(vscode.Uri.file(addonVersionManifestPath));
+    await fs.promises.stat(addonVersionManifestPath);
   } catch (error) {
     await downloadAndExtract(guid, version);
   }
