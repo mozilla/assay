@@ -1,6 +1,7 @@
 {
   "name": "assay",
   "displayName": "assay",
+  "publisher": "mozilla",
   "description": "A Firefox Addons review tool disguised as a VSCode exention.",
   "version": "0.0.1",
   "engines": {
