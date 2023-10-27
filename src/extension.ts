@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
+import { removeCommentFromCurrentLine } from "./commands/deleteComment";
 import {
   exportCommentsFromFile,
   exportCommentsFromFolderPath,
@@ -103,6 +104,13 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const deleteCommentDisposable = vscode.commands.registerCommand(
+    "assay.deleteComment",
+    async () => {
+      await removeCommentFromCurrentLine();
+    }
+  );
+
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -121,7 +129,8 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
     exportCommentsFileDisposable,
     exportCommentsFolderDisposable,
-    vscode.window.registerFileDecorationProvider(fileDecorator)
+    vscode.window.registerFileDecorationProvider(fileDecorator),
+    deleteCommentDisposable
   );
 }
 

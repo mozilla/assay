@@ -83,12 +83,17 @@ export async function getCommentHTML(
       }</textarea>
         <br />
       <button id="submit">Submit</button>
+      <button id="delete">Delete</button>
       <script>
         const vscode = acquireVsCodeApi();
         const submitButton = document.getElementById("submit");
+        const deleteButton = document.getElementById("delete");
         const comment = document.getElementById("comment");
         submitButton.addEventListener("click", () => {
             vscode.postMessage({ command: 'closePanel', comment: comment.value});
+        });
+        deleteButton.addEventListener("click", () => {
+            vscode.postMessage({ command: 'closePanel', comment: ""});
         });
       </script>
     </body>
