@@ -22,7 +22,7 @@ export async function loadFileComments() {
   const fullPath = doc.uri.fsPath;
   const rootFolder = await getRootFolderPath();
   if (!fullPath.startsWith(rootFolder)) {
-    throw new Error("File is not in the root folder");
+    return;
   }
 
   const relativePath = fullPath.replace(rootFolder, "");

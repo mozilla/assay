@@ -47,7 +47,8 @@ export async function getAddonVersions(input: string, next?: string) {
 }
 
 export async function getVersionChoice(
-  input: string
+  input: string,
+  urlVersion?: string
 ): Promise<{ fileID: string; version: string }> {
   const versions: addonVersion[] = [];
   let next: string | undefined = undefined;
@@ -64,9 +65,12 @@ export async function getVersionChoice(
     const versionItems = versions.map((version) => version.version);
     next ? versionItems.push("More") : null;
 
-    const choice = await vscode.window.showQuickPick(versionItems, {
-      placeHolder: "Choose a version",
-    });
+    // if opened from a vscode:// link, use the version from the link
+    const choice =
+      urlVersion ||
+      (await vscode.window.showQuickPick(versionItems, {
+        placeHolder: "Choose a version",
+      }));
 
     if (choice === "More") {
       continue;

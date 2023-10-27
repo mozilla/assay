@@ -10,6 +10,7 @@ import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
+import { handleUri } from "./commands/openFromUrl";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
   setExtensionSecretStorage,
@@ -29,6 +30,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // load comments on startup/reload
   await loadFileComments();
+
+  // listen for vscode://publisher.assay/ links
+  const UriHandlerDisposable = vscode.window.registerUriHandler({
+    handleUri,
+  });
 
   const reviewDisposable = vscode.commands.registerCommand(
     "assay.review",
@@ -98,6 +104,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    UriHandlerDisposable,
     reviewDisposable,
     welcomeDisposable,
     getDisposable,
