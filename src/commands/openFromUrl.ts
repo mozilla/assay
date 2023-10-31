@@ -21,11 +21,10 @@ export async function handleReviewUrl(guid: string, version: string) {
 // handles vscode://mozilla.assay/... urls
 export async function handleUri(uri: vscode.Uri) {
   const { path } = uri;
-  const action = path.split("/")[1];
+  const [_, action, ...rest] = path.split("/");
 
   if (action === "review") {
-    const guid = path.split("/")[2];
-    const version = path.split("/")[3];
+    const [guid, version] = rest;
     await handleReviewUrl(guid, version);
   }
 }

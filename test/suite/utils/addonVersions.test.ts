@@ -75,6 +75,27 @@ describe("addonVersions.ts", () => {
         expect(version?.version).to.equal("1");
       });
     });
+
+    it("should pick the version from the input parameter", async () => {
+      const fetchStub = sinon.stub();
+      fetchStub.onCall(0).returns({
+        json: () => {
+          return {
+            results: firstVersions,
+          };
+        },
+      });
+      sinon.replace(fetch, "default", fetchStub as any);
+
+      const showQuickPickStub = sinon.stub();
+      showQuickPickStub.onCall(0).returns("1");
+      sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
+
+      getVersionChoice("addon-slug-or-guid", "2").then((version) => {
+        expect(version?.fileID).to.equal("2");
+        expect(version?.version).to.equal("2");
+      });
+    });
   });
 
   describe("getPaginatedVersions()", () => {
@@ -181,7 +202,10 @@ describe("addonVersions.ts", () => {
       });
       sinon.replace(fetch, "default", fetchStub as any);
 
-      const showErrorMessageStub = sinon.stub(vscode.window, "showErrorMessage");
+      const showErrorMessageStub = sinon.stub(
+        vscode.window,
+        "showErrorMessage"
+      );
       showErrorMessageStub.onCall(0).resolves({ title: "Cancel" });
 
       try {
