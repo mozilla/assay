@@ -20,13 +20,16 @@ export async function getInput(): Promise<string> {
   return input;
 }
 
-export async function downloadAndExtract() {
+export async function downloadAndExtract(
+  urlGuid?: string,
+  urlVersion?: string
+) {
   try {
-    const input = await getInput();
+    const input = urlGuid || (await getInput());
 
     const json: addonInfoResponse = await getAddonInfo(input);
 
-    const versionInfo = await getVersionChoice(input);
+    const versionInfo = await getVersionChoice(input, urlVersion);
     const addonFileId = versionInfo.fileID;
     const addonVersion = versionInfo.version;
     const addonGUID = json.guid;
