@@ -63,7 +63,6 @@ export class WelcomeView {
     this._panel.dispose();
   }
 
-  // get html from welcome.html
   private _getWebviewContent(mediaFolderSrc: vscode.Uri) {
     return `<!DOCTYPE html>
     <html>
