@@ -50,7 +50,7 @@ export class AssayTreeDataProvider
           }
         ),
         new AssayTreeItem(
-          "View Documentation",
+          "View Instructions",
           vscode.TreeItemCollapsibleState.None,
           {
             command: "assay.welcome",
