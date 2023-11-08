@@ -20,7 +20,7 @@ describe("sidebarView.ts", () => {
     expect(tabChildren).to.be.an("array");
     expect(tabChildren).to.have.lengthOf(4);
     expect(tabChildren[0].label).to.equal("Review New Addon Version");
-    expect(tabChildren[3].label).to.equal("View Documentation");
+    expect(tabChildren[3].label).to.equal("View Instructions");
   });
 
   it("should get the tree item", async () => {
