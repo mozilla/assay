@@ -7,6 +7,7 @@ export async function getApiKeyFromUser() {
   const apiKey = await vscode.window.showInputBox({
     prompt: "Enter your AMO API Key (e.g. user:12345678:123)",
     title: "AMO API Key",
+    ignoreFocusOut: true,
   });
 
   if (!apiKey) {
@@ -24,6 +25,7 @@ export async function getSecretFromUser() {
     prompt: "Enter your AMO API Secret",
     title: "AMO API Secret",
     password: true,
+    ignoreFocusOut: true,
   });
 
   if (!apiSecret) {
