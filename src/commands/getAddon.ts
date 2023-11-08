@@ -12,6 +12,7 @@ export async function getInput(): Promise<string> {
   const input = await vscode.window.showInputBox({
     prompt: "Enter Addon Slug, GUID, or URL",
     title: "Assay",
+    ignoreFocusOut: true,
   });
 
   if (!input) {
