@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 
 import { showErrorMessage } from "../utils/processErrors";
 
-export async function checkGetNewVersion() {
+export async function checkAndGetNewVersion() {
   const apiUrl = `https://api.github.com/repos/mozilla/assay/releases/latest`;
   const response = await fetch(apiUrl);
 
@@ -86,22 +86,19 @@ export async function installNewVersion(downloadUrl: string, version: string) {
       throw new Error(`Could not install addon`);
     }
     fs.unlinkSync(savePath);
-    const currentVersion =
-      vscode.extensions.getExtension("mozilla.assay")?.packageJSON.version;
-    console.log(currentVersion, version);
 
     vscode.window.showInformationMessage(
-      `Assay updated to version ${version} (from ${currentVersion})`
+      `Assay updated to version ${version}. Please reload VSCode.`
     );
   });
 }
 
 export async function updateAssay() {
-  const downloadInfo = await checkGetNewVersion();
+  const downloadInfo = await checkAndGetNewVersion();
   if (!downloadInfo) {
     return;
   }
   const versionLink = downloadInfo.downloadLink;
   const version = downloadInfo.version;
-  await installNewVersion(versionLink, version);
+  installNewVersion(versionLink, version);
 }
