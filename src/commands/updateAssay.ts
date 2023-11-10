@@ -28,6 +28,10 @@ export async function checkAndGetNewVersion() {
     };
   }
 
+  vscode.window.showInformationMessage(
+    `Assay is up to date (version ${currentVersion})`
+  );
+
   return false;
 }
 
@@ -42,7 +46,7 @@ export async function downloadVersion(downloadUrl: string) {
       const response = await fetch(downloadUrl);
       if (!response.ok) {
         throw new Error(
-          `Could not fetch latest version from GitHub: ${response.statusText}`
+          `Could not fetch version file from GitHub: ${response.statusText}`
         );
       }
 
@@ -53,23 +57,12 @@ export async function downloadVersion(downloadUrl: string) {
       }
       const savePath = path.join(extensionPath, "version.vsix");
 
-      const dest = fs.createWriteStream(savePath, { flags: "w" });
-      dest.write(await response.buffer());
-      dest.close();
-
-      if (!fs.existsSync(savePath)) {
-        const errorMessages = {
-          window: {
-            other: `Could not download addon to ${downloadUrl}`,
-          },
-          thrown: {
-            other: "Download failed",
-          },
-        };
-
-        return await showErrorMessage(errorMessages, "other", downloadVersion, [
-          downloadUrl,
-        ]);
+      try {
+        const dest = fs.createWriteStream(savePath, { flags: "w" });
+        dest.write(await response.buffer());
+        dest.close();
+      } catch (err: any) {
+        throw new Error(`Could not write version file: ${err.message}`);
       }
 
       return savePath;
@@ -82,21 +75,27 @@ export async function installNewVersion(downloadUrl: string, version: string) {
   const downloadProcess = spawn("code", ["--install-extension", savePath]);
 
   downloadProcess.on("exit", (code) => {
+    console.log(`Download process exited with code ${code}`);
     if (code !== 0) {
-      throw new Error(`Could not install addon`);
+      vscode.window.showErrorMessage(
+        `Assay could not be updated to version ${version}. Please try again.`
+      );
+      return false;
     }
     fs.unlinkSync(savePath);
 
     vscode.window.showInformationMessage(
-      `Assay updated to version ${version}. Please reload VSCode.`
+      `Assay updated to version ${version}. Please reload VSCode.`,
+      "Reload"
     );
+    return true;
   });
 }
 
 export async function updateAssay() {
   const downloadInfo = await checkAndGetNewVersion();
   if (!downloadInfo) {
-    return;
+    return false;
   }
   const versionLink = downloadInfo.downloadLink;
   const version = downloadInfo.version;
