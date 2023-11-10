@@ -85,9 +85,9 @@ export async function installNewVersion(downloadUrl: string, version: string) {
     fs.unlinkSync(savePath);
 
     vscode.window.showInformationMessage(
-      `Assay updated to version ${version}. Please reload VSCode.`,
-      "Reload"
+      `Assay updated to version ${version}. Please reload VSCode.`
     );
+
     return true;
   });
 }
