@@ -12,6 +12,7 @@ import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { handleUri } from "./commands/openFromUrl";
+import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
   setExtensionSecretStorage,
@@ -36,6 +37,13 @@ export async function activate(context: vscode.ExtensionContext) {
   const UriHandlerDisposable = vscode.window.registerUriHandler({
     handleUri,
   });
+
+  const assayUpdaterDisposable = vscode.commands.registerCommand(
+    "assay.checkForUpdates",
+    async () => {
+      await updateAssay();
+    }
+  );
 
   const reviewDisposable = vscode.commands.registerCommand(
     "assay.review",
@@ -130,7 +138,8 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentsFileDisposable,
     exportCommentsFolderDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
-    deleteCommentDisposable
+    deleteCommentDisposable,
+    assayUpdaterDisposable
   );
 }
 

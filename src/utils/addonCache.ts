@@ -5,12 +5,12 @@ import { getExtensionStoragePath } from "../config/globals";
 
 /***
  * The cache folder is stored at
- * ../Code/User/globalStorage/undefined_publisher.assay/.cache
- * Upon initialization, the extension folder, undefined_publisher.assay,
+ * ../Code/User/globalStorage/mozilla.assay/.cache
+ * Upon initialization, the extension folder, mozilla.assay,
  * may not exist. This function creates that folder and the cache folder
  * if they do not exist.
  *
- * The folder undefined_publisher.assay will continue to exist after this.
+ * The folder mozilla.assay will continue to exist after this.
  */
 export async function addToCache(
   addonGUID: string,

@@ -94,6 +94,10 @@
       {
         "command": "assay.deleteComment",
         "title": "(Assay) Delete Comment"
+      },
+      {
+        "command": "assay.checkForUpdates",
+        "title": "(Assay) Check For Updates"
       }
     ]
   },
