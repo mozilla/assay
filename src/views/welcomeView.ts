@@ -166,6 +166,9 @@ export class WelcomeView {
         <br /><br />
         To open the review page of an addon, there is a taskbar button titled
         "{guid} - Review Page". Clicking that will bring you to the review page.
+      <h3>Updates</h3>
+        To update the extension, simply look for "(Assay) Check for Updates" in the command palette. 
+        This will automatically update the extension if there is a new version available.
       </body>
     </html>
     `;
