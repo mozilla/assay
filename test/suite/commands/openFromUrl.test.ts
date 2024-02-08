@@ -5,7 +5,7 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import * as getAddonFunctions from "../../../src/commands/getAddon";
-import { handleReviewUrl, handleUri } from "../../../src/commands/openFromUrl";
+import { handleUri } from "../../../src/commands/openFromUrl";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 describe("openFromUrl.ts", async () => {

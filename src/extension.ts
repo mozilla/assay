@@ -11,10 +11,11 @@ import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
-import { handleUri } from "./commands/openFromUrl";
+import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
+  setExtensionContext,
   setExtensionSecretStorage,
   setExtensionStoragePath,
   setFileDecorator,
@@ -29,6 +30,17 @@ export async function activate(context: vscode.ExtensionContext) {
   setFileDecorator(fileDecorator);
   setExtensionStoragePath(storagePath);
   setExtensionSecretStorage(context.secrets);
+  setExtensionContext(context);
+
+  // check if this is a newly opened workspace to open the manifest
+  if (context.globalState.get("manifestPath") !== undefined) {
+    const manifestPath = context.globalState.get("manifestPath")?.toString();
+    console.log("manifestPath", manifestPath);
+    if (manifestPath) {
+      await openWorkspace(manifestPath);
+      context.globalState.update("manifestPath", undefined);
+    }
+  }
 
   // load comments on startup/reload
   await loadFileComments();
