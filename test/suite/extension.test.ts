@@ -7,7 +7,11 @@ import { activate, deactivate } from "../../src/extension";
 const context = {
   subscriptions: [] as vscode.Disposable[],
   globalStorageUri: vscode.Uri.parse("test"),
-} as vscode.ExtensionContext;
+  globalState: {
+    get: () => undefined,
+    update: () => undefined,
+  }
+} as unknown as vscode.ExtensionContext;
 
 describe("extension.ts", () => {
   it("should activate and register commands and have 3 subscriptions", async () => {
