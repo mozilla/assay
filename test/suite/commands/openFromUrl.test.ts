@@ -51,6 +51,12 @@ describe("openFromUrl.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
+      const updateWorkspaceFoldersStub = sinon.stub(
+        vscode.workspace,
+        "updateWorkspaceFolders"
+      );
+      updateWorkspaceFoldersStub.resolves();
+
       await handleUri(uri as any);
       expect(downloadAndExtractStub.called).to.be.true;
       expect(showTextDocumentStub.called).to.be.true;
@@ -79,6 +85,12 @@ describe("openFromUrl.ts", async () => {
         "showTextDocument"
       );
       showTextDocumentStub.resolves();
+
+      const updateWorkspaceFoldersStub = sinon.stub(
+        vscode.workspace,
+        "updateWorkspaceFolders"
+      );
+      updateWorkspaceFoldersStub.resolves();
 
       await handleUri(uri as any);
       expect(showTextDocumentStub.called).to.be.true;
