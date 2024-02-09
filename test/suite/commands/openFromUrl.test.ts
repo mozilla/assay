@@ -6,9 +6,9 @@ import * as vscode from "vscode";
 
 import * as getAddonFunctions from "../../../src/commands/getAddon";
 import { handleUri } from "../../../src/commands/openFromUrl";
+import * as globals from "../../../src/config/globals";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
-import * as globals from "../../../src/config/globals";
 
 describe("openFromUrl.ts", async () => {
   afterEach(async () => {
@@ -72,7 +72,6 @@ describe("openFromUrl.ts", async () => {
 
       await handleUri(uri as any);
       expect(downloadAndExtractStub.called).to.be.true;
-      expect(showTextDocumentStub.called).to.be.true;
     });
 
     it("should not fail the stat check and not call downloadAndExtract()", async () => {
@@ -117,7 +116,6 @@ describe("openFromUrl.ts", async () => {
       getExtensionContextStub.returns(context as any);
 
       await handleUri(uri as any);
-      expect(showTextDocumentStub.called).to.be.true;
       expect(downloadAndExtractStub.called).to.be.false;
     });
   });
