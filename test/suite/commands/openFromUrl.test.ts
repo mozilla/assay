@@ -8,6 +8,8 @@ import * as getAddonFunctions from "../../../src/commands/getAddon";
 import { handleUri } from "../../../src/commands/openFromUrl";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
+import * as globals from "../../../src/config/globals";
+
 describe("openFromUrl.ts", async () => {
   afterEach(async () => {
     sinon.restore();
@@ -57,6 +59,17 @@ describe("openFromUrl.ts", async () => {
       );
       updateWorkspaceFoldersStub.resolves();
 
+      const context = {
+        globalState: {
+          update: sinon.stub(),
+        },
+      };
+      const getExtensionContextStub = sinon.stub(
+        globals,
+        "getExtensionContext"
+      );
+      getExtensionContextStub.returns(context as any);
+
       await handleUri(uri as any);
       expect(downloadAndExtractStub.called).to.be.true;
       expect(showTextDocumentStub.called).to.be.true;
@@ -91,6 +104,17 @@ describe("openFromUrl.ts", async () => {
         "updateWorkspaceFolders"
       );
       updateWorkspaceFoldersStub.resolves();
+
+      const context = {
+        globalState: {
+          update: sinon.stub(),
+        },
+      };
+      const getExtensionContextStub = sinon.stub(
+        globals,
+        "getExtensionContext"
+      );
+      getExtensionContextStub.returns(context as any);
 
       await handleUri(uri as any);
       expect(showTextDocumentStub.called).to.be.true;
