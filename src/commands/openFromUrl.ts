@@ -13,7 +13,7 @@ export async function openWorkspace(manifestPath: string) {
   const existingWorkspaceFolder = vscode.workspace.workspaceFolders?.find(
     (folder) => folder.uri.fsPath === rootUri.fsPath
   );
-  console.log("Existing workspace folder", existingWorkspaceFolder);
+
   if (existingWorkspaceFolder) {
     await vscode.commands.executeCommand(
       "workbench.files.action.collapseExplorerFolders"
@@ -34,7 +34,7 @@ export async function openWorkspace(manifestPath: string) {
 // handles urls of the form /review/<guid>/<version>
 export async function handleReviewUrl(guid: string, version: string) {
   const rootPath = await getRootFolderPath();
-  const addonManifestPath = `${rootPath}/addons/${guid}/${version}/manifest.json`;
+  const addonManifestPath = `${rootPath}/${guid}/${version}/manifest.json`;
   try {
     await fs.promises.stat(addonManifestPath);
   } catch (error) {

@@ -35,9 +35,9 @@ export async function activate(context: vscode.ExtensionContext) {
   // check if this is a newly opened workspace to open the manifest
   if (context.globalState.get("manifestPath") !== undefined) {
     const manifestPath = context.globalState.get("manifestPath")?.toString();
+    await context.globalState.update("manifestPath", undefined);
     if (manifestPath) {
       await openWorkspace(manifestPath);
-      context.globalState.update("manifestPath", undefined);
     }
   }
 
