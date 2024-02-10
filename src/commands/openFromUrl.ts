@@ -13,8 +13,8 @@ export async function openWorkspace(manifestPath: string) {
   const existingWorkspaceFolder = vscode.workspace.workspaceFolders?.find(
     (folder) => folder.uri.fsPath === rootUri.fsPath
   );
+  console.log("Existing workspace folder", existingWorkspaceFolder);
   if (existingWorkspaceFolder) {
-    console.log("workspace already open");
     await vscode.commands.executeCommand(
       "workbench.files.action.collapseExplorerFolders"
     );
