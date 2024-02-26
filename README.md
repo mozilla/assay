@@ -6,7 +6,7 @@
 
 ## Requirements
 
-You certainly need [Node](https://nodejs.org/en/) 16.x. Development is done with [VSCode](https://code.visualstudio.com/).
+You certainly need [Node](https://nodejs.org/en/). Development is done with [VSCode](https://code.visualstudio.com/).
 
 
 ## Setup
