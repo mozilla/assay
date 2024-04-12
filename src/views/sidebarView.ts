@@ -57,6 +57,14 @@ export class AssayTreeDataProvider
             title: "View Assay Documentation",
           }
         ),
+        new AssayTreeItem(
+            "Lint AMO Addon",
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "assay.lint",
+              title: "Lint Addon",
+            }
+        ),
       ];
       return Promise.resolve(tabItems);
     }
