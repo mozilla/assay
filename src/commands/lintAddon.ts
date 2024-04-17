@@ -1,3 +1,4 @@
+import linter from 'addons-linter';
 import { existsSync } from 'node:fs';
 import * as vscode from "vscode";
 
@@ -16,19 +17,42 @@ export async function lintAddon() {
     throw new Error("lintAddon failed, the file path doesn't exist in local file system!");
   }
 
-  try {
-    // Fetch linting results from the server
-    const lintingResults = await "http://localhost:3000?directory=${fsInput}";
+  // try {
+  //   // Fetch linting results from the server
+  //   const lintingResults = await "http://localhost:3000?directory=${fsInput}";
 
-    // Check if linting results are available
-    if (lintingResults) {
-        // Process and display linting results
-        console.log(lintingResults);
-        // Your logic to parse and display linting results
-    } else {
-        vscode.window.showErrorMessage('Error fetching linting results!');
-    }
-  } catch (error) {
-    console.error(error);
+  //   // Check if linting results are available
+  //   if (lintingResults) {
+  //       // Process and display linting results
+  //       console.log(lintingResults);
+  //       // Your logic to parse and display linting results
+  //   } else {
+  //       vscode.window.showErrorMessage('Error fetching linting results!');
+  //   }
+  // } catch (error) {
+  //   console.error(error);
+  // }
+
+  const linterOptions = {
+    config: {
+        _: [fsInput],
+        logLevel: process.env.VERBOSE ? 'debug' : 'fatal',
+        stack: Boolean(process.env.VERBOSE),
+        pretty: true,
+        warningsAsErrors: false,
+        metadata: false,
+        output: 'none',
+        boring: false,
+        selfHosted: false,
+    },
+    runAsBinary: false,
+  }
+
+  try {
+    const instance = linter.createInstance(linterOptions);
+    const lintResults = instance.run();
+    console.log(lintResults);
+  } catch (err) {
+    console.error("addons-linter failed!\n", err);
   }
 }
