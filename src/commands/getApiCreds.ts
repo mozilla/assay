@@ -42,8 +42,11 @@ export async function getCredsFromStorage(): Promise<{
   secret: string;
 }> {
   const secrets = getExtensionSecretStorage();
-  const apiKey = await secrets.get("amoApiKey");
-  const secret = await secrets.get("amoApiSecret");
+
+  const [apiKey, secret] = await Promise.all([
+    secrets.get("amoApiKey"),
+    secrets.get("amoApiSecret")
+  ]);
 
   if (!apiKey || !secret) {
     return await showErrorMessage(
