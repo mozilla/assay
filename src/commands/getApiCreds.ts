@@ -4,9 +4,13 @@ import { getExtensionSecretStorage } from "../config/globals";
 import { showErrorMessage } from "../utils/processErrors";
 
 export async function getApiKeyFromUser() {
+  const secrets = getExtensionSecretStorage();
+
+  const placeHolder = (await secrets.get("amoApiKey"));
   const apiKey = await vscode.window.showInputBox({
     prompt: "Enter your AMO API Key (e.g. user:12345678:123)",
     title: "AMO API Key",
+    placeHolder,
     ignoreFocusOut: true,
   });
 
@@ -14,16 +18,25 @@ export async function getApiKeyFromUser() {
     throw new Error("No API Key provided");
   }
 
-  const secrets = getExtensionSecretStorage();
-
   await secrets.store("amoApiKey", apiKey);
   return true;
 }
 
+// Generate a shorter version of the secret that we can show to the user
+export function truncateSecret(str: string, size = 4) {
+  const head = str.substring(0, size);
+  const tail = str.substring(str.length - size);
+  return `${head}...${tail}`;
+}
+
 export async function getSecretFromUser() {
+  const secrets = getExtensionSecretStorage();
+  const placeHolder = truncateSecret((await secrets.get("amoApiSecret")) || '');
+
   const apiSecret = await vscode.window.showInputBox({
     prompt: "Enter your AMO API Secret",
     title: "AMO API Secret",
+    placeHolder,
     password: true,
     ignoreFocusOut: true,
   });
@@ -32,8 +45,7 @@ export async function getSecretFromUser() {
     throw new Error("No API Secret provided");
   }
 
-  const secrets = getExtensionSecretStorage();
-  await secrets.store("amoApiSecret", apiSecret);
+    await secrets.store("amoApiSecret", apiSecret);
   return true;
 }
 
