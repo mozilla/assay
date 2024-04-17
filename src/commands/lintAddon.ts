@@ -1,4 +1,4 @@
-import linter from 'addons-linter';
+import * as linter from 'addons-linter';
 import { existsSync } from 'node:fs';
 import * as vscode from "vscode";
 
@@ -33,7 +33,7 @@ export async function lintAddon() {
   //   console.error(error);
   // }
 
-  const linterOptions = {
+  const linterOptions: linter.Options = {
     config: {
         _: [fsInput],
         logLevel: process.env.VERBOSE ? 'debug' : 'fatal',
