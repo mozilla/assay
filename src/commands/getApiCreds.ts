@@ -14,7 +14,10 @@ export async function getApiKeyFromUser() {
     ignoreFocusOut: true,
   });
 
-  if (!apiKey) {
+  if (apiKey === undefined) {
+    // User cancelled input
+    return false;
+  } else if (!apiKey) {
     throw new Error("No API Key provided");
   }
 
@@ -41,11 +44,14 @@ export async function getSecretFromUser() {
     ignoreFocusOut: true,
   });
 
-  if (!apiSecret) {
+  if (apiSecret === undefined) {
+    // User cancelled input
+    return false;
+  } else if (!apiSecret) {
     throw new Error("No API Secret provided");
   }
 
-    await secrets.store("amoApiSecret", apiSecret);
+  await secrets.store("amoApiSecret", apiSecret);
   return true;
 }
 
