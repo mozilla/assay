@@ -1,7 +1,10 @@
+import fetch from "node-fetch";
 import * as vscode from "vscode";
 
+import constants from "../config/config";
 import { getExtensionSecretStorage } from "../config/globals";
 import { showErrorMessage } from "../utils/processErrors";
+import { makeAuthHeader } from "../utils/requestAuth";
 
 export async function getApiKeyFromUser() {
   const secrets = getExtensionSecretStorage();
@@ -52,6 +55,7 @@ export async function getSecretFromUser() {
   }
 
   await secrets.store("amoApiSecret", apiSecret);
+
   return true;
 }
 
@@ -82,4 +86,21 @@ export async function getCredsFromStorage(): Promise<{
   }
 
   return { apiKey, secret };
+}
+
+export async function testApiCredentials() {
+  const url = `${constants.apiBaseURL}accounts/profile/`;
+  const headers = await makeAuthHeader();
+  const response = await fetch(url, { headers });
+
+  if (response.status === 200) {
+    vscode.window.showInformationMessage("Success! Assay API Key and Secret validated.");
+    return true;
+  } else {
+    vscode.window.showErrorMessage(
+      `Credential test failed: ${response.status} (${response.statusText})`,
+      { title: "Close", isCloseAffordance: true },
+    );
+    return false;
+  }
 }

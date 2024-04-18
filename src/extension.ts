@@ -7,7 +7,7 @@ import {
   exportCommentsFromFolderPath,
 } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
-import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
+import { getApiKeyFromUser, getSecretFromUser, testApiCredentials } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
@@ -88,6 +88,13 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const apiCredentialsTestDisposable = vscode.commands.registerCommand(
+    "assay.testApiCredentials",
+    () => {
+      testApiCredentials();
+    }
+  );
+
   const diffDisposable = vscode.commands.registerCommand(
     "assay.openInDiffTool",
     async (_e: Uri, uris?: [Uri, Uri]) => {
@@ -137,6 +144,7 @@ export async function activate(context: vscode.ExtensionContext) {
     getDisposable,
     apiKeyDisposable,
     apiSecretDisposable,
+    apiCredentialsTestDisposable,
     diffDisposable,
     commentDisposable,
     sidebarDisposable,
