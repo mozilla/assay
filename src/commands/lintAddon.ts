@@ -10,11 +10,13 @@ export async function lintAddonLocally() {
   });
 
   if (!fsInput) {
-    throw new Error("lintAddon failed, no input provided!");
+    vscode.window.showErrorMessage("lintAddonLocally failed, no input provided");
+    throw new Error("lintAddonLocally failed, no input provided!");
   }
 
   if (!existsSync(fsInput)) {
-    throw new Error("lintAddon failed, the file path doesn't exist in local file system!");
+    vscode.window.showErrorMessage("lintAddonLocally failed, the file path doesn't exist in local file system");
+    throw new Error("lintAddonLocally failed, the file path doesn't exist in local file system!");
   }
 
   const linterOptions: linter.Options = {
@@ -37,7 +39,7 @@ export async function lintAddonLocally() {
     const lintResults = instance.run(); // TODO: This fails...
     console.log(lintResults);
   } catch (err) {
-    console.error("addons-linter failed!\n", err);
+    console.error("addons-linter failed in lintAddonLocally function: ", err);
   }
 }
 
@@ -49,17 +51,19 @@ export async function lintAddonApi() {
   });
 
   if (!fsInput) {
-    throw new Error("lintAddon failed, no input provided!");
+    vscode.window.showErrorMessage("lintAddonApi failed, no input provided");
+    throw new Error("lintAddonApi failed, no input provided!");
   }
 
   if (!existsSync(fsInput)) {
-    throw new Error("lintAddon failed, the file path doesn't exist in local file system!");
+    vscode.window.showErrorMessage("lintAddonApi failed, the file path doesn't exist in local file system");
+    throw new Error("lintAddonApi failed, the file path doesn't exist in local file system!");
   }
 
   try {
     const lintResults = "Temporary value"; // = await // TODO: Make API call.
     console.log(lintResults);
   } catch (err) {
-    console.error("addons-linter failed!\n", err);
+    console.error("addons-linter failed in lintAddonApi function: ", err);
   }
 }
