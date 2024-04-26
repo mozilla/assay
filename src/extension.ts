@@ -9,7 +9,7 @@ import {
   testApiCredentials,
 } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
-import { lintAddon } from "./commands/lintAddon";
+import { lintAddonLocally, lintAddonApi } from "./commands/lintAddon";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
@@ -133,8 +133,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const lint = vscode.commands.registerCommand("assay.lint", () => {
-    lintAddon();
+  const lintLocally = vscode.commands.registerCommand("assay.lintLocally", () => {
+    lintAddonLocally();
+  });
+
+  const lintApi = vscode.commands.registerCommand("assay.lintApi", () => {
+    lintAddonApi();
   });
 
   context.subscriptions.push(
@@ -147,7 +151,8 @@ export async function activate(context: vscode.ExtensionContext) {
     apiCredentialsTestDisposable,
     diffDisposable,
     sidebarDisposable,
-    lint,
+    lintLocally,
+    lintApi,
     vscode.window.onDidChangeActiveTextEditor(
       async () => await updateTaskbar()
     ),

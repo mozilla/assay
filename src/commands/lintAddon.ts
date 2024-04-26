@@ -2,10 +2,10 @@ import * as linter from 'addons-linter';
 import { existsSync } from 'node:fs';
 import * as vscode from "vscode";
 
-export async function lintAddon() {
+export async function lintAddonLocally() {
   const fsInput = await vscode.window.showInputBox({
     prompt: "Enter path to Addon (local file system)",
-    title: "Lint AMO Addon",
+    title: "Lint AMO Addon Locally",
     ignoreFocusOut: true,
   });
 
@@ -16,22 +16,6 @@ export async function lintAddon() {
   if (!existsSync(fsInput)) {
     throw new Error("lintAddon failed, the file path doesn't exist in local file system!");
   }
-
-  // try {
-  //   // Fetch linting results from the server
-  //   const lintingResults = await "http://localhost:3000?directory=${fsInput}";
-
-  //   // Check if linting results are available
-  //   if (lintingResults) {
-  //       // Process and display linting results
-  //       console.log(lintingResults);
-  //       // Your logic to parse and display linting results
-  //   } else {
-  //       vscode.window.showErrorMessage('Error fetching linting results!');
-  //   }
-  // } catch (error) {
-  //   console.error(error);
-  // }
 
   const linterOptions: linter.Options = {
     config: {
@@ -49,8 +33,31 @@ export async function lintAddon() {
   }
 
   try {
-    const instance = linter.createInstance(linterOptions);
-    const lintResults = instance.run();
+    const instance = linter.createInstance(linterOptions); 
+    const lintResults = instance.run(); // TODO: This fails...
+    console.log(lintResults);
+  } catch (err) {
+    console.error("addons-linter failed!\n", err);
+  }
+}
+
+export async function lintAddonApi() {
+  const fsInput = await vscode.window.showInputBox({ // TODO: What input could uniquely identify the extension?
+    prompt: "Enter path the GUID of addon",
+    title: "Lint AMO Addon Via Addons API",
+    ignoreFocusOut: true,
+  });
+
+  if (!fsInput) {
+    throw new Error("lintAddon failed, no input provided!");
+  }
+
+  if (!existsSync(fsInput)) {
+    throw new Error("lintAddon failed, the file path doesn't exist in local file system!");
+  }
+
+  try {
+    const lintResults = "Temporary value"; // = await // TODO: Make API call.
     console.log(lintResults);
   } catch (err) {
     console.error("addons-linter failed!\n", err);
