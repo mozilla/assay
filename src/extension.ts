@@ -9,7 +9,7 @@ import {
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
-import { lintAddon } from "./commands/lintAddon";
+import { lintAddonLocally, lintAddonApi } from "./commands/lintAddon";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
@@ -131,8 +131,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const lint = vscode.commands.registerCommand("assay.lint", () => {
-    lintAddon();
+  const lintLocally = vscode.commands.registerCommand("assay.lintLocally", () => {
+    lintAddonLocally();
+  });
+
+  const lintApi = vscode.commands.registerCommand("assay.lintApi", () => {
+    lintAddonApi();
   });
 
   context.subscriptions.push(
@@ -145,7 +149,8 @@ export async function activate(context: vscode.ExtensionContext) {
     diffDisposable,
     commentDisposable,
     sidebarDisposable,
-    lint,
+    lintLocally,
+    lintApi,
     vscode.window.onDidChangeActiveTextEditor(
       async () => await updateTaskbar()
     ),
