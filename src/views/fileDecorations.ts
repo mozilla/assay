@@ -44,7 +44,7 @@ export async function folderHasComment(uri: vscode.Uri) {
   return true;
 }
 
-export class CustomFileDecorationProvider {
+export class CustomFileDecorationProvider implements vscode.FileDecorationProvider {
   private _onDidChangeFileDecorations: vscode.EventEmitter<
     vscode.Uri | vscode.Uri[]
   > = new vscode.EventEmitter<vscode.Uri | vscode.Uri[]>();
@@ -53,23 +53,13 @@ export class CustomFileDecorationProvider {
 
   async provideFileDecoration(uri: vscode.Uri) {
     // if its a file and has a comment, return the decoration
-    // Also if it's a folder of a file that has a comment, return the decoration
-
-    // go up the parent folders until the root too
-    const parentFolder = uri.with({
-      path: uri.path.split("/").slice(0, -1).join("/"),
-    });
-    if (parentFolder.fsPath !== (await getRootFolderPath())) {
-      this.updateDecorations(parentFolder);
-    }
-
     if (
-      (fs.lstatSync(uri.fsPath).isFile() && (await fileHasComment(uri))) ||
-      (fs.lstatSync(uri.fsPath).isDirectory() && (await folderHasComment(uri)))
+      fs.lstatSync(uri.fsPath).isFile() && (await fileHasComment(uri))
     ) {
       return {
         badge: "✎",
         color: new vscode.ThemeColor("charts.green"),
+        propagate: true
       };
     }
   }
