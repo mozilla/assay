@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
+import AssayComment from "./class/comment";
+import { addComment, cancelSaveComment, deleteComment, editComment, saveComment } from "./commands/comment";
 import { removeCommentFromCurrentLine } from "./commands/deleteComment";
 import {
   exportCommentsFromFile,
@@ -12,6 +14,7 @@ import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
+import { clearVerdict, selectVerdict } from "./commands/promptVerdict";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -160,6 +163,40 @@ export async function activate(context: vscode.ExtensionContext) {
     deleteCommentDisposable,
     assayUpdaterDisposable
   );
+
+  // Comment API
+
+  const commentController = vscode.comments.createCommentController('assay-comments', 'Assay');
+  
+  commentController.commentingRangeProvider = {
+    provideCommentingRanges: (document: vscode.TextDocument) => {
+			const lineCount = document.lineCount;
+			return [new vscode.Range(0, 0, lineCount - 1, 0)];
+		}
+  };
+
+  vscode.commands.registerCommand('assay-test.selectVerdict', selectVerdict);
+  vscode.commands.registerCommand('assay-test.clearVerdict', clearVerdict);
+
+  const addCommentDisposable = vscode.commands.registerCommand('assay-test.addComment', addComment);
+  const deleteCommentDisposable2 = vscode.commands.registerCommand('assay-test.deleteComment', deleteComment);
+  const cancelSaveCommentDisposable = vscode.commands.registerCommand('assay-test.cancelSaveComment', cancelSaveComment);
+  const saveCommentDisposable = vscode.commands.registerCommand('assay-test.saveComment', saveComment);
+  const editCommentDisposable = vscode.commands.registerCommand('assay-test.editComment', editComment);
+
+  vscode.commands.registerCommand('assay-test.disposeComment', () => {
+		commentController.dispose();
+	});
+
+  context.subscriptions.push(
+    commentController, 
+    addCommentDisposable, 
+    deleteCommentDisposable2, 
+    cancelSaveCommentDisposable, 
+    saveCommentDisposable, 
+    editCommentDisposable
+  );
+
 }
 
 export function deactivate() {
