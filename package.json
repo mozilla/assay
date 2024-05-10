@@ -82,7 +82,7 @@
 					"when": "comment === comment"
 				},
         {
-					"command": "assay-test.clearVerdict",
+					"command": "assay-test.changeVerdict",
 					"group": "inline@1",
 					"when": "comment === verdictComment"
 				},
@@ -161,11 +161,11 @@
 				}
 			},
       {
-				"command": "assay-test.clearVerdict",
-				"title": "Clear Verdict",
+				"command": "assay-test.changeVerdict",
+				"title": "Change Verdict",
 				"icon": {
-					"dark": "media/commentIcons/clear_verdict_inverse.svg",
-					"light": "media/commentIcons/clear_verdict.svg"
+					"dark": "media/commentIcons/change_verdict_inverse.svg",
+					"light": "media/commentIcons/change_verdict.svg"
 				}
 			},
 			{

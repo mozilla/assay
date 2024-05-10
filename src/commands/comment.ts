@@ -2,12 +2,13 @@
 import * as vscode from "vscode";
 
 import AssayComment from "../class/comment";
+import { getCommentLocation } from "../utils/commentInfo";
 import createComment from "../utils/createComment";
 
-export function addComment(reply: vscode.CommentReply){
-    reply.thread.label = 'Assay';
+export async function addComment(reply: vscode.CommentReply){
+    reply.thread.label = await getCommentLocation(reply.thread);
     reply.thread.canReply = false;
-    createComment("Comment:", reply, "comment");
+    createComment("Comments:", reply, "comment");
 }
 
 
