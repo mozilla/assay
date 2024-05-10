@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import AssayComment from "./class/comment";
 import { addComment, cancelSaveComment, deleteComment, editComment, saveComment } from "./commands/comment";
 import { removeCommentFromCurrentLine } from "./commands/deleteComment";
 import {

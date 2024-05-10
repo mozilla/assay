@@ -67,7 +67,48 @@
           "command": "assay.deleteComment",
           "group": "navigation"
         }
-      ]
+      ],
+      "comments/commentThread/context": [
+				{
+					"command": "assay-test.addComment",
+					"group": "inline",
+					"when": "commentController == assay-comments && commentThreadIsEmpty"
+				}
+			],
+			"comments/comment/title": [
+				{
+					"command": "assay-test.selectVerdict",
+					"group": "inline@1",
+					"when": "comment === comment"
+				},
+        {
+					"command": "assay-test.clearVerdict",
+					"group": "inline@1",
+					"when": "comment === verdictComment"
+				},
+				{
+					"command": "assay-test.editComment",
+					"group": "inline@2",
+					"when": "comment !== verdict && commentController == assay-comments"
+				},
+				{
+					"command": "assay-test.deleteComment",
+					"group": "inline@3",
+					"when": "comment !== verdict && commentController == assay-comments && !commentThreadIsEmpty"
+				}
+			],
+			"comments/comment/context": [
+				{
+					"command": "assay-test.cancelSaveComment",
+					"group": "inline@3",
+					"when": "commentController == assay-comments"
+				},
+				{
+					"command": "assay-test.saveComment",
+					"group": "inline@2",
+					"when": "commentController == assay-comments"
+				}
+			]
     },
     "views": {
       "explorer": [
@@ -105,7 +146,56 @@
       {
         "command": "assay.checkForUpdates",
         "title": "(Assay) Check For Updates"
-      }
+      },
+      {
+				"command": "assay-test.addComment",
+				"title": "Add Comment",
+				"enablement": "!commentIsEmpty"
+			},
+			{
+				"command": "assay-test.selectVerdict",
+				"title": "Add Verdict",
+				"icon": {
+					"dark": "media/commentIcons/add_verdict_inverse.svg",
+					"light": "media/commentIcons/add_verdict.svg"
+				}
+			},
+      {
+				"command": "assay-test.clearVerdict",
+				"title": "Clear Verdict",
+				"icon": {
+					"dark": "media/commentIcons/clear_verdict_inverse.svg",
+					"light": "media/commentIcons/clear_verdict.svg"
+				}
+			},
+			{
+				"command": "assay-test.editComment",
+				"title": "Edit Comment",
+				"icon": {
+					"dark": "media/commentIcons/edit_inverse.svg",
+					"light": "media/commentIcons/edit.svg"
+				}
+			},
+			{
+				"command": "assay-test.deleteComment",
+				"title": "Delete",
+				"icon": {
+					"dark": "media/commentIcons/close_inverse.svg",
+					"light": "media/commentIcons/close.svg"
+				}
+			},
+			{
+				"command": "assay-test.saveComment",
+				"title": "Save"
+			},
+			{
+				"command": "assay-test.cancelSaveComment",
+				"title": "Cancel"
+			},
+			{
+				"command": "assay-test.disposeComment2",
+				"title": "Remove All Comments"
+			}
     ]
   },
   "scripts": {
