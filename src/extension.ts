@@ -13,7 +13,7 @@ import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
-import { changeVerdict, selectVerdict } from "./commands/promptVerdict";
+import { selectVerdict } from "./commands/promptVerdict";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
