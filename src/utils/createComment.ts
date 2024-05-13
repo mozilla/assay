@@ -1,10 +1,10 @@
 
 import * as vscode from "vscode";
 
-import AssayComment from "../class/comment";
+import { AssayComment, AssayReply, contextValues } from "../class/comment";
 
-export default function createComment(name: string, reply: vscode.CommentReply, contextValue?: string) {
-    const thread = reply.thread;
-    const newComment = new AssayComment(new vscode.MarkdownString(reply.text), vscode.CommentMode.Preview, { name: name }, thread, contextValue);
-    thread.comments = [...thread.comments, newComment];
+export default function createComment(contextValue: contextValues, name: string, reply: AssayReply) {
+    reply.thread.canReply = false;
+    const newComment = new AssayComment(new vscode.MarkdownString(reply.text), vscode.CommentMode.Preview, { name: name }, reply.thread, contextValue);
+    reply.thread.comments = [...reply.thread.comments, newComment];
 }

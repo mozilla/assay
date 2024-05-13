@@ -1,14 +1,10 @@
 import * as vscode from "vscode";
 
-import AssayComment from "../class/comment";
+import { AssayComment } from "../class/comment";
 import createComment from "../utils/createComment";
 
 
 export async function selectVerdict(comment: AssayComment) {
-
-    if (!comment.thread){
-        return;
-    }
 
     // TODO: Replace with proper fetch.
     const items = ['Reason One', 'Second Reason', 'Another Reason'];
@@ -22,12 +18,12 @@ export async function selectVerdict(comment: AssayComment) {
     });
 
     if(!result){
-        return;
+        throw new Error("Failed to fetch VSC QuickPick menu.");
     }
 
     // if there exists a selection, clear any previous selection
     if(comment.thread.comments.length > 1) {
-        changeVerdict(comment);
+        deleteVerdict(comment);
     }
 
     // if we selected more than zero, add the verdict
@@ -35,15 +31,13 @@ export async function selectVerdict(comment: AssayComment) {
         const text = ` ∙ ${result.join("\n\n ∙ ")}`;
         comment.contextValue = 'verdictComment';
         
-        createComment("Selected Verdicts:", {thread: comment.thread, text}, "verdict");
+        createComment("verdict", "Selected Verdicts:", {thread: comment.thread, text});
         console.log(comment);
     }
 
 }
 
-export async function changeVerdict(comment: AssayComment){
-    if(comment.thread){
-        comment.contextValue = 'comment';
-        comment.thread.comments = [comment.thread.comments[0]];
-    }
+export async function deleteVerdict(comment: AssayComment){
+    comment.contextValue = 'comment';
+    comment.thread.comments = [comment.thread.comments[0]];
 }

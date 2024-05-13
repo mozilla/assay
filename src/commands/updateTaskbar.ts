@@ -21,7 +21,8 @@ export async function updateTaskbar() {
   const rootFolder = await getRootFolderPath();
   if (!filePath.startsWith(rootFolder)) {
     statusBarItem.hide();
-    throw new Error("File is not in the root folder");
+    // TODO: this is throwing constantly in the terminal when comments are disabled.
+    // throw new Error("File is not in the root folder");
   }
 
   const relativePath = filePath.replace(rootFolder, "");
