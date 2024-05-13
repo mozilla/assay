@@ -79,7 +79,7 @@
 				{
 					"command": "assay-test.selectVerdict",
 					"group": "inline@1",
-					"when": "comment === comment"
+					"when": "comment === comment || comment === markForReview"
 				},
         {
 					"command": "assay-test.changeVerdict",
@@ -147,10 +147,10 @@
         "command": "assay.checkForUpdates",
         "title": "(Assay) Check For Updates"
       },
+      
       {
 				"command": "assay-test.addComment",
-				"title": "Add Comment",
-				"enablement": "!commentIsEmpty"
+				"title": "Mark for Review"
 			},
 			{
 				"command": "assay-test.selectVerdict",

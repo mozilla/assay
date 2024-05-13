@@ -28,11 +28,10 @@ export async function selectVerdict(comment: AssayComment) {
 
     // if we selected more than zero, add the verdict
     if (result.length > 0){
-        const text = ` ∙ ${result.join("\n\n ∙ ")}`;
+        const text = new vscode.MarkdownString(` ∙ ${result.join("\n\n ∙ ")}`);
         comment.contextValue = 'verdictComment';
         
-        createComment("verdict", "Selected Verdicts:", {thread: comment.thread, text});
-        console.log(comment);
+        createComment("verdict", "Selected Verdicts:", text, comment.thread);
     }
 
 }
