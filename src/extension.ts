@@ -2,10 +2,9 @@ import * as vscode from "vscode";
 import { Uri } from "vscode";
 
 import { fetchCommentsFromCache } from "./commands/cacheComment";
-import { addComment, cancelSaveComment, deleteComment, editComment, saveComment } from "./commands/comment";
+import { addComment, cancelSaveComment, deleteThread, editComment, saveComment } from "./commands/comment";
 import { removeCommentFromCurrentLine } from "./commands/deleteComment";
 import {
-  exportComments,
   exportCommentsFromFile,
   exportCommentsFromFolderPath,
 } from "./commands/exportComments";
@@ -188,7 +187,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 
   const addCommentDisposable = vscode.commands.registerCommand('assay-test.addComment', addComment);
-  const deleteCommentDisposable2 = vscode.commands.registerCommand('assay-test.deleteComment', deleteComment);
+  const deleteCommentDisposable2 = vscode.commands.registerCommand('assay-test.deleteComment', deleteThread);
   const cancelSaveCommentDisposable = vscode.commands.registerCommand('assay-test.cancelSaveComment', cancelSaveComment);
   const saveCommentDisposable = vscode.commands.registerCommand('assay-test.saveComment', saveComment);
   const editCommentDisposable = vscode.commands.registerCommand('assay-test.editComment', editComment);
