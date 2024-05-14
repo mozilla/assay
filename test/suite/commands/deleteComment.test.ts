@@ -31,5 +31,5 @@ describe("deleteComment.ts", () => {
   //       expect(addToCacheStub.calledOnce).to.be.true;
   //       expect(addToCacheStub.calledWith("test-guid", ["0.1.0", "file", "1"], "")).to.be.true;
   //   });
-  });
+  // });
 });
