@@ -14,7 +14,6 @@ import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
-import { exportComment } from "./commands/promptExport";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -182,7 +181,7 @@ export async function activate(context: vscode.ExtensionContext) {
   };
 
   
-  const exportCommentDisposable = vscode.commands.registerCommand('assay-test.exportComments', exportComment);
+  const exportCommentDisposable = vscode.commands.registerCommand('assay-test.exportComments', exportCommentsFromFile);
 
 
 
