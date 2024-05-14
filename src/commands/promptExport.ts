@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export async function selectVerdict() {
+export async function exportComment() {
 
     // TODO: Replace with proper fetch.
     const items = ['Reason One', 'Second Reason', 'Another Reason'];

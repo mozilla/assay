@@ -5,6 +5,7 @@ import { fetchCommentsFromCache } from "./commands/cacheComment";
 import { addComment, cancelSaveComment, deleteComment, editComment, saveComment } from "./commands/comment";
 import { removeCommentFromCurrentLine } from "./commands/deleteComment";
 import {
+  exportComments,
   exportCommentsFromFile,
   exportCommentsFromFolderPath,
 } from "./commands/exportComments";
@@ -14,6 +15,7 @@ import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
+import { exportComment } from "./commands/promptExport";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -180,6 +182,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
   };
 
+  
+  const exportCommentDisposable = vscode.commands.registerCommand('assay-test.exportComments', exportComment);
+
+
+
   const addCommentDisposable = vscode.commands.registerCommand('assay-test.addComment', addComment);
   const deleteCommentDisposable2 = vscode.commands.registerCommand('assay-test.deleteComment', deleteComment);
   const cancelSaveCommentDisposable = vscode.commands.registerCommand('assay-test.cancelSaveComment', cancelSaveComment);
@@ -197,7 +204,8 @@ export async function activate(context: vscode.ExtensionContext) {
     cancelSaveCommentDisposable, 
     saveCommentDisposable, 
     editCommentDisposable,
-    fetchDisposable
+    fetchDisposable,
+    exportCommentDisposable
   );
 
 }
