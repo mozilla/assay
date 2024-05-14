@@ -24,6 +24,7 @@ export async function makePanel(
   panel.webview.onDidReceiveMessage(async (message) => {
     panel.dispose();
     const pathParts = filepath.split("/").slice(1);
+
     await addToCache(
       guid,
       [version, ...pathParts, lineNumber],

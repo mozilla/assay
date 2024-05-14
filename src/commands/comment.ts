@@ -1,25 +1,31 @@
 
 import * as vscode from "vscode";
 
+import { deleteCommentFromCache, saveCommentToCache } from "./cacheComment";
 import { AssayComment, AssayReply } from "../class/comment";
 import createComment from "../utils/createComment";
 import getCommentLocation from "../utils/getCommentLocation";
 
 export async function addComment(reply: AssayReply){
-    const { string } = await getCommentLocation(reply.thread);
+
+    const {string} = await getCommentLocation(reply.thread);
     reply.thread.label = string;
 
     const contextValue = reply.text ? "comment" : "markForReview";
     const body = new vscode.MarkdownString(reply.text ? reply.text : "Marked for review.");
 
-    createComment(contextValue, "Notes:", body, reply.thread);    
+    const comment = createComment(contextValue, "Notes:", body, reply.thread);
+    await saveCommentToCache(comment);
+
 }
 
-export function deleteComment(comment: AssayComment){
+export async function deleteComment(comment: AssayComment){
     comment.thread.dispose();
+    await deleteCommentFromCache(comment);
  }
 
 export async function saveComment(comment: AssayComment){
+
     comment.thread.comments = comment.thread.comments.map(cmt => {
         if (cmt.id === comment.id) {
 
@@ -36,6 +42,8 @@ export async function saveComment(comment: AssayComment){
         }
         return cmt;
     });
+
+    await saveCommentToCache(comment);
  }
 
  export function cancelSaveComment(comment: AssayComment){

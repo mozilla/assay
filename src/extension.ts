@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
+import { fetchCommentsFromCache } from "./commands/cacheComment";
 import { addComment, cancelSaveComment, deleteComment, editComment, saveComment } from "./commands/comment";
 import { removeCommentFromCurrentLine } from "./commands/deleteComment";
 import {
@@ -165,6 +166,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Comment API
 
+  // fetch files from cache
+  await fetchCommentsFromCache();
+  const fetchDisposable = vscode.window.onDidChangeActiveTextEditor(
+    fetchCommentsFromCache
+  );
+
   const commentController = vscode.comments.createCommentController('assay-comments', 'Assay');
   
   commentController.commentingRangeProvider = {
@@ -193,7 +200,8 @@ export async function activate(context: vscode.ExtensionContext) {
     deleteCommentDisposable2, 
     cancelSaveCommentDisposable, 
     saveCommentDisposable, 
-    editCommentDisposable
+    editCommentDisposable,
+    fetchDisposable
   );
 
 }

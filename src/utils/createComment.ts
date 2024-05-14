@@ -12,4 +12,5 @@ export default function createComment(contextValue: contextValues, name: string,
         thread, 
         contextValue);
     thread.comments = [...thread.comments, newComment];
+    return newComment;
 }

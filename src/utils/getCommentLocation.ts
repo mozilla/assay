@@ -25,6 +25,6 @@ async function getFilepathInfo(thread: AssayThread){
     return {guid, version, filepath};
 }
 
- function getCommentLine(thread: AssayThread){
+function getCommentLine(thread: AssayThread){
     return {start: thread.range.start.line, end: thread.range.end.line};
 }
