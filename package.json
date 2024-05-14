@@ -71,8 +71,18 @@
       "comments/commentThread/title": [
         {
 					"command": "assay-test.exportComments",
-					"group": "navigation",
+					"group": "inline@1",
           "when": "!commentThreadIsEmpty"
+				},
+        {
+					"command": "assay-test.editComment",
+					"group": "inline@2",
+					"when": "commentController == assay-comments && !commentThreadIsEmpty"
+				},
+				{
+					"command": "assay-test.deleteComment",
+					"group": "inline@3",
+					"when": "commentController == assay-comments && !commentThreadIsEmpty"
 				}
       ],
       "comments/commentThread/context": [
@@ -83,16 +93,7 @@
 				}
 			],
 			"comments/comment/title": [
-				{
-					"command": "assay-test.editComment",
-					"group": "inline@2",
-					"when": "commentController == assay-comments"
-				},
-				{
-					"command": "assay-test.deleteComment",
-					"group": "inline@3",
-					"when": "commentController == assay-comments && !commentThreadIsEmpty"
-				}
+				
 			],
 			"comments/comment/context": [
 				{
