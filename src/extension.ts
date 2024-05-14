@@ -1,9 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { fetchCommentsFromCache } from "./commands/cacheComment";
 import { addComment, cancelSaveComment, deleteThread, editComment, saveComment } from "./commands/comment";
-import { removeCommentFromCurrentLine } from "./commands/deleteComment";
 import {
   exportCommentsFromFile,
   exportCommentsFromFolderPath,
@@ -14,6 +12,7 @@ import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
+import { fetchCommentsFromCache } from "./commands/storage";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -132,13 +131,6 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const deleteCommentDisposable = vscode.commands.registerCommand(
-    "assay.deleteComment",
-    async () => {
-      await removeCommentFromCurrentLine();
-    }
-  );
-
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -159,7 +151,6 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentsFileDisposable,
     exportCommentsFolderDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
-    deleteCommentDisposable,
     assayUpdaterDisposable
   );
 
@@ -180,7 +171,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
   };
 
+  // const thread = {canReply: false, uri: "", range: {start: new vscode.Position(0, 0), end: new vscode.Position(0, 0)} comments};
   
+  // addComment({thread: , text: "This is from extension.ts! Hello!"});
+
   const exportCommentDisposable = vscode.commands.registerCommand('assay-test.exportComments', exportCommentsFromFile);
 
 

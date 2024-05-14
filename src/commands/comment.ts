@@ -1,7 +1,7 @@
 
 import * as vscode from "vscode";
 
-import { deleteCommentFromCache, saveCommentToCache } from "./cacheComment";
+import { deleteCommentFromCache, saveCommentToCache } from "./storage";
 import { AssayComment, AssayReply, AssayThread } from "../class/comment";
 import createComment from "../utils/createComment";
 import getCommentLocation from "../utils/getCommentLocation";
