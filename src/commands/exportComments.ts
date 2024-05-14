@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
+
 export async function compileComments(guid: string, version: string) {
   const comments = await getFromCache(guid, [version]);
   let compiledComments = "";
@@ -21,17 +22,15 @@ export async function compileComments(guid: string, version: string) {
 }
 
 export async function exportComments(compiledComments: string) {
-  const panel = vscode.window.createWebviewPanel(
-    "assay.export",
-    "Export Comments",
-    vscode.ViewColumn.Beside,
-    {
-      enableScripts: true,
-    }
-  );
-
-  panel.webview.html = await getExportHTML(compiledComments);
-
+  const document = await vscode.workspace.openTextDocument({
+    content: compiledComments, 
+    language: "text"
+  });
+  
+    const edit = new vscode.WorkspaceEdit();
+    vscode.workspace.applyEdit(edit);
+    vscode.window.showTextDocument(document, vscode.ViewColumn.Beside);
+    
   if (compiledComments) {
     vscode.env.clipboard.writeText(compiledComments);
     vscode.window.showInformationMessage("Comments copied to clipboard.");
@@ -89,20 +88,4 @@ export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
 
   const comments = await compileComments(guid, version);
   await exportComments(comments);
-}
-
-export async function getExportHTML(compiledComments: string) {
-  compiledComments = compiledComments ? compiledComments : "No comments found.";
-  return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Export Comments</title>
-    </head>
-    <body>
-        <pre>${compiledComments}</pre>
-    </body>
-    </html>
-    `;
 }

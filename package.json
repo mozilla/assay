@@ -34,16 +34,6 @@
       }
     },
     "menus": {
-      "commandPalette": [
-        {
-          "command": "assay.exportCommentsFromFolder",
-          "when": "false"
-        },
-        {
-          "command": "assay.openInDiffTool",
-          "when": "false"
-        }
-      ],
       "explorer/context": [
         {
           "when": "explorerResourceIsFolder && listDoubleSelection",

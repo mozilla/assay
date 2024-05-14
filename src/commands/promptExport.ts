@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
 
+import { exportCommentsFromFile } from "./exportComments";
+
 export async function exportComment() {
 
     // TODO: Replace with proper fetch.
@@ -16,5 +18,7 @@ export async function exportComment() {
     if(!result){
         throw new Error("Failed to fetch VSC QuickPick menu.");
     }
+
+    await exportCommentsFromFile();
 
 }
