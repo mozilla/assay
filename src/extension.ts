@@ -14,7 +14,6 @@ import { openInDiffTool } from "./commands/launchDiff";
 import { loadFileComments } from "./commands/loadComments";
 import { makeComment } from "./commands/makeComment";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
-import { selectVerdict } from "./commands/promptVerdict";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -180,9 +179,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			return [new vscode.Range(0, 0, lineCount - 1, 0)];
 		}
   };
-
-  vscode.commands.registerCommand('assay-test.selectVerdict', selectVerdict);
-  vscode.commands.registerCommand('assay-test.changeVerdict', selectVerdict);
 
   const addCommentDisposable = vscode.commands.registerCommand('assay-test.addComment', addComment);
   const deleteCommentDisposable2 = vscode.commands.registerCommand('assay-test.deleteComment', deleteComment);

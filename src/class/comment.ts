@@ -2,8 +2,7 @@ import * as vscode from "vscode";
 
 let commentId = 0;
 
-// i don't like doing it this way, but vs code doesn't provide an alternative i can find.
-export type contextValues = "markForReview" | "comment" | "verdictComment" | "verdict";
+export type contextValues = "markForReview" | "comment";
 
 export class AssayThread implements vscode.CommentThread {
 	canReply: boolean;
@@ -25,9 +24,7 @@ export class AssayReply implements vscode.CommentReply {
 	constructor(
 		public thread: AssayThread,
 		public text: string
-	){
-		this.thread.canReply = false;
-	}
+	){}
 
 }
 
@@ -44,5 +41,6 @@ export class AssayComment implements vscode.Comment {
 	) {
 		this.id = ++commentId;
 		this.savedBody = body;
+		this.thread.canReply = false;
 	}
 }

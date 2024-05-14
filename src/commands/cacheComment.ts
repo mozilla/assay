@@ -29,7 +29,15 @@ export async function fetchCommentsFromCache(){
   // this should (preferably) occur on launch only --
   // for each comment, create it in the environment.
 
+
+
+
+
   console.log(comments);
+
+  // if a comment doesn't exist here, add it.
+
+
 }
 
 export async function saveCommentToCache(comment: AssayComment){
