@@ -68,6 +68,13 @@
           "group": "navigation"
         }
       ],
+      "comments/commentThread/title": [
+        {
+					"command": "assay-test.exportComments",
+					"group": "navigation",
+          "when": "!commentThreadIsEmpty"
+				}
+      ],
       "comments/commentThread/context": [
 				{
 					"command": "assay-test.addComment",
@@ -77,24 +84,14 @@
 			],
 			"comments/comment/title": [
 				{
-					"command": "assay-test.selectVerdict",
-					"group": "inline@1",
-					"when": "comment === comment || comment === markForReview"
-				},
-        {
-					"command": "assay-test.changeVerdict",
-					"group": "inline@1",
-					"when": "comment === verdictComment"
-				},
-				{
 					"command": "assay-test.editComment",
 					"group": "inline@2",
-					"when": "comment !== verdict && commentController == assay-comments"
+					"when": "commentController == assay-comments"
 				},
 				{
 					"command": "assay-test.deleteComment",
 					"group": "inline@3",
-					"when": "comment !== verdict && commentController == assay-comments && !commentThreadIsEmpty"
+					"when": "commentController == assay-comments && !commentThreadIsEmpty"
 				}
 			],
 			"comments/comment/context": [
@@ -153,22 +150,6 @@
 				"title": "Mark for Review"
 			},
 			{
-				"command": "assay-test.selectVerdict",
-				"title": "Add Verdict",
-				"icon": {
-					"dark": "media/commentIcons/add_verdict_inverse.svg",
-					"light": "media/commentIcons/add_verdict.svg"
-				}
-			},
-      {
-				"command": "assay-test.changeVerdict",
-				"title": "Change Verdict",
-				"icon": {
-					"dark": "media/commentIcons/change_verdict_inverse.svg",
-					"light": "media/commentIcons/change_verdict.svg"
-				}
-			},
-			{
 				"command": "assay-test.editComment",
 				"title": "Edit Comment",
 				"icon": {
@@ -195,6 +176,14 @@
 			{
 				"command": "assay-test.disposeComment2",
 				"title": "Remove All Comments"
+			},
+      {
+				"command": "assay-test.exportComments",
+				"title": "Export Comments",
+				"icon": {
+					"dark": "media/commentIcons/export_inverse.svg",
+					"light": "media/commentIcons/export.svg"
+				}
 			}
     ]
   },
