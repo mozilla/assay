@@ -7,7 +7,6 @@ import * as addonCache from "../../../src/utils/addonCache";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 import {
   fileHasComment,
-  folderHasComment,
   CustomFileDecorationProvider,
 } from "../../../src/views/fileDecorations";
 
@@ -62,52 +61,4 @@ describe("fileDecorations.ts", async () => {
         ).to.be.true;
     });
   });
-
-    describe("folderHasComment()", async () => {
-        it("should return false if there are no comments", async () => {
-            const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
-            getFromCacheStub.resolves(undefined);
-    
-            const result = await folderHasComment(
-            vscode.Uri.file(
-                "test-root-folder-path/test-guid/test-version/test-folderpath"
-            )
-            );
-            expect(result).to.be.false;
-            expect(
-            getFromCacheStub.calledWith("test-guid", [
-                "test-version",
-                "test-folderpath",
-            ])
-            ).to.be.true;
-        });
-    
-        it("should return true if there are comments", async () => {
-            const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
-            getFromCacheStub.resolves({ "test-key": "test-value" });
-    
-            const result = await folderHasComment(
-            vscode.Uri.file(
-                "test-root-folder-path/test-guid/test-version/test-folderpath"
-            )
-            );
-    
-            expect(result).to.be.true;
-            expect(
-            getFromCacheStub.calledWith("test-guid", [
-                "test-version",
-                "test-folderpath",
-            ])
-            ).to.be.true;
-        });
-
-        it("should return false if the folder is the guid folder", async () => {
-            const result = await folderHasComment(
-                vscode.Uri.file(
-                    "test-root-folder-path/test-guid"
-                )
-            );
-            expect(result).to.be.false;
-        });
-    });
 });

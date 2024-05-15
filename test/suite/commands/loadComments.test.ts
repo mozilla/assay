@@ -3,7 +3,7 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { loadFileComments } from "../../../src/commands/loadComments";
+import { loadFileDecorator } from "../../../src/commands/loadComments";
 import * as constants from "../../../src/config/globals";
 import * as cacheFunctions from "../../../src/utils/addonCache";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
@@ -23,9 +23,9 @@ describe("loadComments.ts", async () => {
     sinon.restore();
   });
 
-  describe("loadFileComments()", async () => {
+  describe("loadFileDecorator()", async () => {
     it("should return if there is no activeTextEditor", async () => {
-      const result = await loadFileComments();
+      const result = await loadFileDecorator();
       expect(result).to.be.undefined;
     });
 
@@ -49,7 +49,7 @@ describe("loadComments.ts", async () => {
       getRootFolderPathStub.resolves("test-root-folder-path");
 
       try {
-        await loadFileComments();
+        await loadFileDecorator();
       } catch (err: any) {
         expect(err.message).to.equal("File is not in the root folder");
       }
@@ -79,7 +79,7 @@ describe("loadComments.ts", async () => {
       const getFromCacheStub = sinon.stub(cacheFunctions, "getFromCache");
       getFromCacheStub.resolves(undefined);
 
-      const result = await loadFileComments();
+      const result = await loadFileDecorator();
       expect(result).to.be.undefined;
     });
 
@@ -110,7 +110,7 @@ describe("loadComments.ts", async () => {
             "test-lineNumber": "test-comment",
         });
     
-        await loadFileComments();
+        await loadFileDecorator();
     
         expect(setDecorationsStub.calledOnce).to.be.true;
         expect(setDecorationsStub.args[0][1].length).to.equal(1);

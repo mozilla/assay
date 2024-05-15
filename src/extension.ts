@@ -9,8 +9,7 @@ import {
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser, testApiCredentials } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
-import { loadFileComments } from "./commands/loadComments";
-import { makeComment } from "./commands/makeComment";
+import { loadFileDecorator } from "./commands/loadComments";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { fetchCommentsFromCache } from "./commands/storage";
 import { updateAssay } from "./commands/updateAssay";
@@ -43,7 +42,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   // load comments on startup/reload
-  await loadFileComments();
+  await loadFileDecorator();
 
   // listen for vscode://publisher.assay/ links
   const UriHandlerDisposable = vscode.window.registerUriHandler({
@@ -106,13 +105,6 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const commentDisposable = vscode.commands.registerCommand(
-    "assay.codeComment",
-    async () => {
-      await makeComment();
-    }
-  );
-
   const sidebarDisposable = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),
   });
@@ -140,13 +132,12 @@ export async function activate(context: vscode.ExtensionContext) {
     apiSecretDisposable,
     apiCredentialsTestDisposable,
     diffDisposable,
-    commentDisposable,
     sidebarDisposable,
     vscode.window.onDidChangeActiveTextEditor(
       async () => await updateTaskbar()
     ),
     vscode.window.onDidChangeActiveTextEditor(
-      async () => await loadFileComments()
+      async () => await loadFileDecorator()
     ),
     exportCommentsFileDisposable,
     exportCommentsFolderDisposable,
@@ -156,11 +147,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Comment API
 
-  // fetch files from cache
+  // fetch & restore the current workspace's comments from cache
   await fetchCommentsFromCache();
-  const fetchDisposable = vscode.window.onDidChangeActiveTextEditor(
-    fetchCommentsFromCache
-  );
 
   const commentController = vscode.comments.createCommentController('assay-comments', 'Assay');
   
@@ -171,14 +159,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
   };
 
-  // const thread = {canReply: false, uri: "", range: {start: new vscode.Position(0, 0), end: new vscode.Position(0, 0)} comments};
-  
-  // addComment({thread: , text: "This is from extension.ts! Hello!"});
-
   const exportCommentDisposable = vscode.commands.registerCommand('assay-test.exportComments', exportCommentsFromFile);
-
-
-
   const addCommentDisposable = vscode.commands.registerCommand('assay-test.addComment', addComment);
   const deleteCommentDisposable2 = vscode.commands.registerCommand('assay-test.deleteComment', deleteThread);
   const cancelSaveCommentDisposable = vscode.commands.registerCommand('assay-test.cancelSaveComment', cancelSaveComment);
@@ -196,7 +177,6 @@ export async function activate(context: vscode.ExtensionContext) {
     cancelSaveCommentDisposable, 
     saveCommentDisposable, 
     editCommentDisposable,
-    fetchDisposable,
     exportCommentDisposable
   );
 

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import { loadFileComments } from "./loadComments";
+import { loadFileDecorator } from "./loadComments";
 import { AssayComment } from "../class/comment";
 import { addToCache, getFromCache } from "../utils/addonCache";
 import getCommentLocation from "../utils/getCommentLocation";
@@ -26,7 +26,7 @@ export async function fetchCommentsFromCache(){
   const comments = await getFromCache(guid, keys);
 
 
-  // this should (preferably) occur on launch only --
+  // TODO: this should (preferably) occur on launch only --
   // for each comment, create it in the environment.
 
 
@@ -57,5 +57,5 @@ async function updateCommentInCache(comment: AssayComment, value: string){
       [version, ...pathParts, start.toString()],
       value
     );
-    await loadFileComments();
+    await loadFileDecorator();
 }

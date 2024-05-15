@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-
+// TODO: Modify
 export async function compileComments(guid: string, version: string) {
   const comments = await getFromCache(guid, [version]);
   let compiledComments = "";

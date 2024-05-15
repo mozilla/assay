@@ -21,29 +21,6 @@ export async function fileHasComment(uri: vscode.Uri) {
   }
   return true;
 }
-
-export async function folderHasComment(uri: vscode.Uri) {
-  const fullpath = uri.fsPath;
-  const rootFolder = await getRootFolderPath();
-
-  const filepath = fullpath.replace(rootFolder, "");
-  const splitPath = filepath.split("/");
-  const guid = splitPath[1];
-  const keys = splitPath.slice(2);
-
-  // if there no keys, then we are at the guid path. return false
-  if (keys.length === 0) {
-    return false;
-  }
-
-  const comments = await getFromCache(guid, keys);
-  // check if comments map is empty or not defined
-  if (!comments || Object.keys(comments).length === 0) {
-    return false;
-  }
-  return true;
-}
-
 export class CustomFileDecorationProvider implements vscode.FileDecorationProvider {
   private _onDidChangeFileDecorations: vscode.EventEmitter<
     vscode.Uri | vscode.Uri[]
