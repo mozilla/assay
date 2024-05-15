@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import { AssayComment } from "../class/comment";
+import { AssayComment } from "../config/comment";
 import { getExtensionStoragePath } from "../config/globals";
 
 

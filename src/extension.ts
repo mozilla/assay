@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { addComment, cancelSaveComment, deleteThread, editComment, saveComment } from "./commands/comment";
 import {
   exportCommentsFromFile,
   exportCommentsFromFolderPath,
@@ -20,6 +19,7 @@ import {
   setExtensionStoragePath,
   setFileDecorator,
 } from "./config/globals";
+import { addComment, cancelSaveComment, deleteThread, editComment, saveComment } from "./utils/comment";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
@@ -146,19 +146,18 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Comment API
-
-  // fetch & restore the current workspace's comments from cache
-  
-
   const commentController = vscode.comments.createCommentController('assay-comments', 'Assay');
-  await fetchCommentsFromCache(commentController);
 
-  commentController.commentingRangeProvider = {
-    provideCommentingRanges: (document: vscode.TextDocument) => {
-			const lineCount = document.lineCount;
-			return [new vscode.Range(0, 0, lineCount - 1, 0)];
-		}
-  };
+  // Fetch & restore the current workspace's comments from cache.
+  // Ensure fetches are complete before allowing commentController to be visible.
+  await fetchCommentsFromCache(commentController).then(() => {
+    commentController.commentingRangeProvider = {
+      provideCommentingRanges: (document: vscode.TextDocument) => {
+        const lineCount = document.lineCount;
+        return [new vscode.Range(0, 0, lineCount - 1, 0)];
+      }
+    };
+  });
 
   const exportCommentDisposable = vscode.commands.registerCommand('assay-test.exportComments', exportCommentsFromFile);
   const addCommentDisposable = vscode.commands.registerCommand('assay-test.addComment', addComment);

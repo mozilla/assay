@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
-import { getRootFolderPath } from "../utils/reviewRootDir";
+import { splitUri } from "../utils/getCommentLocation";
 
 export async function compileComments(guid: string, version: string) {
-  const comments = await getFromCache(guid, [version]);
+  const comments = await getFromCache(guid, ['comments', version]);
   let compiledComments = "";
 
   for (const filepath in comments) {
@@ -40,17 +40,13 @@ export async function exportCommentsFromFile() {
     return;
   }
   const doc = editor.document;
-  const fullPath = doc.uri.fsPath;
+  const {rootFolder, fullPath, guid, version} = await splitUri(doc.uri);
 
-  const rootFolder = await getRootFolderPath();
+  
   if (!fullPath.startsWith(rootFolder)) {
     vscode.window.showErrorMessage("(Assay) File is not in the Addons root folder.");
     throw new Error("File is not in the root folder");
   }
-
-  const relativePath = fullPath.replace(rootFolder, "");
-  const guid = relativePath.split("/")[1];
-  const version = relativePath.split("/")[2];
 
   if (!guid || !version) {
     vscode.window.showErrorMessage(
@@ -65,17 +61,14 @@ export async function exportCommentsFromFile() {
 
 // This one is called from the context menu
 export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
-  const fullPath = uri.fsPath;
+  
+  
+  const {rootFolder, fullPath, guid, version} = await splitUri(uri);
 
-  const rootFolder = await getRootFolderPath();
   if (!fullPath.startsWith(rootFolder)) {
     vscode.window.showErrorMessage("(Assay) File is not in the Addons root folder.");
     throw new Error("File is not in the root folder");
   }
-
-  const relativePath = fullPath.replace(rootFolder, "");
-  const guid = relativePath.split("/")[1];
-  const version = relativePath.split("/")[2];
 
   if (!guid || !version) {
     vscode.window.showErrorMessage(

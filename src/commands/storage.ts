@@ -1,13 +1,11 @@
 import * as vscode from "vscode";
 
 import { loadFileDecorator } from "./loadComments";
-import { AssayComment } from "../class/comment";
+import { AssayComment } from "../config/comment";
 import { addToCache, getFromCache } from "../utils/addonCache";
 import createComment from '../utils/createComment';
-import getCommentLocation, { stringToRange } from "../utils/getCommentLocation";
-import { getRootFolderPath } from "../utils/reviewRootDir";
+import getCommentLocation, { splitUri, stringToRange } from "../utils/getCommentLocation";
 
-// TODO: Modify read
 export async function fetchCommentsFromCache(controller: vscode.CommentController){
 
     const editor = vscode.window.activeTextEditor;
@@ -15,14 +13,12 @@ export async function fetchCommentsFromCache(controller: vscode.CommentControlle
         return;
     }
     const doc = editor.document;
-    const fullPath = doc.uri.fsPath;
-    const rootFolder = await getRootFolderPath();
+    
+    const {rootFolder, fullPath, guid} = await splitUri(doc.uri);
     if (!fullPath.startsWith(rootFolder)) {
         return;
     }
 
-    const relativePath = fullPath.replace(rootFolder, "");
-    const guid = relativePath.split("/")[1];
     const comments = await getFromCache(guid, ['comments']);
 
   for(const version in comments){
