@@ -159,14 +159,14 @@ export async function activate(context: vscode.ExtensionContext) {
     };
   });
 
-  const exportCommentDisposable = vscode.commands.registerCommand('assay-test.exportComments', exportCommentsFromFile);
-  const addCommentDisposable = vscode.commands.registerCommand('assay-test.addComment', addComment);
-  const deleteCommentDisposable2 = vscode.commands.registerCommand('assay-test.deleteComment', deleteThread);
-  const cancelSaveCommentDisposable = vscode.commands.registerCommand('assay-test.cancelSaveComment', cancelSaveComment);
-  const saveCommentDisposable = vscode.commands.registerCommand('assay-test.saveComment', saveComment);
-  const editCommentDisposable = vscode.commands.registerCommand('assay-test.editComment', editComment);
+  const exportCommentDisposable = vscode.commands.registerCommand('assay.exportComments', exportCommentsFromFile);
+  const addCommentDisposable = vscode.commands.registerCommand('assay.addComment', addComment);
+  const deleteCommentDisposable2 = vscode.commands.registerCommand('assay.deleteComment', deleteThread);
+  const cancelSaveCommentDisposable = vscode.commands.registerCommand('assay.cancelSaveComment', cancelSaveComment);
+  const saveCommentDisposable = vscode.commands.registerCommand('assay.saveComment', saveComment);
+  const editCommentDisposable = vscode.commands.registerCommand('assay.editComment', editComment);
 
-  vscode.commands.registerCommand('assay-test.disposeComment', () => {
+  vscode.commands.registerCommand('assay.disposeComment', () => {
 		commentController.dispose();
 	});
 
