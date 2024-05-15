@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import { getRootFolderPath } from "./reviewRootDir";
+import { splitUri } from './splitUri';
 import { AssayThread } from "../config/comment";
 
 export default async function getCommentLocation(thread: AssayThread){
@@ -31,14 +31,4 @@ export function stringToRange(str: string){
     const start = new vscode.Position(parseInt(list[0]), 0);
     const end = list.length > 1 ? new vscode.Position(parseInt(list[1]), 0) : start;
     return new vscode.Range(start, end);
-}
-
-export async function splitUri(uri: vscode.Uri){
-    const fullPath = uri.fsPath;
-    const rootFolder = await getRootFolderPath();
-    const relativePath = fullPath.replace(rootFolder, "");
-    const guid = relativePath.split("/")[1];
-    const version = relativePath.split("/")[2];
-    const filepath = relativePath.split(version)[1];
-    return {rootFolder, fullPath, relativePath, guid, version, filepath};
 }

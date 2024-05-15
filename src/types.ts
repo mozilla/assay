@@ -42,3 +42,5 @@ export type errorMessages = {
     [code: string]: string;
   };
 };
+
+export type contextValues = "markForReview" | "comment";

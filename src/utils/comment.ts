@@ -1,9 +1,23 @@
 
 import * as vscode from "vscode";
 
-import createComment from "./createComment";
-import { deleteCommentFromCache, saveCommentToCache } from "../commands/storage";
-import { AssayComment, AssayReply, AssayThread } from "../config/comment";
+import getCommentLocation from "./getCommentLocation";
+import { deleteCommentFromCache, saveCommentToCache } from "./storage";
+import { AssayComment, AssayReply, AssayThread, contextValues } from "../config/comment";
+
+export async function createComment(contextValue: contextValues, body: vscode.MarkdownString, thread: AssayThread | vscode.CommentThread) {
+    const { string } = await getCommentLocation(thread as AssayThread);
+    thread.label = string;
+    
+    const newComment = new AssayComment(
+        body, 
+        vscode.CommentMode.Preview, 
+        { name: "Notes:" }, 
+        thread as AssayThread, 
+        contextValue);
+    thread.comments = [...thread.comments, newComment];
+    return newComment;
+}
 
 export async function addComment(reply: AssayReply){
     const contextValue = reply.text ? "comment" : "markForReview";
@@ -61,4 +75,3 @@ export function editComment(thread: AssayThread){
         return cmt;
     });
  }
- 

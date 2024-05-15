@@ -3,13 +3,12 @@ import * as vscode from "vscode";
 import { Event } from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
-import { splitUri } from "../utils/getCommentLocation";
+import { splitUri } from "../utils/splitUri";
 
 export async function fileHasComment(uri: vscode.Uri) {
   const { guid } = await splitUri(uri);
   const comments = await getFromCache(guid, ['comments']);
 
-  // not optimal; if this is too slow, reevaluate storage (i.e a 'in' check to uris stored separately?)
   for(const version in comments){
     for(const filepath in comments[version]){
       for (const lineNumber in comments[version][filepath]) {

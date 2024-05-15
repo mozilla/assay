@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
-import { splitUri } from "../utils/getCommentLocation";
+import { splitUri } from "../utils/splitUri";
 
 export async function compileComments(guid: string, version: string) {
   const comments = await getFromCache(guid, ['comments', version]);

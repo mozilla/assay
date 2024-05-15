@@ -8,9 +8,7 @@ import {
 import { downloadAndExtract } from "./commands/getAddon";
 import { getApiKeyFromUser, getSecretFromUser, testApiCredentials } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
-import { loadFileDecorator } from "./commands/loadComments";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
-import { fetchCommentsFromCache } from "./commands/storage";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -20,6 +18,8 @@ import {
   setFileDecorator,
 } from "./config/globals";
 import { addComment, cancelSaveComment, deleteThread, editComment, saveComment } from "./utils/comment";
+import { loadFileDecorator } from "./utils/loadComments";
+import { fetchCommentsFromCache } from "./utils/storage";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";

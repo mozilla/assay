@@ -24,7 +24,7 @@ export class AssayReply implements vscode.CommentReply {
 	constructor(
 		public thread: AssayThread,
 		public text: string
-	){}
+	){ }
 
 }
 
