@@ -1,12 +1,14 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 import { loadFileDecorator } from "./loadComments";
 import { AssayComment } from "../class/comment";
 import { addToCache, getFromCache } from "../utils/addonCache";
-import getCommentLocation from "../utils/getCommentLocation";
+import createComment from '../utils/createComment';
+import getCommentLocation, { stringToRange } from "../utils/getCommentLocation";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-export async function fetchCommentsFromCache(){
+// TODO: Modify read
+export async function fetchCommentsFromCache(controller: vscode.CommentController){
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
@@ -21,41 +23,42 @@ export async function fetchCommentsFromCache(){
 
   const relativePath = fullPath.replace(rootFolder, "");
   const guid = relativePath.split("/")[1];
-  const keys = relativePath.split("/").slice(2);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {reviewUrl, ...comments} = await getFromCache(guid);
 
-  const comments = await getFromCache(guid, keys);
 
-
-  // TODO: this should (preferably) occur on launch only --
   // for each comment, create it in the environment.
 
-
-
-
-
-  console.log(comments);
-
-  // if a comment doesn't exist here, add it.
-
+  for(const version in comments){
+    for (const filepath in comments[version]) {
+        for (const lineNumber in comments[version][filepath]) {
+          const {uri, body, contextValue} = comments[version][filepath][lineNumber];
+            const r = stringToRange(lineNumber);
+            const thread = controller.createCommentThread(uri, r, []);
+            createComment(contextValue, body, thread);
+        }
+      }
+  }
 
 }
 
 export async function saveCommentToCache(comment: AssayComment){
-    updateCommentInCache(comment, comment.savedBody.value);
+    const {guid, version, filepath, range} = await getCommentLocation(comment.thread);
+    const pathParts = filepath.split("/").slice(1);
+    await addToCache(
+      guid,
+      [version, ...pathParts, range],
+      comment
+    );
 }
 
 export async function deleteCommentFromCache(comment: AssayComment){
-    updateCommentInCache(comment, "");
-}
-
-async function updateCommentInCache(comment: AssayComment, value: string){
-    const {guid, version, filepath, start} = await getCommentLocation(comment.thread);
+    const {guid, version, filepath, range} = await getCommentLocation(comment.thread);
     const pathParts = filepath.split("/").slice(1);
-
     await addToCache(
       guid,
-      [version, ...pathParts, start.toString()],
-      value
+      [version, ...pathParts, range],
+      ""
     );
     await loadFileDecorator();
 }

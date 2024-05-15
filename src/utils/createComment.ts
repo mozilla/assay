@@ -3,12 +3,12 @@ import * as vscode from "vscode";
 
 import { AssayComment, AssayThread, contextValues } from "../class/comment";
 
-export default function createComment(contextValue: contextValues, name: string, body: vscode.MarkdownString, thread: AssayThread) {
+export default function createComment(contextValue: contextValues, body: vscode.MarkdownString, thread: AssayThread | vscode.CommentThread) {
     const newComment = new AssayComment(
         body, 
         vscode.CommentMode.Preview, 
-        { name: name }, 
-        thread, 
+        { name: "Notes" }, 
+        thread as AssayThread, 
         contextValue);
     thread.comments = [...thread.comments, newComment];
     return newComment;

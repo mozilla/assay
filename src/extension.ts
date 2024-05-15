@@ -148,10 +148,11 @@ export async function activate(context: vscode.ExtensionContext) {
   // Comment API
 
   // fetch & restore the current workspace's comments from cache
-  await fetchCommentsFromCache();
+  
 
   const commentController = vscode.comments.createCommentController('assay-comments', 'Assay');
-  
+  await fetchCommentsFromCache(commentController);
+
   commentController.commentingRangeProvider = {
     provideCommentingRanges: (document: vscode.TextDocument) => {
 			const lineCount = document.lineCount;

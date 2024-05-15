@@ -1,11 +1,13 @@
+import * as vscode from 'vscode';
+
 import { getRootFolderPath } from "./reviewRootDir";
 import { AssayThread } from "../class/comment";
 
 export default async function getCommentLocation(thread: AssayThread){
-    const {start, end} = getCommentLine(thread);
+    const range = rangeToString(thread.range);
     const { guid, version, filepath } = await getFilepathInfo(thread);
-    const string = `${filepath}${start === end ? `#L${start}` : `#L${start}-${end}`}`;
-    return {string, guid, version, filepath, start, end};
+    const string = `${filepath}${range}`;
+    return {string, guid, version, filepath, range: range};
 }
 
 async function getFilepathInfo(thread: AssayThread){
@@ -25,6 +27,19 @@ async function getFilepathInfo(thread: AssayThread){
     return {guid, version, filepath};
 }
 
-function getCommentLine(thread: AssayThread){
-    return {start: thread.range.start.line, end: thread.range.end.line};
+
+export function rangeToString(range: vscode.Range){
+    return range.start.line === range.end.line ? `#L${range.start.line}` : `#L${range.start.line}-${range.end.line}`;
 }
+
+
+export function stringToRange(str: string){
+    const list = str.match(/\d+/g);
+    if(!list || !/#L[0-9]+(-[0-9]+)?/.test(str)){
+        throw Error("Passed string is not a line number.");
+    }
+    const start = new vscode.Position(parseInt(list[0]), 0);
+    const end = list.length > 1 ? new vscode.Position(parseInt(list[1]), 0) : start;
+    return new vscode.Range(start, end);
+}
+

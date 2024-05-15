@@ -3,21 +3,17 @@ import * as vscode from "vscode";
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-// TODO: Modify
 export async function compileComments(guid: string, version: string) {
   const comments = await getFromCache(guid, [version]);
   let compiledComments = "";
 
   for (const filepath in comments) {
     for (const lineNumber in comments[filepath]) {
-      if (comments[filepath][lineNumber]) {
-        compiledComments += `File:\n${filepath}#L${lineNumber}\n\n`;
-        const comment = comments[filepath][lineNumber];
-        compiledComments += `${comment}\n\n`;
-      }
+      compiledComments += `File:\n${filepath}#L${lineNumber}\n\n`;
+      const comment = comments[filepath][lineNumber].body;
+      compiledComments += `${comment}\n\n`;
     }
   }
-
   return compiledComments;
 }
 

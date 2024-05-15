@@ -13,7 +13,7 @@ export async function addComment(reply: AssayReply){
     const contextValue = reply.text ? "comment" : "markForReview";
     const body = new vscode.MarkdownString(reply.text ? reply.text : "Marked for review.");
 
-    const comment = createComment(contextValue, "Notes:", body, reply.thread);
+    const comment = createComment(contextValue, body, reply.thread);
     await saveCommentToCache(comment);
 }
 
@@ -25,7 +25,7 @@ export async function deleteThread(thread: AssayThread){
  }
 
 export async function saveComment(comment: AssayComment){
-    comment.thread.comments = comment.thread.comments.map(cmt => {
+    comment.thread.comments = await comment.thread.comments.map(cmt => {
         if (cmt.id === comment.id) {
             cmt.savedBody = cmt.body;
             cmt.mode = vscode.CommentMode.Preview;

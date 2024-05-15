@@ -1,7 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import { AssayComment } from "../class/comment";
 import { getExtensionStoragePath } from "../config/globals";
+
+
 
 /***
  * The cache folder is stored at
@@ -15,7 +18,7 @@ import { getExtensionStoragePath } from "../config/globals";
 export async function addToCache(
   addonGUID: string,
   keys: string[],
-  value: string | undefined
+  value: AssayComment | string
 ) {
   const storagePath = getExtensionStoragePath();
 
@@ -48,6 +51,12 @@ export async function addToCache(
 
   if (!value) {
     delete currentLevel[keys[keys.length - 1]];
+  } else if(value instanceof AssayComment) {
+    currentLevel[keys[keys.length - 1]] = {
+      uri: value.thread.uri,
+      body: value.savedBody.value,
+      contextValue: value.contextValue,
+    };
   } else {
     currentLevel[keys[keys.length - 1]] = value;
   }
@@ -72,7 +81,7 @@ export function removeEmptyObjectsFromCache(levelObjects: any[]) {
   }
 }
 
-export async function getFromCache(addonGUID: string, keys: string[]) {
+export async function getFromCache(addonGUID: string, keys: string[] = []) {
   const storagePath = getExtensionStoragePath();
   const cacheFolderPath = path.join(storagePath, ".cache");
   const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
