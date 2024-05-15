@@ -21,13 +21,9 @@ export async function fetchCommentsFromCache(controller: vscode.CommentControlle
         return;
     }
 
-  const relativePath = fullPath.replace(rootFolder, "");
-  const guid = relativePath.split("/")[1];
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {reviewUrl, ...comments} = await getFromCache(guid);
-
-
-  // for each comment, create it in the environment.
+    const relativePath = fullPath.replace(rootFolder, "");
+    const guid = relativePath.split("/")[1];
+    const comments = await getFromCache(guid, ['comments']);
 
   for(const version in comments){
     for (const filepath in comments[version]) {
@@ -35,7 +31,7 @@ export async function fetchCommentsFromCache(controller: vscode.CommentControlle
           const {uri, body, contextValue} = comments[version][filepath][lineNumber];
             const r = stringToRange(lineNumber);
             const thread = controller.createCommentThread(uri, r, []);
-            createComment(contextValue, body, thread);
+            createComment(contextValue, new vscode.MarkdownString(body), thread);
         }
       }
   }
@@ -44,20 +40,18 @@ export async function fetchCommentsFromCache(controller: vscode.CommentControlle
 
 export async function saveCommentToCache(comment: AssayComment){
     const {guid, version, filepath, range} = await getCommentLocation(comment.thread);
-    const pathParts = filepath.split("/").slice(1);
     await addToCache(
       guid,
-      [version, ...pathParts, range],
+      ['comments', version, filepath, range],
       comment
     );
 }
 
 export async function deleteCommentFromCache(comment: AssayComment){
     const {guid, version, filepath, range} = await getCommentLocation(comment.thread);
-    const pathParts = filepath.split("/").slice(1);
     await addToCache(
       guid,
-      [version, ...pathParts, range],
+      ['comments', version, filepath, range],
       ""
     );
     await loadFileDecorator();

@@ -3,23 +3,24 @@ import * as vscode from "vscode";
 import { Event } from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
-import { getRootFolderPath } from "../utils/reviewRootDir";
+import { splitUri } from "../utils/getCommentLocation";
 
 export async function fileHasComment(uri: vscode.Uri) {
-  const fullpath = uri.fsPath;
-  const rootFolder = await getRootFolderPath();
+  const { guid } = await splitUri(uri);
+  const comments = await getFromCache(guid, ['comments']);
 
-  const filepath = fullpath.replace(rootFolder, "");
-  const splitPath = filepath.split("/");
-  const guid = splitPath[1];
-  const keys = splitPath.slice(2);
-
-  const comments = await getFromCache(guid, keys);
-  // check if comments map is empty or not defined
-  if (!comments || Object.keys(comments).length === 0) {
-    return false;
+  // not optimal; if this is too slow, reevaluate storage (i.e a 'in' check to uris stored separately?)
+  for(const version in comments){
+    for(const filepath in comments[version]){
+      for (const lineNumber in comments[version][filepath]) {
+        const {uri: currUri} = comments[version][filepath][lineNumber];
+        if(uri.fsPath === currUri.fsPath) {
+          return true;
+        }
+      }
+    }
   }
-  return true;
+  return false;
 }
 export class CustomFileDecorationProvider implements vscode.FileDecorationProvider {
   private _onDidChangeFileDecorations: vscode.EventEmitter<
