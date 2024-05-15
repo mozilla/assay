@@ -3,9 +3,9 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { loadFileDecorator } from "../../../src/commands/loadComments";
 import * as constants from "../../../src/config/globals";
 import * as cacheFunctions from "../../../src/utils/addonCache";
+import { loadFileDecorator } from "../../../src/utils/loadComments";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 describe("loadComments.ts", async () => {

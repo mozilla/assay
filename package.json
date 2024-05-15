@@ -170,7 +170,7 @@
 			},
       {
 				"command": "assay-test.exportComments",
-				"title": "Export Comments",
+				"title": "Export Version Comments",
 				"icon": {
 					"dark": "media/commentIcons/export_inverse.svg",
 					"light": "media/commentIcons/export.svg"
