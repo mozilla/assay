@@ -30,15 +30,17 @@ describe("exportComments.ts", () => {
 
   describe("compileComments()", () => {
     it("should return the compiled comments", async () => {
-      const getFromCacheStub = sinon.stub(addonCache, "getFromCache").resolves({
+      sinon.stub(addonCache, "getFromCache").resolves({
         "/test-filepath": {
-          "1": "test-comment",
+          "#L1": {
+            "body": "test-comment"
+          },
         },
       });
 
       const result = await compileComments("guid", "version");
       expect(result).to.contain("test-filepath");
-      expect(result).to.contain("1");
+      expect(result).to.contain("#L2");
       expect(result).to.contain("test-comment");
     });
   });
@@ -50,6 +52,7 @@ describe("exportComments.ts", () => {
         "showInformationMessage"
       );
       await exportComments("test-compiled-comments");
+      vscode.commands.executeCommand('workbench.action.closeActiveEditor');
       expect(showInformationMessageStub.called).to.be.true;
     });
   });

@@ -36,8 +36,7 @@ describe("fileDecorations.ts", async () => {
       expect(result).to.be.false;
       expect(
         getFromCacheStub.calledWith("test-guid", [
-          "test-version",
-          "test-filepath",
+          "comments"
         ])
       ).to.be.true;
     });
@@ -45,6 +44,19 @@ describe("fileDecorations.ts", async () => {
     it("should return true if there are comments", async () => {
         const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
         getFromCacheStub.resolves({ "test-key": "test-value" });
+
+        getFromCacheStub.resolves({
+          "3.5.2" : {
+            "/test-filepath": {
+              "#L1": {
+                "body": "test-comment",
+                "uri": vscode.Uri.file(
+                  "test-root-folder-path/test-guid/test-version/test-filepath"
+                )
+              },
+            }
+          }
+        });
 
         const result = await fileHasComment(
           vscode.Uri.file(
@@ -55,8 +67,7 @@ describe("fileDecorations.ts", async () => {
         expect(result).to.be.true;
         expect(
           getFromCacheStub.calledWith("test-guid", [
-            "test-version",
-            "test-filepath",
+            "comments"
           ])
         ).to.be.true;
     });
