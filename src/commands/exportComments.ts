@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
+import { rangeTruncation } from "../utils/getCommentLocation";
 import { splitUri } from "../utils/splitUri";
 
 export async function compileComments(guid: string, version: string) {
@@ -9,7 +10,7 @@ export async function compileComments(guid: string, version: string) {
 
   for (const filepath in comments) {
     for (const lineNumber in comments[filepath]) {
-      compiledComments += `File:\n${filepath}${lineNumber}\n\n`;
+      compiledComments += `File:\n${filepath}${rangeTruncation(lineNumber)}\n\n`;
       const comment = comments[filepath][lineNumber].body;
       compiledComments += `${comment}\n\n`;
     }

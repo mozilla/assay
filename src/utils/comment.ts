@@ -1,13 +1,13 @@
 
 import * as vscode from "vscode";
 
-import getCommentLocation from "./getCommentLocation";
+import getCommentLocation, { rangeTruncation } from "./getCommentLocation";
 import { deleteCommentFromCache, saveCommentToCache } from "./storage";
 import { AssayComment, AssayReply, AssayThread, contextValues } from "../config/comment";
 
 export async function createComment(contextValue: contextValues, body: vscode.MarkdownString, thread: AssayThread | vscode.CommentThread) {
-    const { string } = await getCommentLocation(thread as AssayThread);
-    thread.label = string;
+    const { filepath, range } = await getCommentLocation(thread as AssayThread);
+    thread.label = `${filepath}${rangeTruncation(range)}`;
     
     const newComment = new AssayComment(
         body, 
