@@ -7,7 +7,8 @@ import {
   compileComments,
   exportComments,
   exportCommentsFromFile,
-  exportCommentsFromFolderPath
+  exportCommentsFromFolderPath,
+  getExportHTML,
 } from "../../../src/commands/exportComments";
 import * as addonCache from "../../../src/utils/addonCache";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
@@ -19,6 +20,13 @@ describe("exportComments.ts", () => {
 
   beforeEach(() => {
     sinon.stub(reviewRootDir, "getRootFolderPath").resolves("/test-root");
+  });
+
+  describe("getExportHTML()", () => {
+    it("should return the HTML", async () => {
+      const result = await getExportHTML("test-compiled-comments");
+      expect(result).to.contain("test-compiled-comments");
+    });
   });
 
   describe("compileComments()", () => {

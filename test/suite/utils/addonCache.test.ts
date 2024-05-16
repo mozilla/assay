@@ -34,53 +34,52 @@ describe("addonCache.ts", async () => {
   });
 
   describe("addToCache()", async () => {
-    // todo
-  //   it("should create the cache folder, file, and add data if it does not exist", async () => {
-  //     setExtensionStoragePath(storagePath);
+    it("should create the cache folder, file, and add data if it does not exist", async () => {
+      setExtensionStoragePath(storagePath);
 
-  //     await addToCache("test-guid", ["test-key"], "test-value");
+      await addToCache("test-guid", ["test-key"], "test-value");
 
-  //     expect(fs.existsSync(storagePath)).to.be.true;
-  //     expect(fs.existsSync(cachePath)).to.be.true;
-  //     expect(fs.existsSync(filePath)).to.be.true;
+      expect(fs.existsSync(storagePath)).to.be.true;
+      expect(fs.existsSync(cachePath)).to.be.true;
+      expect(fs.existsSync(filePath)).to.be.true;
 
-  //     const json = fs.readFileSync(filePath, "utf8");
-  //     const data = JSON.parse(json);
-  //     expect(data).to.deep.equal({ "test-key": "test-value" });
-  //   });
+      const json = fs.readFileSync(filePath, "utf8");
+      const data = JSON.parse(json);
+      expect(data).to.deep.equal({ "test-key": "test-value" });
+    });
 
-  //   it("should modify the data in the cache file if it does exist", async () => {
-  //     setExtensionStoragePath(storagePath);
+    it("should modify the data in the cache file if it does exist", async () => {
+      setExtensionStoragePath(storagePath);
 
-  //     if (!fs.existsSync(cachePath)) {
-  //       fs.mkdirSync(cachePath);
-  //     }
-  //     fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
+      if (!fs.existsSync(cachePath)) {
+        fs.mkdirSync(cachePath);
+      }
+      fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
 
-  //     await addToCache("test-guid", ["test-key"], "test-value-2");
+      await addToCache("test-guid", ["test-key"], "test-value-2");
 
-  //     const json = fs.readFileSync(filePath, "utf8");
-  //     const data = JSON.parse(json);
-  //     expect(data).to.deep.equal({ "test-key": "test-value-2" });
-  //   });
-  // });
+      const json = fs.readFileSync(filePath, "utf8");
+      const data = JSON.parse(json);
+      expect(data).to.deep.equal({ "test-key": "test-value-2" });
+    });
+  });
 
-  // describe("getFromCache()", async () => {
-  //   it("should return undefined if the cache file does not exist", async () => {
-  //     const result = await getFromCache("test-guid", ["test-key"]);
-  //     expect(result).to.be.undefined;
-  //   });
+  describe("getFromCache()", async () => {
+    it("should return undefined if the cache file does not exist", async () => {
+      const result = await getFromCache("test-guid", ["test-key"]);
+      expect(result).to.be.undefined;
+    });
 
-  //   it("should return the data from the cache file if it does exist", async () => {
-  //     if (!fs.existsSync(cachePath)) {
-  //       fs.mkdirSync(cachePath);
-  //     }
-  //     fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
+    it("should return the data from the cache file if it does exist", async () => {
+      if (!fs.existsSync(cachePath)) {
+        fs.mkdirSync(cachePath);
+      }
+      fs.writeFileSync(filePath, `{"test-key":"test-value"}`);
 
-  //     const result = await getFromCache("test-guid", ["test-key"]);
+      const result = await getFromCache("test-guid", ["test-key"]);
 
-  //     expect(result).to.equal("test-value");
-  //   });
+      expect(result).to.equal("test-value");
+    });
   });
 
   describe("clearCache()", async () => {
@@ -95,17 +94,16 @@ describe("addonCache.ts", async () => {
   });
 
   describe("removeEmptyObjectsFromCache()", async () => {
-    // todo
-    // it("should remove empty objects from the cache", async () => {
-    //   // all of this should be deleted since there is no actual data, just keys
-    //   await addToCache("test-guid", ["test-key", "test-key-2", "test-key-3"], "");
+    it("should remove empty objects from the cache", async () => {
+      // all of this should be deleted since there is no actual data, just keys
+      await addToCache("test-guid", ["test-key", "test-key-2", "test-key-3"], "");
 
-    //   expect(fs.existsSync(filePath)).to.be.true;
+      expect(fs.existsSync(filePath)).to.be.true;
 
-    //   const json = fs.readFileSync(filePath, "utf8");
-    //   const data = JSON.parse(json);
-    //   expect(data).to.deep.equal({});
-    // });
+      const json = fs.readFileSync(filePath, "utf8");
+      const data = JSON.parse(json);
+      expect(data).to.deep.equal({});
+    });
 
     
   });
