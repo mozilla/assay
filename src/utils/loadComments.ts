@@ -10,7 +10,7 @@ export async function loadFileDecorator() {
   }
 
   const doc = editor.document;
-  const {fullPath, rootFolder} = await splitUri(doc.uri);
+  const { fullPath, rootFolder } = await splitUri(doc.uri);
 
   if (!fullPath.startsWith(rootFolder)) {
     return;

@@ -4,8 +4,6 @@ import * as path from "path";
 import { AssayComment } from "../config/comment";
 import { getExtensionStoragePath } from "../config/globals";
 
-
-
 /***
  * The cache folder is stored at
  * ../Code/User/globalStorage/mozilla.assay/.cache
@@ -51,7 +49,7 @@ export async function addToCache(
 
   if (!value) {
     delete currentLevel[keys[keys.length - 1]];
-  } else if(value instanceof AssayComment) {
+  } else if (value instanceof AssayComment) {
     currentLevel[keys[keys.length - 1]] = {
       uri: value.thread.uri,
       body: value.savedBody.value,

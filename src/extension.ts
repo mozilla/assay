@@ -6,7 +6,11 @@ import {
   exportCommentsFromFolderPath,
 } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
-import { getApiKeyFromUser, getSecretFromUser, testApiCredentials } from "./commands/getApiCreds";
+import {
+  getApiKeyFromUser,
+  getSecretFromUser,
+  testApiCredentials,
+} from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
@@ -17,7 +21,13 @@ import {
   setExtensionStoragePath,
   setFileDecorator,
 } from "./config/globals";
-import { addComment, cancelSaveComment, deleteThread, editComment, saveComment } from "./utils/comment";
+import {
+  addComment,
+  cancelSaveComment,
+  deleteThread,
+  editComment,
+  saveComment,
+} from "./utils/comment";
 import { loadFileDecorator } from "./utils/loadComments";
 import { fetchCommentsFromCache } from "./utils/storage";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
@@ -146,7 +156,10 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Comment API
-  const commentController = vscode.comments.createCommentController('assay-comments', 'Assay');
+  const commentController = vscode.comments.createCommentController(
+    "assay-comments",
+    "Assay"
+  );
 
   // Fetch & restore the current workspace's comments from cache.
   // Ensure fetches are complete before allowing commentController to be visible.
@@ -155,31 +168,48 @@ export async function activate(context: vscode.ExtensionContext) {
       provideCommentingRanges: (document: vscode.TextDocument) => {
         const lineCount = document.lineCount;
         return [new vscode.Range(0, 0, lineCount - 1, 0)];
-      }
+      },
     };
   });
 
-  const exportCommentDisposable = vscode.commands.registerCommand('assay.exportComments', exportCommentsFromFile);
-  const addCommentDisposable = vscode.commands.registerCommand('assay.addComment', addComment);
-  const deleteCommentDisposable2 = vscode.commands.registerCommand('assay.deleteComment', deleteThread);
-  const cancelSaveCommentDisposable = vscode.commands.registerCommand('assay.cancelSaveComment', cancelSaveComment);
-  const saveCommentDisposable = vscode.commands.registerCommand('assay.saveComment', saveComment);
-  const editCommentDisposable = vscode.commands.registerCommand('assay.editComment', editComment);
+  const exportCommentDisposable = vscode.commands.registerCommand(
+    "assay.exportComments",
+    exportCommentsFromFile
+  );
+  const addCommentDisposable = vscode.commands.registerCommand(
+    "assay.addComment",
+    addComment
+  );
+  const deleteCommentDisposable2 = vscode.commands.registerCommand(
+    "assay.deleteComment",
+    deleteThread
+  );
+  const cancelSaveCommentDisposable = vscode.commands.registerCommand(
+    "assay.cancelSaveComment",
+    cancelSaveComment
+  );
+  const saveCommentDisposable = vscode.commands.registerCommand(
+    "assay.saveComment",
+    saveComment
+  );
+  const editCommentDisposable = vscode.commands.registerCommand(
+    "assay.editComment",
+    editComment
+  );
 
-  vscode.commands.registerCommand('assay.disposeComment', () => {
-		commentController.dispose();
-	});
+  vscode.commands.registerCommand("assay.disposeComment", () => {
+    commentController.dispose();
+  });
 
   context.subscriptions.push(
-    commentController, 
-    addCommentDisposable, 
-    deleteCommentDisposable2, 
-    cancelSaveCommentDisposable, 
-    saveCommentDisposable, 
+    commentController,
+    addCommentDisposable,
+    deleteCommentDisposable2,
+    cancelSaveCommentDisposable,
+    saveCommentDisposable,
     editCommentDisposable,
     exportCommentDisposable
   );
-
 }
 
 export function deactivate() {

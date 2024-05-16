@@ -5,12 +5,14 @@ import { rangeTruncation } from "../utils/getCommentLocation";
 import { splitUri } from "../utils/splitUri";
 
 export async function compileComments(guid: string, version: string) {
-  const comments = await getFromCache(guid, ['comments', version]);
+  const comments = await getFromCache(guid, ["comments", version]);
   let compiledComments = "";
 
   for (const filepath in comments) {
     for (const lineNumber in comments[filepath]) {
-      compiledComments += `File:\n${filepath}${rangeTruncation(lineNumber)}\n\n`;
+      compiledComments += `File:\n${filepath}${rangeTruncation(
+        lineNumber
+      )}\n\n`;
       const comment = comments[filepath][lineNumber].body;
       compiledComments += `${comment}\n\n`;
     }
@@ -20,14 +22,14 @@ export async function compileComments(guid: string, version: string) {
 
 export async function exportComments(compiledComments: string) {
   const document = await vscode.workspace.openTextDocument({
-    content: compiledComments, 
-    language: "text"
+    content: compiledComments,
+    language: "text",
   });
-  
-    const edit = new vscode.WorkspaceEdit();
-    vscode.workspace.applyEdit(edit);
-    vscode.window.showTextDocument(document, vscode.ViewColumn.Beside);
-    
+
+  const edit = new vscode.WorkspaceEdit();
+  vscode.workspace.applyEdit(edit);
+  vscode.window.showTextDocument(document, vscode.ViewColumn.Beside);
+
   if (compiledComments) {
     vscode.env.clipboard.writeText(compiledComments);
     vscode.window.showInformationMessage("Comments copied to clipboard.");
@@ -41,11 +43,12 @@ export async function exportCommentsFromFile() {
     return;
   }
   const doc = editor.document;
-  const {rootFolder, fullPath, guid, version} = await splitUri(doc.uri);
+  const { rootFolder, fullPath, guid, version } = await splitUri(doc.uri);
 
-  
   if (!fullPath.startsWith(rootFolder)) {
-    vscode.window.showErrorMessage("(Assay) File is not in the Addons root folder.");
+    vscode.window.showErrorMessage(
+      "(Assay) File is not in the Addons root folder."
+    );
     throw new Error("File is not in the root folder");
   }
 
@@ -62,12 +65,12 @@ export async function exportCommentsFromFile() {
 
 // This one is called from the context menu
 export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
-  
-  
-  const {rootFolder, fullPath, guid, version} = await splitUri(uri);
+  const { rootFolder, fullPath, guid, version } = await splitUri(uri);
 
   if (!fullPath.startsWith(rootFolder)) {
-    vscode.window.showErrorMessage("(Assay) File is not in the Addons root folder.");
+    vscode.window.showErrorMessage(
+      "(Assay) File is not in the Addons root folder."
+    );
     throw new Error("File is not in the root folder");
   }
 
