@@ -21,13 +21,6 @@ describe("exportComments.ts", () => {
     sinon.stub(reviewRootDir, "getRootFolderPath").resolves("/test-root");
   });
 
-  describe("getExportHTML()", () => {
-    // it("should return the HTML", async () => {
-    //   const result = await getExportHTML("test-compiled-comments");
-    //   expect(result).to.contain("test-compiled-comments");
-    // });
-  });
-
   describe("compileComments()", () => {
     it("should return the compiled comments", async () => {
       sinon.stub(addonCache, "getFromCache").resolves({
