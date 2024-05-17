@@ -136,29 +136,31 @@ export class WelcomeView {
         <h4>Adding/Removing Comments</h4>
         <img src="${mediaFolderSrc}/commenting.gif" width="600" />
         <br /><br />
-        To add a comment, click the line where you'd like to add a comment, then
-        either from the command palette or the context menu, select the "(Assay)
-        Add/Edit Comment". This will bring up a webview where you can enter your
-        comment. The comment will be saved to cache upon submission and a visual
-        indicator in the gutter and file tree will be displayed.
+        To add a comment, either hover over a line or select multiple lines
+        and press the 'plus' popup in the gutter. The comment will be saved to cache upon submission and a visual
+        indicator in the gutter and file tree will be displayed. You can press the indicator
+        to hide or show the comment as needed.
         <br /><br />
-        To remove a comment, click the line where the comment is, then either from
-        the command palette or the context menu, select the "(Assay) Delete
-        Comment". This will remove the comment from cache, the gutter icon, and any
-        file tree indicators if applicable.
+        To remove a comment, open the comment and press the 'Delete Comment' button
+        in the top right corner, represented by an 'X' icon.
         <h4>Exporting Comments</h4>
-        To export the comments to a text format, either:
+        To export the comments to a text format, you can:
         <ul>
           <li>
             Open the context menu of any file/folder that is a subfolder of the
             specific version folder, or the version folder itself, then select
-            "(Assay) Export Comments".
+            "(Assay) Export Version Comments".
           </li>
           <br />
           <li>
             Navigate to and open a file that belongs to a version. Open the command
-            palette and choose "(Assay) Export Comments". This will export all
+            palette and choose "(Assay) Export Version Comments". This will export all
             comments for the version the file belongs to.
+          </li>
+          <br />
+          <li>
+            Press the 'Export Version Comments' button in the top right corner of
+            any expanded comment.
           </li>
         </ul>
         <h4>Opening Review Page</h4>

@@ -42,7 +42,7 @@
         },
         {
           "when": "explorerResourceIsFolder",
-          "command": "assay.exportCommentsFromFolder",
+          "command": "assay.exportCommentsFromFile",
           "group": "navigation"
         }
       ],
