@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { splitUri } from "./splitUri";
 import { AssayThread } from "../config/comment";
 
-export default async function getCommentLocation(thread: AssayThread) {
+export default async function getThreadLocation(thread: AssayThread) {
   const range = rangeToString(thread.range);
   const { guid, version, filepath } = await getFilepathInfo(thread);
   return { guid, version, filepath, range: range };
@@ -30,7 +30,7 @@ export function rangeToString(range: vscode.Range) {
 
 export function stringToRange(str: string) {
   const list = str.match(/\d+/g);
-  if (!list || !/#L[0-9]+(-[0-9]+)?/.test(str)) {
+  if (!list || !/#L[0-9]+(-[0-9]+)?(?!-)/.test(str)) {
     throw Error(`Passed string is not a line number: ${str}`);
   }
   const start = new vscode.Position(parseInt(list[0]), 0);
@@ -43,7 +43,7 @@ export function stringToRange(str: string) {
 // use this whenever the line number is exposed to the user.
 export function rangeTruncation(str: string) {
   const list = str.match(/\d+/g);
-  if (!list || !/#L[0-9]+(-[0-9]+)?/.test(str)) {
+  if (!list || !/#L[0-9]+(-[0-9]+)?(?!-)/.test(str)) {
     throw Error(`Passed string is not a line number: ${str}`);
   }
   const start = parseInt(list[0]);

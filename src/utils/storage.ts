@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { addToCache, getFromCache } from "./addonCache";
 import { createComment } from "./comment";
-import getCommentLocation, { stringToRange } from "./getCommentLocation";
+import getCommentLocation, { stringToRange } from "./getThreadLocation";
 import { loadFileDecorator } from "./loadComments";
 import { splitUri } from "./splitUri";
 import { AssayComment } from "../config/comment";

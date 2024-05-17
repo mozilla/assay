@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import getCommentLocation, { rangeTruncation } from "./getCommentLocation";
+import getCommentLocation, { rangeTruncation } from "./getThreadLocation";
 import { deleteCommentFromCache, saveCommentToCache } from "./storage";
 import {
   AssayComment,

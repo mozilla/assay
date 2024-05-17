@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
-import { rangeTruncation } from "../utils/getCommentLocation";
+import { rangeTruncation } from "../utils/getThreadLocation";
 import { splitUri } from "../utils/splitUri";
 
 export async function compileComments(guid: string, version: string) {
