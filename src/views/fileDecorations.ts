@@ -6,18 +6,11 @@ import { getFromCache } from "../utils/addonCache";
 import { splitUri } from "../utils/splitUri";
 
 export async function fileHasComment(uri: vscode.Uri) {
-  const { guid } = await splitUri(uri);
+  const { guid, version, filePath } = await splitUri(uri);
   const comments = await getFromCache(guid, ["comments"]);
 
-  for (const version in comments) {
-    for (const filepath in comments[version]) {
-      for (const lineNumber in comments[version][filepath]) {
-        const { uri: currUri } = comments[version][filepath][lineNumber];
-        if (uri.fsPath === currUri.fsPath) {
-          return true;
-        }
-      }
-    }
+  if (comments?.[version]?.[filePath]) {
+    return true;
   }
   return false;
 }
