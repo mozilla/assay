@@ -171,7 +171,7 @@ export async function activate(context: vscode.ExtensionContext) {
     "assay.addComment",
     addComment
   );
-  const deleteCommentDisposable2 = vscode.commands.registerCommand(
+  const deleteCommentDisposable = vscode.commands.registerCommand(
     "assay.deleteComment",
     deleteThread
   );
@@ -195,7 +195,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     commentController,
     addCommentDisposable,
-    deleteCommentDisposable2,
+    deleteCommentDisposable,
     cancelSaveCommentDisposable,
     saveCommentDisposable,
     editCommentDisposable,
