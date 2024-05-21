@@ -2,8 +2,7 @@ import * as vscode from "vscode";
 import { Uri } from "vscode";
 
 import {
-  exportCommentsFromFile,
-  exportCommentsFromFolderPath,
+  exportVersionComments
 } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import {
@@ -120,16 +119,9 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   const exportCommentsFileDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromFile",
+    "assay.exportVersionComments",
     async () => {
-      await exportCommentsFromFile();
-    }
-  );
-
-  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromFolder",
-    async (uri: Uri) => {
-      await exportCommentsFromFolderPath(uri);
+      await exportVersionComments();
     }
   );
 
@@ -150,7 +142,6 @@ export async function activate(context: vscode.ExtensionContext) {
       async () => await loadFileDecorator()
     ),
     exportCommentsFileDisposable,
-    exportCommentsFolderDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
     assayUpdaterDisposable
   );
@@ -174,7 +165,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
-    exportCommentsFromFile
+    exportVersionComments
   );
   const addCommentDisposable = vscode.commands.registerCommand(
     "assay.addComment",

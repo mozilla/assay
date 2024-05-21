@@ -6,8 +6,7 @@ import * as vscode from "vscode";
 import {
   compileComments,
   exportComments,
-  exportCommentsFromFile,
-  exportCommentsFromFolderPath
+  exportVersionComments
 } from "../../../src/commands/exportComments";
 import * as addonCache from "../../../src/utils/addonCache";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
@@ -50,9 +49,9 @@ describe("exportComments.ts", () => {
     });
   });
 
-  describe("exportCommentsFromFile()", () => {
+  describe("exportVersionComments()", () => {
     it("should return if there is no active text editor", async () => {
-      const result = await exportCommentsFromFile();
+      const result = await exportVersionComments();
       expect(result).to.be.undefined;
     });
 
@@ -67,7 +66,7 @@ describe("exportComments.ts", () => {
       sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
 
       try {
-        await exportCommentsFromFile();
+        await exportVersionComments();
       } catch (err: any) {
         expect(err.message).to.equal("File is not in the root folder");
       }
@@ -84,27 +83,7 @@ describe("exportComments.ts", () => {
       sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
 
       try {
-        await exportCommentsFromFile();
-      } catch (err: any) {
-        expect(err.message).to.equal("No guid or version found");
-      }
-    });
-  });
-
-  describe("exportCommentsFromFolder()", () => {
-    it("should throw an error if the file is not in the root folder", async () => {
-      const fullPath = vscode.Uri.file("/test-filepath");
-      try {
-        await exportCommentsFromFolderPath(fullPath);
-      } catch (err: any) {
-        expect(err.message).to.equal("File is not in the root folder");
-      }
-    });
-
-    it("should throw an error if there is no guid or version", async () => {
-      const fullPath = vscode.Uri.file("/test-root");
-      try {
-        await exportCommentsFromFolderPath(fullPath);
+        await exportVersionComments();
       } catch (err: any) {
         expect(err.message).to.equal("No guid or version found");
       }

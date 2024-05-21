@@ -36,8 +36,7 @@ export async function exportComments(compiledComments: string) {
   }
 }
 
-// This one is called from the command palette
-export async function exportCommentsFromFile() {
+export async function exportVersionComments() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
@@ -55,28 +54,6 @@ export async function exportCommentsFromFile() {
   if (!guid || !version) {
     vscode.window.showErrorMessage(
       "Not a valid path. Ensure you are at least as deep as the version folder."
-    );
-    throw new Error("No guid or version found");
-  }
-
-  const comments = await compileComments(guid, version);
-  await exportComments(comments);
-}
-
-// This one is called from the context menu
-export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
-  const { rootFolder, fullPath, guid, version } = await splitUri(uri);
-
-  if (!fullPath.startsWith(rootFolder)) {
-    vscode.window.showErrorMessage(
-      "(Assay) File is not in the Addons root folder."
-    );
-    throw new Error("File is not in the root folder");
-  }
-
-  if (!guid || !version) {
-    vscode.window.showErrorMessage(
-      "Not inside an add-on. Select a version folder, or sub folder."
     );
     throw new Error("No guid or version found");
   }
