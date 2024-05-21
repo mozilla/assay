@@ -68,7 +68,7 @@ describe("fileDecorations.ts", async () => {
         const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
 
         getFromCacheStub.resolves({
-          "3.5.2" : {
+          "test-version" : {
             "/test-filepath": {
               "#L1": {
                 "body": "test-comment",
@@ -105,7 +105,7 @@ describe("fileDecorations.ts", async () => {
       } as fs.Stats);
 
       getFromCacheStub.resolves({
-        "3.5.2" : {
+        "test-version" : {
           "/test-filepath": {
             "#L1": {
               "body": "test-comment",
