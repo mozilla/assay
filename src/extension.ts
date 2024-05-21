@@ -154,7 +154,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Fetch & restore the current workspace's comments from cache.
   // Ensure fetches are complete before allowing commentController to be visible.
-  await fetchCommentsFromCache(commentController).then(() => {
+  fetchCommentsFromCache(commentController).then(() => {
     commentController.commentingRangeProvider = {
       provideCommentingRanges: (document: vscode.TextDocument) => {
         const lineCount = document.lineCount;
