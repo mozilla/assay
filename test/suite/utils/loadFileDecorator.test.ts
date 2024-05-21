@@ -5,10 +5,10 @@ import * as vscode from "vscode";
 
 import * as constants from "../../../src/config/globals";
 import * as cacheFunctions from "../../../src/utils/addonCache";
-import { loadFileDecorator } from "../../../src/utils/loadComments";
+import { loadFileDecorator } from "../../../src/utils/loadFileDecorator";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
-describe("loadComments.ts", async () => {
+describe("loadFileDecorator.ts", async () => {
   beforeEach(() => {
     const getFileDecoratorStub = sinon.stub(
       constants,
