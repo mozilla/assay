@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import { AssayComment } from "../config/comment";
 import { getExtensionStoragePath } from "../config/globals";
 
 /***
@@ -14,14 +13,14 @@ import { getExtensionStoragePath } from "../config/globals";
  * The folder mozilla.assay will continue to exist after this.
  */
 export async function addToCache(
-  addonGUID: string,
+  cacheName: string,
   keys: string[],
-  value: AssayComment | string | undefined
+  value: any
 ) {
   const storagePath = getExtensionStoragePath();
 
   const cacheFolderPath = path.join(storagePath, ".cache");
-  const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
+  const cacheFilePath = path.join(cacheFolderPath, `${cacheName}.json`);
 
   if (!fs.existsSync(storagePath)) {
     await fs.promises.mkdir(storagePath);
@@ -49,12 +48,6 @@ export async function addToCache(
 
   if (!value) {
     delete currentLevel[keys[keys.length - 1]];
-  } else if (value instanceof AssayComment) {
-    currentLevel[keys[keys.length - 1]] = {
-      uri: value.thread.uri,
-      body: value.savedBody.value,
-      contextValue: value.contextValue,
-    };
   } else {
     currentLevel[keys[keys.length - 1]] = value;
   }
@@ -79,10 +72,10 @@ export function removeEmptyObjectsFromCache(levelObjects: any[]) {
   }
 }
 
-export async function getFromCache(addonGUID: string, keys: string[] = []) {
+export async function getFromCache(cacheName: string, keys: string[] = []) {
   const storagePath = getExtensionStoragePath();
   const cacheFolderPath = path.join(storagePath, ".cache");
-  const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
+  const cacheFilePath = path.join(cacheFolderPath, `${cacheName}.json`);
 
   if (!fs.existsSync(cacheFilePath)) {
     return;

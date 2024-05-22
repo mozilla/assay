@@ -5,7 +5,7 @@ import { rangeTruncation } from "../utils/getThreadLocation";
 import { splitUri } from "../utils/splitUri";
 
 export async function compileComments(guid: string, version: string) {
-  const comments = await getFromCache(guid, ["comments", version]);
+  const comments = await getFromCache("comments", [guid, version]);
   let compiledComments = "";
 
   for (const filepath in comments) {
@@ -36,14 +36,17 @@ export async function exportComments(compiledComments: string) {
   }
 }
 
-export async function exportVersionComments() {
+export async function exportCommentsFromContext() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
   }
   const doc = editor.document;
-  const { rootFolder, fullPath, guid, version } = await splitUri(doc.uri);
+  await exportVersionComments(doc.uri);
+}
 
+export async function exportVersionComments(uri: vscode.Uri) {
+  const { rootFolder, fullPath, guid, version } = await splitUri(uri);
   if (!fullPath.startsWith(rootFolder)) {
     vscode.window.showErrorMessage(
       "(Assay) File is not in the Addons root folder."

@@ -28,25 +28,27 @@ describe("fileDecorations.ts", async () => {
     it("should return false if there are no comments in file", async () => {
       const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
       getFromCacheStub.resolves({
-        "3.5.2" : {
-          "/filepath-one": {
-            "#L1": {
-              "body": "test-comment",
-              "uri": vscode.Uri.file(
-                "test-root-folder-path/test-guid/test-version/filepath-one"
-              )
+        "test-guid": {
+          "test-version-1" : {
+            "/filepath-one": {
+              "#L1": {
+                "body": "test-comment",
+                "uri": vscode.Uri.file(
+                  "test-root-folder-path/test-guid/test-version-1/filepath-one"
+                )
+              },
             },
           },
-        },
-        "3.5.4" : {
-          "/filepath-two": {
-            "#L1": {
-              "body": "test-comment",
-              "uri": vscode.Uri.file(
-                "test-root-folder-path/test-guid/test-version/filepath-two"
-              )
+          "test-version-2" : {
+            "/filepath-two": {
+              "#L1": {
+                "body": "test-comment",
+                "uri": vscode.Uri.file(
+                  "test-root-folder-path/test-guid/test-version-2/filepath-two"
+                )
+              },
             },
-          },
+          }
         }
       });
 
@@ -58,9 +60,7 @@ describe("fileDecorations.ts", async () => {
 
       expect(result).to.be.false;
       expect(
-        getFromCacheStub.calledWith("test-guid", [
-          "comments"
-        ])
+        getFromCacheStub.calledWith("comments")
       ).to.be.true;
     });
 
@@ -68,16 +68,19 @@ describe("fileDecorations.ts", async () => {
         const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
 
         getFromCacheStub.resolves({
-          "test-version" : {
-            "/test-filepath": {
-              "#L1": {
-                "body": "test-comment",
-                "uri": vscode.Uri.file(
-                  "test-root-folder-path/test-guid/test-version/test-filepath"
-                )
+          "test-guid": {
+            "test-version" : {
+              "/test-filepath": {
+                "#L1": {
+                  "body": "test-comment",
+                  "uri": vscode.Uri.file(
+                    "test-root-folder-path/test-guid/test-version/test-filepath"
+                  )
+                },
               },
-            },
+            }
           }
+          
         });
 
         const result = await fileHasComment(
@@ -88,9 +91,7 @@ describe("fileDecorations.ts", async () => {
 
         expect(result).to.be.true;
         expect(
-          getFromCacheStub.calledWith("test-guid", [
-            "comments"
-          ])
+          getFromCacheStub.calledWith("comments")
         ).to.be.true;
     });
   });
@@ -105,16 +106,19 @@ describe("fileDecorations.ts", async () => {
       } as fs.Stats);
 
       getFromCacheStub.resolves({
-        "test-version" : {
-          "/test-filepath": {
-            "#L1": {
-              "body": "test-comment",
-              "uri": vscode.Uri.file(
-                "test-root-folder-path/test-guid/test-version/test-filepath"
-              )
-            },
+        "test-guid": {
+          "test-version" : {
+            "/test-filepath": {
+              "#L1": {
+                "body": "test-comment",
+                "uri": vscode.Uri.file(
+                  "test-root-folder-path/test-guid/test-version/test-filepath"
+                )
+              },
+            }
           }
         }
+        
       });
 
       const result = await decorator.provideFileDecoration(

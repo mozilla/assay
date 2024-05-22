@@ -7,10 +7,12 @@ import getCommentLocation, {
 } from "./getThreadLocation";
 import { loadFileDecorator } from "./loadFileDecorator";
 import { splitUri } from "./splitUri";
+import { exportVersionComments } from "../commands/exportComments";
 import {
   AssayComment,
   AssayReply,
   AssayThread,
+  CommentsCache,
   contextValues,
 } from "../config/comment";
 
@@ -33,6 +35,7 @@ export class commentManager {
     this.cancelSaveComment = this.cancelSaveComment.bind(this);
     this.saveComment = this.saveComment.bind(this);
     this.editComment = this.editComment.bind(this);
+    this.exportComments = this.exportComments.bind(this);
     this.dispose = this.dispose.bind(this);
 
     this.createComment = this.createComment.bind(this);
@@ -124,6 +127,13 @@ export class commentManager {
   }
 
   /**
+   * Export comments from current version.
+   */
+  async exportComments(thread: AssayThread) {
+    await exportVersionComments(thread.uri);
+  }
+
+  /**
    * Dispose of the commentManager.
    */
   dispose() {
@@ -164,28 +174,20 @@ export class commentManager {
     }
 
     const uri = workspace[0].uri;
-    const { rootFolder, fullPath, guid } = await splitUri(uri);
+    const { rootFolder, fullPath } = await splitUri(uri);
 
     if (!fullPath.startsWith(rootFolder)) {
       return;
     }
 
-    const comments = await getFromCache(guid, ["comments"]);
+    const comments = await getFromCache("comments");
 
-    for (const version in comments) {
-      for (const filepath in comments[version]) {
-        for (const lineNumber in comments[version][filepath]) {
-          const { uri, body, contextValue } =
-            comments[version][filepath][lineNumber];
-          const r = stringToRange(lineNumber);
-          const thread = this.controller.createCommentThread(uri, r, []);
-          this.createComment(
-            contextValue,
-            new vscode.MarkdownString(body),
-            thread
-          );
-        }
-      }
+    for (const { uri, body, contextValue, lineNumber } of this.iterateComments(
+      comments
+    )) {
+      const r = stringToRange(lineNumber);
+      const thread = this.controller.createCommentThread(uri, r, []);
+      this.createComment(contextValue, new vscode.MarkdownString(body), thread);
     }
   }
 
@@ -197,18 +199,57 @@ export class commentManager {
     const { guid, version, filepath, range } = await getCommentLocation(
       comment.thread
     );
-    await addToCache(guid, ["comments", version, filepath, range], comment);
+    await addToCache(
+      "comments",
+      [guid, version, filepath, range],
+      this.formatCacheComment(comment)
+    );
   }
 
   /**
-   * Remove the given comment to cache.
+   * Remove the given comment from cache.
    * @param comment
    */
   private async deleteCommentFromCache(comment: AssayComment) {
     const { guid, version, filepath, range } = await getCommentLocation(
       comment.thread
     );
-    await addToCache(guid, ["comments", version, filepath, range], "");
+    await addToCache("comments", [guid, version, filepath, range], "");
     await loadFileDecorator();
+  }
+
+  /**
+   *
+   * @param comment Comment to format into a json-friendly object.
+   * @returns Object with the necessary information for the comment.
+   */
+  private formatCacheComment(comment: AssayComment) {
+    return {
+      uri: comment.thread.uri,
+      body: comment.savedBody.value,
+      contextValue: comment.contextValue,
+    };
+  }
+
+  /**
+   * Iterates through each comment in cache.
+   * @param comments The raw cache object.
+   */
+  private *iterateComments(comments: CommentsCache) {
+    for (const guid in comments) {
+      for (const version in comments[guid]) {
+        for (const filepath in comments[guid][version]) {
+          for (const lineNumber in comments[guid][version][filepath]) {
+            yield {
+              ...comments[guid][version][filepath][lineNumber],
+              lineNumber,
+              filepath,
+              version,
+              guid,
+            };
+          }
+        }
+      }
+    }
   }
 }

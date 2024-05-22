@@ -1,10 +1,11 @@
 import { expect } from "chai";
-import { describe, it, afterEach } from "mocha";
+import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import * as openFromUrl from "../../src/commands/openFromUrl";
 import { activate, deactivate } from "../../src/extension";
+import * as reviewRootDir from "../../src/utils/reviewRootDir";
 
 function makeContext() {
   return {
@@ -18,6 +19,22 @@ function makeContext() {
 }
 
 describe("extension.ts", () => {
+  beforeEach(() => {
+    const rootUri = vscode.Uri.parse("test-root-uri");
+      const getRootFolderPathStub = sinon.stub(
+        reviewRootDir,
+        "getRootFolderPath"
+      );
+      getRootFolderPathStub.resolves(rootUri.fsPath);
+
+      const workspaceFoldersStub = sinon.stub(vscode.workspace, "workspaceFolders");
+      workspaceFoldersStub.value([
+        {
+          uri: rootUri,
+        },
+      ]);
+  });
+  
   afterEach(() => {
     sinon.restore();
   });

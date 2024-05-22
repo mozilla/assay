@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { exportVersionComments } from "./commands/exportComments";
+import { exportCommentsFromContext } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import {
   getApiKeyFromUser,
@@ -20,11 +20,27 @@ import {
 } from "./config/globals";
 import { commentManager } from "./utils/commentManager";
 import { loadFileDecorator } from "./utils/loadFileDecorator";
+import { splitUri } from "./utils/splitUri";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
+  const workspace = vscode.workspace.workspaceFolders;
+  if (!workspace) {
+    return;
+  }
+
+  const uri = workspace[0].uri;
+  const { rootFolder, fullPath } = await splitUri(uri);
+
+  if (!fullPath.startsWith(rootFolder)) {
+    vscode.window.showErrorMessage(
+      "(Assay) Launch terminated. Workspace is not in root folder."
+    );
+    return;
+  }
+
   const storagePath: string = context.globalStorageUri.fsPath;
   const fileDecorator = new CustomFileDecorationProvider();
   setFileDecorator(fileDecorator);
@@ -110,9 +126,9 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   const exportCommentsFileDisposable = vscode.commands.registerCommand(
-    "assay.exportVersionComments",
+    "assay.exportCommentsFromContext",
     async () => {
-      await exportVersionComments();
+      await exportCommentsFromContext();
     }
   );
 
@@ -142,7 +158,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
-    exportVersionComments
+    cmtManager.exportComments
   );
   const addCommentDisposable = vscode.commands.registerCommand(
     "assay.addComment",
