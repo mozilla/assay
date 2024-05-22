@@ -42,7 +42,7 @@
         },
         {
           "when": "explorerResourceIsFolder",
-          "command": "assay.exportVersionComments",
+          "command": "assay.exportCommentsFromContext",
           "group": "navigation"
         }
       ],
@@ -104,7 +104,7 @@
         "title": "(Assay) Open in Diff Tool"
       },
       {
-        "command": "assay.exportVersionComments",
+        "command": "assay.exportCommentsFromContext",
         "title": "(Assay) Export Version Comments"
       },
       {
