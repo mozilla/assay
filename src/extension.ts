@@ -18,7 +18,7 @@ import {
   setExtensionStoragePath,
   setFileDecorator,
 } from "./config/globals";
-import { commentManager } from "./utils/commentManager";
+import { CommentManager } from "./utils/commentManager";
 import { loadFileDecorator } from "./utils/loadFileDecorator";
 import { splitUri } from "./utils/splitUri";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
@@ -154,23 +154,27 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Comment API
-  const cmtManager = new commentManager("assay-comments", "Assay");
+  const cmtManager = new CommentManager("assay-comments", "Assay");
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
-    cmtManager.exportComments
+    cmtManager.exportComments,
+    cmtManager
   );
   const addCommentDisposable = vscode.commands.registerCommand(
     "assay.addComment",
-    cmtManager.addComment
+    cmtManager.addComment,
+    cmtManager
   );
   const deleteCommentDisposable = vscode.commands.registerCommand(
     "assay.deleteComment",
-    cmtManager.deleteThread
+    cmtManager.deleteThread,
+    cmtManager
   );
   const cancelSaveCommentDisposable = vscode.commands.registerCommand(
     "assay.cancelSaveComment",
-    cmtManager.cancelSaveComment
+    cmtManager.cancelSaveComment,
+    cmtManager
   );
   const saveCommentDisposable = vscode.commands.registerCommand(
     "assay.saveComment",
@@ -178,12 +182,14 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   const editCommentDisposable = vscode.commands.registerCommand(
     "assay.editComment",
-    cmtManager.editComment
+    cmtManager.editComment,
+    cmtManager
   );
 
   const disposeCommentDisposable = vscode.commands.registerCommand(
     "assay.disposeComment",
-    cmtManager.dispose
+    cmtManager.dispose,
+    cmtManager
   );
 
   context.subscriptions.push(

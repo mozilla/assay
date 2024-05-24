@@ -22,12 +22,8 @@ export async function addToCache(
   const cacheFolderPath = path.join(storagePath, ".cache");
   const cacheFilePath = path.join(cacheFolderPath, `${cacheName}.json`);
 
-  if (!fs.existsSync(storagePath)) {
-    await fs.promises.mkdir(storagePath);
-  }
-
   if (!fs.existsSync(cacheFolderPath)) {
-    await fs.promises.mkdir(cacheFolderPath);
+    await fs.promises.mkdir(cacheFolderPath, { recursive: true });
   }
 
   let cacheFileJSON: any = {};
