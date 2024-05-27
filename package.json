@@ -16,7 +16,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onUri"
+    "onUri",
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -36,38 +37,40 @@
     "menus": {
       "explorer/context": [
         {
-          "when": "explorerResourceIsFolder && listDoubleSelection",
+          
           "command": "assay.openInDiffTool",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "assay.commentsEnabled && explorerResourceIsFolder && listDoubleSelection"
         },
         {
-          "when": "explorerResourceIsFolder",
+          
           "command": "assay.exportCommentsFromContext",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "assay.commentsEnabled && explorerResourceIsFolder"
         }
       ],
       "comments/commentThread/title": [
         {
 					"command": "assay.exportComments",
 					"group": "inline@1",
-          "when": "!commentThreadIsEmpty"
+          "when": "assay.commentsEnabled && !commentThreadIsEmpty"
 				},
         {
 					"command": "assay.editComment",
 					"group": "inline@2",
-					"when": "commentController == assay-comments && !commentThreadIsEmpty"
+					"when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
 				},
 				{
 					"command": "assay.deleteComment",
 					"group": "inline@3",
-					"when": "commentController == assay-comments && !commentThreadIsEmpty"
+					"when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
 				}
       ],
       "comments/commentThread/context": [
 				{
 					"command": "assay.addComment",
 					"group": "inline",
-					"when": "commentController == assay-comments && commentThreadIsEmpty"
+					"when": "assay.commentsEnabled && commentController == assay-comments && commentThreadIsEmpty"
 				}
 			],
 			"comments/comment/title": [
@@ -77,12 +80,12 @@
 				{
 					"command": "assay.cancelSaveComment",
 					"group": "inline@3",
-					"when": "commentController == assay-comments"
+					"when": "assay.commentsEnabled && commentController == assay-comments"
 				},
 				{
 					"command": "assay.saveComment",
 					"group": "inline@2",
-					"when": "commentController == assay-comments"
+					"when": "assay.commentsEnabled && commentController == assay-comments"
 				}
 			]
     },

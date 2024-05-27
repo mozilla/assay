@@ -39,33 +39,27 @@ describe("extension.ts", () => {
     sinon.restore();
   });
 
-  it("should activate and register commands and have 3 subscriptions", async () => {
-    const context = makeContext();
-    await activate(context);
-    const commands = await vscode.commands.getCommands(true);
-    expect(commands).to.include.members(["assay.get"]);
-    expect(commands).to.include.members(["assay.welcome"]);
-    expect(commands).to.include.members(["assay.review"]);
-    expect(context.subscriptions.length).to.be.greaterThan(10);    
-  });
-
   it("should deactivate and return undefined", async () => {
     // placeholder due to blank deactivate function
     const result = deactivate();
     expect(result).to.be.undefined;
   });
 
-  it("should load the manifest if launched with the intention to do so", async () => {
+  it("should activate and register commands and load the manifest if launched with the intention to do so", async () => {
     const context = makeContext();
     context.globalState.get = sinon.stub().returns("test");
     context.globalState.update = sinon.stub();
-    const openWorkspaceStub = sinon.stub(openFromUrl, "openWorkspace");
-    openWorkspaceStub.resolves();
+    const showTextDocumentStub = sinon.stub(vscode.window, "showTextDocument");
+    showTextDocumentStub.resolves();
 
     sinon.stub(vscode.window, "registerUriHandler");
     sinon.stub(vscode.commands, "registerCommand");
     await activate(context);
-    expect(openWorkspaceStub.calledOnce).to.be.true;
-    expect(openWorkspaceStub.calledWith("test")).to.be.true;
+    expect(showTextDocumentStub.calledOnce).to.be.true;
+    const commands = await vscode.commands.getCommands(true);
+    expect(commands).to.include.members(["assay.get"]);
+    expect(commands).to.include.members(["assay.welcome"]);
+    expect(commands).to.include.members(["assay.review"]);
+    expect(context.subscriptions.length).to.be.greaterThan(10);    
   });
 });

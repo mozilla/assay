@@ -29,9 +29,13 @@ describe("openFromUrl.ts", async () => {
     });
 
     it("should fail the stat check and call downloadAndExtract() if the manifest does not exist", async () => {
+      const executeCommandStub = sinon.stub(vscode.commands, 'executeCommand');
+      executeCommandStub.resolves();
+
       const uri = {
         path: "/review/test-guid/test-version",
       };
+      
       const getRootFolderPathStub = sinon.stub(
         reviewRootDir,
         "getRootFolderPath"
@@ -53,12 +57,6 @@ describe("openFromUrl.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
-      const updateWorkspaceFoldersStub = sinon.stub(
-        vscode.workspace,
-        "updateWorkspaceFolders"
-      );
-      updateWorkspaceFoldersStub.resolves();
-
       const context = {
         globalState: {
           update: sinon.stub(),
@@ -75,6 +73,9 @@ describe("openFromUrl.ts", async () => {
     });
 
     it("should not fail the stat check and not call downloadAndExtract()", async () => {
+      const executeCommandStub = sinon.stub(vscode.commands, 'executeCommand');
+      executeCommandStub.resolves();
+
       const uri = {
         path: "/review/test-guid/test-version",
       };
@@ -98,12 +99,6 @@ describe("openFromUrl.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
-      const updateWorkspaceFoldersStub = sinon.stub(
-        vscode.workspace,
-        "updateWorkspaceFolders"
-      );
-      updateWorkspaceFoldersStub.resolves();
-
       const context = {
         globalState: {
           update: sinon.stub(),
@@ -122,13 +117,24 @@ describe("openFromUrl.ts", async () => {
 
   describe("openWorkspace()", async () => {
     it("should open the manifest if the workspace is already open", async () => {
-      const manifestUri = vscode.Uri.parse("test-manifest-uri");
+      
+      const context = {
+        globalState: {
+          update: sinon.stub(),
+        },
+      };
+      const getExtensionContextStub = sinon.stub(
+        globals,
+        "getExtensionContext"
+      );
+      getExtensionContextStub.returns(context as any);
       const executeCommandStub = sinon.stub(
         vscode.commands,
         "executeCommand"
       );
       executeCommandStub.resolves();
 
+      const manifestUri = vscode.Uri.parse("test-manifest-uri");
       const rootUri = vscode.Uri.parse("test-root-uri");
       const getRootFolderPathStub = sinon.stub(
         reviewRootDir,
@@ -150,8 +156,7 @@ describe("openFromUrl.ts", async () => {
       showTextDocumentStub.resolves();
 
       await openWorkspace(manifestUri.fsPath);
-      expect(executeCommandStub.called).to.be.true;
-      expect(showTextDocumentStub.called).to.be.true;
+      expect(executeCommandStub.calledOnceWith("vscode.openFolder")).to.be.true;
     });
   });
 });

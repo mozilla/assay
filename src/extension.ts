@@ -2,14 +2,13 @@ import * as vscode from "vscode";
 import { Uri } from "vscode";
 
 import { exportCommentsFromContext } from "./commands/exportComments";
-import { downloadAndExtract } from "./commands/getAddon";
 import {
   getApiKeyFromUser,
   getSecretFromUser,
   testApiCredentials,
 } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
-import { handleUri, openWorkspace } from "./commands/openFromUrl";
+import { getAddonByUrl, handleUri } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -26,21 +25,6 @@ import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
-  const workspace = vscode.workspace.workspaceFolders;
-  if (!workspace) {
-    return;
-  }
-
-  const uri = workspace[0].uri;
-  const { rootFolder, fullPath } = await splitUri(uri);
-
-  if (!fullPath.startsWith(rootFolder)) {
-    vscode.window.showErrorMessage(
-      "(Assay) Launch terminated. Workspace is not in root folder."
-    );
-    return;
-  }
-
   const storagePath: string = context.globalStorageUri.fsPath;
   const fileDecorator = new CustomFileDecorationProvider();
   setFileDecorator(fileDecorator);
@@ -48,12 +32,12 @@ export async function activate(context: vscode.ExtensionContext) {
   setExtensionSecretStorage(context.secrets);
   setExtensionContext(context);
 
-  // check if this is a newly opened workspace to open the manifest
+  // If a manifestPath exists, a version folder was just opened. Open the manifest.
   if (context.globalState.get("manifestPath") !== undefined) {
     const manifestPath = context.globalState.get("manifestPath")?.toString();
     await context.globalState.update("manifestPath", undefined);
     if (manifestPath) {
-      await openWorkspace(manifestPath);
+      await vscode.window.showTextDocument(vscode.Uri.file(manifestPath));
     }
   }
 
@@ -86,9 +70,10 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const getDisposable = vscode.commands.registerCommand("assay.get", () => {
-    downloadAndExtract();
-  });
+  const getDisposable = vscode.commands.registerCommand(
+    "assay.get",
+    getAddonByUrl
+  );
 
   const apiKeyDisposable = vscode.commands.registerCommand(
     "assay.getApiKey",
@@ -154,8 +139,30 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Comment API
-  const cmtManager = new commentManager("assay-comments", "Assay");
 
+  await vscode.commands.executeCommand(
+    "setContext",
+    "assay.commentsEnabled",
+    false
+  );
+
+  const workspace = vscode.workspace.workspaceFolders;
+  if (workspace) {
+    const uri = workspace[0].uri;
+    const { rootFolder, fullPath } = await splitUri(uri);
+    // Do not launch commenting system if not in the rootFolder.
+    // Still allows Assay to be launched to use other commands (setup, installs).
+    if (!fullPath.startsWith(rootFolder)) {
+      return;
+    }
+  }
+
+  await vscode.commands.executeCommand(
+    "setContext",
+    "assay.commentsEnabled",
+    true
+  );
+  const cmtManager = new commentManager("assay-comments", "Assay");
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
     cmtManager.exportComments

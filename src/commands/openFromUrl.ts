@@ -5,43 +5,44 @@ import { downloadAndExtract } from "./getAddon";
 import { getExtensionContext } from "../config/globals";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-export async function openWorkspace(manifestPath: string) {
-  const rootUri = vscode.Uri.file(await getRootFolderPath());
-  const manifestUri = vscode.Uri.file(manifestPath);
+export async function openWorkspace(versionPath: string) {
+  const versionUri = vscode.Uri.file(versionPath);
+  const manifestPath = `${versionPath}/manifest.json`;
+  const workspace = vscode.workspace.workspaceFolders;
 
-  // if the workspace is already open, just open the manifest
-  const existingWorkspaceFolder = vscode.workspace.workspaceFolders?.find(
-    (folder) => folder.uri.fsPath === rootUri.fsPath
-  );
+  // If user already has the version folder opened, open the manifest.json
+  if (workspace && workspace[0].uri.fsPath === versionUri.fsPath) {
+    await vscode.window.showTextDocument(vscode.Uri.file(manifestPath));
+  }
+  // Otherwise, store the manifestPath (since the extension must restart) to open on launch.
+  else {
+    const context = getExtensionContext();
+    await context.globalState.update("manifestPath", manifestPath);
+    vscode.commands.executeCommand("vscode.openFolder", versionUri);
+  }
+}
 
-  if (existingWorkspaceFolder) {
-    await vscode.commands.executeCommand(
-      "workbench.files.action.collapseExplorerFolders"
-    );
-    await vscode.window.showTextDocument(manifestUri);
+// handles assay.get input
+export async function getAddonByUrl() {
+  const result = await downloadAndExtract();
+  if (!result) {
     return;
   }
-
-  // otherwise, open the workspace and store the manifest URI to be opened when the workspace is ready
-  vscode.workspace.updateWorkspaceFolders(0, 0, {
-    uri: rootUri,
-    name: "Assay",
-  });
-  const context = getExtensionContext();
-  context.globalState.update("manifestPath", manifestPath);
+  const { workspaceFolder, guid, version } = result;
+  const versionPath = `${workspaceFolder}/${guid}/${version}`;
+  await openWorkspace(versionPath);
 }
 
 // handles urls of the form /review/<guid>/<version>
 export async function handleReviewUrl(guid: string, version: string) {
   const rootPath = await getRootFolderPath();
-  const addonManifestPath = `${rootPath}/${guid}/${version}/manifest.json`;
+  const versionPath = `${rootPath}/${guid}/${version}`;
   try {
-    await fs.promises.stat(addonManifestPath);
+    await fs.promises.stat(versionPath);
   } catch (error) {
     await downloadAndExtract(guid, version);
   }
-
-  await openWorkspace(addonManifestPath);
+  await openWorkspace(versionPath);
 }
 
 // handles vscode://mozilla.assay/... urls
