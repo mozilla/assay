@@ -189,6 +189,28 @@ describe("CommentManager.ts", () => {
     });
   });
 
+  describe("refetchComments", () => {
+    it("should create, replace and activate a new controller with refetched comments in place of the old one.", () => {
+      const cmtManager = new CommentManager("assay-tester", "Assay Tester");
+      const initController = cmtManager.controller;
+      cmtManager.refetchComments();
+      const newController = cmtManager.controller;
+      expect(initController).to.not.equal(newController);
+    });
+  });
+
+  describe("deleteComments", () => {
+    it("should delete all comments in the uri's guid and version.", async () => {
+      const addToCacheStub = sinon.stub(addonCache, "addToCache");
+      const cmtManager = new CommentManager("assay-tester", "Assay Tester");
+      const refetchStub = sinon.stub(cmtManager, "refetchComments");
+      await cmtManager.deleteComments(vscode.Uri.file("/test-root/guid/version"));
+      expect(addToCacheStub.called).to.be.true;
+      expect(refetchStub.called).to.be.true;
+    });
+
+  });
+
 });
 
 
