@@ -52,6 +52,11 @@
           "when": "explorerResourceIsFolder",
           "command": "assay.exportCommentsFromContext",
           "group": "navigation"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "assay.deleteCommentsFromContext",
+          "group": "navigation"
         }
       ],
       "comments/commentThread/title": [
@@ -114,6 +119,10 @@
       {
         "command": "assay.exportCommentsFromContext",
         "title": "(Assay) Export Version Comments"
+      },
+      {
+        "command": "assay.deleteCommentsFromContext",
+        "title": "(Assay) Delete Version Comments"
       },
       {
         "command": "assay.checkForUpdates",

@@ -5,8 +5,7 @@ import * as vscode from "vscode";
 
 import {
   compileComments,
-  exportComments,
-  exportCommentsFromContext
+  exportComments
 } from "../../../src/commands/exportComments";
 import * as addonCache from "../../../src/utils/addonCache";
 import * as getDeleteVersionComments from "../../../src/utils/getDeleteVersionComments";
@@ -51,47 +50,6 @@ describe("exportComments.ts", () => {
       await exportComments("test-compiled-comments", "guid", "version");
       vscode.commands.executeCommand('workbench.action.closeActiveEditor');
       expect(showInformationMessageStub.called).to.be.true;
-    });
-  });
-
-  describe("exportCommentsFromContext()", () => {
-    it("should return if there is no active text editor", async () => {
-      const result = await exportCommentsFromContext();
-      expect(result).to.be.undefined;
-    });
-
-    it("should throw an error if the file is not in the root folder", async () => {
-      const editor = {
-        document: {
-          uri: {
-            fsPath: "/test-filepath",
-          },
-        },
-      } as vscode.TextEditor;
-      sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
-
-      try {
-        await exportCommentsFromContext();
-      } catch (err: any) {
-        expect(err.message).to.equal("File is not in the root folder");
-      }
-    });
-
-    it("should throw an error if there is no guid or version", async () => {
-      const editor = {
-        document: {
-          uri: {
-            fsPath: "/test-root",
-          },
-        },
-      } as vscode.TextEditor;
-      sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
-
-      try {
-        await exportCommentsFromContext();
-      } catch (err: any) {
-        expect(err.message).to.equal("No guid or version found");
-      }
     });
   });
 });

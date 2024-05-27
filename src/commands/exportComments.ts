@@ -22,15 +22,6 @@ export async function compileComments(guid: string, version: string) {
   return compiledComments;
 }
 
-export async function exportCommentsFromContext() {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor) {
-    return;
-  }
-  const doc = editor.document;
-  return await exportVersionComments(doc.uri);
-}
-
 export async function exportVersionComments(uri: vscode.Uri) {
   const { rootFolder, fullPath, guid, version } = await splitUri(uri);
   if (!fullPath.startsWith(rootFolder)) {

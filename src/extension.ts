@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { exportCommentsFromContext } from "./commands/exportComments";
+import { deleteCommentsFromContext } from "./commands/deleteComments";
+import { exportVersionComments } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import {
   getApiKeyFromUser,
@@ -128,9 +129,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const exportCommentsFileDisposable = vscode.commands.registerCommand(
     "assay.exportCommentsFromContext",
-    async () => {
-      await exportCommentsFromContext();
-    }
+    exportVersionComments
+  );
+
+  const deleteCommentsFileDisposable = vscode.commands.registerCommand(
+    "assay.deleteCommentsFromContext",
+    deleteCommentsFromContext
   );
 
   context.subscriptions.push(
@@ -150,6 +154,7 @@ export async function activate(context: vscode.ExtensionContext) {
       async () => await loadFileDecorator()
     ),
     exportCommentsFileDisposable,
+    deleteCommentsFileDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
     assayUpdaterDisposable
   );
