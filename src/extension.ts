@@ -13,6 +13,7 @@ import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
+  setCommentManager,
   setExtensionContext,
   setExtensionSecretStorage,
   setExtensionStoragePath,
@@ -155,6 +156,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Comment API
   const cmtManager = new CommentManager("assay-comments", "Assay");
+  setCommentManager(cmtManager);
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",

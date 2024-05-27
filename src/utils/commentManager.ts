@@ -18,9 +18,15 @@ import {
 
 export class CommentManager {
   controller: vscode.CommentController;
-  constructor(id: string, label: string) {
+  constructor(private id: string, private label: string) {
     this.controller = vscode.comments.createCommentController(id, label);
+    this.activateController();
+  }
 
+  /**
+   * Allows the commenting system to be visible in the gutter.
+   */
+  private activateController() {
     this.fetchCommentsFromCache().then(() => {
       this.controller.commentingRangeProvider = {
         provideCommentingRanges: (document: vscode.TextDocument) => {
@@ -29,6 +35,21 @@ export class CommentManager {
         },
       };
     });
+  }
+
+  /**
+   * Refetches comments from cache by disposing & creating a new controller.
+   */
+  // Not ideal, but the API does not expose its CommentThreads and so the alternative
+  // is tracking them with a dictionary in the CmtManager, which to uniquely do so
+  // would be recreating the cache structure in runtime (and iterating regardless).
+  async refetchComments() {
+    this.controller.dispose();
+    this.controller = vscode.comments.createCommentController(
+      this.id,
+      this.label
+    );
+    this.activateController();
   }
 
   /**
@@ -97,12 +118,11 @@ export class CommentManager {
 
   /**
    * Set a comment to edit.
-   *
-   * Due to the associated button's placement, the entire thread is passed.
-   * this command sets 'all' the comments to edit.
-   * but since we only ever have one comment, it works out.
    * @param thread The associated thread containing the comment.
    */
+  // Due to the associated button's placement, the entire thread is passed.
+  // this command sets 'all' the comments to edit.
+  // but since we only ever have one comment, it works out.
   editComment(thread: AssayThread) {
     thread.comments = thread.comments.map((cmt) => {
       if (cmt.contextValue === "markForReview") {
@@ -118,6 +138,16 @@ export class CommentManager {
    */
   async exportComments(thread: AssayThread) {
     await exportVersionComments(thread.uri);
+  }
+
+  /**
+   * Delete all comments in add-on guid of version.
+   * @param guid add-on GUID.
+   * @param version Version of the add-on.
+   */
+  async deleteVersionComments(guid: string, version: string) {
+    await addToCache("comments", [guid, version], "");
+    this.refetchComments();
   }
 
   /**
