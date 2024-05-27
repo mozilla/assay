@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { deleteCommentsFromContext } from "./commands/deleteComments";
-import { exportVersionComments } from "./commands/exportComments";
+import { exportFolderComments } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import {
   getApiKeyFromUser,
@@ -127,16 +126,6 @@ export async function activate(context: vscode.ExtensionContext) {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
-  const exportCommentsFileDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromContext",
-    exportVersionComments
-  );
-
-  const deleteCommentsFileDisposable = vscode.commands.registerCommand(
-    "assay.deleteCommentsFromContext",
-    deleteCommentsFromContext
-  );
-
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -153,8 +142,6 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor(
       async () => await loadFileDecorator()
     ),
-    exportCommentsFileDisposable,
-    deleteCommentsFileDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
     assayUpdaterDisposable
   );
@@ -162,6 +149,17 @@ export async function activate(context: vscode.ExtensionContext) {
   // Comment API
   const cmtManager = new CommentManager("assay-comments", "Assay");
   setCommentManager(cmtManager);
+
+  const exportCommentsFileDisposable = vscode.commands.registerCommand(
+    "assay.exportCommentsFromContext",
+    exportFolderComments
+  );
+
+  const deleteCommentsFileDisposable = vscode.commands.registerCommand(
+    "assay.deleteCommentsFromContext",
+    cmtManager.deleteComments,
+    cmtManager
+  );
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
@@ -207,7 +205,9 @@ export async function activate(context: vscode.ExtensionContext) {
     saveCommentDisposable,
     editCommentDisposable,
     exportCommentDisposable,
-    disposeCommentDisposable
+    disposeCommentDisposable,
+    exportCommentsFileDisposable,
+    deleteCommentsFileDisposable
   );
 }
 

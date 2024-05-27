@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { getCommentManager } from "../config/globals";
 import { getFromCache } from "../utils/addonCache";
-import { getDeleteVersionCommentsPreference } from "../utils/getDeleteVersionComments";
+import { getDeleteCommentsPreference } from "../utils/getDeleteComments";
 import { rangeTruncation } from "../utils/getThreadLocation";
 import { splitUri } from "../utils/splitUri";
 
@@ -22,7 +22,7 @@ export async function compileComments(guid: string, version: string) {
   return compiledComments;
 }
 
-export async function exportVersionComments(uri: vscode.Uri) {
+export async function exportFolderComments(uri: vscode.Uri) {
   const { rootFolder, fullPath, guid, version } = await splitUri(uri);
   if (!fullPath.startsWith(rootFolder)) {
     vscode.window.showErrorMessage(
@@ -39,15 +39,14 @@ export async function exportVersionComments(uri: vscode.Uri) {
   }
 
   const comments = await compileComments(guid, version);
-  await exportComments(comments, guid, version);
+  await exportComments(comments, uri);
 }
 
 export async function exportComments(
   compiledComments: string,
-  guid: string,
-  version: string
+  uri: vscode.Uri
 ) {
-  const deleteCachedComments = await getDeleteVersionCommentsPreference();
+  const deleteCachedComments = await getDeleteCommentsPreference();
 
   const document = await vscode.workspace.openTextDocument({
     content: compiledComments,
@@ -65,6 +64,6 @@ export async function exportComments(
 
   if (deleteCachedComments) {
     const cmtManager = getCommentManager();
-    await cmtManager.deleteVersionComments(guid, version);
+    await cmtManager.deleteComments(uri);
   }
 }

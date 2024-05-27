@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
 
-export async function getDeleteVersionCommentsPreference() {
+export async function getDeleteCommentsPreference() {
   const config = vscode.workspace.getConfiguration("assay");
   const savedPreference =
-    config.get<string>("deleteVersionCommentsOnExport") || "No Preference";
+    config.get<string>("deleteCommentsOnExport") || "No Preference";
   return ["Yes", "No"].includes(savedPreference)
     ? savedPreference === "Yes"
-    : await promptDeleteVersionComments(config, savedPreference);
+    : await promptdeleteComments(config, savedPreference);
 }
 
-async function promptDeleteVersionComments(
+async function promptdeleteComments(
   config: vscode.WorkspaceConfiguration,
   savedPreference: string
 ) {
@@ -21,12 +21,12 @@ async function promptDeleteVersionComments(
     return false;
   }
   if (savedPreference === "No Preference") {
-    await setDeleteVersionCommentsPreference(config, selectedPreference);
+    await setdeleteCommentsPreference(config, selectedPreference);
   }
   return selectedPreference === "Yes";
 }
 
-async function setDeleteVersionCommentsPreference(
+async function setdeleteCommentsPreference(
   config: vscode.WorkspaceConfiguration,
   selectedPreference: string
 ) {
@@ -44,7 +44,7 @@ async function setDeleteVersionCommentsPreference(
     return;
   }
   await config.update(
-    "deleteVersionCommentsOnExport",
+    "deleteCommentsOnExport",
     input === "Save my Preference" ? selectedPreference : "Ask Every Time",
     true
   );

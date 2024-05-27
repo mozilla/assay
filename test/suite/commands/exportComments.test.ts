@@ -8,7 +8,7 @@ import {
   exportComments
 } from "../../../src/commands/exportComments";
 import * as addonCache from "../../../src/utils/addonCache";
-import * as getDeleteVersionComments from "../../../src/utils/getDeleteVersionComments";
+import * as getdeleteComments from "../../../src/utils/getDeleteComments";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 describe("exportComments.ts", () => {
@@ -40,14 +40,14 @@ describe("exportComments.ts", () => {
   describe("exportComments()", () => {
     it("should show an information message", async () => {
 
-      const preferenceStub = sinon.stub(getDeleteVersionComments, "getDeleteVersionCommentsPreference");
+      const preferenceStub = sinon.stub(getdeleteComments, "getDeleteCommentsPreference");
       preferenceStub.resolves(false);
 
       const showInformationMessageStub = sinon.stub(
         vscode.window,
         "showInformationMessage"
       );
-      await exportComments("test-compiled-comments", "guid", "version");
+      await exportComments("test-compiled-comments", vscode.Uri.file("guid"));
       vscode.commands.executeCommand('workbench.action.closeActiveEditor');
       expect(showInformationMessageStub.called).to.be.true;
     });

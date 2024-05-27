@@ -5,19 +5,19 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { setExtensionStoragePath } from "../../../src/config/globals";
-import { getDeleteVersionCommentsPreference } from "../../../src/utils/getDeleteVersionComments";
+import { getDeleteCommentsPreference } from "../../../src/utils/getDeleteComments";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
 const storagePath = path.resolve(workspaceFolder, ".test_assay");
 setExtensionStoragePath(storagePath);
 
-describe("getDeleteVersionComments.ts", () => {
+describe("getdeleteComments.ts", () => {
 
       afterEach(async () => {
         sinon.restore();
       });
 
-      describe("getDeleteVersionCommentsPreference", () => {
+      describe("getDeleteCommentsPreference", () => {
         it("should return true when user's preference is to delete comments after export", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const config = {
@@ -25,7 +25,7 @@ describe("getDeleteVersionComments.ts", () => {
             } as unknown as vscode.WorkspaceConfiguration;
             configStub.returns(config);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.true;
         });
 
@@ -36,7 +36,7 @@ describe("getDeleteVersionComments.ts", () => {
             } as unknown as vscode.WorkspaceConfiguration;
             configStub.returns(config);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.false;
         });
 
@@ -51,7 +51,7 @@ describe("getDeleteVersionComments.ts", () => {
             showQuickPickStub.onCall(0).returns(undefined);
             sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.false;
         });
 
@@ -66,7 +66,7 @@ describe("getDeleteVersionComments.ts", () => {
             showQuickPickStub.onCall(0).returns("Yes");
             sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.true;
         });
 
@@ -81,7 +81,7 @@ describe("getDeleteVersionComments.ts", () => {
             showQuickPickStub.onCall(0).returns("No");
             sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.false;
         });
 
@@ -100,10 +100,10 @@ describe("getDeleteVersionComments.ts", () => {
             showQuickPickStub.onSecondCall().resolves("Save my Preference");
             sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.true;
             expect(updateStub.calledOnce).to.be.true;
-            expect(updateStub.calledWith("deleteVersionCommentsOnExport", "Yes", true)).to.be.true;
+            expect(updateStub.calledWith("deleteCommentsOnExport", "Yes", true)).to.be.true;
         });
 
         it("should prompt the user twice when their preference is not defined: once for their preference (Yes), once to save (Ask Every Time) then save and return preference.", async () => {
@@ -121,10 +121,10 @@ describe("getDeleteVersionComments.ts", () => {
             showQuickPickStub.onSecondCall().resolves("Ask Every Time");
             sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.true;
             expect(updateStub.calledOnce).to.be.true;
-            expect(updateStub.calledWith("deleteVersionCommentsOnExport", "Ask Every Time", true)).to.be.true;
+            expect(updateStub.calledWith("deleteCommentsOnExport", "Ask Every Time", true)).to.be.true;
         });
 
         it("should prompt the user twice when their preference is not defined: once for their preference (No), once to save (Save my preference) then save and return preference.", async () => {
@@ -142,10 +142,10 @@ describe("getDeleteVersionComments.ts", () => {
             showQuickPickStub.onSecondCall().resolves("Save my Preference");
             sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.false;
             expect(updateStub.calledOnce).to.be.true;
-            expect(updateStub.calledWith("deleteVersionCommentsOnExport", "No", true)).to.be.true;
+            expect(updateStub.calledWith("deleteCommentsOnExport", "No", true)).to.be.true;
         });
 
         it("should prompt the user twice when their preference is not defined: once for their preference (No), once to save (Ask Every Time) then save and return preference.", async () => {
@@ -163,10 +163,10 @@ describe("getDeleteVersionComments.ts", () => {
             showQuickPickStub.onSecondCall().resolves("Ask Every Time");
             sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.false;
             expect(updateStub.calledOnce).to.be.true;
-            expect(updateStub.calledWith("deleteVersionCommentsOnExport", "Ask Every Time", true)).to.be.true;
+            expect(updateStub.calledWith("deleteCommentsOnExport", "Ask Every Time", true)).to.be.true;
         });
 
         it("should prompt the user twice when their preference is not defined: once for their preference and once to save (early termination).", async () => {
@@ -184,7 +184,7 @@ describe("getDeleteVersionComments.ts", () => {
             showQuickPickStub.onSecondCall().resolves(undefined);
             sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-            const result = await getDeleteVersionCommentsPreference();
+            const result = await getDeleteCommentsPreference();
             expect(result).to.be.false;
             expect(updateStub.called).to.be.false;
         });

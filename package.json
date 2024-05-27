@@ -33,9 +33,9 @@
           "description": "Command to launch external tool to diff add-ons.",
           "default": ""
         },
-        "assay.deleteVersionCommentsOnExport": {
+        "assay.deleteCommentsOnExport": {
           "type": "string",
-          "description": "Whether or not to delete version comments after exporting.",
+          "description": "Whether or not to delete comments after exporting.",
           "default": "No Preference",
           "enum": ["Yes", "No", "Ask Every Time"]
         }
@@ -122,7 +122,7 @@
       },
       {
         "command": "assay.deleteCommentsFromContext",
-        "title": "(Assay) Delete Version Comments"
+        "title": "(Assay) Delete Comments"
       },
       {
         "command": "assay.checkForUpdates",

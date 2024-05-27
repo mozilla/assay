@@ -7,7 +7,7 @@ import getCommentLocation, {
 } from "./getThreadLocation";
 import { loadFileDecorator } from "./loadFileDecorator";
 import { splitUri } from "./splitUri";
-import { exportVersionComments } from "../commands/exportComments";
+import { exportFolderComments } from "../commands/exportComments";
 import {
   AssayComment,
   AssayReply,
@@ -137,15 +137,15 @@ export class CommentManager {
    * Export comments from current version.
    */
   async exportComments(thread: AssayThread) {
-    await exportVersionComments(thread.uri);
+    await exportFolderComments(thread.uri);
   }
 
   /**
    * Delete all comments in add-on guid of version.
-   * @param guid add-on GUID.
-   * @param version Version of the add-on.
+   * @param uri The current uri.
    */
-  async deleteVersionComments(guid: string, version: string) {
+  async deleteComments(uri: vscode.Uri) {
+    const { guid, version } = await splitUri(uri);
     await addToCache("comments", [guid, version], "");
     this.refetchComments();
   }
