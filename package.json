@@ -25,11 +25,19 @@
       "properties": {
         "assay.rootFolder": {
           "type": "string",
+          "description": "The folder in which to store downloaded add-ons.",
           "default": ""
         },
         "assay.diffTool": {
           "type": "string",
+          "description": "Command to launch external tool to diff add-ons.",
           "default": ""
+        },
+        "assay.deleteVersionCommentsOnExport": {
+          "type": "string",
+          "description": "Whether or not to delete version comments after exporting.",
+          "default": "No Preference",
+          "enum": ["Yes", "No", "Ask Every Time"]
         }
       }
     },
