@@ -118,11 +118,11 @@
       },
       {
         "command": "assay.exportCommentsFromContext",
-        "title": "(Assay) Export Version Comments"
+        "title": "(Assay) Export Comments in Folder"
       },
       {
         "command": "assay.deleteCommentsFromContext",
-        "title": "(Assay) Delete Comments"
+        "title": "(Assay) Delete Comments in Folder"
       },
       {
         "command": "assay.checkForUpdates",
@@ -163,7 +163,7 @@
 			},
       {
 				"command": "assay.exportComments",
-				"title": "Export Version Comments",
+				"title": "Export Comments in Folder",
 				"icon": {
 					"dark": "media/commentIcons/export_inverse.svg",
 					"light": "media/commentIcons/export.svg"
