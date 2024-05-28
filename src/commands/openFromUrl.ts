@@ -5,9 +5,9 @@ import { downloadAndExtract } from "./getAddon";
 import { getExtensionContext } from "../config/globals";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 
-export async function openWorkspace(versionPath: string) {
+export async function openWorkspace(versionPath: string, filepath?: string) {
   const versionUri = vscode.Uri.file(versionPath);
-  const manifestPath = `${versionPath}/manifest.json`;
+  const manifestPath = `${versionPath}/${filepath ?? "manifest.json"}`;
   const workspace = vscode.workspace.workspaceFolders;
 
   // If user already has the version folder opened, open the manifest.json
@@ -33,8 +33,12 @@ export async function getAddonByUrl() {
   await openWorkspace(versionPath);
 }
 
-// handles urls of the form /review/<guid>/<version>
-export async function handleReviewUrl(guid: string, version: string) {
+// handles urls of the form /review/<guid>/<version>?path=<file>
+export async function handleReviewUrl(
+guid: string,
+version: string,
+filepath?: string
+) {
   const rootPath = await getRootFolderPath();
   const versionPath = `${rootPath}/${guid}/${version}`;
   try {
@@ -42,16 +46,16 @@ export async function handleReviewUrl(guid: string, version: string) {
   } catch (error) {
     await downloadAndExtract(guid, version);
   }
-  await openWorkspace(versionPath);
+  await openWorkspace(versionPath, filepath);
 }
 
 // handles vscode://mozilla.assay/... urls
 export async function handleUri(uri: vscode.Uri) {
-  const { path } = uri;
+  const { path, query } = uri;
+  const filepath = new URLSearchParams(query).get("path");
   const [_, action, ...rest] = path.split("/");
-
   if (action === "review") {
     const [guid, version] = rest;
-    await handleReviewUrl(guid, version);
+    await handleReviewUrl(guid, version, filepath || undefined);
   }
 }
