@@ -24,35 +24,6 @@ export class CommentManager {
   }
 
   /**
-   * Allows the commenting system to be visible in the gutter.
-   */
-  private activateController() {
-    this.fetchCommentsFromCache().then(() => {
-      this.controller.commentingRangeProvider = {
-        provideCommentingRanges: (document: vscode.TextDocument) => {
-          const lineCount = document.lineCount;
-          return [new vscode.Range(0, 0, lineCount - 1, 0)];
-        },
-      };
-    });
-  }
-
-  /**
-   * Refetches comments from cache by disposing & creating a new controller.
-   */
-  // Not ideal, but the API does not expose its CommentThreads and so the alternative
-  // is tracking them with a dictionary in the CmtManager, which to uniquely do so
-  // would be recreating the cache structure in runtime (and iterating regardless).
-  async refetchComments() {
-    this.controller.dispose();
-    this.controller = vscode.comments.createCommentController(
-      this.id,
-      this.label
-    );
-    this.activateController();
-  }
-
-  /**
    * Adds a comment to the reply's thread.
    * @param reply The thread location and text to add.
    */
@@ -155,6 +126,35 @@ export class CommentManager {
    */
   dispose() {
     this.controller.dispose();
+  }
+
+  /**
+   * Allows the commenting system to be visible in the gutter.
+   */
+  private activateController() {
+    this.fetchCommentsFromCache().then(() => {
+      this.controller.commentingRangeProvider = {
+        provideCommentingRanges: (document: vscode.TextDocument) => {
+          const lineCount = document.lineCount;
+          return [new vscode.Range(0, 0, lineCount - 1, 0)];
+        },
+      };
+    });
+  }
+
+  /**
+   * Refetches comments from cache by disposing & creating a new controller.
+   */
+  // Not ideal, but the API does not expose its CommentThreads and so the alternative
+  // is tracking them with a dictionary in the CmtManager, which to uniquely do so
+  // would be recreating the cache structure in runtime (and iterating regardless).
+  private async refetchComments() {
+    this.controller.dispose();
+    this.controller = vscode.comments.createCommentController(
+      this.id,
+      this.label
+    );
+    this.activateController();
   }
 
   /**

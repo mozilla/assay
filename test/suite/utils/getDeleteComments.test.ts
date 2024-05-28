@@ -5,7 +5,7 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { setExtensionStoragePath } from "../../../src/config/globals";
-import { getDeleteCommentsPreference } from "../../../src/utils/getDeleteComments";
+import getDeleteCommentsPreference from "../../../src/utils/getDeleteCommentsPreference";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
 const storagePath = path.resolve(workspaceFolder, ".test_assay");

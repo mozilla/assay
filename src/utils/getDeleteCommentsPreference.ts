@@ -1,12 +1,17 @@
 import * as vscode from "vscode";
 
-export async function getDeleteCommentsPreference() {
+export default async function getDeleteCommentsPreference() {
   const config = vscode.workspace.getConfiguration("assay");
   const savedPreference =
     config.get<string>("deleteCommentsOnExport") || "No Preference";
-  return ["Yes", "No"].includes(savedPreference)
-    ? savedPreference === "Yes"
-    : await promptdeleteComments(config, savedPreference);
+
+  if(["Yes", "No"].includes(savedPreference)){
+    return savedPreference === "Yes";
+  }
+  else { // No preference or ask every time.
+    return await promptdeleteComments(config, savedPreference);
+  }
+  
 }
 
 async function promptdeleteComments(
@@ -17,12 +22,16 @@ async function promptdeleteComments(
     title: "Delete version comments after exporting?",
     ignoreFocusOut: true,
   });
+  
   if (!selectedPreference) {
     return false;
   }
+
+  // Ask to save preference.
   if (savedPreference === "No Preference") {
     await setdeleteCommentsPreference(config, selectedPreference);
   }
+  
   return selectedPreference === "Yes";
 }
 
@@ -40,9 +49,11 @@ async function setdeleteCommentsPreference(
       ignoreFocusOut: true,
     }
   );
+  
   if (!input) {
     return;
   }
+
   await config.update(
     "deleteCommentsOnExport",
     input === "Save my Preference" ? selectedPreference : "Ask Every Time",

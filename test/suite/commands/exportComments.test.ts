@@ -9,7 +9,7 @@ import {
   exportFolderComments
 } from "../../../src/commands/exportComments";
 import * as addonCache from "../../../src/utils/addonCache";
-import * as getdeleteComments from "../../../src/utils/getDeleteComments";
+import * as getdeleteComments from "../../../src/utils/getDeleteCommentsPreference";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 describe("exportComments.ts", () => {
@@ -41,7 +41,7 @@ describe("exportComments.ts", () => {
   describe("exportComments()", () => {
     it("should show an information message", async () => {
 
-      const preferenceStub = sinon.stub(getdeleteComments, "getDeleteCommentsPreference");
+      const preferenceStub = sinon.stub(getdeleteComments, "default");
       preferenceStub.resolves(false);
 
       const showInformationMessageStub = sinon.stub(
