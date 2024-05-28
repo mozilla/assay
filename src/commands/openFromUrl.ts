@@ -18,7 +18,7 @@ export async function openWorkspace(versionPath: string) {
   else {
     const context = getExtensionContext();
     await context.globalState.update("manifestPath", manifestPath);
-    vscode.commands.executeCommand("vscode.openFolder", versionUri);
+    vscode.commands.executeCommand("vscode.openFolder", versionUri, true);
   }
 }
 
