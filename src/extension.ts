@@ -1,16 +1,14 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { removeCommentFromCurrentLine } from "./commands/deleteComment";
-import {
-  exportCommentsFromFile,
-  exportCommentsFromFolderPath,
-} from "./commands/exportComments";
+import { exportCommentsFromContext } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
-import { getApiKeyFromUser, getSecretFromUser, testApiCredentials } from "./commands/getApiCreds";
+import {
+  getApiKeyFromUser,
+  getSecretFromUser,
+  testApiCredentials,
+} from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
-import { loadFileComments } from "./commands/loadComments";
-import { makeComment } from "./commands/makeComment";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
@@ -20,11 +18,29 @@ import {
   setExtensionStoragePath,
   setFileDecorator,
 } from "./config/globals";
+import { CommentManager } from "./utils/commentManager";
+import { loadFileDecorator } from "./utils/loadFileDecorator";
+import { splitUri } from "./utils/splitUri";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
+  const workspace = vscode.workspace.workspaceFolders;
+  if (!workspace) {
+    return;
+  }
+
+  const uri = workspace[0].uri;
+  const { rootFolder, fullPath } = await splitUri(uri);
+
+  if (!fullPath.startsWith(rootFolder)) {
+    vscode.window.showErrorMessage(
+      "(Assay) Launch terminated. Workspace is not in root folder."
+    );
+    return;
+  }
+
   const storagePath: string = context.globalStorageUri.fsPath;
   const fileDecorator = new CustomFileDecorationProvider();
   setFileDecorator(fileDecorator);
@@ -42,7 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   // load comments on startup/reload
-  await loadFileComments();
+  await loadFileDecorator();
 
   // listen for vscode://publisher.assay/ links
   const UriHandlerDisposable = vscode.window.registerUriHandler({
@@ -105,35 +121,14 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const commentDisposable = vscode.commands.registerCommand(
-    "assay.codeComment",
-    async () => {
-      await makeComment();
-    }
-  );
-
   const sidebarDisposable = vscode.window.createTreeView("assayCommands", {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
   const exportCommentsFileDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromFile",
+    "assay.exportCommentsFromContext",
     async () => {
-      await exportCommentsFromFile();
-    }
-  );
-
-  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromFolder",
-    async (uri: Uri) => {
-      await exportCommentsFromFolderPath(uri);
-    }
-  );
-
-  const deleteCommentDisposable = vscode.commands.registerCommand(
-    "assay.deleteComment",
-    async () => {
-      await removeCommentFromCurrentLine();
+      await exportCommentsFromContext();
     }
   );
 
@@ -146,19 +141,66 @@ export async function activate(context: vscode.ExtensionContext) {
     apiSecretDisposable,
     apiCredentialsTestDisposable,
     diffDisposable,
-    commentDisposable,
     sidebarDisposable,
     vscode.window.onDidChangeActiveTextEditor(
       async () => await updateTaskbar()
     ),
     vscode.window.onDidChangeActiveTextEditor(
-      async () => await loadFileComments()
+      async () => await loadFileDecorator()
     ),
     exportCommentsFileDisposable,
-    exportCommentsFolderDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
-    deleteCommentDisposable,
     assayUpdaterDisposable
+  );
+
+  // Comment API
+  const cmtManager = new CommentManager("assay-comments", "Assay");
+
+  const exportCommentDisposable = vscode.commands.registerCommand(
+    "assay.exportComments",
+    cmtManager.exportComments,
+    cmtManager
+  );
+  const addCommentDisposable = vscode.commands.registerCommand(
+    "assay.addComment",
+    cmtManager.addComment,
+    cmtManager
+  );
+  const deleteCommentDisposable = vscode.commands.registerCommand(
+    "assay.deleteComment",
+    cmtManager.deleteThread,
+    cmtManager
+  );
+  const cancelSaveCommentDisposable = vscode.commands.registerCommand(
+    "assay.cancelSaveComment",
+    cmtManager.cancelSaveComment,
+    cmtManager
+  );
+  const saveCommentDisposable = vscode.commands.registerCommand(
+    "assay.saveComment",
+    cmtManager.saveComment
+  );
+  const editCommentDisposable = vscode.commands.registerCommand(
+    "assay.editComment",
+    cmtManager.editComment,
+    cmtManager
+  );
+
+  const disposeCommentDisposable = vscode.commands.registerCommand(
+    "assay.disposeComment",
+    cmtManager.dispose,
+    cmtManager
+  );
+
+  context.subscriptions.push(
+    cmtManager.controller,
+    addCommentDisposable,
+    deleteCommentDisposable,
+    cancelSaveCommentDisposable,
+    saveCommentDisposable,
+    editCommentDisposable,
+    exportCommentDisposable,
+    disposeCommentDisposable
   );
 }
 

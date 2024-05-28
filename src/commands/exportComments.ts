@@ -1,36 +1,34 @@
 import * as vscode from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
-import { getRootFolderPath } from "../utils/reviewRootDir";
+import { rangeTruncation } from "../utils/getThreadLocation";
+import { splitUri } from "../utils/splitUri";
 
 export async function compileComments(guid: string, version: string) {
-  const comments = await getFromCache(guid, [version]);
+  const comments = await getFromCache("comments", [guid, version]);
   let compiledComments = "";
 
   for (const filepath in comments) {
     for (const lineNumber in comments[filepath]) {
-      if (comments[filepath][lineNumber]) {
-        compiledComments += `File:\n${filepath.slice(1)}#L${lineNumber}\n\n`;
-        const comment = comments[filepath][lineNumber];
-        compiledComments += `${comment}\n\n`;
-      }
+      compiledComments += `File:\n${filepath}${rangeTruncation(
+        lineNumber
+      )}\n\n`;
+      const comment = comments[filepath][lineNumber].body;
+      compiledComments += `${comment}\n\n`;
     }
   }
-
   return compiledComments;
 }
 
 export async function exportComments(compiledComments: string) {
-  const panel = vscode.window.createWebviewPanel(
-    "assay.export",
-    "Export Comments",
-    vscode.ViewColumn.Beside,
-    {
-      enableScripts: true,
-    }
-  );
+  const document = await vscode.workspace.openTextDocument({
+    content: compiledComments,
+    language: "text",
+  });
 
-  panel.webview.html = await getExportHTML(compiledComments);
+  const edit = new vscode.WorkspaceEdit();
+  vscode.workspace.applyEdit(edit);
+  vscode.window.showTextDocument(document, vscode.ViewColumn.Beside);
 
   if (compiledComments) {
     vscode.env.clipboard.writeText(compiledComments);
@@ -38,23 +36,23 @@ export async function exportComments(compiledComments: string) {
   }
 }
 
-// This one is called from the command palette
-export async function exportCommentsFromFile() {
+export async function exportCommentsFromContext() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
   }
   const doc = editor.document;
-  const fullPath = doc.uri.fsPath;
+  await exportVersionComments(doc.uri);
+}
 
-  const rootFolder = await getRootFolderPath();
+export async function exportVersionComments(uri: vscode.Uri) {
+  const { rootFolder, fullPath, guid, version } = await splitUri(uri);
   if (!fullPath.startsWith(rootFolder)) {
+    vscode.window.showErrorMessage(
+      "(Assay) File is not in the Addons root folder."
+    );
     throw new Error("File is not in the root folder");
   }
-
-  const relativePath = fullPath.replace(rootFolder, "");
-  const guid = relativePath.split("/")[1];
-  const version = relativePath.split("/")[2];
 
   if (!guid || !version) {
     vscode.window.showErrorMessage(
@@ -65,44 +63,4 @@ export async function exportCommentsFromFile() {
 
   const comments = await compileComments(guid, version);
   await exportComments(comments);
-}
-
-// This one is called from the context menu
-export async function exportCommentsFromFolderPath(uri: vscode.Uri) {
-  const fullPath = uri.fsPath;
-
-  const rootFolder = await getRootFolderPath();
-  if (!fullPath.startsWith(rootFolder)) {
-    throw new Error("File is not in the root folder");
-  }
-
-  const relativePath = fullPath.replace(rootFolder, "");
-  const guid = relativePath.split("/")[1];
-  const version = relativePath.split("/")[2];
-
-  if (!guid || !version) {
-    vscode.window.showErrorMessage(
-      "Not inside an add-on. Select a version folder, or sub folder."
-    );
-    throw new Error("No guid or version found");
-  }
-
-  const comments = await compileComments(guid, version);
-  await exportComments(comments);
-}
-
-export async function getExportHTML(compiledComments: string) {
-  compiledComments = compiledComments ? compiledComments : "No comments found.";
-  return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Export Comments</title>
-    </head>
-    <body>
-        <pre>${compiledComments}</pre>
-    </body>
-    </html>
-    `;
 }

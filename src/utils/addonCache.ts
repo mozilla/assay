@@ -13,21 +13,17 @@ import { getExtensionStoragePath } from "../config/globals";
  * The folder mozilla.assay will continue to exist after this.
  */
 export async function addToCache(
-  addonGUID: string,
+  cacheName: string,
   keys: string[],
-  value: string | undefined
+  value: any
 ) {
   const storagePath = getExtensionStoragePath();
 
   const cacheFolderPath = path.join(storagePath, ".cache");
-  const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
-
-  if (!fs.existsSync(storagePath)) {
-    await fs.promises.mkdir(storagePath);
-  }
+  const cacheFilePath = path.join(cacheFolderPath, `${cacheName}.json`);
 
   if (!fs.existsSync(cacheFolderPath)) {
-    await fs.promises.mkdir(cacheFolderPath);
+    await fs.promises.mkdir(cacheFolderPath, { recursive: true });
   }
 
   let cacheFileJSON: any = {};
@@ -72,10 +68,10 @@ export function removeEmptyObjectsFromCache(levelObjects: any[]) {
   }
 }
 
-export async function getFromCache(addonGUID: string, keys: string[]) {
+export async function getFromCache(cacheName: string, keys: string[] = []) {
   const storagePath = getExtensionStoragePath();
   const cacheFolderPath = path.join(storagePath, ".cache");
-  const cacheFilePath = path.join(cacheFolderPath, `${addonGUID}.json`);
+  const cacheFilePath = path.join(cacheFolderPath, `${cacheName}.json`);
 
   if (!fs.existsSync(cacheFilePath)) {
     return;

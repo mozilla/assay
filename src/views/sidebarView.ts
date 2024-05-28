@@ -54,7 +54,7 @@ export class AssayTreeDataProvider
           vscode.TreeItemCollapsibleState.None,
           {
             command: "assay.testApiCredentials",
-            title: "Test AMO Credentials"
+            title: "Test AMO Credentials",
           }
         ),
         new AssayTreeItem(

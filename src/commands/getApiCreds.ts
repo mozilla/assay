@@ -9,7 +9,7 @@ import { makeAuthHeader } from "../utils/requestAuth";
 export async function getApiKeyFromUser() {
   const secrets = getExtensionSecretStorage();
 
-  const placeHolder = (await secrets.get("amoApiKey"));
+  const placeHolder = await secrets.get("amoApiKey");
   const apiKey = await vscode.window.showInputBox({
     prompt: "Enter your AMO API Key (e.g. user:12345678:123)",
     title: "AMO API Key",
@@ -37,7 +37,7 @@ export function truncateSecret(str: string, size = 4) {
 
 export async function getSecretFromUser() {
   const secrets = getExtensionSecretStorage();
-  const placeHolder = truncateSecret((await secrets.get("amoApiSecret")) || '');
+  const placeHolder = truncateSecret((await secrets.get("amoApiSecret")) || "");
 
   const apiSecret = await vscode.window.showInputBox({
     prompt: "Enter your AMO API Secret",
@@ -67,7 +67,7 @@ export async function getCredsFromStorage(): Promise<{
 
   const [apiKey, secret] = await Promise.all([
     secrets.get("amoApiKey"),
-    secrets.get("amoApiSecret")
+    secrets.get("amoApiSecret"),
   ]);
 
   if (!apiKey || !secret) {
@@ -94,12 +94,14 @@ export async function testApiCredentials() {
   const response = await fetch(url, { headers });
 
   if (response.status === 200) {
-    vscode.window.showInformationMessage("Success! Assay API Key and Secret validated.");
+    vscode.window.showInformationMessage(
+      "Success! Assay API Key and Secret validated."
+    );
     return true;
   } else {
     vscode.window.showErrorMessage(
       `Credential test failed: ${response.status} (${response.statusText})`,
-      { title: "Close", isCloseAffordance: true },
+      { title: "Close", isCloseAffordance: true }
     );
     return false;
   }

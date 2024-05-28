@@ -3,48 +3,19 @@ import * as vscode from "vscode";
 import { Event } from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
-import { getRootFolderPath } from "../utils/reviewRootDir";
+import { splitUri } from "../utils/splitUri";
 
 export async function fileHasComment(uri: vscode.Uri) {
-  const fullpath = uri.fsPath;
-  const rootFolder = await getRootFolderPath();
-
-  const filepath = fullpath.replace(rootFolder, "");
-  const splitPath = filepath.split("/");
-  const guid = splitPath[1];
-  const keys = splitPath.slice(2);
-
-  const comments = await getFromCache(guid, keys);
-  // check if comments map is empty or not defined
-  if (!comments || Object.keys(comments).length === 0) {
-    return false;
+  const { guid, version, filepath } = await splitUri(uri);
+  const comments = await getFromCache("comments");
+  if (comments?.[guid]?.[version]?.[filepath]) {
+    return true;
   }
-  return true;
+  return false;
 }
-
-export async function folderHasComment(uri: vscode.Uri) {
-  const fullpath = uri.fsPath;
-  const rootFolder = await getRootFolderPath();
-
-  const filepath = fullpath.replace(rootFolder, "");
-  const splitPath = filepath.split("/");
-  const guid = splitPath[1];
-  const keys = splitPath.slice(2);
-
-  // if there no keys, then we are at the guid path. return false
-  if (keys.length === 0) {
-    return false;
-  }
-
-  const comments = await getFromCache(guid, keys);
-  // check if comments map is empty or not defined
-  if (!comments || Object.keys(comments).length === 0) {
-    return false;
-  }
-  return true;
-}
-
-export class CustomFileDecorationProvider implements vscode.FileDecorationProvider {
+export class CustomFileDecorationProvider
+  implements vscode.FileDecorationProvider
+{
   private _onDidChangeFileDecorations: vscode.EventEmitter<
     vscode.Uri | vscode.Uri[]
   > = new vscode.EventEmitter<vscode.Uri | vscode.Uri[]>();
@@ -53,13 +24,11 @@ export class CustomFileDecorationProvider implements vscode.FileDecorationProvid
 
   async provideFileDecoration(uri: vscode.Uri) {
     // if its a file and has a comment, return the decoration
-    if (
-      fs.lstatSync(uri.fsPath).isFile() && (await fileHasComment(uri))
-    ) {
+    if (fs.lstatSync(uri.fsPath).isFile() && (await fileHasComment(uri))) {
       return {
         badge: "✎",
         color: new vscode.ThemeColor("charts.green"),
-        propagate: true
+        propagate: true,
       };
     }
   }
