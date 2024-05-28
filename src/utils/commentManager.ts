@@ -223,11 +223,8 @@ export class CommentManager {
    * Populates workspace with comments.
    */
   private async loadCommentsFromCache() {
-    const comments = await this.fetchCommentsFromCache();
-
-    for (const { uri, body, contextValue, lineNumber } of this.iterateByComment(
-      comments
-    )) {
+    const cmtIterator = await this.getCachedCommentIterator();
+    for (const { uri, body, contextValue, lineNumber } of cmtIterator) {
       const r = stringToRange(lineNumber);
       const thread = this.controller.createCommentThread(uri, r, []);
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);
@@ -272,6 +269,15 @@ export class CommentManager {
       body: comment.savedBody.value,
       contextValue: comment.contextValue,
     };
+  }
+
+  /**
+   * Fetches comments and returns an iterator.
+   * @returns iterator function. 
+   */
+  private async getCachedCommentIterator() {
+    const comments = await this.fetchCommentsFromCache();
+    return this.iterateByComment(comments);
   }
 
   /**
