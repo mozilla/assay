@@ -9,6 +9,7 @@ import { AssayReply, AssayThread, contextValues } from "../../../src/config/comm
 import { setExtensionStoragePath } from "../../../src/config/globals";
 import * as addonCache from "../../../src/utils/addonCache";
 import { CommentManager } from "../../../src/utils/commentManager";
+import * as loadFileDecorator from "../../../src/utils/loadFileDecorator";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
@@ -191,12 +192,18 @@ describe("CommentManager.ts", () => {
 
   describe("deleteComments", () => {
     it("should delete all comments in the uri's guid and version and create, replace and activate a new controller with refetched comments in place of the old one.", async () => {
+      sinon.stub(Object, 'entries').returns([
+        ["filepath", "comments"]
+      ]);
       const addToCacheStub = sinon.stub(addonCache, "addToCache");
+      const loadFileDecoratorStub = sinon.stub(loadFileDecorator, "loadFileDecorator");
+
       const cmtManager = new CommentManager("assay-tester", "Assay Tester");
       const initController = cmtManager.controller;
       await cmtManager.deleteComments(vscode.Uri.file("/test-root/guid/version"));
       const newController = cmtManager.controller;
       expect(addToCacheStub.called).to.be.true;
+      expect(loadFileDecoratorStub.called).to.be.true;
       expect(initController).to.not.equal(newController);
     });
 

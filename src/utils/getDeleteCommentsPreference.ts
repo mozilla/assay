@@ -5,13 +5,12 @@ export default async function getDeleteCommentsPreference() {
   const savedPreference =
     config.get<string>("deleteCommentsOnExport") || "No Preference";
 
-  if(["Yes", "No"].includes(savedPreference)){
+  if (["Yes", "No"].includes(savedPreference)) {
     return savedPreference === "Yes";
-  }
-  else { // No preference or ask every time.
+  } else {
+    // No preference or ask every time.
     return await promptdeleteComments(config, savedPreference);
   }
-  
 }
 
 async function promptdeleteComments(
@@ -22,7 +21,7 @@ async function promptdeleteComments(
     title: "Delete version comments after exporting?",
     ignoreFocusOut: true,
   });
-  
+
   if (!selectedPreference) {
     return false;
   }
@@ -31,7 +30,7 @@ async function promptdeleteComments(
   if (savedPreference === "No Preference") {
     await setdeleteCommentsPreference(config, selectedPreference);
   }
-  
+
   return selectedPreference === "Yes";
 }
 
@@ -49,7 +48,7 @@ async function setdeleteCommentsPreference(
       ignoreFocusOut: true,
     }
   );
-  
+
   if (!input) {
     return;
   }

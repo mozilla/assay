@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { exportFolderComments } from "./commands/exportComments";
+import { exportVersionComments } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import {
   getApiKeyFromUser,
@@ -150,12 +150,12 @@ export async function activate(context: vscode.ExtensionContext) {
   const cmtManager = new CommentManager("assay-comments", "Assay");
   setCommentManager(cmtManager);
 
-  const exportCommentsFileDisposable = vscode.commands.registerCommand(
+  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.exportCommentsFromContext",
-    exportFolderComments
+    exportVersionComments
   );
 
-  const deleteCommentsFileDisposable = vscode.commands.registerCommand(
+  const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.deleteCommentsFromContext",
     cmtManager.deleteComments,
     cmtManager
@@ -206,8 +206,8 @@ export async function activate(context: vscode.ExtensionContext) {
     editCommentDisposable,
     exportCommentDisposable,
     disposeCommentDisposable,
-    exportCommentsFileDisposable,
-    deleteCommentsFileDisposable
+    exportCommentsFolderDisposable,
+    deleteCommentsFolderDisposable
   );
 }
 

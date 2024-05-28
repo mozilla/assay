@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import {
   compileComments,
   exportComments,
-  exportFolderComments
+  exportVersionComments
 } from "../../../src/commands/exportComments";
 import * as addonCache from "../../../src/utils/addonCache";
 import * as getdeleteComments from "../../../src/utils/getDeleteCommentsPreference";
@@ -67,7 +67,7 @@ describe("exportComments.ts", () => {
       sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
 
       try {
-        await exportFolderComments(vscode.Uri.file("/not-root"));
+        await exportVersionComments(vscode.Uri.file("/not-root"));
       } catch (err: any) {
         expect(err.message).to.equal("File is not in the root folder");
       }
@@ -84,7 +84,7 @@ describe("exportComments.ts", () => {
       sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
 
       try {
-        await exportFolderComments(vscode.Uri.file("/test-root"));
+        await exportVersionComments(vscode.Uri.file("/test-root"));
       } catch (err: any) {
         expect(err.message).to.equal("No guid or version found");
       }

@@ -6,8 +6,9 @@ import getCommentLocation, {
   stringToRange,
 } from "./getThreadLocation";
 import { loadFileDecorator } from "./loadFileDecorator";
+import { getRootFolderPath } from "./reviewRootDir";
 import { splitUri } from "./splitUri";
-import { exportFolderComments } from "../commands/exportComments";
+import { exportVersionComments } from "../commands/exportComments";
 import {
   AssayComment,
   AssayReply,
@@ -108,16 +109,33 @@ export class CommentManager {
    * Export comments from current version.
    */
   async exportComments(thread: AssayThread) {
-    await exportFolderComments(thread.uri);
+    await exportVersionComments(thread.uri);
   }
 
   /**
    * Delete all comments in add-on guid of version.
    * @param uri The current uri.
    */
+  // Deleting comments by [guid, version], while optimal,
+  // is not compatible with VS Code's base FileDecorationProvider,
+  // which requires the use of file uris directly.
+  // To avoid iterating by each individual comment, we can knit together
+  // the uri when iterating by file.
   async deleteComments(uri: vscode.Uri) {
     const { guid, version } = await splitUri(uri);
-    await addToCache("comments", [guid, version], "");
+    const rootPath = await getRootFolderPath();
+    const comments = await this.fetchCommentsFromCache([guid, version]);
+
+    for (const [filepath] of Object.entries(comments)) {
+      // Delete the file in cache.
+      await addToCache("comments", [guid, version, filepath], "");
+      // Update the file's decorator.
+      const commentUri = vscode.Uri.file(
+        `${rootPath}/${guid}/${version}/${filepath}`
+      );
+      await loadFileDecorator(commentUri);
+    }
+
     this.refetchComments();
   }
 
@@ -132,7 +150,7 @@ export class CommentManager {
    * Allows the commenting system to be visible in the gutter.
    */
   private activateController() {
-    this.fetchCommentsFromCache().then(() => {
+    this.loadCommentsFromCache().then(() => {
       this.controller.commentingRangeProvider = {
         provideCommentingRanges: (document: vscode.TextDocument) => {
           const lineCount = document.lineCount;
@@ -181,10 +199,10 @@ export class CommentManager {
   }
 
   /**
-   * Fetch existing comments for the workspace from cache.
-   * Populates workspace with comments.
+   * Fetch and return existing comments for the workspace from cache.
+   * @returns raw cache comments.
    */
-  private async fetchCommentsFromCache() {
+  private async fetchCommentsFromCache(keys?: string[]) {
     const workspace = vscode.workspace.workspaceFolders;
     if (!workspace) {
       return;
@@ -197,9 +215,17 @@ export class CommentManager {
       return;
     }
 
-    const comments = await getFromCache("comments");
+    return getFromCache("comments", keys);
+  }
 
-    for (const { uri, body, contextValue, lineNumber } of this.iterateComments(
+  /**
+   * Fetch and load existing comments for the workspace from cache.
+   * Populates workspace with comments.
+   */
+  private async loadCommentsFromCache() {
+    const comments = await this.fetchCommentsFromCache();
+
+    for (const { uri, body, contextValue, lineNumber } of this.iterateByComment(
       comments
     )) {
       const r = stringToRange(lineNumber);
@@ -252,7 +278,7 @@ export class CommentManager {
    * Iterates through each comment in cache.
    * @param comments The raw cache object.
    */
-  private *iterateComments(comments: CommentsCache) {
+  private *iterateByComment(comments: CommentsCache) {
     for (const guid in comments) {
       for (const version in comments[guid]) {
         for (const filepath in comments[guid][version]) {

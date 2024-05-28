@@ -22,7 +22,7 @@ export async function compileComments(guid: string, version: string) {
   return compiledComments;
 }
 
-export async function exportFolderComments(uri: vscode.Uri) {
+export async function exportVersionComments(uri: vscode.Uri) {
   const { rootFolder, fullPath, guid, version } = await splitUri(uri);
   if (!fullPath.startsWith(rootFolder)) {
     vscode.window.showErrorMessage(
