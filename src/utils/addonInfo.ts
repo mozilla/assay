@@ -1,15 +1,15 @@
 import fetch from "node-fetch";
 
+import getAddonSlug from "./getAddonSlug";
 import { showErrorMessage } from "./processErrors";
 import { makeAuthHeader } from "./requestAuth";
 import constants from "../config/config";
 import { addonInfoResponse, errorMessages } from "../types";
 
 export async function getAddonInfo(input: string): Promise<addonInfoResponse> {
-  const slug: string = input.includes("/")
-    ? input.split("addon/")[1].split("/")[0]
-    : input;
+  const slug: string = getAddonSlug(input);
   const url = `${constants.apiBaseURL}addons/addon/${slug}`;
+
   const headers = await makeAuthHeader();
 
   const response = await fetch(url, { headers: headers });
