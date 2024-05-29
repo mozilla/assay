@@ -9,7 +9,6 @@ export default async function revealFile(uri: vscode.Uri, lineNumber?: string) {
     const lineRange = await stringToRange(lineNumber, uri);
     const selection = new vscode.Selection(lineRange.start, lineRange.end);
     editor.selections = [selection];
-
     // move editor to focus on line(s)
     editor.revealRange(lineRange, vscode.TextEditorRevealType.InCenter);
   }

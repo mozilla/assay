@@ -5,7 +5,8 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import * as getAddonFunctions from "../../../src/commands/getAddon";
-import { handleUri, openWorkspace } from "../../../src/commands/openFromUrl";
+import { handleUri, openWorkspace, getAddonByUrl } from "../../../src/commands/openFromUrl";
+import * as openFromUrl from "../../../src/commands/openFromUrl";
 import * as globals from "../../../src/config/globals";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
@@ -158,5 +159,29 @@ describe("openFromUrl.ts", async () => {
       await openWorkspace(manifestUri.fsPath);
       expect(executeCommandStub.calledOnceWith("vscode.openFolder")).to.be.true;
     });
+  });
+
+  describe("getAddonByUrl", async () => {
+    it("should receive a result from downloadAndExtract and correctly call openWorkspace", async () => {
+      const context = {
+        globalState: {
+          update: sinon.stub(),
+        },
+      };
+      const getExtensionContextStub = sinon.stub(
+        globals,
+        "getExtensionContext"
+      );
+      getExtensionContextStub.returns(context as any);
+      const downloadAndExtractStub = sinon.stub(
+        getAddonFunctions,
+        "downloadAndExtract"
+      );
+      downloadAndExtractStub.resolves({ workspaceFolder: "workspace", guid: "guid", version: "version" });
+      const openWorkspaceStub = sinon.stub(openFromUrl, "openWorkspace");
+      await getAddonByUrl();
+      expect(openWorkspaceStub.calledWith('workspace/guid/version'));
+    });
+
   });
 });
