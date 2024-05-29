@@ -34,21 +34,21 @@ export async function stringToRange(str: string, uri?: vscode.Uri) {
     throw Error(`Passed string is not a line number: ${str}`);
   }
 
-  let endCharacter = 0;
+  let endCharacter = undefined;
+  const startLine = parseInt(list[0]);
+  const endLine = list.length > 1 ? parseInt(list[1]) : startLine;
 
   // if given a file uri, set the the end range to eol
   if (uri) {
     const buffer = await vscode.workspace.fs.readFile(uri);
     const content = buffer.toString()?.split("\n");
-    endCharacter = content[parseInt(list[1])]?.length;
+    endCharacter = content[endLine]?.length;
   }
 
-  const start = new vscode.Position(parseInt(list[0]), 0);
-  const end =
-    list.length > 1
-      ? new vscode.Position(parseInt(list[1]), endCharacter ?? 0)
-      : start;
-  return new vscode.Range(start, end);
+  const startPosition = new vscode.Position(startLine, 0);
+  const endPosition = new vscode.Position(endLine, endCharacter ?? 0);
+
+  return new vscode.Range(startPosition, endPosition);
 }
 
 // adjusts the range string to account for lines starting from 1 in the editor rather than 0 in the backend.
