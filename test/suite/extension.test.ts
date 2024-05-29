@@ -3,7 +3,6 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import * as openFromUrl from "../../src/commands/openFromUrl";
 import { activate, deactivate } from "../../src/extension";
 import * as reviewRootDir from "../../src/utils/reviewRootDir";
 
@@ -47,7 +46,8 @@ describe("extension.ts", () => {
 
   it("should activate and register commands and load the manifest if launched with the intention to do so", async () => {
     const context = makeContext();
-    context.globalState.get = sinon.stub().returns("test");
+    sinon.stub(context.globalState, 'get').withArgs("filePath").returns("test");
+
     context.globalState.update = sinon.stub();
     const showTextDocumentStub = sinon.stub(vscode.window, "showTextDocument");
     showTextDocumentStub.resolves();

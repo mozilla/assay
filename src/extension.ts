@@ -19,6 +19,7 @@ import {
 } from "./config/globals";
 import { commentManager } from "./utils/commentManager";
 import { loadFileDecorator } from "./utils/loadFileDecorator";
+import revealFile from "./utils/revealFile";
 import { splitUri } from "./utils/splitUri";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
 import { AssayTreeDataProvider } from "./views/sidebarView";
@@ -32,12 +33,15 @@ export async function activate(context: vscode.ExtensionContext) {
   setExtensionSecretStorage(context.secrets);
   setExtensionContext(context);
 
-  // If a manifestPath exists, a version folder was just opened. Open the manifest.
-  if (context.globalState.get("manifestPath") !== undefined) {
-    const manifestPath = context.globalState.get("manifestPath")?.toString();
-    await context.globalState.update("manifestPath", undefined);
-    if (manifestPath) {
-      await vscode.window.showTextDocument(vscode.Uri.file(manifestPath));
+  // If a filePath exists, a version folder was just opened. Open the manifest.
+  if (context.globalState.get("filePath") !== undefined) {
+    const filePath = context.globalState.get("filePath")?.toString();
+    const lineNumber = context.globalState.get("lineNumber")?.toString();
+    console.log("hi", lineNumber);
+    await context.globalState.update("filePath", undefined);
+    await context.globalState.update("lineNumber", undefined);
+    if (filePath) {
+      revealFile(vscode.Uri.file(filePath), lineNumber);
     }
   }
 
@@ -187,7 +191,16 @@ export async function activate(context: vscode.ExtensionContext) {
     "assay.editComment",
     cmtManager.editComment
   );
-
+  const copyLinkFromReplyDisposable = vscode.commands.registerCommand(
+    "assay.copyLinkFromReply",
+    cmtManager.copyLinkFromReply,
+    cmtManager
+  );
+  const copyLinkFromThreadDisposable = vscode.commands.registerCommand(
+    "assay.copyLinkFromThread",
+    cmtManager.copyLinkFromThread,
+    cmtManager
+  );
   const disposeCommentDisposable = vscode.commands.registerCommand(
     "assay.disposeComment",
     cmtManager.dispose
@@ -201,7 +214,9 @@ export async function activate(context: vscode.ExtensionContext) {
     saveCommentDisposable,
     editCommentDisposable,
     exportCommentDisposable,
-    disposeCommentDisposable
+    disposeCommentDisposable,
+    copyLinkFromReplyDisposable,
+    copyLinkFromThreadDisposable
   );
 }
 

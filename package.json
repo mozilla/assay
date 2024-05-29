@@ -60,16 +60,26 @@
 					"group": "inline@2",
 					"when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
 				},
+        {
+					"command": "assay.copyLinkFromThread",
+					"group": "inline@3",
+          "when": "assay.commentsEnabled && !commentThreadIsEmpty"
+				},
 				{
 					"command": "assay.deleteComment",
-					"group": "inline@3",
+					"group": "inline@5",
 					"when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
 				}
       ],
       "comments/commentThread/context": [
-				{
+        {
 					"command": "assay.addComment",
-					"group": "inline",
+					"group": "inline@1",
+					"when": "assay.commentsEnabled && commentController == assay-comments && commentThreadIsEmpty"
+				},
+        {
+					"command": "assay.copyLinkFromReply",
+					"group": "inline@2",
 					"when": "assay.commentsEnabled && commentController == assay-comments && commentThreadIsEmpty"
 				}
 			],
@@ -114,7 +124,10 @@
         "command": "assay.checkForUpdates",
         "title": "(Assay) Check For Updates"
       },
-      
+      {
+				"command": "assay.copyLinkFromReply",
+				"title": "Copy Link"
+			},
       {
 				"command": "assay.addComment",
 				"title": "Mark for Review"
@@ -153,6 +166,14 @@
 				"icon": {
 					"dark": "media/commentIcons/export_inverse.svg",
 					"light": "media/commentIcons/export.svg"
+				}
+			},
+      {
+				"command": "assay.copyLinkFromThread",
+				"title": "Copy Link",
+				"icon": {
+					"dark": "media/commentIcons/link_inverse.svg",
+					"light": "media/commentIcons/link.svg"
 				}
 			}
     ]

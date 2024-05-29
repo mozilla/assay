@@ -5,6 +5,7 @@ import getCommentLocation, {
   rangeTruncation,
   stringToRange,
 } from "./getThreadLocation";
+import getThreadLocation from "./getThreadLocation";
 import { loadFileDecorator } from "./loadFileDecorator";
 import { splitUri } from "./splitUri";
 import { exportVersionComments } from "../commands/exportComments";
@@ -131,6 +132,25 @@ export class commentManager {
    */
   async exportComments(thread: AssayThread) {
     await exportVersionComments(thread.uri);
+  }
+
+  /**
+   * Copies a link to the selected line(s) to the clipboard for sharing.
+   * @param reply Holds the thread location.
+   */
+  async copyLinkFromReply(reply: AssayReply){
+    this.copyLinkFromThread(reply.thread);
+  }
+
+  /**
+   * Copies a link to the selected line(s) to the clipboard for sharing.
+   * @param thread
+   */
+  async copyLinkFromThread(thread: AssayThread){
+    const { guid, version, filepath, range } = await getThreadLocation(thread);
+    const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${encodeURI(filepath)}${range}`;
+    vscode.env.clipboard.writeText(link);
+    vscode.window.showInformationMessage("Link copied to clipboard.");
   }
 
   /**
