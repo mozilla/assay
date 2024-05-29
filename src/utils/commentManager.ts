@@ -125,7 +125,7 @@ export class CommentManager {
    * Copies a link to the selected line(s) to the clipboard for sharing.
    * @param reply Holds the thread location.
    */
-  async copyLinkFromReply(reply: AssayReply){
+  async copyLinkFromReply(reply: AssayReply) {
     this.copyLinkFromThread(reply.thread);
   }
 
@@ -133,9 +133,11 @@ export class CommentManager {
    * Copies a link to the selected line(s) to the clipboard for sharing.
    * @param thread
    */
-  async copyLinkFromThread(thread: AssayThread){
+  async copyLinkFromThread(thread: AssayThread) {
     const { guid, version, filepath, range } = await getThreadLocation(thread);
-    const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${encodeURI(filepath)}${range}`;
+    const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${encodeURI(
+      filepath
+    )}${range}`;
     vscode.env.clipboard.writeText(link);
     vscode.window.showInformationMessage("Link copied to clipboard.");
   }
@@ -192,7 +194,7 @@ export class CommentManager {
     for (const { uri, body, contextValue, lineNumber } of this.iterateComments(
       comments
     )) {
-      const r = stringToRange(lineNumber);
+      const r = await stringToRange(lineNumber, uri);
       const thread = this.controller.createCommentThread(uri, r, []);
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);
     }

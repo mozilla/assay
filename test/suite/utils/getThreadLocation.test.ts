@@ -73,7 +73,7 @@ describe("getThreadLocation.ts", () => {
     it("should reject an incorrectly-formatted string", async () => {
         const str = '#L1-';
         try{
-            const result = stringToRange(str);
+            const result = await stringToRange(str);
             expect(result).to.be.empty;
         }catch(e: any){
             expect(e.message).to.equal("Passed string is not a line number: #L1-");
@@ -84,7 +84,7 @@ describe("getThreadLocation.ts", () => {
     it("should reject an incorrectly-formatted string", async () => {
         const str = '#L-23';
         try{
-            const result = stringToRange(str);
+            const result = await stringToRange(str);
             expect(result).to.be.empty;
         }catch(e: any){
             expect(e.message).to.equal("Passed string is not a line number: #L-23");
@@ -95,7 +95,7 @@ describe("getThreadLocation.ts", () => {
     it("should reject an incorrectly-formatted string", async () => {
         const str = '#l1-2';
         try{
-            const result = stringToRange(str);
+            const result = await stringToRange(str);
             expect(result).to.be.empty;
         }catch(e: any){
             expect(e.message).to.equal("Passed string is not a line number: #l1-2");
@@ -106,7 +106,7 @@ describe("getThreadLocation.ts", () => {
     it("should reject a string with no numbers", async () => {
         const str = '#L-';
         try{
-            const result = stringToRange(str);
+            const result = await stringToRange(str);
             expect(result).to.be.empty;
         }catch(e: any){
             expect(e.message).to.equal("Passed string is not a line number: #L-");
@@ -115,12 +115,12 @@ describe("getThreadLocation.ts", () => {
     
     it("should correctly return a single-line range", async () => {
         const str = '#L1';
-        const result = stringToRange(str);
+        const result = await stringToRange(str);
         expect(result).to.deep.equal(rng);
     });
     it("should correctly return a multi-line range", async () => {
         const str = '#L1-5';
-        const result = stringToRange(str);
+        const result = await stringToRange(str);
         expect(result).to.deep.equal(multiRng);
     });
   });

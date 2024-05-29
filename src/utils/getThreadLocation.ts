@@ -28,14 +28,26 @@ export function rangeToString(range: vscode.Range) {
     : `#L${range.start.line}-${range.end.line}`;
 }
 
-export function stringToRange(str: string) {
+export async function stringToRange(str: string, uri?: vscode.Uri) {
   const list = str.match(/\d+/g);
   if (!list || !/#L[0-9]+(-[0-9]+)?(?!-)/.test(str)) {
     throw Error(`Passed string is not a line number: ${str}`);
   }
+
+  let endCharacter = 0;
+
+  // if given a file uri, set the the end range to eol
+  if (uri) {
+    const buffer = await vscode.workspace.fs.readFile(uri);
+    const content = buffer.toString()?.split("\n");
+    endCharacter = content[parseInt(list[1])]?.length;
+  }
+
   const start = new vscode.Position(parseInt(list[0]), 0);
   const end =
-    list.length > 1 ? new vscode.Position(parseInt(list[1]), 0) : start;
+    list.length > 1
+      ? new vscode.Position(parseInt(list[1]), endCharacter ?? 0)
+      : start;
   return new vscode.Range(start, end);
 }
 

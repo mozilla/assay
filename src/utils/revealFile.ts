@@ -6,7 +6,7 @@ export default async function revealFile(uri: vscode.Uri, lineNumber?: string) {
   const editor = await vscode.window.showTextDocument(uri);
   if (lineNumber) {
     // highlight offending lines
-    const lineRange = stringToRange(lineNumber);
+    const lineRange = await stringToRange(lineNumber, uri);
     const selection = new vscode.Selection(lineRange.start, lineRange.end);
     editor.selections = [selection];
 
