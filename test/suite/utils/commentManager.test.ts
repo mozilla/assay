@@ -8,7 +8,7 @@ import * as vscode from "vscode";
 import { AssayReply, AssayThread, contextValues } from "../../../src/config/comment";
 import { setExtensionStoragePath } from "../../../src/config/globals";
 import * as addonCache from "../../../src/utils/addonCache";
-import { commentManager } from "../../../src/utils/commentManager";
+import { CommentManager } from "../../../src/utils/commentManager";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
@@ -26,7 +26,7 @@ const cmt = {
 const pos = new vscode.Position(1, 0);
 const range = new vscode.Range(pos, pos);
 
-describe("commentManager.ts", () => {
+describe("CommentManager.ts", () => {
 
   beforeEach(() => {
     sinon.stub(reviewRootDir, "getRootFolderPath").resolves("/test-root");
@@ -49,7 +49,7 @@ describe("commentManager.ts", () => {
     it("should create a comment & thread from non-empty reply and save the comment to cache", async () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
 
-        const cmtManager = new commentManager("assay-tester", "Assay Tester");
+        const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, cmt.body);
 
@@ -71,7 +71,7 @@ describe("commentManager.ts", () => {
 
     it("should create a markForReview & comment thread from an empty reply", async () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
-        const cmtManager = new commentManager("assay-tester", "Assay Tester");
+        const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, "");
 
@@ -92,7 +92,7 @@ describe("commentManager.ts", () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
 
         const newBody = new vscode.MarkdownString("Hello, world!");
-        const cmtManager = new commentManager("assay-tester", "Assay Tester");
+        const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, cmt.body);
         const comment = await cmtManager.addComment(reply);
@@ -110,7 +110,7 @@ describe("commentManager.ts", () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
 
         const newBody = new vscode.MarkdownString("");
-        const cmtManager = new commentManager("assay-tester", "Assay Tester");
+        const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, cmt.body);
         const comment = await cmtManager.addComment(reply);
@@ -130,7 +130,7 @@ describe("commentManager.ts", () => {
   describe("cancelSaveComment", () => {
     it("should retain its original body text", async () => {
         const newBody = new vscode.MarkdownString("Hello, world!");
-        const cmtManager = new commentManager("assay-tester", "Assay Tester");
+        const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, cmt.body);
         const comment = await cmtManager.addComment(reply);
@@ -147,7 +147,7 @@ describe("commentManager.ts", () => {
     it("should delete the comment thread from a controller and its comments from cache", async () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
 
-        const cmtManager = new commentManager("assay-tester", "Assay Tester");
+        const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, cmt.body);
         const comment = await cmtManager.addComment(reply);
@@ -163,7 +163,7 @@ describe("commentManager.ts", () => {
 
   describe("editComment", () => {
     it("should set a comment to edit mode", async () => {
-        const cmtManager = new commentManager("assay-tester", "Assay Tester");
+        const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, cmt.body);
         const comment = await cmtManager.addComment(reply);
@@ -176,7 +176,7 @@ describe("commentManager.ts", () => {
     });
   
     it("should clear the body if a markForReview comment", async () => {
-        const cmtManager = new commentManager("assay-tester", "Assay Tester");
+        const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, "");
         const comment = await cmtManager.addComment(reply);

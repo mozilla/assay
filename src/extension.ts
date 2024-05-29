@@ -17,7 +17,7 @@ import {
   setExtensionStoragePath,
   setFileDecorator,
 } from "./config/globals";
-import { commentManager } from "./utils/commentManager";
+import { CommentManager } from "./utils/commentManager";
 import { loadFileDecorator } from "./utils/loadFileDecorator";
 import revealFile from "./utils/revealFile";
 import { splitUri } from "./utils/splitUri";
@@ -143,6 +143,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Comment API
+  const cmtManager = new CommentManager("assay-comments", "Assay");
 
   await vscode.commands.executeCommand(
     "setContext",
@@ -169,19 +170,23 @@ export async function activate(context: vscode.ExtensionContext) {
   const cmtManager = new commentManager("assay-comments", "Assay");
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
-    cmtManager.exportComments
+    cmtManager.exportComments,
+    cmtManager
   );
   const addCommentDisposable = vscode.commands.registerCommand(
     "assay.addComment",
-    cmtManager.addComment
+    cmtManager.addComment,
+    cmtManager
   );
   const deleteCommentDisposable = vscode.commands.registerCommand(
     "assay.deleteComment",
-    cmtManager.deleteThread
+    cmtManager.deleteThread,
+    cmtManager
   );
   const cancelSaveCommentDisposable = vscode.commands.registerCommand(
     "assay.cancelSaveComment",
-    cmtManager.cancelSaveComment
+    cmtManager.cancelSaveComment,
+    cmtManager
   );
   const saveCommentDisposable = vscode.commands.registerCommand(
     "assay.saveComment",
@@ -189,7 +194,8 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   const editCommentDisposable = vscode.commands.registerCommand(
     "assay.editComment",
-    cmtManager.editComment
+    cmtManager.editComment,
+    cmtManager
   );
   const copyLinkFromReplyDisposable = vscode.commands.registerCommand(
     "assay.copyLinkFromReply",
@@ -203,7 +209,8 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   const disposeCommentDisposable = vscode.commands.registerCommand(
     "assay.disposeComment",
-    cmtManager.dispose
+    cmtManager.dispose,
+    cmtManager
   );
 
   context.subscriptions.push(

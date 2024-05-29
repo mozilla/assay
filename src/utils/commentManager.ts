@@ -17,7 +17,7 @@ import {
   contextValues,
 } from "../config/comment";
 
-export class commentManager {
+export class CommentManager {
   controller: vscode.CommentController;
   constructor(id: string, label: string) {
     this.controller = vscode.comments.createCommentController(id, label);
@@ -30,19 +30,6 @@ export class commentManager {
         },
       };
     });
-
-    this.addComment = this.addComment.bind(this);
-    this.deleteThread = this.deleteThread.bind(this);
-    this.cancelSaveComment = this.cancelSaveComment.bind(this);
-    this.saveComment = this.saveComment.bind(this);
-    this.editComment = this.editComment.bind(this);
-    this.exportComments = this.exportComments.bind(this);
-    this.dispose = this.dispose.bind(this);
-
-    this.createComment = this.createComment.bind(this);
-    this.fetchCommentsFromCache = this.fetchCommentsFromCache.bind(this);
-    this.saveCommentToCache = this.saveCommentToCache.bind(this);
-    this.deleteCommentFromCache = this.deleteCommentFromCache.bind(this);
   }
 
   /**
@@ -154,7 +141,7 @@ export class commentManager {
   }
 
   /**
-   * Dispose of the commentManager.
+   * Dispose of the CommentManager.
    */
   dispose() {
     this.controller.dispose();
