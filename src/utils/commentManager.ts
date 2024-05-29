@@ -1,11 +1,10 @@
 import * as vscode from "vscode";
 
 import { addToCache, getFromCache } from "./addonCache";
-import getCommentLocation, {
+import getThreadLocation, {
   rangeTruncation,
   stringToRange,
 } from "./getThreadLocation";
-import getThreadLocation from "./getThreadLocation";
 import { loadFileDecorator } from "./loadFileDecorator";
 import { splitUri } from "./splitUri";
 import { exportVersionComments } from "../commands/exportComments";
@@ -158,7 +157,7 @@ export class CommentManager {
     body: vscode.MarkdownString,
     thread: AssayThread | vscode.CommentThread
   ) {
-    const { filepath, range } = await getCommentLocation(thread as AssayThread);
+    const { filepath, range } = await getThreadLocation(thread as AssayThread);
     thread.label = `${filepath}${rangeTruncation(range)}`;
 
     const newComment = new AssayComment(
@@ -205,7 +204,7 @@ export class CommentManager {
    * @param comment
    */
   private async saveCommentToCache(comment: AssayComment) {
-    const { guid, version, filepath, range } = await getCommentLocation(
+    const { guid, version, filepath, range } = await getThreadLocation(
       comment.thread
     );
     await addToCache(
@@ -220,7 +219,7 @@ export class CommentManager {
    * @param comment
    */
   private async deleteCommentFromCache(comment: AssayComment) {
-    const { guid, version, filepath, range } = await getCommentLocation(
+    const { guid, version, filepath, range } = await getThreadLocation(
       comment.thread
     );
     await addToCache("comments", [guid, version, filepath, range], "");
