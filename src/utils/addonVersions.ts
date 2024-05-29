@@ -1,15 +1,15 @@
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
+import getAddonSlug from "./getAddonSlug";
 import { showErrorMessage } from "./processErrors";
 import { makeAuthHeader } from "./requestAuth";
 import constants from "../config/config";
 import { addonVersion, errorMessages } from "../types";
 
 export async function getAddonVersions(input: string, next?: string) {
-  const slug: string = input.includes("/")
-    ? input.split("addon/")[1].split("/")[0]
-    : input;
+  const slug: string = getAddonSlug(input);
+
   const url = next
     ? next
     : `${constants.apiBaseURL}addons/addon/${slug}/versions?filter=all_with_deleted`;
