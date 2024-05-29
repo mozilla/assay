@@ -3,6 +3,14 @@ import * as vscode from "vscode";
 import { splitUri } from "./splitUri";
 import { AssayThread } from "../config/comment";
 
+async function readFile(uri: vscode.Uri) {
+  try {
+    return await vscode.workspace.fs.readFile(uri);
+  } catch {
+    return new Uint8Array();
+  }
+}
+
 export default async function getThreadLocation(thread: AssayThread) {
   const range = rangeToString(thread.range);
   const { guid, version, filepath } = await getFilepathInfo(thread);
@@ -40,8 +48,8 @@ export async function stringToRange(str: string, uri?: vscode.Uri) {
 
   // if given a file uri, set the the end range to eol
   if (uri) {
-    const buffer = await vscode.workspace.fs.readFile(uri);
-    const content = buffer.toString()?.split("\n");
+    const buffer = await readFile(uri);
+    const content = buffer?.toString()?.split("\n");
     endCharacter = content[endLine]?.length;
   }
 
