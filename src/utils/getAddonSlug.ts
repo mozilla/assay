@@ -5,5 +5,5 @@ export default function getAddonSlug(input: string) {
     ? "review-unlisted/"
     : "addon/";
 
-  return input.includes("/") ? input.split(delimiter)[1].split("/")[0] : input;
+  return input.includes("/") ? input.split(delimiter)[1]?.split("/")[0] : input;
 }
