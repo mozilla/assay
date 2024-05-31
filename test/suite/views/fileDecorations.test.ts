@@ -193,4 +193,6 @@ describe("fileDecorations.ts", async () => {
       expect(fileDecoStub.calledWith(uri)).to.be.true;
     });
   });
+
 });
+
