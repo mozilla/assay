@@ -133,9 +133,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const lintLocally = vscode.commands.registerCommand("assay.lintLocally", () => {
-    lintAddonLocally();
-  });
+  const lintLocally = vscode.commands.registerCommand(
+    "assay.lintLocally",
+    () => {
+      lintAddonLocally();
+    }
+  );
 
   const lintApi = vscode.commands.registerCommand("assay.lintApi", () => {
     lintAddonApi();

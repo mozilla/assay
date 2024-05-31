@@ -66,12 +66,12 @@ export class AssayTreeDataProvider
           }
         ),
         new AssayTreeItem(
-            "Lint AMO Addon Locally",
-            vscode.TreeItemCollapsibleState.None,
-            {
-              command: "assay.lintLocally",
-              title: "Lint Addon Locally",
-            }
+          "Lint AMO Addon Locally",
+          vscode.TreeItemCollapsibleState.None,
+          {
+            command: "assay.lintLocally",
+            title: "Lint Addon Locally",
+          }
         ),
         new AssayTreeItem(
           "Lint AMO Addon Via API",
@@ -80,7 +80,7 @@ export class AssayTreeDataProvider
             command: "assay.lintApi",
             title: "Lint Addon API",
           }
-      ),
+        ),
       ];
       return Promise.resolve(tabItems);
     }
