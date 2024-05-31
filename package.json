@@ -48,43 +48,41 @@
       ],
       "comments/commentThread/title": [
         {
-					"command": "assay.exportComments",
-					"group": "inline@1",
+          "command": "assay.exportComments",
+          "group": "inline@1",
           "when": "!commentThreadIsEmpty"
-				},
+        },
         {
-					"command": "assay.editComment",
-					"group": "inline@2",
-					"when": "commentController == assay-comments && !commentThreadIsEmpty"
-				},
-				{
-					"command": "assay.deleteComment",
-					"group": "inline@3",
-					"when": "commentController == assay-comments && !commentThreadIsEmpty"
-				}
+          "command": "assay.editComment",
+          "group": "inline@2",
+          "when": "commentController == assay-comments && !commentThreadIsEmpty"
+        },
+        {
+          "command": "assay.deleteComment",
+          "group": "inline@3",
+          "when": "commentController == assay-comments && !commentThreadIsEmpty"
+        }
       ],
       "comments/commentThread/context": [
-				{
-					"command": "assay.addComment",
-					"group": "inline",
-					"when": "commentController == assay-comments && commentThreadIsEmpty"
-				}
-			],
-			"comments/comment/title": [
-				
-			],
-			"comments/comment/context": [
-				{
-					"command": "assay.cancelSaveComment",
-					"group": "inline@3",
-					"when": "commentController == assay-comments"
-				},
-				{
-					"command": "assay.saveComment",
-					"group": "inline@2",
-					"when": "commentController == assay-comments"
-				}
-			]
+        {
+          "command": "assay.addComment",
+          "group": "inline",
+          "when": "commentController == assay-comments && commentThreadIsEmpty"
+        }
+      ],
+      "comments/comment/title": [],
+      "comments/comment/context": [
+        {
+          "command": "assay.cancelSaveComment",
+          "group": "inline@3",
+          "when": "commentController == assay-comments"
+        },
+        {
+          "command": "assay.saveComment",
+          "group": "inline@2",
+          "when": "commentController == assay-comments"
+        }
+      ]
     },
     "views": {
       "explorer": [
@@ -111,47 +109,46 @@
         "command": "assay.checkForUpdates",
         "title": "(Assay) Check For Updates"
       },
-      
       {
-				"command": "assay.addComment",
-				"title": "Mark for Review"
-			},
-			{
-				"command": "assay.editComment",
-				"title": "Edit Comment",
-				"icon": {
-					"dark": "media/commentIcons/edit_inverse.svg",
-					"light": "media/commentIcons/edit.svg"
-				}
-			},
-			{
-				"command": "assay.deleteComment",
-				"title": "Delete",
-				"icon": {
-					"dark": "media/commentIcons/close_inverse.svg",
-					"light": "media/commentIcons/close.svg"
-				}
-			},
-			{
-				"command": "assay.saveComment",
-				"title": "Save"
-			},
-			{
-				"command": "assay.cancelSaveComment",
-				"title": "Cancel"
-			},
-			{
-				"command": "assay.disposeComment",
-				"title": "Remove All Comments"
-			},
+        "command": "assay.addComment",
+        "title": "Mark for Review"
+      },
       {
-				"command": "assay.exportComments",
-				"title": "Export Version Comments",
-				"icon": {
-					"dark": "media/commentIcons/export_inverse.svg",
-					"light": "media/commentIcons/export.svg"
-				}
-			}
+        "command": "assay.editComment",
+        "title": "Edit Comment",
+        "icon": {
+          "dark": "media/commentIcons/edit_inverse.svg",
+          "light": "media/commentIcons/edit.svg"
+        }
+      },
+      {
+        "command": "assay.deleteComment",
+        "title": "Delete",
+        "icon": {
+          "dark": "media/commentIcons/close_inverse.svg",
+          "light": "media/commentIcons/close.svg"
+        }
+      },
+      {
+        "command": "assay.saveComment",
+        "title": "Save"
+      },
+      {
+        "command": "assay.cancelSaveComment",
+        "title": "Cancel"
+      },
+      {
+        "command": "assay.disposeComment",
+        "title": "Remove All Comments"
+      },
+      {
+        "command": "assay.exportComments",
+        "title": "Export Version Comments",
+        "icon": {
+          "dark": "media/commentIcons/export_inverse.svg",
+          "light": "media/commentIcons/export.svg"
+        }
+      }
     ]
   },
   "scripts": {
@@ -210,6 +207,7 @@
   },
   "dependencies": {
     "@types/request": "^2.48.8",
+    "addons-linter": "^6.28.0",
     "extract-zip": "^2.0.1",
     "jsonwebtoken": "^9.0.1",
     "jszip": "^3.10.1"
