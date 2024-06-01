@@ -8,6 +8,7 @@ import {
   getSecretFromUser,
   testApiCredentials,
 } from "./commands/getApiCreds";
+import { lintWorkspace, updateFileLint } from "./commands/getLinter";
 import { openInDiffTool } from "./commands/launchDiff";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
@@ -132,6 +133,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  lintWorkspace();
+
+  const updateLintDisposable = vscode.workspace.onDidChangeTextDocument(
+    updateFileLint
+  );
+
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -150,7 +157,8 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
     exportCommentsFileDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
-    assayUpdaterDisposable
+    assayUpdaterDisposable,
+    updateLintDisposable
   );
 
   // Comment API
