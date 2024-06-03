@@ -8,12 +8,13 @@ import {
   getSecretFromUser,
   testApiCredentials,
 } from "./commands/getApiCreds";
-import { lintWorkspace, updateFileLint } from "./commands/getLinter";
 import { openInDiffTool } from "./commands/launchDiff";
+import { clearLintsOnDirty, lintWorkspace, updateFileLint } from "./commands/lintAddon";
 import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
+  setDiagnosticCollection,
   setExtensionContext,
   setExtensionSecretStorage,
   setExtensionStoragePath,
@@ -133,9 +134,15 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const diagnosticCollection = vscode.languages.createDiagnosticCollection("addons-linter");
+  setDiagnosticCollection(diagnosticCollection);
   lintWorkspace();
 
-  const updateLintDisposable = vscode.workspace.onDidChangeTextDocument(
+  const changeLintDisposable = vscode.workspace.onDidChangeTextDocument(
+    clearLintsOnDirty
+  );
+
+  const updateLintDisposable = vscode.workspace.onDidSaveTextDocument(
     updateFileLint
   );
 
@@ -158,7 +165,8 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentsFileDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
     assayUpdaterDisposable,
-    updateLintDisposable
+    updateLintDisposable,
+    changeLintDisposable
   );
 
   // Comment API
