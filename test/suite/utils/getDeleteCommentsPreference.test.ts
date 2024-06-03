@@ -18,7 +18,7 @@ describe("getdeleteComments.ts", () => {
       });
 
       describe("getDeleteCommentsPreference", () => {
-        it("should return true when user's preference is to delete comments after export", async () => {
+        it("should return true when user's preference is to delete comments after export.", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const config = {
                 get: sinon.stub().returns("Yes"),
@@ -29,7 +29,7 @@ describe("getdeleteComments.ts", () => {
             expect(result).to.be.true;
         });
 
-        it("should return false when user's preference is to not delete comments after export", async () => {
+        it("should return false when user's preference is to not delete comments after export.", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const config = {
                 get: sinon.stub().returns("No"),
@@ -40,7 +40,7 @@ describe("getdeleteComments.ts", () => {
             expect(result).to.be.false;
         });
 
-        it("should prompt the user when their preference is to be asked every time, and return false on no response", async () => {
+        it("should prompt the user when their preference is to be asked every time, and return false on no response.", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const config = {
                 get: sinon.stub().returns("Ask Every Time"),
@@ -55,7 +55,7 @@ describe("getdeleteComments.ts", () => {
             expect(result).to.be.false;
         });
 
-        it("should prompt the user when their preference is to be asked every time, and return their selection 'Yes' (true)", async () => {
+        it("should prompt the user when their preference is to be asked every time, and return their selection 'Yes' (true).", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const config = {
                 get: sinon.stub().returns("Ask Every Time"),
@@ -70,7 +70,7 @@ describe("getdeleteComments.ts", () => {
             expect(result).to.be.true;
         });
 
-        it("should prompt the user when their preference is to be asked every time, and return their selection 'No' (false)", async () => {
+        it("should prompt the user when their preference is to be asked every time, and return their selection 'No' (false).", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const config = {
                 get: sinon.stub().returns("Ask Every Time"),

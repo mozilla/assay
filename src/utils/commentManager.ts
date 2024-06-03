@@ -224,8 +224,8 @@ export class CommentManager {
    * Populates workspace with comments.
    */
   private async loadCommentsFromCache() {
-    const cmtIterator = await this.getCachedCommentIterator();
-    for (const { uri, body, contextValue, lineNumber } of cmtIterator) {
+    for (const comment of await this.getCachedCommentIterator()) {
+      const { uri, body, contextValue, lineNumber } = comment;
       const range = stringToRange(lineNumber);
       const thread = this.controller.createCommentThread(uri, range, []);
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);

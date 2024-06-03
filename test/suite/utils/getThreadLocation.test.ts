@@ -33,7 +33,7 @@ describe("getThreadLocation.ts", () => {
   });
 
   describe("getThreadLocation()", () => {
-    it("should return the thread's Uri guid, version, filepath and range", async () => {
+    it("should return the thread's Uri guid, version, filepath and range.", async () => {
         const controller = vscode.comments.createCommentController("assay-tester", "Assay Tester");
         const thread = controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
         const {guid, version, filepath, range} = await getThreadLocation(thread);
@@ -45,7 +45,7 @@ describe("getThreadLocation.ts", () => {
 
     });
 
-    it("should throw an error & show an error message if file not in root folder", async () => {
+    it("should throw an error & show an error message if file not in root folder.", async () => {
         const controller = vscode.comments.createCommentController("assay-tester", "Assay Tester");
         const thread = controller.createCommentThread(vscode.Uri.file("/not-root"), rng, []) as AssayThread;
         
@@ -58,19 +58,19 @@ describe("getThreadLocation.ts", () => {
   });
 
   describe("rangeToString()", () => {
-    it("should convert a single-line range correctly", async () => {
+    it("should convert a single-line range correctly.", async () => {
         const range = rangeToString(rng);
         expect(range).to.equal("#L1");
     });
 
-    it("should convert a multi-line range correctly", async () => {
+    it("should convert a multi-line range correctly.", async () => {
         const range = rangeToString(multiRng);
         expect(range).to.equal("#L1-5");
     });
   });
 
   describe("stringToRange()", () => {
-    it("should reject an incorrectly-formatted string", async () => {
+    it("should reject an incorrectly-formatted string.", async () => {
         const str = '#L1-';
         try{
             const result = stringToRange(str);
@@ -81,7 +81,7 @@ describe("getThreadLocation.ts", () => {
         
     });
 
-    it("should reject an incorrectly-formatted string", async () => {
+    it("should reject an incorrectly-formatted string.", async () => {
         const str = '#L-23';
         try{
             const result = stringToRange(str);
@@ -92,7 +92,7 @@ describe("getThreadLocation.ts", () => {
         
     });
 
-    it("should reject an incorrectly-formatted string", async () => {
+    it("should reject an incorrectly-formatted string.", async () => {
         const str = '#l1-2';
         try{
             const result = stringToRange(str);
@@ -103,7 +103,7 @@ describe("getThreadLocation.ts", () => {
         
     });
 
-    it("should reject a string with no numbers", async () => {
+    it("should reject a string with no numbers.", async () => {
         const str = '#L-';
         try{
             const result = stringToRange(str);
@@ -113,12 +113,12 @@ describe("getThreadLocation.ts", () => {
         }
     });
     
-    it("should correctly return a single-line range", async () => {
+    it("should correctly return a single-line range.", async () => {
         const str = '#L1';
         const result = stringToRange(str);
         expect(result).to.deep.equal(rng);
     });
-    it("should correctly return a multi-line range", async () => {
+    it("should correctly return a multi-line range.", async () => {
         const str = '#L1-5';
         const result = stringToRange(str);
         expect(result).to.deep.equal(multiRng);
@@ -127,7 +127,7 @@ describe("getThreadLocation.ts", () => {
 
   describe("rangeTruncation()", () => {
     
-    it("should reject an incorrectly-formatted string", async () => {
+    it("should reject an incorrectly-formatted string.", async () => {
         const str = '#L1-';
         try{
             const result = rangeTruncation(str);
@@ -138,7 +138,7 @@ describe("getThreadLocation.ts", () => {
         
     });
 
-    it("should reject an incorrectly-formatted string", async () => {
+    it("should reject an incorrectly-formatted string.", async () => {
         const str = '#L-23';
         try{
             const result = rangeTruncation(str);
@@ -149,7 +149,7 @@ describe("getThreadLocation.ts", () => {
         
     });
 
-    it("should reject an incorrectly-formatted string", async () => {
+    it("should reject an incorrectly-formatted string.", async () => {
         const str = '#l1-2';
         try{
             const result = rangeTruncation(str);
@@ -160,7 +160,7 @@ describe("getThreadLocation.ts", () => {
         
     });
 
-    it("should reject a string with no numbers", async () => {
+    it("should reject a string with no numbers.", async () => {
         const str = '#L-';
         try{
             const result = rangeTruncation(str);
@@ -170,12 +170,12 @@ describe("getThreadLocation.ts", () => {
         }
     });
 
-    it("should correctly adjust a single-line range", async () => {
+    it("should correctly adjust a single-line range.", async () => {
         const str = '#L1';
         const result = rangeTruncation(str);
         expect(result).to.equal("#L2");
     });
-    it("should correctly adjust a multi-line range", async () => {
+    it("should correctly adjust a multi-line range.", async () => {
         const str = '#L1-5';
         const result = rangeTruncation(str);
         expect(result).to.equal("#L2-6");

@@ -49,7 +49,7 @@ describe("addonDownload.ts", async () => {
     }
   });
 
-  it("should download the xpi of the addon", async () => {
+  it("should download the xpi of the addon.", async () => {
     const fetchStub = sinon.stub();
     fetchStub.resolves(goodResponse);
     sinon.replace(fetch, "default", fetchStub as any);
@@ -69,7 +69,7 @@ describe("addonDownload.ts", async () => {
     expect(fs.existsSync(downloadedFilePath)).to.be.true;
   });
 
-  it("should not make a file if the request failed", async () => {
+  it("should not make a file if the request failed.", async () => {
     const fetchStub = sinon.stub();
     fetchStub.resolves(badResponse);
     sinon.replace(fetch, "default", fetchStub as any);
@@ -91,7 +91,7 @@ describe("addonDownload.ts", async () => {
     }
   });
 
-  it("should throw an error if the user cancels", async () => {
+  it("should throw an error if the user cancels.", async () => {
     const fetchStub = sinon.stub();
     fetchStub.resolves(goodResponse);
     sinon.replace(fetch, "default", fetchStub as any);

@@ -16,7 +16,7 @@ describe("openFromUrl.ts", async () => {
   });
 
   describe("handleUri()", async () => {
-    it("should do nothing if the action is not review", async () => {
+    it("should do nothing if the action is not review.", async () => {
       const uri = {
         path: "/test-action/test-guid/test-version",
       };
@@ -28,7 +28,7 @@ describe("openFromUrl.ts", async () => {
       expect(getRootFolderPathStub.called).to.be.false;
     });
 
-    it("should fail the stat check and call downloadAndExtract() if the manifest does not exist", async () => {
+    it("should fail the stat check and call downloadAndExtract() if the manifest does not exist.", async () => {
       const uri = {
         path: "/review/test-guid/test-version",
       };
@@ -74,7 +74,7 @@ describe("openFromUrl.ts", async () => {
       expect(downloadAndExtractStub.called).to.be.true;
     });
 
-    it("should not fail the stat check and not call downloadAndExtract()", async () => {
+    it("should not fail the stat check and not call downloadAndExtract().", async () => {
       const uri = {
         path: "/review/test-guid/test-version",
       };
@@ -121,7 +121,7 @@ describe("openFromUrl.ts", async () => {
   });
 
   describe("openWorkspace()", async () => {
-    it("should open the manifest if the workspace is already open", async () => {
+    it("should open the manifest if the workspace is already open.", async () => {
       const manifestUri = vscode.Uri.parse("test-manifest-uri");
       const executeCommandStub = sinon.stub(
         vscode.commands,

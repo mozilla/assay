@@ -29,7 +29,7 @@ const secretsStubReturn = {
   },
 };
 
-describe("getApiCreds.ts", async () => {
+describe("getApiCreds.ts.", async () => {
   beforeEach(() => {
     const secretsStub = sinon.stub(authUtils, "getExtensionSecretStorage");
     secretsStub.returns(secretsStubReturn);
@@ -39,14 +39,14 @@ describe("getApiCreds.ts", async () => {
     sinon.restore();
   });
 
-  describe("getCredsFromStorage()", () => {
-    it("should return the creds if they exist", async () => {
+  describe("getCredsFromStorage().", () => {
+    it("should return the creds if they exist.", async () => {
       const result = await getCredsFromStorage();
       expect(result.apiKey).to.equal("test");
       expect(result.secret).to.equal("test");
     });
 
-    it("should error if the creds don't exist", async () => {
+    it("should error if the creds don't exist.", async () => {
       sinon.restore();
 
       const secretsStub = sinon.stub(authUtils, "getExtensionSecretStorage");
@@ -70,15 +70,15 @@ describe("getApiCreds.ts", async () => {
     });
   });
 
-  describe("getApiKeyFromUser()", () => {
-    it("should return true the input is provided", async () => {
+  describe("getApiKeyFromUser().", () => {
+    it("should return true the input is provided.", async () => {
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.onFirstCall().resolves("test");
       const result = await getApiKeyFromUser();
       expect(result).to.be.true;
     });
 
-    it("should raise an error if no input is provided", async () => {
+    it("should raise an error if no input is provided.", async () => {
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.onFirstCall().resolves(undefined);
       try {
@@ -89,8 +89,8 @@ describe("getApiCreds.ts", async () => {
     });
   });
 
-  describe("getSecretFromUser()", () => {
-    it("should return true if the input is provided", async () => {
+  describe("getSecretFromUser().", () => {
+    it("should return true if the input is provided.", async () => {
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.onFirstCall().resolves("test");
 
@@ -98,7 +98,7 @@ describe("getApiCreds.ts", async () => {
       expect(result).to.be.true;
     });
 
-    it("should raise an error if no input is provided", async () => {
+    it("should raise an error if no input is provided.", async () => {
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.onFirstCall().resolves(undefined);
       try {

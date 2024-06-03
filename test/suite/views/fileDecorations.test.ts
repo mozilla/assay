@@ -25,7 +25,7 @@ describe("fileDecorations.ts", async () => {
   });
 
   describe("fileHasComment()", async () => {
-    it("should return false if there are no comments in file", async () => {
+    it("should return false if there are no comments in file.", async () => {
       const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
       getFromCacheStub.resolves({
         "test-guid": {
@@ -64,7 +64,7 @@ describe("fileDecorations.ts", async () => {
       ).to.be.true;
     });
 
-    it("should return true if there are comments in file", async () => {
+    it("should return true if there are comments in file.", async () => {
         const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
 
         getFromCacheStub.resolves({
@@ -97,7 +97,7 @@ describe("fileDecorations.ts", async () => {
   });
 
   describe("provideFileDecoration()", async () => {
-    it("should return the decoration if its a file and has a comment", async () => {
+    it("should return the decoration if its a file and has a comment.", async () => {
       const getFromCacheStub = sinon.stub(addonCache, "getFromCache");
       const decorator = getFileDecorator();
 
@@ -184,7 +184,7 @@ describe("fileDecorations.ts", async () => {
   });
 
   describe("updateDecorations()", async () => {
-    it("should notify subscribers of changes", async () => {
+    it("should notify subscribers of changes.", async () => {
       const decorator = getFileDecorator();
       const uri = vscode.Uri.file("test-root-folder-path/test-filepath");
       const fileDecoStub = sinon.stub(decorator['_onDidChangeFileDecorations'], 'fire');

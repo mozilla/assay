@@ -22,7 +22,7 @@ describe("exportComments.ts", () => {
   });
 
   describe("compileComments()", () => {
-    it("should return the compiled comments", async () => {
+    it("should return the compiled comments.", async () => {
       sinon.stub(addonCache, "getFromCache").resolves({
         "/test-filepath": {
           "#L1": {
@@ -39,7 +39,7 @@ describe("exportComments.ts", () => {
   });
 
   describe("exportComments()", () => {
-    it("should show an information message", async () => {
+    it("should show an information message.", async () => {
 
       const preferenceStub = sinon.stub(getdeleteComments, "default");
       preferenceStub.resolves(false);
@@ -56,7 +56,7 @@ describe("exportComments.ts", () => {
 
   describe("exportCommentsFromContext()", () => {
 
-    it("should throw an error if the file is not in the root folder", async () => {
+    it("should throw an error if the file is not in the root folder.", async () => {
       const editor = {
         document: {
           uri: {
@@ -73,7 +73,7 @@ describe("exportComments.ts", () => {
       }
     });
 
-    it("should throw an error if there is no guid or version", async () => {
+    it("should throw an error if there is no guid or version.", async () => {
       const editor = {
         document: {
           uri: {

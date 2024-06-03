@@ -20,7 +20,7 @@ describe("updateAssay.ts", () => {
   });
 
   describe("updateAssay()", () => {
-    it("should return false if the version is up to date", async () => {
+    it("should return false if the version is up to date.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
@@ -38,7 +38,7 @@ describe("updateAssay.ts", () => {
   });
 
   describe("checkAndGetNewVersion()", () => {
-    it("should throw an error if the request fails", async () => {
+    it("should throw an error if the request fails.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({ ok: false, statusText: "error message" } as any);
       sinon.replace(node_fetch, "default", fetchStub as any);
@@ -53,7 +53,7 @@ describe("updateAssay.ts", () => {
       }
     });
 
-    it("should return false if the version is up to date", async () => {
+    it("should return false if the version is up to date.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
@@ -77,7 +77,7 @@ describe("updateAssay.ts", () => {
       expect(showInformationMessageStub.calledOnce).to.equal(true);
     });
 
-    it("should return the download link and version if the version is not up to date", async () => {
+    it("should return the download link and version if the version is not up to date.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
@@ -126,7 +126,7 @@ describe("updateAssay.ts", () => {
       }
     });
 
-    it("should spawn a new process to install the new version and remove the file when done", async () => {
+    it("should spawn a new process to install the new version and remove the file when done.", async () => {
       const spawnStub = sinon.stub(child_process, "spawn");
       const event = {
         on: sinon.stub().callsFake(async (event, callback) => {
@@ -166,7 +166,7 @@ describe("updateAssay.ts", () => {
       ).to.equal(true);
     });
 
-    it("should throw an error if the installation fails", async () => {
+    it("should throw an error if the installation fails.", async () => {
       const spawnStub = sinon.stub(child_process, "spawn");
       const event = {
         on: sinon.stub().callsFake(async (event, callback) => {
@@ -193,7 +193,7 @@ describe("updateAssay.ts", () => {
   });
 
   describe("downloadVersion()", () => {
-    it("should throw an error if the request fails", async () => {
+    it("should throw an error if the request fails.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({ ok: false, statusText: "error message" } as any);
       sinon.replace(node_fetch, "default", fetchStub as any);
@@ -208,7 +208,7 @@ describe("updateAssay.ts", () => {
       }
     });
 
-    it("should throw an error if the extension path cannot be found", async () => {
+    it("should throw an error if the extension path cannot be found.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
@@ -229,7 +229,7 @@ describe("updateAssay.ts", () => {
       }
     });
 
-    it("should throw an error if the file cannot be saved", async () => {
+    it("should throw an error if the file cannot be saved.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
@@ -253,7 +253,7 @@ describe("updateAssay.ts", () => {
       }
     });
 
-    it("should return the save path if the file is saved", async () => {
+    it("should return the save path if the file is saved.", async () => {
       const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
       if (!fs.existsSync(workspaceFolder)) {
         fs.mkdirSync(workspaceFolder);

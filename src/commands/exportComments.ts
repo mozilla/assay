@@ -62,8 +62,6 @@ export async function exportComments(
     language: "text",
   });
 
-  const edit = new vscode.WorkspaceEdit();
-  vscode.workspace.applyEdit(edit);
   vscode.window.showTextDocument(document, vscode.ViewColumn.Beside);
 
   if (compiledComments) {

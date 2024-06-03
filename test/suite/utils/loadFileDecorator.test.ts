@@ -24,12 +24,12 @@ describe("loadFileDecorator.ts", async () => {
   });
 
   describe("loadFileDecorator()", async () => {
-    it("should return if there is no activeTextEditor", async () => {
+    it("should return if there is no activeTextEditor.", async () => {
       const result = await loadFileDecorator();
       expect(result).to.be.undefined;
     });
 
-    it("should throw an error if the file is not in the root folder", async () => {
+    it("should throw an error if the file is not in the root folder.", async () => {
       const activeTextEditorStub = sinon.stub(
         vscode.window,
         "activeTextEditor"
@@ -55,7 +55,7 @@ describe("loadFileDecorator.ts", async () => {
       }
     });
 
-    it("should return if there are no comments", async () => {
+    it("should return if there are no comments.", async () => {
       const activeTextEditorStub = sinon.stub(
         vscode.window,
         "activeTextEditor"
