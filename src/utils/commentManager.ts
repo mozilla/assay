@@ -113,8 +113,9 @@ export class CommentManager {
   }
 
   /**
-   * Delete all comments in add-on guid of version.
-   * @param uri The current uri.
+   * Delete all comments associated with a given version of an add-on.
+   * @param uri The URI of a file inside Assay's add-on cache. This will be used
+   to determine the add-on's GUID and version number.
    */
   // Deleting comments by [guid, version], while optimal,
   // is not compatible with VS Code's base FileDecorationProvider,
@@ -225,8 +226,8 @@ export class CommentManager {
   private async loadCommentsFromCache() {
     const cmtIterator = await this.getCachedCommentIterator();
     for (const { uri, body, contextValue, lineNumber } of cmtIterator) {
-      const r = stringToRange(lineNumber);
-      const thread = this.controller.createCommentThread(uri, r, []);
+      const range = stringToRange(lineNumber);
+      const thread = this.controller.createCommentThread(uri, range, []);
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);
     }
   }
