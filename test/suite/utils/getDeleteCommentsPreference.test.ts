@@ -85,7 +85,7 @@ describe("getdeleteComments.ts", () => {
             expect(result).to.be.false;
         });
 
-        it("should prompt the user twice when their preference is not defined: once for their preference (Yes), once to save (Save my preference) then save and return preference.", async () => {
+        it("should prompt the user twice when their preference is not defined: once for their preference ('Yes') and once to save ('Save my preference') then save, and then return preference.", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const updateStub = sinon.stub();
             
@@ -106,7 +106,7 @@ describe("getdeleteComments.ts", () => {
             expect(updateStub.calledWith("deleteCommentsOnExport", "Yes", true)).to.be.true;
         });
 
-        it("should prompt the user twice when their preference is not defined: once for their preference (Yes), once to save (Ask Every Time) then save and return preference.", async () => {
+        it("should prompt the user twice when their preference is not defined: once for their preference ('Yes') and once to save ('Ask Every Time') then save, and then return preference.", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const updateStub = sinon.stub();
             
@@ -127,7 +127,7 @@ describe("getdeleteComments.ts", () => {
             expect(updateStub.calledWith("deleteCommentsOnExport", "Ask Every Time", true)).to.be.true;
         });
 
-        it("should prompt the user twice when their preference is not defined: once for their preference (No), once to save (Save my preference) then save and return preference.", async () => {
+        it("should prompt the user twice when their preference is not defined: once for their preference ('No') and once to save ('Save my preference') then save, and then return preference.", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const updateStub = sinon.stub();
             
@@ -148,7 +148,7 @@ describe("getdeleteComments.ts", () => {
             expect(updateStub.calledWith("deleteCommentsOnExport", "No", true)).to.be.true;
         });
 
-        it("should prompt the user twice when their preference is not defined: once for their preference (No), once to save (Ask Every Time) then save and return preference.", async () => {
+        it("should prompt the user twice when their preference is not defined: once for their preference ('No') and once to save ('Ask Every Time') then save, and then return preference.", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const updateStub = sinon.stub();
             
@@ -169,7 +169,7 @@ describe("getdeleteComments.ts", () => {
             expect(updateStub.calledWith("deleteCommentsOnExport", "Ask Every Time", true)).to.be.true;
         });
 
-        it("should prompt the user twice when their preference is not defined: once for their preference and once to save (early termination).", async () => {
+        it("should prompt the user twice when their preference is not defined: once for their preference  and once to save (early termination).", async () => {
             const configStub = sinon.stub(vscode.workspace, "getConfiguration");
             const updateStub = sinon.stub();
             

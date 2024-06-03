@@ -191,7 +191,7 @@ describe("CommentManager.ts", () => {
   });
 
   describe("deleteComments", () => {
-    it("should delete all comments in the uri's guid and version and create, replace and activate a new controller with refetched comments in place of the old one.", async () => {
+    it("should delete all comments in the URI's GUID and version and create, replace, and activate a new controller with re-fetched comments in place of the old one.", async () => {
       sinon.stub(Object, 'entries').returns([
         ["filepath", "comments"]
       ]);
