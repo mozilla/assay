@@ -55,8 +55,6 @@ export async function exportComments(
   compiledComments: string,
   uri: vscode.Uri
 ) {
-  const deleteCachedComments = await getDeleteCommentsPreference();
-
   const document = await vscode.workspace.openTextDocument({
     content: compiledComments,
     language: "text",
@@ -69,6 +67,7 @@ export async function exportComments(
     vscode.window.showInformationMessage("Comments copied to clipboard.");
   }
 
+  const deleteCachedComments = await getDeleteCommentsPreference();
   if (deleteCachedComments) {
     const cmtManager = getCommentManager();
     await cmtManager.deleteComments(uri);
