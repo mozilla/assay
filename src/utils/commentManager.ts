@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 
 import { addToCache, getFromCache } from "./addonCache";
-import getThreadLocation, {
+import {
+  getThreadLocation,
   rangeTruncation,
   stringToRange,
 } from "./getThreadLocation";

@@ -17,7 +17,7 @@ describe("openFromUrl.ts", async () => {
   });
 
   describe("handleUri()", async () => {
-    it("should do nothing if the action is not review", async () => {
+    it("should do nothing if the action is not review.", async () => {
       const uri = {
         path: "/test-action/test-guid/test-version",
       };
@@ -29,7 +29,7 @@ describe("openFromUrl.ts", async () => {
       expect(getRootFolderPathStub.called).to.be.false;
     });
 
-    it("should fail the stat check and call downloadAndExtract() if the manifest does not exist", async () => {
+    it("should fail the stat check and call downloadAndExtract() if the manifest does not exist.", async () => {
       const executeCommandStub = sinon.stub(vscode.commands, 'executeCommand');
       executeCommandStub.resolves();
 
@@ -73,7 +73,7 @@ describe("openFromUrl.ts", async () => {
       expect(downloadAndExtractStub.called).to.be.true;
     });
 
-    it("should not fail the stat check and not call downloadAndExtract()", async () => {
+    it("should not fail the stat check and not call downloadAndExtract().", async () => {
       const executeCommandStub = sinon.stub(vscode.commands, 'executeCommand');
       executeCommandStub.resolves();
 
@@ -117,7 +117,7 @@ describe("openFromUrl.ts", async () => {
   });
 
   describe("openWorkspace()", async () => {
-    it("should open the manifest if the workspace is already open", async () => {
+    it("should open the manifest if the workspace is already open.", async () => {
       
       const context = {
         globalState: {
@@ -162,7 +162,7 @@ describe("openFromUrl.ts", async () => {
   });
 
   describe("getAddonByUrl", async () => {
-    it("should receive a result from downloadAndExtract and correctly call openWorkspace", async () => {
+    it("should receive a result from downloadAndExtract and correctly call openWorkspace.", async () => {
       const context = {
         globalState: {
           update: sinon.stub(),

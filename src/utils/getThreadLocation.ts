@@ -11,7 +11,7 @@ async function readFile(uri: vscode.Uri) {
   }
 }
 
-export default async function getThreadLocation(thread: AssayThread) {
+export async function getThreadLocation(thread: AssayThread) {
   const range = rangeToString(thread.range);
   const { guid, version, filepath } = await getFilepathInfo(thread);
   return { guid, version, filepath, range: range };
@@ -46,7 +46,7 @@ export async function stringToRange(str: string, uri?: vscode.Uri) {
   const startLine = parseInt(list[0]);
   const endLine = list.length > 1 ? parseInt(list[1]) : startLine;
 
-  // if given a file uri, set the the end range to eol
+  // if given a file URI, set the the end range to eol
   if (uri) {
     const buffer = await readFile(uri);
     const content = buffer?.toString()?.split("\n");

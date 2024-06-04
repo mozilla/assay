@@ -4,7 +4,7 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { AssayThread, contextValues } from "../../../src/config/comment";
-import getThreadLocation, { rangeToString, rangeTruncation, stringToRange } from "../../../src/utils/getThreadLocation";
+import { getThreadLocation, rangeToString, rangeTruncation, stringToRange } from "../../../src/utils/getThreadLocation";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 

@@ -210,7 +210,7 @@ describe("CommentManager.ts", () => {
       const expectedLink = `vscode://mozilla.assay/review/guid/version?path=filepath/with/slashes.py#range`;
 
       const showInformationMessageStub = sinon.stub(vscode.window, 'showInformationMessage');
-      const getThreadLocationStub = sinon.stub(getThreadLocation, 'default').resolves({
+      const getThreadLocationStub = sinon.stub(getThreadLocation, 'getThreadLocation').resolves({
         guid: 'guid',
         version: 'version',
         filepath: 'filepath/with/slashes.py',

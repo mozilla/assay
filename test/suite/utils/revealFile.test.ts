@@ -12,17 +12,17 @@ describe("revealFile.ts", async () => {
   });
   describe("revealFile()", () => {
     
-    it("should reveal the document located at uri.", async () => {
+    it("should reveal the document located at URI.", async () => {
         const showTextDocumentStub = sinon.stub(vscode.window, "showTextDocument");
-        const uri = vscode.Uri.parse("index.html");
+        const URI = vscode.Uri.parse("index.html");
 
-        await revealFile(uri);
+        await revealFile(URI);
 
         expect(showTextDocumentStub.calledOnce).to.be.true;
-        expect(showTextDocumentStub.firstCall.args[0]).to.deep.equal(uri);
+        expect(showTextDocumentStub.firstCall.args[0]).to.deep.equal(URI);
     });
 
-    it("should reveal the document located at uri and correctly highlight and reveal the desired range", async () => {
+    it("should reveal the document located at URI and correctly highlight and reveal the desired range", async () => {
         const range = new vscode.Range(new vscode.Position(24, 0), new vscode.Position(24, 0));
         const stringToRangeStub = sinon.stub(getThreadLocation, "stringToRange").resolves(range);
         const revealRangeStub = sinon.stub();
@@ -32,13 +32,13 @@ describe("revealFile.ts", async () => {
             selections: [],
         } as unknown as vscode.TextEditor;
 
-        const uri = vscode.Uri.file("index.html");
+        const URI = vscode.Uri.file("index.html");
         const lineNumber = "#L25";
 
         const showTextDocumentStub = sinon.stub(vscode.window, "showTextDocument");
         showTextDocumentStub.resolves(fakeEditor);
 
-        await revealFile(uri, lineNumber);
+        await revealFile(URI, lineNumber);
 
         expect(stringToRangeStub.calledOnce).to.be.true;
         expect(revealRangeStub.calledOnce).to.be.true;

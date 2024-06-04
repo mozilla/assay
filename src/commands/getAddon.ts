@@ -42,15 +42,10 @@ export async function downloadAndExtract(
 
     await downloadAddon(addonFileId, compressedFilePath);
 
-    try {
-      await extractAddon(
-        compressedFilePath,
-        `${workspaceFolder}/${guid}`,
-        `${workspaceFolder}/${guid}/${version}`
-      );
-    } catch (e) {
-      return { workspaceFolder, guid, version };
-    }
+    await extractAddon(
+      compressedFilePath,
+      `${workspaceFolder}/${guid}/${version}`
+    );
     return { workspaceFolder, guid, version };
   } catch (error) {
     console.error(error);

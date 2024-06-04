@@ -37,7 +37,6 @@ export async function activate(context: vscode.ExtensionContext) {
   if (context.globalState.get("filePath") !== undefined) {
     const filePath = context.globalState.get("filePath")?.toString();
     const lineNumber = context.globalState.get("lineNumber")?.toString();
-    console.log("hi", lineNumber);
     await context.globalState.update("filePath", undefined);
     await context.globalState.update("lineNumber", undefined);
     if (filePath) {

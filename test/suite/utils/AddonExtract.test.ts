@@ -43,20 +43,19 @@ describe("AddonExtract.ts", async () => {
 
   describe("extractAddon()", async () => {
     it("should extract a new addon, remove the xpi, and make files read only", async () => {
+      // make a stub for the quickpick and force it to say yes
+      const showQuickPickStub = sinon.stub();
+      showQuickPickStub.onCall(0).returns("Yes");
+      sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
+      
       await extractAddon(
         compressedFilePath,
-        extractedworkspaceFolder,
         extractedVersionFolder
       );
 
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(fs.existsSync(extractedVersionFolder)).to.be.true;
       expect(fs.existsSync(compressedFilePath)).to.be.false;
-
-      const fileStats = fs.statSync(
-        path.resolve(extractedVersionFolder, "test.txt")
-      );
-      // expect(fileStats.mode).to.equal(0o100444);
     });
 
     it("should overwrite an existing addon", async () => {
@@ -76,7 +75,6 @@ describe("AddonExtract.ts", async () => {
 
       await extractAddon(
         compressedFilePath,
-        extractedworkspaceFolder,
         extractedVersionFolder
       );
 
@@ -114,7 +112,6 @@ describe("AddonExtract.ts", async () => {
       try {
         await extractAddon(
           compressedFilePath,
-          extractedworkspaceFolder,
           extractedVersionFolder
         );
         expect(false).to.be.true;
@@ -148,7 +145,6 @@ describe("AddonExtract.ts", async () => {
       try {
         await extractAddon(
           compressedFilePath,
-          extractedworkspaceFolder,
           extractedVersionFolder
         );
         expect(false).to.be.true;
