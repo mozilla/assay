@@ -25,11 +25,19 @@
       "properties": {
         "assay.rootFolder": {
           "type": "string",
+          "description": "The folder in which to store downloaded add-ons.",
           "default": ""
         },
         "assay.diffTool": {
           "type": "string",
+          "description": "Command to launch external tool to diff add-ons.",
           "default": ""
+        },
+        "assay.deleteCommentsOnExport": {
+          "type": "string",
+          "description": "Whether or not to delete comments after exporting.",
+          "default": "No Preference",
+          "enum": ["Yes", "No", "Ask Every Time"]
         }
       }
     },
@@ -43,6 +51,11 @@
         {
           "when": "explorerResourceIsFolder",
           "command": "assay.exportCommentsFromContext",
+          "group": "navigation"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "assay.deleteCommentsFromContext",
           "group": "navigation"
         }
       ],
@@ -106,6 +119,10 @@
       {
         "command": "assay.exportCommentsFromContext",
         "title": "(Assay) Export Version Comments"
+      },
+      {
+        "command": "assay.deleteCommentsFromContext",
+        "title": "(Assay) Delete Version Comments"
       },
       {
         "command": "assay.checkForUpdates",

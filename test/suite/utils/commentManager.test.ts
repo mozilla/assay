@@ -9,6 +9,7 @@ import { AssayReply, AssayThread, contextValues } from "../../../src/config/comm
 import { setExtensionStoragePath } from "../../../src/config/globals";
 import * as addonCache from "../../../src/utils/addonCache";
 import { CommentManager } from "../../../src/utils/commentManager";
+import * as loadFileDecorator from "../../../src/utils/loadFileDecorator";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
@@ -46,7 +47,7 @@ describe("CommentManager.ts", () => {
   });
 
   describe("addComment", async () => {
-    it("should create a comment & thread from non-empty reply and save the comment to cache", async () => {
+    it("should create a comment & thread from non-empty reply and save the comment to cache.", async () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
 
         const cmtManager = new CommentManager("assay-tester", "Assay Tester");
@@ -69,7 +70,7 @@ describe("CommentManager.ts", () => {
         expect(addToCacheStub.called).to.be.true;
     });
 
-    it("should create a markForReview & comment thread from an empty reply", async () => {
+    it("should create a markForReview & comment thread from an empty reply.", async () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
         const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
@@ -88,7 +89,7 @@ describe("CommentManager.ts", () => {
   });
 
   describe("saveComment", () => {
-    it("should update a comment's body to the new string both in comment and in cache", async () => {
+    it("should update a comment's body to the new string both in comment and in cache.", async () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
 
         const newBody = new vscode.MarkdownString("Hello, world!");
@@ -106,7 +107,7 @@ describe("CommentManager.ts", () => {
         // was added to cache
         expect(addToCacheStub.called).to.be.true;
     });
-    it("should take an empty string and populate it as marked", async () => {
+    it("should take an empty string and populate it as marked.", async () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
 
         const newBody = new vscode.MarkdownString("");
@@ -128,7 +129,7 @@ describe("CommentManager.ts", () => {
   });
 
   describe("cancelSaveComment", () => {
-    it("should retain its original body text", async () => {
+    it("should retain its original body text.", async () => {
         const newBody = new vscode.MarkdownString("Hello, world!");
         const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
@@ -144,7 +145,7 @@ describe("CommentManager.ts", () => {
   });
 
   describe("deleteThread", () => {
-    it("should delete the comment thread from a controller and its comments from cache", async () => {
+    it("should delete the comment thread from a controller and its comments from cache.", async () => {
         const addToCacheStub = sinon.stub(addonCache, "addToCache");
 
         const cmtManager = new CommentManager("assay-tester", "Assay Tester");
@@ -162,7 +163,7 @@ describe("CommentManager.ts", () => {
   });
 
   describe("editComment", () => {
-    it("should set a comment to edit mode", async () => {
+    it("should set a comment to edit mode.", async () => {
         const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, cmt.body);
@@ -175,7 +176,7 @@ describe("CommentManager.ts", () => {
         expect(comment.mode).to.be.equal(vscode.CommentMode.Editing);
     });
   
-    it("should clear the body if a markForReview comment", async () => {
+    it("should clear the body if a markForReview comment.", async () => {
         const cmtManager = new CommentManager("assay-tester", "Assay Tester");
         const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
         const reply = new AssayReply(thread, "");
@@ -187,6 +188,25 @@ describe("CommentManager.ts", () => {
         expect(comment.body.value).to.be.equal("");
         expect(comment.mode).to.be.equal(vscode.CommentMode.Editing);      
     });
+  });
+
+  describe("deleteComments", () => {
+    it("should delete all comments in the URI's GUID and version and create, replace, and activate a new controller with re-fetched comments in place of the old one.", async () => {
+      sinon.stub(Object, 'entries').returns([
+        ["filepath", "comments"]
+      ]);
+      const addToCacheStub = sinon.stub(addonCache, "addToCache");
+      const loadFileDecoratorStub = sinon.stub(loadFileDecorator, "loadFileDecorator");
+
+      const cmtManager = new CommentManager("assay-tester", "Assay Tester");
+      const initController = cmtManager.controller;
+      await cmtManager.deleteComments(vscode.Uri.file("/test-root/guid/version"));
+      const newController = cmtManager.controller;
+      expect(addToCacheStub.called).to.be.true;
+      expect(loadFileDecoratorStub.called).to.be.true;
+      expect(initController).to.not.equal(newController);
+    });
+
   });
 
 });

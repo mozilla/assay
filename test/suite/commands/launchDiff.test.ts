@@ -13,7 +13,7 @@ describe("launchDiff.ts", async () => {
   });
 
   describe("openInDiffTool()", () => {
-    it("should return undefined if no diff command is provided", async () => {
+    it("should return undefined if no diff command is provided.", async () => {
       const getDiffCommandStub = sinon.stub(diffTool, "getDiffCommand");
       getDiffCommandStub.resolves(undefined);
 
@@ -24,7 +24,7 @@ describe("launchDiff.ts", async () => {
       expect(result).to.be.undefined;
     });
 
-    it("should return true if child process runs", async () => {
+    it("should return true if child process runs.", async () => {
       const getDiffCommandStub = sinon.stub(diffTool, "getDiffCommand");
       getDiffCommandStub.resolves("diff");
 

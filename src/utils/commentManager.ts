@@ -6,6 +6,7 @@ import getCommentLocation, {
   stringToRange,
 } from "./getThreadLocation";
 import { loadFileDecorator } from "./loadFileDecorator";
+import { getRootFolderPath } from "./reviewRootDir";
 import { splitUri } from "./splitUri";
 import { exportVersionComments } from "../commands/exportComments";
 import {
@@ -18,17 +19,9 @@ import {
 
 export class CommentManager {
   controller: vscode.CommentController;
-  constructor(id: string, label: string) {
+  constructor(private id: string, private label: string) {
     this.controller = vscode.comments.createCommentController(id, label);
-
-    this.fetchCommentsFromCache().then(() => {
-      this.controller.commentingRangeProvider = {
-        provideCommentingRanges: (document: vscode.TextDocument) => {
-          const lineCount = document.lineCount;
-          return [new vscode.Range(0, 0, lineCount - 1, 0)];
-        },
-      };
-    });
+    this.activateController();
   }
 
   /**
@@ -97,12 +90,11 @@ export class CommentManager {
 
   /**
    * Set a comment to edit.
-   *
-   * Due to the associated button's placement, the entire thread is passed.
-   * this command sets 'all' the comments to edit.
-   * but since we only ever have one comment, it works out.
    * @param thread The associated thread containing the comment.
    */
+  // Due to the associated button's placement, the entire thread is passed.
+  // this command sets 'all' the comments to edit.
+  // but since we only ever have one comment, it works out.
   editComment(thread: AssayThread) {
     thread.comments = thread.comments.map((cmt) => {
       if (cmt.contextValue === "markForReview") {
@@ -121,10 +113,67 @@ export class CommentManager {
   }
 
   /**
+   * Delete all comments associated with a given version of an add-on.
+   * @param uri The URI of a file inside Assay's add-on cache. This will be used
+   to determine the add-on's GUID and version number.
+   */
+  // Deleting comments by [guid, version], while optimal,
+  // is not compatible with VS Code's base FileDecorationProvider,
+  // which requires the use of file uris directly.
+  // To avoid iterating by each individual comment, we can knit together
+  // the uri when iterating by file.
+  async deleteComments(uri: vscode.Uri) {
+    const { guid, version } = await splitUri(uri);
+    const rootPath = await getRootFolderPath();
+    const comments = await this.fetchCommentsFromCache([guid, version]);
+
+    for (const [filepath] of Object.entries(comments)) {
+      // Delete the file in cache.
+      await addToCache("comments", [guid, version, filepath], "");
+      // Update the file's decorator.
+      const commentUri = vscode.Uri.file(
+        `${rootPath}/${guid}/${version}/${filepath}`
+      );
+      await loadFileDecorator(commentUri);
+    }
+
+    this.refetchComments();
+  }
+
+  /**
    * Dispose of the CommentManager.
    */
   dispose() {
     this.controller.dispose();
+  }
+
+  /**
+   * Allows the commenting system to be visible in the gutter.
+   */
+  private activateController() {
+    this.loadCommentsFromCache().then(() => {
+      this.controller.commentingRangeProvider = {
+        provideCommentingRanges: (document: vscode.TextDocument) => {
+          const lineCount = document.lineCount;
+          return [new vscode.Range(0, 0, lineCount - 1, 0)];
+        },
+      };
+    });
+  }
+
+  /**
+   * Refetches comments from cache by disposing & creating a new controller.
+   */
+  // Not ideal, but the API does not expose its CommentThreads and so the alternative
+  // is tracking them with a dictionary in the CmtManager, which to uniquely do so
+  // would be recreating the cache structure in runtime (and iterating regardless).
+  private async refetchComments() {
+    this.controller.dispose();
+    this.controller = vscode.comments.createCommentController(
+      this.id,
+      this.label
+    );
+    this.activateController();
   }
 
   /**
@@ -151,10 +200,10 @@ export class CommentManager {
   }
 
   /**
-   * Fetch existing comments for the workspace from cache.
-   * Populates workspace with comments.
+   * Fetch and return existing comments for the workspace from cache.
+   * @returns raw cache comments.
    */
-  private async fetchCommentsFromCache() {
+  private async fetchCommentsFromCache(keys?: string[]) {
     const workspace = vscode.workspace.workspaceFolders;
     if (!workspace) {
       return;
@@ -167,13 +216,18 @@ export class CommentManager {
       return;
     }
 
-    const comments = await getFromCache("comments");
+    return getFromCache("comments", keys);
+  }
 
-    for (const { uri, body, contextValue, lineNumber } of this.iterateComments(
-      comments
-    )) {
-      const r = stringToRange(lineNumber);
-      const thread = this.controller.createCommentThread(uri, r, []);
+  /**
+   * Fetch and load existing comments for the workspace from cache.
+   * Populates workspace with comments.
+   */
+  private async loadCommentsFromCache() {
+    for (const comment of await this.getCachedCommentIterator()) {
+      const { uri, body, contextValue, lineNumber } = comment;
+      const range = stringToRange(lineNumber);
+      const thread = this.controller.createCommentThread(uri, range, []);
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);
     }
   }
@@ -219,10 +273,19 @@ export class CommentManager {
   }
 
   /**
+   * Fetches comments and returns an iterator.
+   * @returns iterator function. 
+   */
+  private async getCachedCommentIterator() {
+    const comments = await this.fetchCommentsFromCache();
+    return this.iterateByComment(comments);
+  }
+
+  /**
    * Iterates through each comment in cache.
    * @param comments The raw cache object.
    */
-  private *iterateComments(comments: CommentsCache) {
+  private *iterateByComment(comments: CommentsCache) {
     for (const guid in comments) {
       for (const version in comments[guid]) {
         for (const filepath in comments[guid][version]) {

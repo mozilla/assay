@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { exportCommentsFromContext } from "./commands/exportComments";
+import { exportVersionComments } from "./commands/exportComments";
 import { downloadAndExtract } from "./commands/getAddon";
 import {
   getApiKeyFromUser,
@@ -13,6 +13,7 @@ import { handleUri, openWorkspace } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
+  setCommentManager,
   setExtensionContext,
   setExtensionSecretStorage,
   setExtensionStoragePath,
@@ -125,13 +126,6 @@ export async function activate(context: vscode.ExtensionContext) {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
-  const exportCommentsFileDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromContext",
-    async () => {
-      await exportCommentsFromContext();
-    }
-  );
-
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -148,13 +142,24 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor(
       async () => await loadFileDecorator()
     ),
-    exportCommentsFileDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
     assayUpdaterDisposable
   );
 
   // Comment API
   const cmtManager = new CommentManager("assay-comments", "Assay");
+  setCommentManager(cmtManager);
+
+  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
+    "assay.exportCommentsFromContext",
+    exportVersionComments
+  );
+
+  const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
+    "assay.deleteCommentsFromContext",
+    cmtManager.deleteComments,
+    cmtManager
+  );
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
@@ -200,7 +205,9 @@ export async function activate(context: vscode.ExtensionContext) {
     saveCommentDisposable,
     editCommentDisposable,
     exportCommentDisposable,
-    disposeCommentDisposable
+    disposeCommentDisposable,
+    exportCommentsFolderDisposable,
+    deleteCommentsFolderDisposable
   );
 }
 
