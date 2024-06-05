@@ -9,6 +9,7 @@ import {
 } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
 import { getAddonByUrl, handleUri } from "./commands/openFromUrl";
+import { setReadOnlyEditor } from "./commands/setReadOnlyEditor";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -120,6 +121,8 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const setReadOnlyEditorDisposable = vscode.window.onDidChangeActiveTextEditor(setReadOnlyEditor);
+
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -138,7 +141,8 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
     exportCommentsFileDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
-    assayUpdaterDisposable
+    assayUpdaterDisposable,
+    setReadOnlyEditorDisposable
   );
 
   // Comment API
