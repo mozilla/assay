@@ -17,7 +17,6 @@ export async function extractAddon(
   compressedFilePath: string,
   addonVersionFolderPath: string
 ) {
-  
   if (!(await dirExistsOrMake(addonVersionFolderPath))) {
     const choice = await vscode.window.showQuickPick(["Yes", "No"], {
       placeHolder: "Addon already exists. Overwrite?",

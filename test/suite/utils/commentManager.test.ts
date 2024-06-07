@@ -5,8 +5,9 @@ import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { AssayReply, AssayThread, contextValues } from "../../../src/config/comment";
+import { AssayReply, AssayThread } from "../../../src/config/comment";
 import { setExtensionStoragePath } from "../../../src/config/globals";
+import { contextValues } from "../../../src/types";
 import * as addonCache from "../../../src/utils/addonCache";
 import { CommentManager } from "../../../src/utils/commentManager";
 import * as getThreadLocation from "../../../src/utils/getThreadLocation";

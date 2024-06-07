@@ -1,3 +1,5 @@
+import { Uri } from "vscode";
+
 export type addonInfoResponse = {
   id: string;
   slug: string;
@@ -44,6 +46,33 @@ export type errorMessages = {
   };
 };
 
+export type contextValues = "markForReview" | "comment";
+
+export type CommentsCache = {
+  [guid: string]: {
+    [version: string]: {
+      [filepath: string]: {
+        [lineNumber: string]: {
+          uri: Uri;
+          body: string;
+          contextValue: contextValues;
+        };
+      };
+    };
+  };
+};
+
 export type filesReadonlyIncludeConfig = {
   [key: string]: boolean;
+};
+
+export type MessageType = "error" | "notice" | "warning";
+
+export type Message = {
+  type: MessageType;
+  code: string;
+  message: string;
+  description: string;
+  file: string;
+  line: number | undefined;
 };

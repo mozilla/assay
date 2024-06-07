@@ -166,7 +166,7 @@ describe("AddonExtract.ts", async () => {
 
       const res = await dirExistsOrMake(extractedworkspaceFolder);
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
-      expect(res).to.be.undefined;
+      expect(res).to.be.false;
     });
   });
 });

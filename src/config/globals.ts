@@ -1,4 +1,4 @@
-import { SecretStorage, ExtensionContext } from "vscode";
+import { SecretStorage, ExtensionContext, DiagnosticCollection } from "vscode";
 
 import { CustomFileDecorationProvider } from "../views/fileDecorations";
 
@@ -6,6 +6,7 @@ let secrets: SecretStorage;
 let storagePath: string;
 let fileDecorator: CustomFileDecorationProvider;
 let extensionContext: ExtensionContext;
+let diagnosticCollection: DiagnosticCollection;
 
 export function setExtensionSecretStorage(secretStorage: SecretStorage) {
   secrets = secretStorage;
@@ -37,4 +38,11 @@ export function setFileDecorator(decorator: CustomFileDecorationProvider) {
 
 export function getFileDecorator() {
   return fileDecorator;
+}
+
+export function setDiagnosticCollection(collection: DiagnosticCollection) {
+  diagnosticCollection = collection;
+}
+export function getDiagnosticCollection() {
+  return diagnosticCollection;
 }

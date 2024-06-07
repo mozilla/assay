@@ -1,5 +1,7 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-export function setReadOnlyEditor(){
-    vscode.commands.executeCommand('workbench.action.files.setActiveEditorReadonlyInSession');
+export function setReadOnlyEditor() {
+  vscode.commands.executeCommand(
+    "workbench.action.files.setActiveEditorReadonlyInSession"
+  );
 }

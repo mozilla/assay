@@ -8,10 +8,12 @@ import {
   testApiCredentials,
 } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
+import { lintWorkspace } from "./commands/lintAddon";
 import { getAddonByUrl, handleUri } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
+  setDiagnosticCollection,
   setExtensionContext,
   setExtensionSecretStorage,
   setExtensionStoragePath,
@@ -130,6 +132,12 @@ export async function activate(context: vscode.ExtensionContext) {
   setCachedRootFolder(rootFolder);
   const handleRootConfigurationChangeDisposable =
     vscode.workspace.onDidChangeConfiguration(handleRootConfigurationChange);
+
+  // linting setup
+  const diagnosticCollection =
+    vscode.languages.createDiagnosticCollection("addons-linter");
+  setDiagnosticCollection(diagnosticCollection);
+  lintWorkspace();
 
   context.subscriptions.push(
     UriHandlerDisposable,

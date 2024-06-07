@@ -9,13 +9,8 @@ import {
 import { loadFileDecorator } from "./loadFileDecorator";
 import { splitUri } from "./splitUri";
 import { exportVersionComments } from "../commands/exportComments";
-import {
-  AssayComment,
-  AssayReply,
-  AssayThread,
-  CommentsCache,
-  contextValues,
-} from "../config/comment";
+import { AssayComment, AssayReply, AssayThread } from "../config/comment";
+import { CommentsCache, contextValues } from "../types";
 
 export class CommentManager {
   controller: vscode.CommentController;

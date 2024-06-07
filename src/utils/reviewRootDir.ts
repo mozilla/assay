@@ -61,13 +61,14 @@ export async function handleRootConfigurationChange(
   }
 }
 
-
 export async function setRootToReadonly() {
   const config = vscode.workspace.getConfiguration("assay");
   const rootFolder = config.get<string>("rootFolder");
 
   const fileConfig = vscode.workspace.getConfiguration("files");
-  const readOnlyFiles = fileConfig.get("readonlyInclude") as filesReadonlyIncludeConfig;
+  const readOnlyFiles = fileConfig.get(
+    "readonlyInclude"
+  ) as filesReadonlyIncludeConfig;
 
   // remove the cachedRootFolder's readonly property.
   const globInitialFolder = `${cachedRootFolder}/**`;
