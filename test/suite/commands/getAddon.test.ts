@@ -35,6 +35,7 @@ describe("getAddon.ts", async () => {
       // stub getAddonInfo
       const getAddonInfoStub = sinon.stub(addonInfo, "getAddonInfo");
       getAddonInfoStub.resolves({
+        id: "id",
         slug: "test-slug",
         name: {
           en_US: "Test Slug",

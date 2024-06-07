@@ -26,6 +26,7 @@
       "properties": {
         "assay.rootFolder": {
           "type": "string",
+          "description": "The directory where add-ons are saved. Using the 'Files: Readonly Include' setting, Assay will set the new directory to readonly and release the original.",
           "default": ""
         },
         "assay.diffTool": {

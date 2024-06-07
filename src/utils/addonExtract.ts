@@ -10,14 +10,14 @@ export async function dirExistsOrMake(dir: string) {
     await fs.promises.mkdir(dir, { recursive: true });
     return true;
   }
+  return false;
 }
 
 export async function extractAddon(
   compressedFilePath: string,
   addonVersionFolderPath: string
 ) {
-  await dirExistsOrMake(addonVersionFolderPath);
-
+  
   if (!(await dirExistsOrMake(addonVersionFolderPath))) {
     const choice = await vscode.window.showQuickPick(["Yes", "No"], {
       placeHolder: "Addon already exists. Overwrite?",

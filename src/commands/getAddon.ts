@@ -27,20 +27,24 @@ export async function downloadAndExtract(
 ) {
   try {
     const input = urlGuid || (await getInput());
-
     const json: addonInfoResponse = await getAddonInfo(input);
 
     const versionInfo = await getVersionChoice(input, urlVersion);
-    const addonFileId = versionInfo.fileID;
+    const addonFileID = versionInfo.fileID;
     const version = versionInfo.version;
     const guid = json.guid;
+    const addonID = json.id;
 
     const workspaceFolder = await getRootFolderPath();
     const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
 
-    await addToCache("reviewUrls", [guid], json.review_url);
+    await addToCache("reviewMeta", [guid], {
+      review_url: json.review_url,
+      file_id: addonFileID,
+      id: addonID,
+    });
 
-    await downloadAddon(addonFileId, compressedFilePath);
+    await downloadAddon(addonFileID, compressedFilePath);
 
     await extractAddon(
       compressedFilePath,
