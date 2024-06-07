@@ -9,7 +9,6 @@ import {
 } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
 import { getAddonByUrl, handleUri } from "./commands/openFromUrl";
-import { setReadOnlyEditor } from "./commands/setReadOnlyEditor";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
@@ -21,6 +20,10 @@ import {
 import { CommentManager } from "./utils/commentManager";
 import { loadFileDecorator } from "./utils/loadFileDecorator";
 import revealFile from "./utils/revealFile";
+import {
+  handleRootConfigurationChange,
+  setCachedRootFolder,
+} from "./utils/reviewRootDir";
 import { splitUri } from "./utils/splitUri";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
 import { AssayTreeDataProvider } from "./views/sidebarView";
@@ -121,7 +124,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const setReadOnlyEditorDisposable = vscode.window.onDidChangeActiveTextEditor(setReadOnlyEditor);
+  // readonly setup
+  const config = vscode.workspace.getConfiguration("assay");
+  const rootFolder = config.get<string>("rootFolder");
+  setCachedRootFolder(rootFolder);
+  const handleRootConfigurationChangeDisposable =
+    vscode.workspace.onDidChangeConfiguration(handleRootConfigurationChange);
 
   context.subscriptions.push(
     UriHandlerDisposable,
@@ -142,7 +150,7 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentsFileDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
     assayUpdaterDisposable,
-    setReadOnlyEditorDisposable
+    handleRootConfigurationChangeDisposable
   );
 
   // Comment API

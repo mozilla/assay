@@ -1,4 +1,5 @@
 export type addonInfoResponse = {
+  id: string;
   slug: string;
   name: {
     [key: string]: string;
@@ -41,4 +42,8 @@ export type errorMessages = {
   thrown: {
     [code: string]: string;
   };
+};
+
+export type filesReadonlyIncludeConfig = {
+  [key: string]: boolean;
 };
