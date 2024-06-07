@@ -126,14 +126,14 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  // readonly setup
+  // Configure watchers for the rootFolder.
   const config = vscode.workspace.getConfiguration("assay");
   const rootFolder = config.get<string>("rootFolder");
   setCachedRootFolder(rootFolder);
   const handleRootConfigurationChangeDisposable =
     vscode.workspace.onDidChangeConfiguration(handleRootConfigurationChange);
 
-  // linting setup
+  // Execute linting.
   const diagnosticCollection =
     vscode.languages.createDiagnosticCollection("addons-linter");
   setDiagnosticCollection(diagnosticCollection);
