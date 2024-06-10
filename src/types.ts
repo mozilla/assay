@@ -43,7 +43,7 @@ export type errorMessages = {
   };
 };
 
-export enum QuickPick {
+export enum QPOption {
   Save = "Save my Preference",
   Ask = "Ask Every Time",
   None = "No Preference",

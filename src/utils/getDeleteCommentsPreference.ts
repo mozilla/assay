@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
 
-import { QuickPick } from "../types";
+import { QPOption } from "../types";
 
 export default async function getDeleteCommentsPreference() {
   const config = vscode.workspace.getConfiguration("assay");
   const savedPreference =
-    (config.get<string>("deleteCommentsOnExport") as QuickPick) ||
-    QuickPick.None;
+    (config.get<string>("deleteCommentsOnExport") as QPOption) ||
+    QPOption.None;
 
-  if ([QuickPick.Yes, QuickPick.No].includes(savedPreference)) {
-    return savedPreference === QuickPick.Yes;
+  if ([QPOption.Yes, QPOption.No].includes(savedPreference)) {
+    return savedPreference === QPOption.Yes;
   } else {
     // No preference or ask every time.
     return await promptdeleteComments(config, savedPreference);
@@ -21,7 +21,7 @@ async function promptdeleteComments(
   savedPreference: string
 ) {
   const selectedPreference = await vscode.window.showQuickPick(
-    [QuickPick.Yes, QuickPick.No],
+    [QPOption.Yes, QPOption.No],
     {
       title: "Delete version comments after exporting?",
       ignoreFocusOut: true,
@@ -33,11 +33,11 @@ async function promptdeleteComments(
   }
 
   // Ask to save preference.
-  if (savedPreference === QuickPick.None) {
+  if (savedPreference === QPOption.None) {
     await setDeleteCommentsPreference(config, selectedPreference);
   }
 
-  return selectedPreference === QuickPick.Yes;
+  return selectedPreference === QPOption.Yes;
 }
 
 async function setDeleteCommentsPreference(
@@ -45,10 +45,10 @@ async function setDeleteCommentsPreference(
   selectedPreference: string
 ) {
   const input = await vscode.window.showQuickPick(
-    [QuickPick.Save, QuickPick.Ask],
+    [QPOption.Save, QPOption.Ask],
     {
       title:
-        selectedPreference === QuickPick.No
+        selectedPreference === QPOption.No
           ? "Delete comments on every export?"
           : "Keep comments on every export?",
       ignoreFocusOut: true,
@@ -61,7 +61,7 @@ async function setDeleteCommentsPreference(
 
   await config.update(
     "deleteCommentsOnExport",
-    input === QuickPick.Save ? selectedPreference : QuickPick.Ask,
+    input === QPOption.Save ? selectedPreference : QPOption.Ask,
     true
   );
 }
