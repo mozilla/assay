@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
 import { getRootFolderPath } from "../utils/reviewRootDir";
+import { splitUri } from "../utils/splitUri";
 
 export const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
@@ -11,28 +12,26 @@ export const statusBarItem = vscode.window.createStatusBarItem(
 statusBarItem.text = "Assay";
 
 export async function updateTaskbar() {
-  const activeEditor = vscode.window.activeTextEditor;
-  if (!activeEditor) {
+  const workspace = vscode.workspace.workspaceFolders;
+  if (!workspace) {
     return;
   }
 
-  const doc = activeEditor.document;
-  const filePath = doc.uri.fsPath;
-  const rootFolder = await getRootFolderPath();
-  if (!filePath.startsWith(rootFolder)) {
+  const filePath = workspace[0].uri;
+  const { guid, rootFolder } = await splitUri(filePath);
+  if (!filePath.fsPath.startsWith(rootFolder)) {
     statusBarItem.hide();
     throw new Error("File is not in the root folder");
   }
-
-  const relativePath = filePath.replace(rootFolder, "");
-  const guid = relativePath.split(path.sep)[1];
 
   if (!guid) {
     statusBarItem.hide();
     throw new Error("No guid found");
   }
 
-  const reviewUrl = await getFromCache("reviewMeta", ["guid", "review_url"]);
+  const reviewUrl = await getFromCache("reviewMeta", [guid, "review_url"]);
+
+  console.log(reviewUrl);
 
   statusBarItem.text = `${guid} - Review Page`;
   statusBarItem.tooltip = reviewUrl;
