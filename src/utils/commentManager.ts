@@ -274,7 +274,7 @@ export class CommentManager {
 
   /**
    * Fetches comments and returns an iterator.
-   * @returns iterator function. 
+   * @returns iterator function.
    */
   private async getCachedCommentIterator() {
     const comments = await this.fetchCommentsFromCache();
