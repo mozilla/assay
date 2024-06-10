@@ -7,17 +7,16 @@ import { errorMessages } from "../types";
 
 export async function dirExistsOrMake(dir: string) {
   if (!fs.existsSync(dir)) {
-    await fs.promises.mkdir(dir);
+    await fs.promises.mkdir(dir, { recursive: true });
     return true;
   }
 }
 
 export async function extractAddon(
   compressedFilePath: string,
-  addonFolderPath: string,
   addonVersionFolderPath: string
 ) {
-  await dirExistsOrMake(addonFolderPath);
+  await dirExistsOrMake(addonVersionFolderPath);
 
   if (!(await dirExistsOrMake(addonVersionFolderPath))) {
     const choice = await vscode.window.showQuickPick(["Yes", "No"], {
@@ -47,7 +46,6 @@ export async function extractAddon(
 
     return await showErrorMessage(errorMessages, "other", extractAddon, [
       compressedFilePath,
-      addonFolderPath,
       addonVersionFolderPath,
     ]);
   }

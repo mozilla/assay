@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 
 import { addToCache, getFromCache } from "./addonCache";
-import getCommentLocation, {
+import {
+  getThreadLocation,
   rangeTruncation,
   stringToRange,
 } from "./getThreadLocation";
@@ -113,6 +114,28 @@ export class CommentManager {
   }
 
   /**
+
+   * Copies a link to the selected line(s) to the clipboard for sharing.
+   * @param reply Holds the thread location.
+   * @return the generated link.
+   */
+  async copyLinkFromReply(reply: AssayReply) {
+    this.copyLinkFromThread(reply.thread);
+  }
+
+  /**
+   * Copies a link to the selected line(s) to the clipboard for sharing.
+   * @param thread
+   * @return the generated link.
+   */
+  async copyLinkFromThread(thread: AssayThread) {
+    const { guid, version, filepath, range } = await getThreadLocation(thread);
+    const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
+    vscode.env.clipboard.writeText(link);
+    vscode.window.showInformationMessage("Link copied to clipboard.");
+    return link;
+  }
+  
    * Delete all comments associated with a given version of an add-on.
    * @param uri The URI of a file inside Assay's add-on cache. This will be used
    to determine the add-on's GUID and version number.
@@ -136,7 +159,6 @@ export class CommentManager {
       );
       await loadFileDecorator(commentUri);
     }
-
     this.refetchComments();
   }
 
@@ -185,7 +207,7 @@ export class CommentManager {
     body: vscode.MarkdownString,
     thread: AssayThread | vscode.CommentThread
   ) {
-    const { filepath, range } = await getCommentLocation(thread as AssayThread);
+    const { filepath, range } = await getThreadLocation(thread as AssayThread);
     thread.label = `${filepath}${rangeTruncation(range)}`;
 
     const newComment = new AssayComment(
@@ -219,6 +241,7 @@ export class CommentManager {
     return getFromCache("comments", keys);
   }
 
+
   /**
    * Fetch and load existing comments for the workspace from cache.
    * Populates workspace with comments.
@@ -237,7 +260,7 @@ export class CommentManager {
    * @param comment
    */
   private async saveCommentToCache(comment: AssayComment) {
-    const { guid, version, filepath, range } = await getCommentLocation(
+    const { guid, version, filepath, range } = await getThreadLocation(
       comment.thread
     );
     await addToCache(
@@ -252,7 +275,7 @@ export class CommentManager {
    * @param comment
    */
   private async deleteCommentFromCache(comment: AssayComment) {
-    const { guid, version, filepath, range } = await getCommentLocation(
+    const { guid, version, filepath, range } = await getThreadLocation(
       comment.thread
     );
     await addToCache("comments", [guid, version, filepath, range], "");

@@ -9,6 +9,7 @@ import { AssayReply, AssayThread, contextValues } from "../../../src/config/comm
 import { setExtensionStoragePath } from "../../../src/config/globals";
 import * as addonCache from "../../../src/utils/addonCache";
 import { CommentManager } from "../../../src/utils/commentManager";
+import * as getThreadLocation from "../../../src/utils/getThreadLocation";
 import * as loadFileDecorator from "../../../src/utils/loadFileDecorator";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
@@ -190,6 +191,41 @@ describe("CommentManager.ts", () => {
     });
   });
 
+  describe("copyLinkFromReply", () => {
+    it("should call copyLinkFromThread with the reply's thread", () => {
+      const cmtManager = new CommentManager("assay-tester", "Assay Tester");
+      const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
+      const reply = new AssayReply(thread, cmt.body);
+      const copyLinkFromThreadStub = sinon.stub(cmtManager, 'copyLinkFromThread');
+
+      cmtManager.copyLinkFromReply(reply);
+
+      expect(copyLinkFromThreadStub.calledOnceWith(thread)).to.be.true;
+    });
+  });
+
+  describe("copyLinkFromThread", () => {
+    it("should copy the correctly formatted link to clipboard and show the info message", async () => {
+      const cmtManager = new CommentManager("assay-tester", "Assay Tester");
+      const thread = cmtManager.controller.createCommentThread(cmt.uri, range, []) as AssayThread;
+      const expectedLink = `vscode://mozilla.assay/review/guid/version?path=filepath/with/slashes.py#range`;
+
+      const showInformationMessageStub = sinon.stub(vscode.window, 'showInformationMessage');
+      const getThreadLocationStub = sinon.stub(getThreadLocation, 'getThreadLocation').resolves({
+        guid: 'guid',
+        version: 'version',
+        filepath: 'filepath/with/slashes.py',
+        range: '#range'
+      });
+
+      const link = await cmtManager.copyLinkFromThread(thread);
+  
+      expect(getThreadLocationStub.called).to.be.true;
+      expect(showInformationMessageStub.calledOnce).to.be.true;
+      expect(link).to.equal(expectedLink);
+  
+    });
+    
   describe("deleteComments", () => {
     it("should delete all comments in the URI's GUID and version and create, replace, and activate a new controller with re-fetched comments in place of the old one.", async () => {
       sinon.stub(Object, 'entries').returns([
@@ -206,7 +242,6 @@ describe("CommentManager.ts", () => {
       expect(loadFileDecoratorStub.called).to.be.true;
       expect(initController).to.not.equal(newController);
     });
-
   });
 
 });

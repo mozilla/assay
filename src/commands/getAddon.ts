@@ -32,20 +32,21 @@ export async function downloadAndExtract(
 
     const versionInfo = await getVersionChoice(input, urlVersion);
     const addonFileId = versionInfo.fileID;
-    const addonVersion = versionInfo.version;
-    const addonGUID = json.guid;
+    const version = versionInfo.version;
+    const guid = json.guid;
 
     const workspaceFolder = await getRootFolderPath();
-    const compressedFilePath = `${workspaceFolder}/${addonGUID}_${addonVersion}.xpi`;
+    const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
 
-    await addToCache("reviewUrls", [addonGUID], json.review_url);
+    await addToCache("reviewUrls", [guid], json.review_url);
 
     await downloadAddon(addonFileId, compressedFilePath);
+
     await extractAddon(
       compressedFilePath,
-      `${workspaceFolder}/${addonGUID}`,
-      `${workspaceFolder}/${addonGUID}/${addonVersion}`
+      `${workspaceFolder}/${guid}/${version}`
     );
+    return { workspaceFolder, guid, version };
   } catch (error) {
     console.error(error);
   }
