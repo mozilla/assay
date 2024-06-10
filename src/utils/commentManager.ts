@@ -136,6 +136,7 @@ export class CommentManager {
     return link;
   }
   
+  /*
    * Delete all comments associated with a given version of an add-on.
    * @param uri The URI of a file inside Assay's add-on cache. This will be used
    to determine the add-on's GUID and version number.
@@ -249,7 +250,7 @@ export class CommentManager {
   private async loadCommentsFromCache() {
     for (const comment of await this.getCachedCommentIterator()) {
       const { uri, body, contextValue, lineNumber } = comment;
-      const range = stringToRange(lineNumber);
+      const range = await stringToRange(lineNumber);
       const thread = this.controller.createCommentThread(uri, range, []);
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);
     }

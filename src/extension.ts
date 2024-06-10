@@ -137,19 +137,6 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Comment API
-  const cmtManager = new CommentManager("assay-comments", "Assay");
-  setCommentManager(cmtManager);
-
-  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromContext",
-    exportVersionComments
-  );
-
-  const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
-    "assay.deleteCommentsFromContext",
-    cmtManager.deleteComments,
-    cmtManager
-  );
 
   await vscode.commands.executeCommand(
     "setContext",
@@ -174,6 +161,19 @@ export async function activate(context: vscode.ExtensionContext) {
     true
   );
   const cmtManager = new CommentManager("assay-comments", "Assay");
+  setCommentManager(cmtManager);
+
+  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
+    "assay.exportCommentsFromContext",
+    exportVersionComments
+  );
+
+  const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
+    "assay.deleteCommentsFromContext",
+    cmtManager.deleteComments,
+    cmtManager
+  );
+
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
     cmtManager.exportComments,
@@ -229,10 +229,9 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentDisposable,
     disposeCommentDisposable,
     copyLinkFromReplyDisposable,
-    copyLinkFromThreadDisposable
+    copyLinkFromThreadDisposable,
     exportCommentsFolderDisposable,
     deleteCommentsFolderDisposable
->>>>>>> main
   );
 }
 
