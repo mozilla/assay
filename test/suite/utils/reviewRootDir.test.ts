@@ -6,7 +6,9 @@ import * as vscode from "vscode";
 
 import {
   getRootFolderPath,
+  handleRootConfigurationChange,
   selectRootFolder,
+  setCachedRootFolder,
 } from "../../../src/utils/reviewRootDir";
 
 describe("reviewRootDir.ts", async () => {
@@ -95,5 +97,37 @@ describe("reviewRootDir.ts", async () => {
       const result = await selectRootFolder();
       expect(result).to.equal("/test");
     });
+  });
+
+  describe("handleRootConfigurationChange()", async () => {
+
+
+    const updateStub = sinon.stub();
+
+    const getConfigurationStub = sinon.stub(
+      vscode.workspace,
+      "getConfiguration"
+    );
+    getConfigurationStub.onFirstCall().returns({
+      get: () => {
+        return "/root-folder";
+      },
+    } as any);
+    getConfigurationStub.onSecondCall().returns({
+      get: () => {
+        return ["untouched-folder", "/old-folder/**"];
+      },
+      update: updateStub
+    } as any);
+
+    setCachedRootFolder("/old-folder");
+    const event = {affectsConfiguration: () => true} as vscode.ConfigurationChangeEvent;
+    await handleRootConfigurationChange(event);
+
+    // assert old one was removed
+    expect(updateStub.calledWith("readonlyInclude",
+    { "untouched-folder": true, '/root-folder/**': true },
+    vscode.ConfigurationTarget.Global));
+
   });
 });

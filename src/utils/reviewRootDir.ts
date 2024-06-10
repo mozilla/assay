@@ -61,7 +61,7 @@ export async function handleRootConfigurationChange(
   }
 }
 
-export async function setRootToReadonly() {
+async function setRootToReadonly() {
   const config = vscode.workspace.getConfiguration("assay");
   const rootFolder = config.get<string>("rootFolder");
 
