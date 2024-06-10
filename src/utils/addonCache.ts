@@ -3,7 +3,6 @@ import * as path from "path";
 
 import { getExtensionStoragePath } from "../config/globals";
 
-
 /**
  * Adds a value to keys in cache cacheName.
  * If an empty string is passed to value, the value at key(s) is deleted from cache.

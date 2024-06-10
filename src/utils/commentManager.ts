@@ -135,7 +135,7 @@ export class CommentManager {
     vscode.window.showInformationMessage("Link copied to clipboard.");
     return link;
   }
-  
+
   /*
    * Delete all comments associated with a given version of an add-on.
    * @param uri The URI of a file inside Assay's add-on cache. This will be used
@@ -242,7 +242,6 @@ export class CommentManager {
     return getFromCache("comments", keys);
   }
 
-
   /**
    * Fetch and load existing comments for the workspace from cache.
    * Populates workspace with comments.
@@ -298,7 +297,7 @@ export class CommentManager {
 
   /**
    * Fetches comments and returns an iterator.
-   * @returns iterator function. 
+   * @returns iterator function.
    */
   private async getCachedCommentIterator() {
     const comments = await this.fetchCommentsFromCache();

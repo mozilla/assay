@@ -1,9 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { exportCommentsFromContext } from "./commands/exportComments";
 import { exportVersionComments } from "./commands/exportComments";
-import { downloadAndExtract } from "./commands/getAddon";
 import {
   getApiKeyFromUser,
   getSecretFromUser,
