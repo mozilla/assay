@@ -42,3 +42,10 @@ export type errorMessages = {
     [code: string]: string;
   };
 };
+export enum ExportPreference {
+  Save = "Save my Preference",
+  Ask = "Ask Every Time",
+  None = "No Preference",
+  Yes = "Yes",
+  No = "No"
+}
