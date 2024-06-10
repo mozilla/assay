@@ -11,7 +11,7 @@ describe("requestAuth.ts", () => {
   });
 
   describe("makeToken()", () => {
-    it("should return the token", async () => {
+    it("should return the token.", async () => {
       const creds = {
         apiKey: "test",
         secret: "test",
@@ -24,7 +24,7 @@ describe("requestAuth.ts", () => {
   });
 
   describe("makeAuthHeader()", () => {
-    it("should return the auth header", async () => {
+    it("should return the auth header.", async () => {
       const creds = {
         apiKey: "test",
         secret: "test",

@@ -37,12 +37,12 @@ describe("updateTaskbar.ts", async () => {
   });
 
   describe("updateTaskbar()", () => {
-    it("should return undefined if there is no activeTextEditor", async () => {
+    it("should return undefined if there is no activeTextEditor.", async () => {
       // by default, vscode.window.activeTextEditor is undefined
       expect(await updateTaskbar()).to.be.undefined;
     });
 
-    it("should throw error if the folder is not in the root", async () => {
+    it("should throw error if the folder is not in the root.", async () => {
       const getConfigurationStub = sinon.stub(
         vscode.workspace,
         "getConfiguration"
@@ -72,7 +72,7 @@ describe("updateTaskbar.ts", async () => {
       }
     });
 
-    it("should throw an error if there is no guid in the path", async () => {
+    it("should throw an error if there is no guid in the path.", async () => {
       const getConfigurationStub = sinon.stub(
         vscode.workspace,
         "getConfiguration"
@@ -102,7 +102,7 @@ describe("updateTaskbar.ts", async () => {
       }
     });
 
-    it("should return true if the taskbar is updated", async () => {
+    it("should return true if the taskbar is updated.", async () => {
       const getConfigurationStub = sinon.stub(
         vscode.workspace,
         "getConfiguration"

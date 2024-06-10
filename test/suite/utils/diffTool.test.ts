@@ -11,7 +11,7 @@ describe("diffTool.ts", async () => {
   });
 
   describe("setDiffCommand()", () => {
-    it("should return undefined if no input is provided", async () => {
+    it("should return undefined if no input is provided.", async () => {
       const config = vscode.workspace.getConfiguration("assay");
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.resolves(undefined);
@@ -19,7 +19,7 @@ describe("diffTool.ts", async () => {
       expect(result).to.be.undefined;
     });
 
-    it("should return the input and update the config if input is provided", async () => {
+    it("should return the input and update the config if input is provided.", async () => {
       const configStub = sinon.stub(vscode.workspace, "getConfiguration");
       const config = {
         update: sinon.stub(),
@@ -41,7 +41,7 @@ describe("diffTool.ts", async () => {
   });
 
   describe("getDiffCommand()", () => {
-    it("should return the diff command from the config if it exists", async () => {
+    it("should return the diff command from the config if it exists.", async () => {
       const configStub = sinon.stub(vscode.workspace, "getConfiguration");
       const config = {
         update: sinon.stub(),

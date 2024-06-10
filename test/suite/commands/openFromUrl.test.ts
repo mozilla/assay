@@ -30,6 +30,7 @@ describe("openFromUrl.ts", async () => {
     });
 
     it("should fail the stat check and call downloadAndExtract() if the manifest does not exist.", async () => {
+
       const executeCommandStub = sinon.stub(vscode.commands, 'executeCommand');
       executeCommandStub.resolves();
 
@@ -74,6 +75,7 @@ describe("openFromUrl.ts", async () => {
     });
 
     it("should not fail the stat check and not call downloadAndExtract().", async () => {
+
       const executeCommandStub = sinon.stub(vscode.commands, 'executeCommand');
       executeCommandStub.resolves();
 
@@ -129,6 +131,7 @@ describe("openFromUrl.ts", async () => {
         "getExtensionContext"
       );
       getExtensionContextStub.returns(context as any);
+
       const executeCommandStub = sinon.stub(
         vscode.commands,
         "executeCommand"

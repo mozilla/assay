@@ -41,7 +41,7 @@ describe("AddonInfo.ts", () => {
     sinon.restore();
   });
 
-  it("should return a json object of type addonInfoResponse if input is a slug", async () => {
+  it("should return a json object of type addonInfoResponse if input is a slug.", async () => {
     const fetchStub = sinon.stub();
     fetchStub.resolves({
       ok: true,
@@ -57,7 +57,7 @@ describe("AddonInfo.ts", () => {
     ).to.be.true;
   });
 
-  it("should return a json object of type addonInfoResponse if input is an id", async () => {
+  it("should return a json object of type addonInfoResponse if input is an id.", async () => {
     const fetchStub = sinon.stub();
     fetchStub.resolves({
       json: () => expected,
@@ -73,7 +73,7 @@ describe("AddonInfo.ts", () => {
     ).to.be.true;
   });
 
-  it("should return a json object of type addonInfoResponse if input is a url", async () => {
+  it("should return a json object of type addonInfoResponse if input is a url.", async () => {
     const fetchStub = sinon.stub();
     fetchStub.resolves({
       json: () => expected,
@@ -91,7 +91,7 @@ describe("AddonInfo.ts", () => {
     ).to.be.true;
   });
 
-  it("should throw an error if the response is not ok", async () => {
+  it("should throw an error if the response is not ok.", async () => {
     const fetchStub = sinon.stub();
     fetchStub.resolves({
       ok: false,

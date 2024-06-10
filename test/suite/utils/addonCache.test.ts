@@ -34,7 +34,7 @@ describe("addonCache.ts", async () => {
   });
 
   describe("addToCache()", async () => {
-    it("should create the cache folder, file, and add data if it does not exist", async () => {
+    it("should create the cache folder, file, and add data if it does not exist.", async () => {
       setExtensionStoragePath(storagePath);
 
       await addToCache("test-guid", ["test-key"], "test-value");
@@ -48,7 +48,7 @@ describe("addonCache.ts", async () => {
       expect(data).to.deep.equal({ "test-key": "test-value" });
     });
 
-    it("should modify the data in the cache file if it does exist", async () => {
+    it("should modify the data in the cache file if it does exist.", async () => {
       setExtensionStoragePath(storagePath);
 
       if (!fs.existsSync(cachePath)) {
@@ -65,12 +65,12 @@ describe("addonCache.ts", async () => {
   });
 
   describe("getFromCache()", async () => {
-    it("should return undefined if the cache file does not exist", async () => {
+    it("should return undefined if the cache file does not exist.", async () => {
       const result = await getFromCache("test-guid", ["test-key"]);
       expect(result).to.be.undefined;
     });
 
-    it("should return the data from the cache file if it does exist", async () => {
+    it("should return the data from the cache file if it does exist.", async () => {
       if (!fs.existsSync(cachePath)) {
         fs.mkdirSync(cachePath);
       }
@@ -83,7 +83,7 @@ describe("addonCache.ts", async () => {
   });
 
   describe("clearCache()", async () => {
-    it("should delete the cache folder and return true", async () => {
+    it("should delete the cache folder and return true.", async () => {
       if (!fs.existsSync(cachePath)) {
         fs.mkdirSync(cachePath);
       }
@@ -94,7 +94,7 @@ describe("addonCache.ts", async () => {
   });
 
   describe("removeEmptyObjectsFromCache()", async () => {
-    it("should remove empty objects from the cache", async () => {
+    it("should remove empty objects from the cache.", async () => {
       // all of this should be deleted since there is no actual data, just keys
       await addToCache("test-guid", ["test-key", "test-key-2", "test-key-3"], "");
 
