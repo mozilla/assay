@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { splitUri } from "./splitUri";
 import { AssayThread } from "../config/comment";
 
-async function readFile(uri: vscode.Uri) {
+export async function readFile(uri: vscode.Uri) {
   try {
     return await vscode.workspace.fs.readFile(uri);
   } catch {

@@ -4,6 +4,7 @@ import constants from "../config/config";
 import { getDiagnosticCollection } from "../config/globals";
 import { Message, MessageType, errorMessages } from "../types";
 import { getFromCache } from "../utils/addonCache";
+import { readFile } from "../utils/getThreadLocation";
 import { showErrorMessage } from "../utils/processErrors";
 import { makeAuthHeader } from "../utils/requestAuth";
 import { splitUri } from "../utils/splitUri";
@@ -25,8 +26,7 @@ async function formatNotice(versionPath: string, n: Message) {
   };
 
   const fileUri = getUriFromVersionPath(versionPath, n.file);
-  const buffer =
-    (await vscode.workspace.fs.readFile(fileUri)) || new Uint8Array();
+  const buffer = await readFile(fileUri);
   const fileText = buffer?.toString()?.split("\n");
   const lineNumber = n.line ? n.line - 1 : 0;
   const lineText = fileText?.at(lineNumber);
@@ -73,9 +73,9 @@ async function fetchLints(guid: string) {
       },
     };
 
-    return await showErrorMessage(errorMessages, response.status, fetchLints, [
-      guid,
-    ]);
+    await showErrorMessage(errorMessages, response.status, fetchLints, [guid]);
+
+    return;
   }
 
   const json = await response.json();
@@ -94,7 +94,10 @@ export async function lintWorkspace() {
     return;
   }
 
-  const { success, messages } = await fetchLints(guid);
+  const { success, messages } = (await fetchLints(guid)) || [
+    undefined,
+    undefined,
+  ];
   if (!success) {
     return;
   }
