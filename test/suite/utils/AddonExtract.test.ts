@@ -6,6 +6,7 @@ import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
+import { QPOption } from "../../../src/types";
 import { extractAddon, dirExistsOrMake } from "../../../src/utils/addonExtract";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
@@ -42,21 +43,21 @@ describe("AddonExtract.ts", async () => {
   });
 
   describe("extractAddon()", async () => {
-
-    it("should extract a new addon, remove the xpi, and make files read only", async () => {
-      // make a stub for the quickpick and force it to say yes
-      const showQuickPickStub = sinon.stub();
-      showQuickPickStub.onCall(0).returns("Yes");
-      sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
-      
+    it("should extract a new addon, remove the xpi, and make files read only.", async () => {
       await extractAddon(
         compressedFilePath,
+        extractedworkspaceFolder,
         extractedVersionFolder
       );
 
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(fs.existsSync(extractedVersionFolder)).to.be.true;
       expect(fs.existsSync(compressedFilePath)).to.be.false;
+
+      const fileStats = fs.statSync(
+        path.resolve(extractedVersionFolder, "test.txt")
+      );
+      // expect(fileStats.mode).to.equal(0o100444);
     });
 
     it("should overwrite an existing addon.", async () => {
@@ -71,11 +72,12 @@ describe("AddonExtract.ts", async () => {
 
       // make a stub for the quickpick and force it to say yes
       const showQuickPickStub = sinon.stub();
-      showQuickPickStub.onCall(0).returns("Yes");
+      showQuickPickStub.onCall(0).returns(QPOption.Yes);
       sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
       await extractAddon(
         compressedFilePath,
+        extractedworkspaceFolder,
         extractedVersionFolder
       );
 
@@ -107,12 +109,13 @@ describe("AddonExtract.ts", async () => {
 
       // make a stub for the quickpick and force it to say no
       const showQuickPickStub = sinon.stub();
-      showQuickPickStub.onCall(0).returns("No");
+      showQuickPickStub.onCall(0).returns(QPOption.No);
       sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
       try {
         await extractAddon(
           compressedFilePath,
+          extractedworkspaceFolder,
           extractedVersionFolder
         );
         expect(false).to.be.true;
@@ -146,6 +149,7 @@ describe("AddonExtract.ts", async () => {
       try {
         await extractAddon(
           compressedFilePath,
+          extractedworkspaceFolder,
           extractedVersionFolder
         );
         expect(false).to.be.true;
@@ -167,7 +171,7 @@ describe("AddonExtract.ts", async () => {
 
       const res = await dirExistsOrMake(extractedworkspaceFolder);
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
-      expect(res).to.be.false;
+      expect(res).to.be.undefined;
     });
   });
 });

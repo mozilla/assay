@@ -3,25 +3,30 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { showErrorMessage } from "./processErrors";
-import { errorMessages } from "../types";
+import { QPOption, errorMessages } from "../types";
 
 export async function dirExistsOrMake(dir: string) {
   if (!fs.existsSync(dir)) {
-    await fs.promises.mkdir(dir, { recursive: true });
+    await fs.promises.mkdir(dir);
     return true;
   }
-  return false;
 }
 
 export async function extractAddon(
   compressedFilePath: string,
+  addonFolderPath: string,
   addonVersionFolderPath: string
 ) {
+  await dirExistsOrMake(addonFolderPath);
+
   if (!(await dirExistsOrMake(addonVersionFolderPath))) {
-    const choice = await vscode.window.showQuickPick(["Yes", "No"], {
-      placeHolder: "Addon already exists. Overwrite?",
-    });
-    if (choice === "No" || !choice) {
+    const choice = await vscode.window.showQuickPick(
+      [QPOption.Yes, QPOption.No],
+      {
+        placeHolder: "Addon already exists. Overwrite?",
+      }
+    );
+    if (choice === QPOption.No || !choice) {
       await fs.promises.unlink(compressedFilePath);
       throw new Error("Extraction cancelled");
     }
@@ -45,6 +50,7 @@ export async function extractAddon(
 
     return await showErrorMessage(errorMessages, "other", extractAddon, [
       compressedFilePath,
+      addonFolderPath,
       addonVersionFolderPath,
     ]);
   }

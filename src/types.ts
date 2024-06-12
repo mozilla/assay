@@ -76,3 +76,11 @@ export type Message = {
   file: string;
   line: number | undefined;
 };
+
+export enum QPOption {
+  Save = "Save my Preference",
+  Ask = "Ask Every Time",
+  None = "No Preference",
+  Yes = "Yes",
+  No = "No",
+}
