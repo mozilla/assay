@@ -12,14 +12,14 @@ describe("getAddon.ts", async () => {
   });
 
   describe("getInput()", () => {
-    it("should return the input if provided", async () => {
+    it("should return the input if provided.", async () => {
       const showInputBoxStub = sinon.stub(vscode.window, "showInputBox");
       showInputBoxStub.onFirstCall().resolves("test");
       const result = await getInput();
       expect(result).to.equal("test");
     });
 
-    it("should raise an error if no input is provided", async () => {
+    it("should raise an error if no input is provided.", async () => {
       const showInputBoxStub = sinon.stub(vscode.window, "showInputBox");
       showInputBoxStub.onFirstCall().resolves(undefined);
       try {
@@ -31,7 +31,7 @@ describe("getAddon.ts", async () => {
   });
 
   describe("downloadAndExtract()", () => {
-    it("should use the guid parameter and not call getInput()", async () => {
+    it("should use the guid parameter and not call getInput().", async () => {
       // stub getAddonInfo
       const getAddonInfoStub = sinon.stub(addonInfo, "getAddonInfo");
       getAddonInfoStub.resolves({

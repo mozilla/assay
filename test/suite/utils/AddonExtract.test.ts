@@ -42,6 +42,7 @@ describe("AddonExtract.ts", async () => {
   });
 
   describe("extractAddon()", async () => {
+
     it("should extract a new addon, remove the xpi, and make files read only", async () => {
       // make a stub for the quickpick and force it to say yes
       const showQuickPickStub = sinon.stub();
@@ -58,7 +59,7 @@ describe("AddonExtract.ts", async () => {
       expect(fs.existsSync(compressedFilePath)).to.be.false;
     });
 
-    it("should overwrite an existing addon", async () => {
+    it("should overwrite an existing addon.", async () => {
       fs.mkdirSync(extractedworkspaceFolder);
       fs.mkdirSync(extractedVersionFolder);
 
@@ -94,7 +95,7 @@ describe("AddonExtract.ts", async () => {
       expect(fileContent).to.equal("test data inside txt");
     });
 
-    it("should not overwrite an existing addon", async () => {
+    it("should not overwrite an existing addon.", async () => {
       fs.mkdirSync(extractedworkspaceFolder);
       fs.mkdirSync(extractedVersionFolder);
 
@@ -129,7 +130,7 @@ describe("AddonExtract.ts", async () => {
       }
     });
 
-    it("should error if the user cancels the vscode error", async () => {
+    it("should error if the user cancels the vscode error.", async () => {
       if (!fs.existsSync(workspaceFolder)) {
         fs.mkdirSync(workspaceFolder);
       }
@@ -155,13 +156,13 @@ describe("AddonExtract.ts", async () => {
   });
 
   describe("dirExistsOrMake()", async () => {
-    it("should create a directory if it does not exist", async () => {
+    it("should create a directory if it does not exist.", async () => {
       const res = await dirExistsOrMake(extractedworkspaceFolder);
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(res).to.be.true;
     });
 
-    it("should not create a directory if it exists", async () => {
+    it("should not create a directory if it exists.", async () => {
       fs.mkdirSync(extractedworkspaceFolder);
 
       const res = await dirExistsOrMake(extractedworkspaceFolder);

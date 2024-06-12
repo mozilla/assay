@@ -17,7 +17,7 @@ describe("reviewRootDir.ts", async () => {
   });
 
   describe("getRootFolderPath()", async () => {
-    it("should return the folder that is already set", async () => {
+    it("should return the folder that is already set.", async () => {
       const getConfigurationStub = sinon.stub(
         vscode.workspace,
         "getConfiguration"
@@ -35,7 +35,7 @@ describe("reviewRootDir.ts", async () => {
       expect(result).to.equal("/test");
     });
 
-    it("should throw an error if the folder is not set", async () => {
+    it("should throw an error if the folder is not set.", async () => {
       const getConfigurationStub = sinon.stub(
         vscode.workspace,
         "getConfiguration"
@@ -57,7 +57,7 @@ describe("reviewRootDir.ts", async () => {
       }
     });
 
-    it("should return the new folder if the old one doesn't exist", async () => {
+    it("should return the new folder if the old one doesn't exist.", async () => {
       const getConfigurationStub = sinon.stub(
         vscode.workspace,
         "getConfiguration"
@@ -81,7 +81,7 @@ describe("reviewRootDir.ts", async () => {
   });
 
   describe("selectRootFolder()", async () => {
-    it("should return undefined if no folder is chosen", async () => {
+    it("should return undefined if no folder is chosen.", async () => {
       const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
       showOpenDialogStub.resolves(undefined);
 
@@ -89,7 +89,7 @@ describe("reviewRootDir.ts", async () => {
       expect(result).to.be.undefined;
     });
 
-    it("should return the chosen folder", async () => {
+    it("should return the chosen folder.", async () => {
       const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
       const uri = vscode.Uri.file("test");
       showOpenDialogStub.resolves([uri]);

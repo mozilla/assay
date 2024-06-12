@@ -3,15 +3,19 @@ import * as path from "path";
 
 import { getExtensionStoragePath } from "../config/globals";
 
-/***
- * The cache folder is stored at
- * ../Code/User/globalStorage/mozilla.assay/.cache
- * Upon initialization, the extension folder, mozilla.assay,
- * may not exist. This function creates that folder and the cache folder
- * if they do not exist.
- *
- * The folder mozilla.assay will continue to exist after this.
+/**
+ * Adds a value to keys in cache cacheName.
+ * If an empty string is passed to value, the value at key(s) is deleted from cache.
+ * @param cacheName The name of the .cache file.
+ * @param keys The key(s) of the value.
+ * @param value The value to store at key(s).
  */
+// Caches are stored at
+// ../Code/User/globalStorage/mozilla.assay/<cacheName>.cache
+// Upon initialization, the extension folder, mozilla.assay,
+// may not exist. This function creates that folder and the cache folder
+// if they do not exist.
+// The folder mozilla.assay will continue to exist after this.
 export async function addToCache(
   cacheName: string,
   keys: string[],

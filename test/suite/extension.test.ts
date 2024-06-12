@@ -44,7 +44,7 @@ describe("extension.ts", () => {
     expect(result).to.be.undefined;
   });
 
-  it("should activate and register commands and load the manifest if launched with the intention to do so", async () => {
+  it("should load the manifest if launched with the intention to do so.", async () => {
     const context = makeContext();
     sinon.stub(context.globalState, 'get').withArgs("filePath").returns("test");
 

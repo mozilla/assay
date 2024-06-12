@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { exportCommentsFromContext } from "./commands/exportComments";
+import { exportVersionComments } from "./commands/exportComments";
 import {
   getApiKeyFromUser,
   getSecretFromUser,
@@ -14,6 +14,7 @@ import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
   setDiagnosticCollection,
+  setCommentManager,
   setExtensionContext,
   setExtensionSecretStorage,
   setExtensionStoragePath,
@@ -155,7 +156,6 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor(
       async () => await loadFileDecorator()
     ),
-    exportCommentsFileDisposable,
     vscode.window.registerFileDecorationProvider(fileDecorator),
     assayUpdaterDisposable,
     handleRootConfigurationChangeDisposable
@@ -186,6 +186,19 @@ export async function activate(context: vscode.ExtensionContext) {
     true
   );
   const cmtManager = new CommentManager("assay-comments", "Assay");
+  setCommentManager(cmtManager);
+
+  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
+    "assay.exportCommentsFromContext",
+    exportVersionComments
+  );
+
+  const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
+    "assay.deleteCommentsFromContext",
+    cmtManager.deleteComments,
+    cmtManager
+  );
+
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
     cmtManager.exportComments,
@@ -241,7 +254,9 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentDisposable,
     disposeCommentDisposable,
     copyLinkFromReplyDisposable,
-    copyLinkFromThreadDisposable
+    copyLinkFromThreadDisposable,
+    exportCommentsFolderDisposable,
+    deleteCommentsFolderDisposable
   );
 }
 

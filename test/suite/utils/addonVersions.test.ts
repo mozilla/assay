@@ -55,7 +55,7 @@ describe("addonVersions.ts", () => {
   });
 
   describe("getVersionChoice()", () => {
-    it("should choose a version from the input slug", async () => {
+    it("should choose a version from the input slug.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.onCall(0).returns({
         json: () => {
@@ -76,7 +76,7 @@ describe("addonVersions.ts", () => {
       });
     });
 
-    it("should pick the version from the input parameter", async () => {
+    it("should pick the version from the input parameter.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.onCall(0).returns({
         json: () => {
@@ -99,7 +99,7 @@ describe("addonVersions.ts", () => {
   });
 
   describe("getPaginatedVersions()", () => {
-    it("should retrieve the next page if there is one", async () => {
+    it("should retrieve the next page if there is one.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.onCall(0).returns({
         json: () => {
@@ -132,7 +132,7 @@ describe("addonVersions.ts", () => {
       expect(json2.next).to.be.undefined;
     });
 
-    it("should error if the user cancels the prompt", async () => {
+    it("should error if the user cancels the prompt.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.onCall(0).returns({
         ok: false,
@@ -155,7 +155,7 @@ describe("addonVersions.ts", () => {
   });
 
   describe("getFirstVersions()", () => {
-    it("should return a json if the input is a link", async () => {
+    it("should return a json if the input is a link.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.onCall(0).returns({
         json: () => {
@@ -174,7 +174,7 @@ describe("addonVersions.ts", () => {
       expect(json.results).to.have.lengthOf(25);
     });
 
-    it("should return a json if the input is a slug/guid", async () => {
+    it("should return a json if the input is a slug/guid.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.onCall(0).returns({
         json: () => {
@@ -191,7 +191,7 @@ describe("addonVersions.ts", () => {
       expect(json.results).to.have.lengthOf(25);
     });
 
-    it("should error if user cancels the error", async () => {
+    it("should error if user cancels the error.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.onCall(0).returns({
         json: () => {
