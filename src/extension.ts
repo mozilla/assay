@@ -120,13 +120,6 @@ export async function activate(context: vscode.ExtensionContext) {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
-  const exportCommentsFileDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromContext",
-    async () => {
-      await exportCommentsFromContext();
-    }
-  );
-
   // Configure watchers for the rootFolder.
   const config = vscode.workspace.getConfiguration("assay");
   const rootFolder = config.get<string>("rootFolder");
