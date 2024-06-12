@@ -1,19 +1,19 @@
 import * as vscode from "vscode";
 
-import { addToCache, getFromCache } from "./addonCache";
+import { exportVersionComments } from "../commands/exportComments";
+import { AssayComment, AssayReply, AssayThread } from "../config/comment";
+import { CommentsCache, contextValues } from "../types";
+import { addToCache, getFromCache } from "../utils/addonCache";
 import {
   getThreadLocation,
   rangeTruncation,
   stringToRange,
-} from "./getThreadLocation";
-import { loadFileDecorator } from "./loadFileDecorator";
-import { getRootFolderPath } from "./reviewRootDir";
-import { splitUri } from "./splitUri";
-import { exportVersionComments } from "../commands/exportComments";
-import { AssayComment, AssayReply, AssayThread } from "../config/comment";
-import { CommentsCache, contextValues } from "../types";
+} from "../utils/getThreadLocation";
+import { loadFileDecorator } from "../utils/loadFileDecorator";
+import { getRootFolderPath } from "../utils/reviewRootDir";
+import { splitUri } from "../utils/splitUri";
 
-export class CommentManager {
+export class AssayCommentController {
   controller: vscode.CommentController;
   constructor(private id: string, private label: string) {
     this.controller = vscode.comments.createCommentController(id, label);
@@ -159,7 +159,7 @@ export class CommentManager {
   }
 
   /**
-   * Dispose of the CommentManager.
+   * Dispose of the CommentController.
    */
   dispose() {
     this.controller.dispose();

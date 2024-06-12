@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { getCommentManager } from "../config/globals";
+import { getCommentController } from "../config/globals";
 import { getFromCache } from "../utils/addonCache";
 import getDeleteCommentsPreference from "../utils/getDeleteCommentsPreference";
 import { rangeTruncation } from "../utils/getThreadLocation";
@@ -69,7 +69,7 @@ export async function exportComments(
 
   const deleteCachedComments = await getDeleteCommentsPreference();
   if (deleteCachedComments) {
-    const cmtManager = getCommentManager();
+    const cmtManager = getCommentController();
     await cmtManager.deleteComments(uri);
   }
 }

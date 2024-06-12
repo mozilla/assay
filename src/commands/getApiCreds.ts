@@ -3,8 +3,8 @@ import * as vscode from "vscode";
 
 import constants from "../config/config";
 import { getExtensionSecretStorage } from "../config/globals";
-import { showErrorMessage } from "../utils/processErrors";
 import { makeAuthHeader } from "../utils/requestAuth";
+import { showErrorMessage } from "../views/notificationView";
 
 export async function getApiKeyFromUser() {
   const secrets = getExtensionSecretStorage();

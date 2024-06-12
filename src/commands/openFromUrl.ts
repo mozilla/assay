@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
-import { downloadAndExtract } from "./getAddon";
 import { getExtensionContext } from "../config/globals";
+import { downloadAndExtract } from "../controller/addonController";
 import revealFile from "../utils/revealFile";
 import { getRootFolderPath } from "../utils/reviewRootDir";
 

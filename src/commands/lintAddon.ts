@@ -5,9 +5,9 @@ import { getDiagnosticCollection } from "../config/globals";
 import { Message, MessageType, errorMessages } from "../types";
 import { getFromCache } from "../utils/addonCache";
 import { readFile } from "../utils/getThreadLocation";
-import { showErrorMessage } from "../utils/processErrors";
 import { makeAuthHeader } from "../utils/requestAuth";
 import { splitUri } from "../utils/splitUri";
+import { showErrorMessage } from "../views/notificationView";
 
 function getUriFromVersionPath(versionPath: string, filepath: string) {
   return vscode.Uri.file(`${versionPath}/${filepath}`);

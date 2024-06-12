@@ -2,11 +2,38 @@ import * as vscode from "vscode";
 
 import { errorMessages } from "../types";
 
+/**
+ * Shows progress in the editor. Progress is shown while running the given task.
+ * @param message The message to display with the prompt.
+ * @param task The async task to perform.
+ * @returns the result of the task.
+ */
+export async function promptProgress(message: string, task: () => Promise<void>){
+    return await vscode.window.withProgress(
+        { title: "Assay", location: vscode.ProgressLocation.Notification },
+        async (progress) => {
+            progress.report({
+            message: message,
+            });
+            await task();
+        }
+    );
+}
+
+
+/**
+ * Displays an error message to the user, and the option to retry (if applicable).
+ * @param errorMessages 
+ * @param status 
+ * @param tryAgainFunction 
+ * @param tryAgainFunctionParams 
+ * @returns 
+ */
 export async function showErrorMessage(
   errorMessages: errorMessages,
   status: keyof errorMessages["window"] | keyof errorMessages["thrown"],
-  tryAgainFunction: (...args: any[]) => Promise<any>,
-  tryAgainFunctionParams?: any[]
+  tryAgainFunction?: (...args: any[]) => Promise<any>,
+  tryAgainFunctionParams: any[] = []
 ) {
   const tryAgainButton = { title: "Try Again" };
   const fetchNewAddonButton = { title: "Fetch New Addon" };
@@ -24,10 +51,7 @@ export async function showErrorMessage(
     )
     .then((action) => {
       if (action?.title === tryAgainButton.title) {
-        if (!tryAgainFunctionParams) {
-          return tryAgainFunction();
-        }
-        return tryAgainFunction(...tryAgainFunctionParams);
+        return tryAgainFunction ? tryAgainFunction(...tryAgainFunctionParams) : Promise.resolve();
       } else if (action?.title === fetchNewAddonButton.title) {
         // restart the process, but also throw an error to end the current process
         vscode.commands.executeCommand("assay.get");

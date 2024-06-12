@@ -1,6 +1,6 @@
 import { SecretStorage, ExtensionContext, DiagnosticCollection } from "vscode";
 
-import { CommentManager } from "../utils/commentManager";
+import { AssayCommentController } from "../controller/commentController";
 import { CustomFileDecorationProvider } from "../views/fileDecorations";
 
 let secrets: SecretStorage;
@@ -8,7 +8,7 @@ let storagePath: string;
 let fileDecorator: CustomFileDecorationProvider;
 let extensionContext: ExtensionContext;
 let diagnosticCollection: DiagnosticCollection;
-let commentManager: CommentManager;
+let commentController: AssayCommentController;
 
 export function setExtensionSecretStorage(secretStorage: SecretStorage) {
   secrets = secretStorage;
@@ -50,10 +50,10 @@ export function getDiagnosticCollection() {
   return diagnosticCollection;
 }
 
-export function setCommentManager(cmtManager: CommentManager) {
-  commentManager = cmtManager;
+export function setCommentController(cmtController: AssayCommentController) {
+  commentController = cmtController;
 }
 
-export function getCommentManager() {
-  return commentManager;
+export function getCommentController() {
+  return commentController;
 }

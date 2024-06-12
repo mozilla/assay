@@ -7,9 +7,9 @@ import { lintWorkspace } from "../../../src/commands/lintAddon";
 import * as globals from "../../../src/config/globals";
 import * as cacheFunctions from "../../../src/utils/addonCache";
 import * as getThreadLocation from "../../../src/utils/getThreadLocation";
-import * as processErrors from "../../../src/utils/processErrors";
 import * as authUtils from "../../../src/utils/requestAuth";
 import * as splitUri from "../../../src/utils/splitUri";
+import * as notificationView from "../../../src/views/notificationView";
 
 describe("addonDownload.ts", async () => {
 
@@ -170,7 +170,7 @@ describe("addonDownload.ts", async () => {
         const getFromCacheStub = sinon.stub(cacheFunctions, "getFromCache");
         getFromCacheStub.resolves({id: "id", file_id: "fileID"});
 
-        const showErrorMessageStub = sinon.stub(processErrors, "showErrorMessage");
+        const showErrorMessageStub = sinon.stub(notificationView, "showErrorMessage");
 
         const authStub = sinon.stub(authUtils, "makeAuthHeader");
         authStub.resolves({ Authorization: "test" });

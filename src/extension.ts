@@ -14,13 +14,13 @@ import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
   setDiagnosticCollection,
-  setCommentManager,
+  setCommentController,
   setExtensionContext,
   setExtensionSecretStorage,
   setExtensionStoragePath,
   setFileDecorator,
 } from "./config/globals";
-import { CommentManager } from "./utils/commentManager";
+import { AssayCommentController } from "./controller/commentController";
 import { loadFileDecorator } from "./utils/loadFileDecorator";
 import revealFile from "./utils/revealFile";
 import {
@@ -178,8 +178,8 @@ export async function activate(context: vscode.ExtensionContext) {
     "assay.commentsEnabled",
     true
   );
-  const cmtManager = new CommentManager("assay-comments", "Assay");
-  setCommentManager(cmtManager);
+  const cmtController = new AssayCommentController("assay-comments", "Assay");
+  setCommentController(cmtController);
 
   const exportCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.exportCommentsFromContext",
@@ -188,57 +188,57 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.deleteCommentsFromContext",
-    cmtManager.deleteComments,
-    cmtManager
+    cmtController.deleteComments,
+    cmtController
   );
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
-    cmtManager.exportComments,
-    cmtManager
+    cmtController.exportComments,
+    cmtController
   );
   const addCommentDisposable = vscode.commands.registerCommand(
     "assay.addComment",
-    cmtManager.addComment,
-    cmtManager
+    cmtController.addComment,
+    cmtController
   );
   const deleteCommentDisposable = vscode.commands.registerCommand(
     "assay.deleteComment",
-    cmtManager.deleteThread,
-    cmtManager
+    cmtController.deleteThread,
+    cmtController
   );
   const cancelSaveCommentDisposable = vscode.commands.registerCommand(
     "assay.cancelSaveComment",
-    cmtManager.cancelSaveComment,
-    cmtManager
+    cmtController.cancelSaveComment,
+    cmtController
   );
   const saveCommentDisposable = vscode.commands.registerCommand(
     "assay.saveComment",
-    cmtManager.saveComment
+    cmtController.saveComment
   );
   const editCommentDisposable = vscode.commands.registerCommand(
     "assay.editComment",
-    cmtManager.editComment,
-    cmtManager
+    cmtController.editComment,
+    cmtController
   );
   const copyLinkFromReplyDisposable = vscode.commands.registerCommand(
     "assay.copyLinkFromReply",
-    cmtManager.copyLinkFromReply,
-    cmtManager
+    cmtController.copyLinkFromReply,
+    cmtController
   );
   const copyLinkFromThreadDisposable = vscode.commands.registerCommand(
     "assay.copyLinkFromThread",
-    cmtManager.copyLinkFromThread,
-    cmtManager
+    cmtController.copyLinkFromThread,
+    cmtController
   );
   const disposeCommentDisposable = vscode.commands.registerCommand(
     "assay.disposeComment",
-    cmtManager.dispose,
-    cmtManager
+    cmtController.dispose,
+    cmtController
   );
 
   context.subscriptions.push(
-    cmtManager.controller,
+    cmtController.controller,
     addCommentDisposable,
     deleteCommentDisposable,
     cancelSaveCommentDisposable,

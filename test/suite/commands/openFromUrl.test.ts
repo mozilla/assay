@@ -4,10 +4,10 @@ import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import * as getAddonFunctions from "../../../src/commands/getAddon";
 import { handleUri, openWorkspace, getAddonByUrl } from "../../../src/commands/openFromUrl";
 import * as openFromUrl from "../../../src/commands/openFromUrl";
 import * as globals from "../../../src/config/globals";
+import * as addonController from "../../../src/controller/addonController";
 import * as reviewRootDir from "../../../src/utils/reviewRootDir";
 
 
@@ -48,7 +48,7 @@ describe("openFromUrl.ts", async () => {
       fsStatStub.rejects();
 
       const downloadAndExtractStub = sinon.stub(
-        getAddonFunctions,
+        addonController,
         "downloadAndExtract"
       );
       downloadAndExtractStub.resolves();
@@ -92,7 +92,7 @@ describe("openFromUrl.ts", async () => {
       fsStatStub.resolves();
 
       const downloadAndExtractStub = sinon.stub(
-        getAddonFunctions,
+        addonController,
         "downloadAndExtract"
       );
 
@@ -177,7 +177,7 @@ describe("openFromUrl.ts", async () => {
       );
       getExtensionContextStub.returns(context as any);
       const downloadAndExtractStub = sinon.stub(
-        getAddonFunctions,
+        addonController,
         "downloadAndExtract"
       );
       downloadAndExtractStub.resolves({ workspaceFolder: "workspace", guid: "guid", version: "version" });

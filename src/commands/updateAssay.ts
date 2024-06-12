@@ -4,8 +4,6 @@ import fetch from "node-fetch";
 import path = require("path");
 import * as vscode from "vscode";
 
-import { showErrorMessage } from "../utils/processErrors";
-
 export async function checkAndGetNewVersion() {
   const apiUrl = `https://api.github.com/repos/mozilla/assay/releases/latest`;
   const response = await fetch(apiUrl);
