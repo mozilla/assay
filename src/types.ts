@@ -62,6 +62,26 @@ export type CommentsCache = {
   };
 };
 
+export type JSONComment = {
+  uri: Uri,
+  body: string,
+  contextValue: contextValues,
+};
+
+export type JSONReview = {
+  reviewUrl: string,
+  fileID: string,
+  id: string
+};
+
+export type threadLocation = {
+  guid: string,
+  version: string,
+  filepath: string,
+  range: string
+};
+
+
 export type filesReadonlyIncludeConfig = {
   [key: string]: boolean;
 };

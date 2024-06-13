@@ -1,123 +1,148 @@
 import * as vscode from "vscode";
 
-import { makeAuthHeader } from "./credentialController";
 import constants from "../config/config";
-import { getDiagnosticCollection } from "../config/globals";
-import { getFromCache } from "../model/cache";
+import { getCredentialController, getDiagnosticCollection, getReviewCacheController } from "../config/globals";
 import { Message, MessageType, errorMessages } from "../types";
 import { readFile, splitUri } from "../utils/helper";
 import { showErrorMessage } from "../views/notificationView";
 
-function getUriFromVersionPath(versionPath: string, filepath: string) {
-  return vscode.Uri.file(`${versionPath}/${filepath}`);
-}
+export class LintController{
 
-async function formatNotice(versionPath: string, n: Message) {
-  const typeToSeverity = (type: MessageType) => {
-    switch (type) {
-      case "error":
-        return vscode.DiagnosticSeverity.Error;
-      case "notice":
-        return vscode.DiagnosticSeverity.Information;
-      case "warning":
-        return vscode.DiagnosticSeverity.Warning;
+  /**
+   * Lints the current workspace.
+   */
+  async lintWorkspace() {
+    const workspace = vscode.workspace.workspaceFolders?.at(0);
+    if (!workspace) {
+      return;
     }
-  };
 
-  const fileUri = getUriFromVersionPath(versionPath, n.file);
-  const buffer = await readFile(fileUri);
-  const fileText = buffer?.toString()?.split("\n");
-  const lineNumber = n.line ? n.line - 1 : 0;
-  const lineText = fileText?.at(lineNumber);
+    const { versionPath, guid } = await splitUri(workspace.uri);
+    if (!versionPath) {
+      return;
+    }
 
-  const startChar = n.line ? lineText?.match(/\S/)?.index : 0;
-  const endChar = n.line ? lineText?.length : 0;
-  const startPosition = new vscode.Position(lineNumber, startChar ?? 0);
-  const endPosition = new vscode.Position(lineNumber, endChar ?? 0);
-  const range = new vscode.Range(startPosition, endPosition);
+    const { success, messages } = (await this.fetchLints(guid)) || [
+      undefined,
+      undefined,
+    ];
+    if (!success) {
+      return;
+    }
 
-  const diagnostic: vscode.Diagnostic = {
-    range,
-    severity: typeToSeverity(n.type),
-    message: n.message,
-    source: "Assay",
-    code: n.code,
-  };
-
-  return diagnostic;
-}
-
-async function fetchLints(guid: string) {
-  const { id: addonID, file_id: fileID } = await getFromCache("reviewMeta", [
-    guid,
-  ]);
-  const url = `${constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;
-
-  const headers = await makeAuthHeader();
-  const response = await fetch(url, { headers });
-
-  if (!response.ok) {
-    const errorMessages: errorMessages = {
-      window: {
-        404: `(Status ${response.status}): Failed to lint. Validation not found.`,
-        401: `(Status ${response.status}): Failed to lint. Unauthorized request.`,
-        403: `(Status ${response.status}): Failed to lint. Inadequate permissions`,
-        other: `(Status ${response.status}): Could not fetch lint.`,
-      },
-      thrown: {
-        404: "Failed to lint. Validation not found.",
-        401: "Failed to lint. Unauthorized request.",
-        403: "Failed to lint. Inadequate permissions",
-        other: "Could not fetch lint.",
-      },
+    const populateDiagnostic = async (messages: Message[]) => {
+      for (const message of messages) {
+        const diagnostic = await this.formatNotice(versionPath, message);
+        if (diagnosticMap.has(message.file)) {
+          diagnosticMap.get(message.file)?.push(diagnostic);
+        } else {
+          diagnosticMap.set(message.file, [diagnostic]);
+        }
+      }
     };
 
-    await showErrorMessage(errorMessages, response.status, fetchLints, [guid]);
+    const diagnosticCollection = getDiagnosticCollection();
+    const diagnosticMap: Map<string, vscode.Diagnostic[]> = new Map();
+    await populateDiagnostic(messages);
 
-    return;
+    diagnosticMap.forEach((diagnostics, file) => {
+      const uri = this.getUriFromVersionPath(versionPath, file);
+      diagnosticCollection.set(uri, diagnostics);
+    });
   }
 
-  const json = await response.json();
+  /**
+   * Fetches the lints for an add-on.
+   * @param guid The add-on to fetch lints for.
+   * @returns The lint information.
+   */
+  private async fetchLints(guid: string) {
+    const reviewCacheController = getReviewCacheController();
+    const { id: addonID, file_id: fileID } = await reviewCacheController.getReview([
+      guid,
+    ]);
+    
+    const url = `${constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;
 
-  return json.validation;
-}
+    const credentialController = getCredentialController();
+    const headers = await credentialController.makeAuthHeader();
+    const response = await fetch(url, { headers });
 
-export async function lintWorkspace() {
-  const workspace = vscode.workspace.workspaceFolders?.at(0);
-  if (!workspace) {
-    return;
-  }
+    if (!response.ok) {
+      const errorMessages: errorMessages = {
+        window: {
+          404: `(Status ${response.status}): Failed to lint. Validation not found.`,
+          401: `(Status ${response.status}): Failed to lint. Unauthorized request.`,
+          403: `(Status ${response.status}): Failed to lint. Inadequate permissions`,
+          other: `(Status ${response.status}): Could not fetch lint.`,
+        },
+        thrown: {
+          404: "Failed to lint. Validation not found.",
+          401: "Failed to lint. Unauthorized request.",
+          403: "Failed to lint. Inadequate permissions",
+          other: "Could not fetch lint.",
+        },
+      };
 
-  const { versionPath, guid } = await splitUri(workspace.uri);
-  if (!versionPath) {
-    return;
-  }
+      await showErrorMessage(errorMessages, response.status, this.fetchLints, [guid]);
 
-  const { success, messages } = (await fetchLints(guid)) || [
-    undefined,
-    undefined,
-  ];
-  if (!success) {
-    return;
-  }
-
-  const populateDiagnostic = async (messages: Message[]) => {
-    for (const message of messages) {
-      const diagnostic = await formatNotice(versionPath, message);
-      if (diagnosticMap.has(message.file)) {
-        diagnosticMap.get(message.file)?.push(diagnostic);
-      } else {
-        diagnosticMap.set(message.file, [diagnostic]);
-      }
+      return;
     }
-  };
 
-  const diagnosticCollection = getDiagnosticCollection();
-  const diagnosticMap: Map<string, vscode.Diagnostic[]> = new Map();
-  await populateDiagnostic(messages);
+    const json = await response.json();
 
-  diagnosticMap.forEach((diagnostics, file) => {
-    const uri = getUriFromVersionPath(versionPath, file);
-    diagnosticCollection.set(uri, diagnostics);
-  });
+    return json.validation;
+  }
+
+  /**
+   * Formats a lint into a Diagnostic.
+   * @param versionPath The path to the version folder.
+   * @param notice The notice to format.
+   * @returns Diagnostic
+   */
+  private async formatNotice(versionPath: string, notice: Message) {
+    const typeToSeverity = (type: MessageType) => {
+      switch (type) {
+        case "error":
+          return vscode.DiagnosticSeverity.Error;
+        case "notice":
+          return vscode.DiagnosticSeverity.Information;
+        case "warning":
+          return vscode.DiagnosticSeverity.Warning;
+      }
+    };
+
+    const fileUri = this.getUriFromVersionPath(versionPath, notice.file);
+    const buffer = await readFile(fileUri);
+    const fileText = buffer?.toString()?.split("\n");
+    const lineNumber = notice.line ? notice.line - 1 : 0;
+    const lineText = fileText?.at(lineNumber);
+
+    const startChar = notice.line ? lineText?.match(/\S/)?.index : 0;
+    const endChar = notice.line ? lineText?.length : 0;
+    const startPosition = new vscode.Position(lineNumber, startChar ?? 0);
+    const endPosition = new vscode.Position(lineNumber, endChar ?? 0);
+    const range = new vscode.Range(startPosition, endPosition);
+
+    const diagnostic: vscode.Diagnostic = {
+      range,
+      severity: typeToSeverity(notice.type),
+      message: notice.message,
+      source: "Assay",
+      code: notice.code,
+    };
+
+    return diagnostic;
+  }
+
+  /**
+   * Returns a lint's filepath's location on disk.
+   * @param versionPath The path to the version folder.
+   * @param filepath The filepath within the version.
+   * @returns the URI location.
+   */
+  private getUriFromVersionPath(versionPath: string, filepath: string) {
+    return vscode.Uri.file(`${versionPath}/${filepath}`);
+  }
+
 }

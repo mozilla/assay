@@ -1,25 +1,27 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { setCommentController, setDiagnosticCollection, setExtensionContext, setExtensionSecretStorage, setExtensionStoragePath, setFileDecorator } from "./config/globals";
+import { setCommentController, setCommentsCache, setDiagnosticCollection, setExtensionContext, setExtensionSecretStorage, setExtensionStoragePath, setFileDecorator, setReviewCache } from "./config/globals";
 import { updateAssay } from "./controller/assayController";
 import { AssayCommentController } from "./controller/commentController";
 import { getApiKeyFromUser, getSecretFromUser, testApiCredentials } from "./controller/credentialController";
 import { openInDiffTool } from "./controller/diffController";
 import { lintWorkspace } from "./controller/lintController";
 import { setCachedRootFolder, handleRootConfigurationChange } from "./controller/rootController";
-import { loadFileDecorator } from "./controller/sidebarController";
-import { updateStatusBar } from "./controller/statusBarController";
 import revealFile, { getAddonByUrl, handleUri } from "./controller/urlController";
-import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
+import { AssayCache } from "./model/cache";
 import { splitUri } from "./utils/helper";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
-  const fileDecorator = new CustomFileDecorationProvider();
-  setFileDecorator(fileDecorator);
+  const commentsCache = new AssayCache("comments", storagePath);
+  const reviewsCache = new AssayCache("reviewMeta", storagePath);
+  setCommentsCache(commentsCache);
+  setReviewCache(reviewsCache);
+
+
   setExtensionStoragePath(storagePath);
   setExtensionSecretStorage(context.secrets);
   setExtensionContext(context);

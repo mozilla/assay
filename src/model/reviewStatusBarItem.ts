@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export class StatusBarView {
+export class ReviewStatusBarItem {
   statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
     100
