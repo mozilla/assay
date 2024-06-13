@@ -1,10 +1,10 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
+import { downloadAndExtract } from "./addonController";
+import { getRootFolderPath } from "./rootController";
 import { getExtensionContext } from "../config/globals";
-import { downloadAndExtract } from "../controller/addonController";
-import revealFile from "../utils/revealFile";
-import { getRootFolderPath } from "../utils/reviewRootDir";
+import { stringToRange } from "../utils/helper";
 
 export async function openWorkspace(
   versionPath: string,
@@ -68,5 +68,18 @@ export async function handleUri(uri: vscode.Uri) {
   if (action === "review") {
     const [guid, version] = rest;
     await handleReviewUrl(guid, version, filepath || undefined, lineNumber);
+  }
+}
+
+
+export default async function revealFile(uri: vscode.Uri, lineNumber?: string) {
+  const editor = await vscode.window.showTextDocument(uri);
+  if (lineNumber) {
+    // highlight offending lines
+    const lineRange = await stringToRange(lineNumber, uri);
+    const selection = new vscode.Selection(lineRange.start, lineRange.end);
+    editor.selections = [selection];
+    // move editor to focus on line(s)
+    editor.revealRange(lineRange, vscode.TextEditorRevealType.InCenter);
   }
 }

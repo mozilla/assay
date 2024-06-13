@@ -1,12 +1,11 @@
 import * as vscode from "vscode";
 
+import { makeAuthHeader } from "./credentialController";
 import constants from "../config/config";
 import { getDiagnosticCollection } from "../config/globals";
+import { getFromCache } from "../model/cache";
 import { Message, MessageType, errorMessages } from "../types";
-import { getFromCache } from "../utils/addonCache";
-import { readFile } from "../utils/getThreadLocation";
-import { makeAuthHeader } from "../utils/requestAuth";
-import { splitUri } from "../utils/splitUri";
+import { readFile, splitUri } from "../utils/helper";
 import { showErrorMessage } from "../views/notificationView";
 
 function getUriFromVersionPath(versionPath: string, filepath: string) {

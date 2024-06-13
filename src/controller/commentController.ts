@@ -1,17 +1,17 @@
 import * as vscode from "vscode";
 
-import { exportVersionComments } from "../commands/exportComments";
-import { AssayComment, AssayReply, AssayThread } from "../config/comment";
+import { getRootFolderPath } from "./rootController";
+import { loadFileDecorator } from "./sidebarController";
+import { addToCache, getFromCache } from "../model/cache";
+import { AssayComment, AssayReply, AssayThread } from "../model/comment";
 import { CommentsCache, contextValues } from "../types";
-import { addToCache, getFromCache } from "../utils/addonCache";
 import {
-  getThreadLocation,
+  rangeToString,
   rangeTruncation,
+  splitUri,
   stringToRange,
-} from "../utils/getThreadLocation";
-import { loadFileDecorator } from "../utils/loadFileDecorator";
-import { getRootFolderPath } from "../utils/reviewRootDir";
-import { splitUri } from "../utils/splitUri";
+} from "../utils/helper";
+import getDeleteCommentsPreference from "../views/exportView";
 
 export class AssayCommentController {
   controller: vscode.CommentController;
@@ -105,7 +105,7 @@ export class AssayCommentController {
    * Export comments from current version.
    */
   async exportComments(thread: AssayThread) {
-    await exportVersionComments(thread.uri);
+    await this.exportVersionComments(thread.uri);
   }
 
   /**
@@ -124,7 +124,7 @@ export class AssayCommentController {
    * @return the generated link.
    */
   async copyLinkFromThread(thread: AssayThread) {
-    const { guid, version, filepath, range } = await getThreadLocation(thread);
+    const { guid, version, filepath, range } = await this.getThreadLocation(thread);
     const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
     vscode.env.clipboard.writeText(link);
     vscode.window.showInformationMessage("Link copied to clipboard.");
@@ -158,11 +158,121 @@ export class AssayCommentController {
     this.refetchComments();
   }
 
+  //TODO: manager __string__?
+  /**
+   * Compiles existing comments into a string format.
+   * @param guid 
+   * @param version 
+   * @returns 
+   */
+  async compileComments(guid: string, version: string) {
+    const comments = await getFromCache("comments", [guid, version]);
+    let compiledComments = "";
+  
+    for (const filepath in comments) {
+      for (const lineNumber in comments[filepath]) {
+        compiledComments += `File:\n${filepath}${rangeTruncation(
+          lineNumber
+        )}\n\n`;
+        const comment = comments[filepath][lineNumber].body;
+        compiledComments += `${comment}\n\n`;
+      }
+    }
+    return compiledComments;
+  }
+  
+  /**
+   * Handles exporting comments from the context.
+   */
+  async exportCommentsFromContext() {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      return;
+    }
+    const doc = editor.document;
+    await this.exportVersionComments(doc.uri);
+  }
+  
+  /**
+   * Handles exporting comments from the version uri resides in.
+   * @param uri The selected uri.
+   */
+  async exportVersionComments(uri: vscode.Uri) {
+    const { rootFolder, fullPath, guid, version } = await splitUri(uri);
+    if (!fullPath.startsWith(rootFolder)) {
+      vscode.window.showErrorMessage(
+        "(Assay) File is not in the Addons root folder."
+      );
+      throw new Error("File is not in the root folder");
+    }
+  
+    if (!guid || !version) {
+      vscode.window.showErrorMessage(
+        "Not a valid path. Ensure you are at least as deep as the version folder."
+      );
+      throw new Error("No guid or version found");
+    }
+  
+    const comments = await this.compileComments(guid, version);
+    await this.exportCommentsToDocument(comments, uri);
+  }
+
+  /**
+   * Fetches the location of a thread.
+   * @param thread The thread to locate.
+   * @returns The location of the thread.
+   */
+  async getThreadLocation(thread: AssayThread) {
+    const range = rangeToString(thread.range);
+    const { guid, version, filepath } = await this.getFilepathInfo(thread);
+    return { guid, version, filepath, range: range };
+  }
+
   /**
    * Dispose of the CommentController.
    */
   dispose() {
     this.controller.dispose();
+  }
+
+  /**
+   * Exports comments to a TextDocument.
+   * @param compiledComments The comments as a string.
+   * @param uri The uri of comments to (possibly) delete.
+   */
+  private async exportCommentsToDocument(
+    compiledComments: string,
+    uri: vscode.Uri
+  ) {
+    const document = await vscode.workspace.openTextDocument({
+      content: compiledComments,
+      language: "text",
+    });
+  
+    vscode.window.showTextDocument(document, vscode.ViewColumn.Beside);
+  
+    if (compiledComments) {
+      vscode.env.clipboard.writeText(compiledComments);
+      vscode.window.showInformationMessage("Comments copied to clipboard.");
+    }
+  
+    const deleteCachedComments = await getDeleteCommentsPreference();
+    if (deleteCachedComments) {
+      await this.deleteComments(uri);
+    }
+  }  
+  
+  private async getFilepathInfo(thread: AssayThread) {
+    const { rootFolder, fullPath, guid, version, filepath } = await splitUri(
+      thread.uri
+    );
+    if (!fullPath.startsWith(rootFolder)) {
+      vscode.window.showErrorMessage(
+        "(Assay) File is not in the Addons root folder."
+      );
+      throw new Error("File is not in the root folder.");
+    }
+    return { guid, version, filepath };
   }
 
   /**
@@ -203,7 +313,7 @@ export class AssayCommentController {
     body: vscode.MarkdownString,
     thread: AssayThread | vscode.CommentThread
   ) {
-    const { filepath, range } = await getThreadLocation(thread as AssayThread);
+    const { filepath, range } = await this.getThreadLocation(thread as AssayThread);
     thread.label = `${filepath}${rangeTruncation(range)}`;
 
     const newComment = new AssayComment(
@@ -255,7 +365,7 @@ export class AssayCommentController {
    * @param comment
    */
   private async saveCommentToCache(comment: AssayComment) {
-    const { guid, version, filepath, range } = await getThreadLocation(
+    const { guid, version, filepath, range } = await this.getThreadLocation(
       comment.thread
     );
     await addToCache(
@@ -270,7 +380,7 @@ export class AssayCommentController {
    * @param comment
    */
   private async deleteCommentFromCache(comment: AssayComment) {
-    const { guid, version, filepath, range } = await getThreadLocation(
+    const { guid, version, filepath, range } = await this.getThreadLocation(
       comment.thread
     );
     await addToCache("comments", [guid, version, filepath, range], "");

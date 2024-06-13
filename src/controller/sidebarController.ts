@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
-import { splitUri } from "./splitUri";
 import { getFileDecorator } from "../config/globals";
+import { splitUri } from "../utils/helper";
 
 export async function loadFileDecorator(uri?: vscode.Uri) {
   const fileDecorator = getFileDecorator();

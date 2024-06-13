@@ -1,34 +1,18 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { exportVersionComments } from "./commands/exportComments";
-import {
-  getApiKeyFromUser,
-  getSecretFromUser,
-  testApiCredentials,
-} from "./commands/getApiCreds";
-import { openInDiffTool } from "./commands/launchDiff";
-import { lintWorkspace } from "./commands/lintAddon";
-import { getAddonByUrl, handleUri } from "./commands/openFromUrl";
-import { updateAssay } from "./commands/updateAssay";
-import { updateTaskbar } from "./commands/updateTaskbar";
-import {
-  setDiagnosticCollection,
-  setCommentController,
-  setExtensionContext,
-  setExtensionSecretStorage,
-  setExtensionStoragePath,
-  setFileDecorator,
-} from "./config/globals";
+import { setCommentController, setDiagnosticCollection, setExtensionContext, setExtensionSecretStorage, setExtensionStoragePath, setFileDecorator } from "./config/globals";
+import { updateAssay } from "./controller/assayController";
 import { AssayCommentController } from "./controller/commentController";
-import { loadFileDecorator } from "./utils/loadFileDecorator";
-import revealFile from "./utils/revealFile";
-import {
-  handleRootConfigurationChange,
-  setCachedRootFolder,
-} from "./utils/reviewRootDir";
-import { splitUri } from "./utils/splitUri";
-import { CustomFileDecorationProvider } from "./views/fileDecorations";
+import { getApiKeyFromUser, getSecretFromUser, testApiCredentials } from "./controller/credentialController";
+import { openInDiffTool } from "./controller/diffController";
+import { lintWorkspace } from "./controller/lintController";
+import { setCachedRootFolder, handleRootConfigurationChange } from "./controller/rootController";
+import { loadFileDecorator } from "./controller/sidebarController";
+import { updateStatusBar } from "./controller/statusBarController";
+import revealFile, { getAddonByUrl, handleUri } from "./controller/urlController";
+import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
+import { splitUri } from "./utils/helper";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
@@ -144,7 +128,7 @@ export async function activate(context: vscode.ExtensionContext) {
     diffDisposable,
     sidebarDisposable,
     vscode.window.onDidChangeActiveTextEditor(
-      async () => await updateTaskbar()
+      async () => await updateStatusBar()
     ),
     vscode.window.onDidChangeActiveTextEditor(
       async () => await loadFileDecorator()
@@ -183,7 +167,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const exportCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.exportCommentsFromContext",
-    exportVersionComments
+    cmtController.exportVersionComments,
+    cmtController
   );
 
   const deleteCommentsFolderDisposable = vscode.commands.registerCommand(

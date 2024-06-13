@@ -2,8 +2,8 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 import { Event } from "vscode";
 
-import { getFromCache } from "../utils/addonCache";
-import { splitUri } from "../utils/splitUri";
+import { getFromCache } from "./cache";
+import { splitUri } from "../utils/helper";
 
 export async function fileHasComment(uri: vscode.Uri) {
   const { guid, version, filepath } = await splitUri(uri);

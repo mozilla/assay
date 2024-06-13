@@ -1,7 +1,7 @@
 import { SecretStorage, ExtensionContext, DiagnosticCollection } from "vscode";
 
 import { AssayCommentController } from "../controller/commentController";
-import { CustomFileDecorationProvider } from "../views/fileDecorations";
+import { CustomFileDecorationProvider } from "../model/fileDecorationProvider";
 
 let secrets: SecretStorage;
 let storagePath: string;

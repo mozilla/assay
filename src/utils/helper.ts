@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 
-import { splitUri } from "./splitUri";
-import { AssayThread } from "../config/comment";
+import { getRootFolderPath } from "../controller/rootController";
 
 export async function readFile(uri: vscode.Uri) {
   try {
@@ -11,23 +10,23 @@ export async function readFile(uri: vscode.Uri) {
   }
 }
 
-export async function getThreadLocation(thread: AssayThread) {
-  const range = rangeToString(thread.range);
-  const { guid, version, filepath } = await getFilepathInfo(thread);
-  return { guid, version, filepath, range: range };
-}
-
-async function getFilepathInfo(thread: AssayThread) {
-  const { rootFolder, fullPath, guid, version, filepath } = await splitUri(
-    thread.uri
-  );
-  if (!fullPath.startsWith(rootFolder)) {
-    vscode.window.showErrorMessage(
-      "(Assay) File is not in the Addons root folder."
-    );
-    throw new Error("File is not in the root folder.");
-  }
-  return { guid, version, filepath };
+export async function splitUri(uri: vscode.Uri) {
+  const fullPath = uri.fsPath;
+  const rootFolder = await getRootFolderPath();
+  const relativePath = fullPath.replace(rootFolder, "");
+  const guid = relativePath.split("/")[1];
+  const version = relativePath.split("/")[2];
+  const filepath = relativePath.split(version)[1];
+  const versionPath = version ? `${rootFolder}/${guid}/${version}` : undefined;
+  return {
+    rootFolder,
+    versionPath,
+    fullPath,
+    relativePath,
+    guid,
+    version,
+    filepath,
+  };
 }
 
 export function rangeToString(range: vscode.Range) {
