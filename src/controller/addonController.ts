@@ -4,8 +4,8 @@ import fetch from "node-fetch";
 import * as vscode from "vscode";
 
 import { CredentialController } from "./credentialController";
+import { FileDirectoryController } from "./fileDirectoryController";
 import { ReviewCacheController } from "./reviewCacheController";
-import { RootController } from "./rootController";
 import constants from "../config/config";
 import { addonInfoResponse, errorMessages } from "../types";
 import {
@@ -19,7 +19,7 @@ export class AddonController{
   
   constructor(private credentialController: CredentialController,
               private reviewCacheController: ReviewCacheController,
-              private rootController: RootController){}
+              private fileDirectoryController: FileDirectoryController){}
 
   /**
    * Fetches version information for a given add-on.
@@ -85,7 +85,7 @@ export class AddonController{
       const guid = json.guid;
       const addonID = json.id;
 
-      const workspaceFolder = await this.rootController.getRootFolderPath();
+      const workspaceFolder = await this.fileDirectoryController.getRootFolderPath();
       const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
 
       this.reviewCacheController.addReview(guid, {

@@ -1,15 +1,18 @@
 import * as vscode from "vscode";
 
 import { CredentialController } from "./credentialController";
+import { FileDirectoryController } from "./fileDirectoryController";
 import { ReviewCacheController } from "./reviewCacheController";
 import constants from "../config/config";
 import { Message, MessageType, errorMessages } from "../types";
-import { readFile, splitUri } from "../utils/helper";
 import { showErrorMessage } from "../views/notificationView";
 
 export class LintController {
   diagnosticCollection: vscode.DiagnosticCollection;
-  constructor(public name: string, private credentialController: CredentialController, private reviewCacheController: ReviewCacheController){
+  constructor(public name: string,
+              private credentialController: CredentialController,
+              private reviewCacheController: ReviewCacheController,
+              private fileDirectoryController: FileDirectoryController){
     this.diagnosticCollection = vscode.languages.createDiagnosticCollection(name);
   }
 
@@ -22,7 +25,7 @@ export class LintController {
       return;
     }
 
-    const { versionPath, guid } = await splitUri(workspace.uri);
+    const { versionPath, guid } = await this.fileDirectoryController.splitUri(workspace.uri);
     if (!versionPath) {
       return;
     }
@@ -115,7 +118,7 @@ export class LintController {
     };
 
     const fileUri = this.getUriFromVersionPath(versionPath, notice.file);
-    const buffer = await readFile(fileUri);
+    const buffer = await this.fileDirectoryController.readFile(fileUri);
     const fileText = buffer?.toString()?.split("\n");
     const lineNumber = notice.line ? notice.line - 1 : 0;
     const lineText = fileText?.at(lineNumber);

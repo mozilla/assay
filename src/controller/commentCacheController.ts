@@ -1,20 +1,18 @@
 import * as vscode from "vscode";
 
 import { FileDecoratorController } from "./fileDecoratorController";
-import { RootController } from "./rootController";
+import { FileDirectoryController } from "./fileDirectoryController";
+import { RangeController } from "./rangeController";
 import { AssayCache } from "../model/cache";
 import { CommentsCache, JSONComment, threadLocation } from "../types";
-import { rangeTruncation, splitUri } from "../utils/helper";
 import getDeleteCommentsPreference from "../views/exportView";
 
 export class CommentCacheController{
-    private cache: AssayCache;
 
-    constructor(public cacheName: string,
-                private rootController: RootController,
+    constructor(private cache: AssayCache,
+                private fileDirectoryController: FileDirectoryController,
                 private sidebarController: FileDecoratorController,
-                storagePath: string){
-        this.cache = new AssayCache(cacheName, storagePath);
+                private rangeController: RangeController){
     }
 
     /**
@@ -50,8 +48,8 @@ export class CommentCacheController{
     // the uri when iterating by file.
     async deleteComments(uri: vscode.Uri) {
         this.checkUri(uri);
-        const { guid, version } = await splitUri(uri);
-        const rootPath = await this.rootController.getRootFolderPath();
+        const { guid, version } = await this.fileDirectoryController.splitUri(uri);
+        const rootPath = await this.fileDirectoryController.getRootFolderPath();
         const comments = await this.getComments([guid, version]);
 
         for (const [filepath] of Object.entries(comments)) {
@@ -77,7 +75,7 @@ export class CommentCacheController{
 
         for (const filepath in comments) {
             for (const lineNumber in comments[filepath]) {
-            compiledComments += `File:\n${filepath}${rangeTruncation(
+            compiledComments += `File:\n${filepath}${this.rangeController.rangeTruncation(
                 lineNumber
             )}\n\n`;
             const comment = comments[filepath][lineNumber].body;
@@ -107,7 +105,7 @@ export class CommentCacheController{
      */
     async exportVersionComments(uri: vscode.Uri) {
         this.checkUri(uri, true);
-        const { guid, version } = await splitUri(uri);
+        const { guid, version } = await this.fileDirectoryController.splitUri(uri);
         const comments = await this.compileComments(guid, version);
         return await this.exportCommentsToDocument(comments, uri);
     }
@@ -135,7 +133,7 @@ export class CommentCacheController{
      * @returns whether the uri has comments.
      */
     fileHasComment = async (uri: vscode.Uri) => {
-        const { guid, version, filepath } = await splitUri(uri);
+        const { guid, version, filepath } = await this.fileDirectoryController.splitUri(uri);
         const comments = await this.getComments();
         if (comments?.[guid]?.[version]?.[filepath]) {
           return true;
@@ -198,7 +196,7 @@ export class CommentCacheController{
      * Error-checking for uris that are passed into the controller.
      */
     private async checkUri(uri: vscode.Uri, strict?: boolean){
-    const { rootFolder, fullPath, guid, version } = await splitUri(uri);
+    const { rootFolder, fullPath, guid, version } = await this.fileDirectoryController.splitUri(uri);
         if (!fullPath.startsWith(rootFolder)) {
             vscode.window.showErrorMessage(
             "(Assay) File is not in the Addons root folder."

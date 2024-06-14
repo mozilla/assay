@@ -1,20 +1,17 @@
 import * as vscode from "vscode";
 
 import { CommentCacheController } from "./commentCacheController";
+import { FileDirectoryController } from "./fileDirectoryController";
+import { RangeController } from "./rangeController";
 import { AssayComment, AssayReply, AssayThread } from "../model/comment";
 import { contextValues } from "../types";
-import {
-  rangeToString,
-  rangeTruncation,
-  splitUri,
-  stringToRange
-} from "../utils/helper";
-
 export class CommentController {
   controller: vscode.CommentController;
   constructor(public id: string,
               public label: string,
-              private commentCacheController: CommentCacheController) {
+              private commentCacheController: CommentCacheController,
+              private fileDirectoryController: FileDirectoryController,
+              private rangeController: RangeController) {
     this.controller = vscode.comments.createCommentController(id, label);
     this.activateController();
   }
@@ -138,7 +135,7 @@ export class CommentController {
    * @returns The location of the thread.
    */
   async getThreadLocation(thread: AssayThread) {
-    const range = rangeToString(thread.range);
+    const range = this.rangeController.rangeToString(thread.range);
     const { guid, version, filepath } = await this.getFilepathInfo(thread);
     return { guid, version, filepath, range: range };
   }
@@ -185,7 +182,7 @@ export class CommentController {
    * @returns The guid, version, and filepath of the thread.
    */
   private async getFilepathInfo(thread: AssayThread) {
-    const { rootFolder, fullPath, guid, version, filepath } = await splitUri(
+    const { rootFolder, fullPath, guid, version, filepath } = await this.fileDirectoryController.splitUri(
       thread.uri
     );
     if (!fullPath.startsWith(rootFolder)) {
@@ -207,7 +204,7 @@ export class CommentController {
     thread: AssayThread | vscode.CommentThread
   ) {
     const { filepath, range } = await this.getThreadLocation(thread as AssayThread);
-    thread.label = `${filepath}${rangeTruncation(range)}`;
+    thread.label = `${filepath}${this.rangeController.rangeTruncation(range)}`;
 
     const newComment = new AssayComment(
       body,
@@ -260,7 +257,7 @@ export class CommentController {
     const comments = await this.commentCacheController.getCachedCommentIterator();
     for (const comment of comments) {
       const { uri, body, contextValue, lineNumber } = comment;
-      const range = await stringToRange(lineNumber);
+      const range = await this.rangeController.stringToRange(lineNumber);
       const thread = this.controller.createCommentThread(uri, range, []);
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);
     }

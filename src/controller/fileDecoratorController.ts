@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
+import { FileDirectoryController } from "./fileDirectoryController";
 import { CustomFileDecorationProvider } from "../model/fileDecorationProvider";
-import { splitUri } from "../utils/helper";
 
 export class FileDecoratorController{
-  constructor(private fileDecorator: CustomFileDecorationProvider){}
+  constructor(private fileDecorator: CustomFileDecorationProvider, private fileDirectoryController: FileDirectoryController){}
 
   async loadFileDecorator(){
     const editor = vscode.window.activeTextEditor;
@@ -13,7 +13,7 @@ export class FileDecoratorController{
     }
 
     const doc = editor.document;
-    const { fullPath, rootFolder } = await splitUri(doc.uri);
+    const { fullPath, rootFolder } = await this.fileDirectoryController.splitUri(doc.uri);
 
     if (!fullPath.startsWith(rootFolder)) {
       return;

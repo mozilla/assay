@@ -1,8 +1,8 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
+import { FileDirectoryController } from "./fileDirectoryController";
 import { ReviewCacheController } from "./reviewCacheController";
-import { RootController } from "./rootController";
 import { ReviewStatusBarItem } from "../model/reviewStatusBarItem";
 
 /**
@@ -13,7 +13,7 @@ import { ReviewStatusBarItem } from "../model/reviewStatusBarItem";
 export class StatusBarController {
   private reviewItem: ReviewStatusBarItem;
   constructor(private reviewCacheController: ReviewCacheController,
-              private rootController: RootController){
+              private fileDirectoryController: FileDirectoryController){
     this.reviewItem = new ReviewStatusBarItem();
   }
 
@@ -25,7 +25,7 @@ export class StatusBarController {
   
     const doc = activeEditor.document;
     const filePath = doc.uri.fsPath;
-    const rootFolder = await this.rootController.getRootFolderPath();
+    const rootFolder = await this.fileDirectoryController.getRootFolderPath();
     if (!filePath.startsWith(rootFolder)) {
       this.reviewItem.hide();
       throw new Error("File is not in the root folder.");

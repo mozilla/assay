@@ -2,20 +2,21 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { AddonController } from "./addonController";
-import { RootController } from "./rootController";
-import { stringToRange } from "../utils/helper";
+import { FileDirectoryController } from "./fileDirectoryController";
+import { RangeController } from "./rangeController";
 
 export class UrlController implements vscode.UriHandler {
 
   constructor(private context: vscode.ExtensionContext,
               private addonController: AddonController,
-              private rootController: RootController){}
+              private fileDirectoryController: FileDirectoryController,
+              private rangeController: RangeController){}
 
   async revealFile(uri: vscode.Uri, lineNumber?: string) {
     const editor = await vscode.window.showTextDocument(uri);
     if (lineNumber) {
       // highlight offending lines
-      const lineRange = await stringToRange(lineNumber, uri);
+      const lineRange = await this.rangeController.stringToRange(lineNumber, uri);
       const selection = new vscode.Selection(lineRange.start, lineRange.end);
       editor.selections = [selection];
       // move editor to focus on line(s)
@@ -55,7 +56,7 @@ export class UrlController implements vscode.UriHandler {
     filepath?: string,
     lineNumber?: string
   ) {
-    const rootPath = await this.rootController.getRootFolderPath();
+    const rootPath = await this.fileDirectoryController.getRootFolderPath();
     const versionPath = `${rootPath}/${guid}/${version}`;
     try {
       await fs.promises.stat(versionPath);

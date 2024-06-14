@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { filesReadonlyIncludeConfig } from "../types";
 import { selectRootFolder } from "../views/rootView";
 
-export class RootController{
+export class FileDirectoryController{
   private cachedRootFolder: string | undefined;
 
   constructor(private assayConfig: vscode.WorkspaceConfiguration,
@@ -42,6 +42,33 @@ export class RootController{
       event.affectsConfiguration("files.readonlyInclude")
     ) {
       await this.setRootToReadonly();
+    }
+  }
+
+  async splitUri(uri: vscode.Uri) {
+    const fullPath = uri.fsPath;
+    const rootFolder = await this.getRootFolderPath();
+    const relativePath = fullPath.replace(rootFolder, "");
+    const guid = relativePath.split("/")[1];
+    const version = relativePath.split("/")[2];
+    const filepath = relativePath.split(version)[1];
+    const versionPath = version ? `${rootFolder}/${guid}/${version}` : undefined;
+    return {
+      rootFolder,
+      versionPath,
+      fullPath,
+      relativePath,
+      guid,
+      version,
+      filepath,
+    };
+  }
+
+  async readFile(uri: vscode.Uri) {
+    try {
+      return await vscode.workspace.fs.readFile(uri);
+    } catch {
+      return new Uint8Array();
     }
   }
 

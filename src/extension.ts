@@ -7,14 +7,15 @@ import { CommentController } from "./controller/commentController";
 import { CredentialController } from "./controller/credentialController";
 import { DiffController } from "./controller/diffController";
 import { FileDecoratorController } from "./controller/fileDecoratorController";
+import { FileDirectoryController } from "./controller/fileDirectoryController";
 import { LintController } from "./controller/lintController";
+import { RangeController } from "./controller/rangeController";
 import { ReviewCacheController } from "./controller/reviewCacheController";
-import { RootController } from "./controller/rootController";
 import { StatusBarController } from "./controller/statusBarController";
 import { UpdateController } from "./controller/updateController";
 import { UrlController } from "./controller/urlController";
+import { AssayCache } from "./model/cache";
 import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
-import { splitUri } from "./utils/helper";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
@@ -23,13 +24,18 @@ export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
   const assayConfig = vscode.workspace.getConfiguration("assay");
   const fileConfig = vscode.workspace.getConfiguration("files");
+  const commentsCache = new AssayCache("comments", storagePath);
+  const reviewsCache = new AssayCache("reviewMeta", storagePath);
+
 
   // always launched
-  const reviewCacheController = new ReviewCacheController("reviewMeta", storagePath);
+  const reviewCacheController = new ReviewCacheController(reviewsCache);
   const credentialController = new CredentialController(context.secrets);
-  const rootController = new RootController(assayConfig, fileConfig);
-  const addonController = new AddonController(credentialController, reviewCacheController, rootController);
-  const urlController = new UrlController(context, addonController, rootController);
+  const fileDirectoryController = new FileDirectoryController(assayConfig, fileConfig);
+  const rangeController = new RangeController(fileDirectoryController);
+
+  const addonController = new AddonController(credentialController, reviewCacheController, fileDirectoryController);
+  const urlController = new UrlController(context, addonController, fileDirectoryController, rangeController);
   const updateController = new UpdateController();
 
   // listen for vscode://publisher.assay/ links
@@ -86,7 +92,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Configure watchers for the rootFolder.
   const handleRootConfigurationChangeDisposable =
-    vscode.workspace.onDidChangeConfiguration(rootController.handleRootConfigurationChange, rootController);
+    vscode.workspace.onDidChangeConfiguration(fileDirectoryController.handleRootConfigurationChange, fileDirectoryController);
 
   context.subscriptions.push(
     UriHandlerDisposable,
@@ -112,7 +118,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const workspace = vscode.workspace.workspaceFolders;
   if (workspace) {
     const uri = workspace[0].uri;
-    const { rootFolder, fullPath } = await splitUri(uri);
+    const { rootFolder, fullPath } = await fileDirectoryController.splitUri(uri);
     if (!fullPath.startsWith(rootFolder)) {
       return;
     }
@@ -126,13 +132,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // active review controllers
   const fileDecorationProvider = new CustomFileDecorationProvider();
-  const fileDecoratorController = new FileDecoratorController(fileDecorationProvider);
-  const commentCacheController = new CommentCacheController("comments", rootController, fileDecoratorController, storagePath);
+  const fileDecoratorController = new FileDecoratorController(fileDecorationProvider, fileDirectoryController);
+  const commentCacheController = new CommentCacheController(commentsCache, fileDirectoryController, fileDecoratorController, rangeController);
   fileDecorationProvider.setProvideDecorationClause(commentCacheController.fileHasComment);
 
-  const lintController = new LintController("addons-linter", credentialController, reviewCacheController);
-  const commentController = new CommentController("assay-comments", "Assay", commentCacheController);
-  const statusBarController = new StatusBarController(reviewCacheController, rootController);
+  const lintController = new LintController("addons-linter", credentialController, reviewCacheController, fileDirectoryController);
+  const commentController = new CommentController("assay-comments", "Assay", commentCacheController, fileDirectoryController, rangeController);
+  const statusBarController = new StatusBarController(reviewCacheController, fileDirectoryController);
   const diffController = new DiffController();
 
   // load comments on startup/reload
