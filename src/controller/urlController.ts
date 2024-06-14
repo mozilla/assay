@@ -5,7 +5,7 @@ import { AddonController } from "./addonController";
 import { RootController } from "./rootController";
 import { stringToRange } from "../utils/helper";
 
-export class UrlController{
+export class UrlController implements vscode.UriHandler {
 
   constructor(private context: vscode.ExtensionContext,
               private addonController: AddonController,

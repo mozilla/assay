@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
+import { FileDecoratorController } from "./fileDecoratorController";
 import { RootController } from "./rootController";
-import { SidebarController } from "./sidebarController";
 import { AssayCache } from "../model/cache";
 import { CommentsCache, JSONComment, threadLocation } from "../types";
 import { rangeTruncation, splitUri } from "../utils/helper";
@@ -10,10 +10,10 @@ import getDeleteCommentsPreference from "../views/exportView";
 export class CommentCacheController{
     private cache: AssayCache;
 
-    constructor(storagePath: string,
-                public cacheName: string,
+    constructor(public cacheName: string,
                 private rootController: RootController,
-                private sidebarController: SidebarController){
+                private sidebarController: FileDecoratorController,
+                storagePath: string){
         this.cache = new AssayCache(cacheName, storagePath);
     }
 
@@ -61,7 +61,7 @@ export class CommentCacheController{
             const commentUri = vscode.Uri.file(
                 `${rootPath}/${guid}/${version}/${filepath}`
             );
-            this.sidebarController.loadFileDecorator(commentUri);
+            this.sidebarController.loadFileDecoratorByUri(commentUri);
         }
     }
 
@@ -120,6 +120,28 @@ export class CommentCacheController{
         return this.cache.getFromCache(keys);
     }
 
+     /**
+     * Fetches comments and returns an iterator.
+     * @returns iterator function.
+     */
+    async getCachedCommentIterator() {
+    const comments = await this.getComments();
+    return this.iterateByComment(comments);
+    }
+
+    /**
+     * Returns a boolean representing whether the provided uri has any comments.
+     * @param uri The uri to check.
+     * @returns whether the uri has comments.
+     */
+    fileHasComment = async (uri: vscode.Uri) => {
+        const { guid, version, filepath } = await splitUri(uri);
+        const comments = await this.getComments();
+        if (comments?.[guid]?.[version]?.[filepath]) {
+          return true;
+        }
+        return false;
+    };
 
     /**
      * Exports comments to a TextDocument.
@@ -149,17 +171,7 @@ export class CommentCacheController{
         }
         return deleteCachedComments;
     }  
-
-
-    /**
-     * Fetches comments and returns an iterator.
-     * @returns iterator function.
-     */
-    async getCachedCommentIterator() {
-    const comments = await this.getComments();
-    return this.iterateByComment(comments);
-    }
-
+   
     /**
      * Iterates through each comment in cache.
      * @param comments The raw cache object.

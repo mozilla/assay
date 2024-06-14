@@ -6,12 +6,9 @@ import { selectRootFolder } from "../views/rootView";
 
 export class RootController{
   private cachedRootFolder: string | undefined;
-  private assayConfig: vscode.WorkspaceConfiguration;
-  private fileConfig: vscode.WorkspaceConfiguration;
 
-  constructor(){
-    this.fileConfig = vscode.workspace.getConfiguration("files");
-    this.assayConfig = vscode.workspace.getConfiguration("assay");
+  constructor(private assayConfig: vscode.WorkspaceConfiguration,
+              private fileConfig: vscode.WorkspaceConfiguration){
     const rootFolder = this.assayConfig.get<string>("rootFolder");
     this.setCachedRootFolder(rootFolder);
   }

@@ -1,60 +1,49 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
 
-import { setCommentController, setCommentsCache, setDiagnosticCollection, setExtensionContext, setExtensionSecretStorage, setExtensionStoragePath, setFileDecorator, setReviewCache } from "./config/globals";
-import { updateAssay } from "./controller/assayController";
-import { AssayCommentController } from "./controller/commentController";
-import { getApiKeyFromUser, getSecretFromUser, testApiCredentials } from "./controller/credentialController";
-import { openInDiffTool } from "./controller/diffController";
-import { lintWorkspace } from "./controller/lintController";
-import { setCachedRootFolder, handleRootConfigurationChange } from "./controller/rootController";
-import revealFile, { getAddonByUrl, handleUri } from "./controller/urlController";
-import { AssayCache } from "./model/cache";
+import { AddonController } from "./controller/addonController";
+import { CommentCacheController } from "./controller/commentCacheController";
+import { CommentController } from "./controller/commentController";
+import { CredentialController } from "./controller/credentialController";
+import { DiffController } from "./controller/diffController";
+import { FileDecoratorController } from "./controller/fileDecoratorController";
+import { LintController } from "./controller/lintController";
+import { ReviewCacheController } from "./controller/reviewCacheController";
+import { RootController } from "./controller/rootController";
+import { StatusBarController } from "./controller/statusBarController";
+import { UpdateController } from "./controller/updateController";
+import { UrlController } from "./controller/urlController";
+import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
 import { splitUri } from "./utils/helper";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
+
   const storagePath: string = context.globalStorageUri.fsPath;
-  const commentsCache = new AssayCache("comments", storagePath);
-  const reviewsCache = new AssayCache("reviewMeta", storagePath);
-  setCommentsCache(commentsCache);
-  setReviewCache(reviewsCache);
+  const assayConfig = vscode.workspace.getConfiguration("assay");
+  const fileConfig = vscode.workspace.getConfiguration("files");
 
-
-  setExtensionStoragePath(storagePath);
-  setExtensionSecretStorage(context.secrets);
-  setExtensionContext(context);
-
-  // If a filePath exists, a version folder was just opened. Open the manifest.
-  if (context.globalState.get("filePath") !== undefined) {
-    const filePath = context.globalState.get("filePath")?.toString();
-    const lineNumber = context.globalState.get("lineNumber")?.toString();
-    await context.globalState.update("filePath", undefined);
-    await context.globalState.update("lineNumber", undefined);
-    if (filePath) {
-      revealFile(vscode.Uri.file(filePath), lineNumber);
-    }
-  }
-
-  // load comments on startup/reload
-  await loadFileDecorator();
+  // always launched
+  const reviewCacheController = new ReviewCacheController("reviewMeta", storagePath);
+  const credentialController = new CredentialController(context.secrets);
+  const rootController = new RootController(assayConfig, fileConfig);
+  const addonController = new AddonController(credentialController, reviewCacheController, rootController);
+  const urlController = new UrlController(context, addonController, rootController);
+  const updateController = new UpdateController();
 
   // listen for vscode://publisher.assay/ links
-  const UriHandlerDisposable = vscode.window.registerUriHandler({
-    handleUri,
-  });
+  const UriHandlerDisposable = vscode.window.registerUriHandler(urlController);
 
   const assayUpdaterDisposable = vscode.commands.registerCommand(
     "assay.checkForUpdates",
-    async () => {
-      await updateAssay();
-    }
+    updateController.updateAssay,
+    updateController
   );
 
   const reviewDisposable = vscode.commands.registerCommand(
     "assay.review",
-    async function (url: string) {
+    (url: string) => {
       vscode.env.openExternal(vscode.Uri.parse(url));
     }
   );
@@ -63,43 +52,32 @@ export async function activate(context: vscode.ExtensionContext) {
     "assay.welcome",
     () => {
       WelcomeView.createOrShow(context.extensionUri);
-    }
+    },
+    WelcomeView
   );
 
   const getDisposable = vscode.commands.registerCommand(
     "assay.get",
-    getAddonByUrl
+    urlController.getAddonByUrl,
+    urlController
   );
 
   const apiKeyDisposable = vscode.commands.registerCommand(
     "assay.getApiKey",
-    () => {
-      getApiKeyFromUser();
-    }
+    credentialController.getApiKeyFromUser,
+    credentialController
   );
 
   const apiSecretDisposable = vscode.commands.registerCommand(
     "assay.getSecret",
-    () => {
-      getSecretFromUser();
-    }
+    credentialController.getSecretFromUser,
+    credentialController
   );
 
   const apiCredentialsTestDisposable = vscode.commands.registerCommand(
     "assay.testApiCredentials",
-    () => {
-      testApiCredentials();
-    }
-  );
-
-  const diffDisposable = vscode.commands.registerCommand(
-    "assay.openInDiffTool",
-    async (_e: Uri, uris?: [Uri, Uri]) => {
-      if (!uris) {
-        return;
-      }
-      await openInDiffTool(uris);
-    }
+    credentialController.testApiCredentials,
+    credentialController
   );
 
   const sidebarDisposable = vscode.window.createTreeView("assayCommands", {
@@ -107,17 +85,8 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   // Configure watchers for the rootFolder.
-  const config = vscode.workspace.getConfiguration("assay");
-  const rootFolder = config.get<string>("rootFolder");
-  setCachedRootFolder(rootFolder);
   const handleRootConfigurationChangeDisposable =
-    vscode.workspace.onDidChangeConfiguration(handleRootConfigurationChange);
-
-  // Execute linting.
-  const diagnosticCollection =
-    vscode.languages.createDiagnosticCollection("addons-linter");
-  setDiagnosticCollection(diagnosticCollection);
-  lintWorkspace();
+    vscode.workspace.onDidChangeConfiguration(rootController.handleRootConfigurationChange, rootController);
 
   context.subscriptions.push(
     UriHandlerDisposable,
@@ -127,20 +96,10 @@ export async function activate(context: vscode.ExtensionContext) {
     apiKeyDisposable,
     apiSecretDisposable,
     apiCredentialsTestDisposable,
-    diffDisposable,
     sidebarDisposable,
-    vscode.window.onDidChangeActiveTextEditor(
-      async () => await updateStatusBar()
-    ),
-    vscode.window.onDidChangeActiveTextEditor(
-      async () => await loadFileDecorator()
-    ),
-    vscode.window.registerFileDecorationProvider(fileDecorator),
     assayUpdaterDisposable,
     handleRootConfigurationChangeDisposable
   );
-
-  // Comment API
 
   await vscode.commands.executeCommand(
     "setContext",
@@ -148,12 +107,12 @@ export async function activate(context: vscode.ExtensionContext) {
     false
   );
 
+  // Do not launch commenting system if not in the rootFolder.
+  // Still allows Assay to be launched to use other commands (setup, installs).
   const workspace = vscode.workspace.workspaceFolders;
   if (workspace) {
     const uri = workspace[0].uri;
     const { rootFolder, fullPath } = await splitUri(uri);
-    // Do not launch commenting system if not in the rootFolder.
-    // Still allows Assay to be launched to use other commands (setup, installs).
     if (!fullPath.startsWith(rootFolder)) {
       return;
     }
@@ -164,68 +123,124 @@ export async function activate(context: vscode.ExtensionContext) {
     "assay.commentsEnabled",
     true
   );
-  const cmtController = new AssayCommentController("assay-comments", "Assay");
-  setCommentController(cmtController);
+
+  // active review controllers
+  const fileDecorationProvider = new CustomFileDecorationProvider();
+  const fileDecoratorController = new FileDecoratorController(fileDecorationProvider);
+  const commentCacheController = new CommentCacheController("comments", rootController, fileDecoratorController, storagePath);
+  fileDecorationProvider.setProvideDecorationClause(commentCacheController.fileHasComment);
+
+  const lintController = new LintController("addons-linter", credentialController, reviewCacheController);
+  const commentController = new CommentController("assay-comments", "Assay", commentCacheController);
+  const statusBarController = new StatusBarController(reviewCacheController, rootController);
+  const diffController = new DiffController();
+
+  // load comments on startup/reload
+  await fileDecoratorController.loadFileDecorator();
+
+  // If a filePath exists, a version folder was just opened. Open the manifest.
+  if (context.globalState.get("filePath") !== undefined) {
+    const filePath = context.globalState.get("filePath")?.toString();
+    const lineNumber = context.globalState.get("lineNumber")?.toString();
+    await context.globalState.update("filePath", undefined);
+    await context.globalState.update("lineNumber", undefined);
+    if (filePath) {
+      urlController.revealFile(vscode.Uri.file(filePath), lineNumber);
+    }
+  }
+
+  const diffDisposable = vscode.commands.registerCommand(
+    "assay.openInDiffTool",
+    async (_e: Uri, uris?: [Uri, Uri]) => {
+      if (!uris) {
+        return;
+      }
+      await diffController.openInDiffTool(uris);
+    },
+    diffController
+  );
+  
+  const updateStatusBarController = vscode.window.onDidChangeActiveTextEditor(
+      statusBarController.updateStatusBar,
+      statusBarController
+  );
+  
+  const loadFileDecoratorController = vscode.window.onDidChangeActiveTextEditor(
+    fileDecoratorController.loadFileDecorator,
+    fileDecoratorController
+  );
+ 
+  const fileDecorationProviderDisposable = vscode.window.registerFileDecorationProvider(fileDecorationProvider);
+
+  // Execute linting.
+  lintController.lintWorkspace(); 
+
+  context.subscriptions.push(
+    diffDisposable,
+    updateStatusBarController,
+    loadFileDecoratorController,
+    fileDecorationProviderDisposable
+  );
 
   const exportCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.exportCommentsFromContext",
-    cmtController.exportVersionComments,
-    cmtController
+    commentCacheController.exportVersionComments,
+    commentCacheController
   );
 
   const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.deleteCommentsFromContext",
-    cmtController.deleteComments,
-    cmtController
+    commentCacheController.deleteComments,
+    commentCacheController
   );
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
-    cmtController.exportComments,
-    cmtController
+    commentController.exportComments,
+    commentController
   );
   const addCommentDisposable = vscode.commands.registerCommand(
     "assay.addComment",
-    cmtController.addComment,
-    cmtController
+    commentController.addComment,
+    commentController
   );
   const deleteCommentDisposable = vscode.commands.registerCommand(
     "assay.deleteComment",
-    cmtController.deleteThread,
-    cmtController
+    commentController.deleteThread,
+    commentController
   );
   const cancelSaveCommentDisposable = vscode.commands.registerCommand(
     "assay.cancelSaveComment",
-    cmtController.cancelSaveComment,
-    cmtController
+    commentController.cancelSaveComment,
+    commentController
   );
   const saveCommentDisposable = vscode.commands.registerCommand(
     "assay.saveComment",
-    cmtController.saveComment
+    commentController.saveComment
   );
   const editCommentDisposable = vscode.commands.registerCommand(
     "assay.editComment",
-    cmtController.editComment,
-    cmtController
+    commentController.editComment,
+    commentController
   );
   const copyLinkFromReplyDisposable = vscode.commands.registerCommand(
     "assay.copyLinkFromReply",
-    cmtController.copyLinkFromReply,
-    cmtController
+    commentController.copyLinkFromReply,
+    commentController
   );
   const copyLinkFromThreadDisposable = vscode.commands.registerCommand(
     "assay.copyLinkFromThread",
-    cmtController.copyLinkFromThread,
-    cmtController
+    commentController.copyLinkFromThread,
+    commentController
   );
   const disposeCommentDisposable = vscode.commands.registerCommand(
     "assay.disposeComment",
-    cmtController.dispose,
-    cmtController
+    commentController.dispose,
+    commentController
   );
 
   context.subscriptions.push(
-    cmtController.controller,
+    commentController.controller,
     addCommentDisposable,
     deleteCommentDisposable,
     cancelSaveCommentDisposable,
@@ -238,6 +253,7 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentsFolderDisposable,
     deleteCommentsFolderDisposable
   );
+
 }
 
 export function deactivate() {

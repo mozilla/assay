@@ -4,8 +4,7 @@ import fetch from "node-fetch";
 import path = require("path");
 import * as vscode from "vscode";
 
-// main driver.
-export class AssayController{
+export class UpdateController{
 
   async updateAssay() {
     const downloadInfo = await this.checkAndGetNewVersion();

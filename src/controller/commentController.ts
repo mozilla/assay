@@ -10,7 +10,7 @@ import {
   stringToRange
 } from "../utils/helper";
 
-export class AssayCommentController {
+export class CommentController {
   controller: vscode.CommentController;
   constructor(public id: string,
               public label: string,
