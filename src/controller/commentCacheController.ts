@@ -20,10 +20,11 @@ export class CommentCacheController{
      * @param comment
      */
     async saveCommentToCache(location: threadLocation, comment: JSONComment) {
-        const { guid, version, filepath, range } = location;
-        this.cache.addToCache(
+        const { uri, guid, version, filepath, range } = location;
+        await this.cache.addToCache(
             [guid, version, filepath, range],
             comment);
+        this.sidebarController.loadFileDecoratorByUri(uri);
     }
 
     /**
@@ -31,9 +32,9 @@ export class CommentCacheController{
      * @param comment
      */
     async deleteCommentFromCache(location: threadLocation) {
-        const { guid, version, filepath, range } = location;
-        this.cache.removeFromCache([guid, version, filepath, range]);
-        this.sidebarController.loadFileDecorator();
+        const { uri, guid, version, filepath, range } = location;
+        await this.cache.removeFromCache([guid, version, filepath, range]);
+        this.sidebarController.loadFileDecoratorByUri(uri);
     }
 
     /*

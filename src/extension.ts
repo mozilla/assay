@@ -132,7 +132,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // active review controllers
   const fileDecorationProvider = new CustomFileDecorationProvider();
-  const fileDecoratorController = new FileDecoratorController(fileDecorationProvider, fileDirectoryController);
+  const fileDecoratorController = new FileDecoratorController(fileDecorationProvider);
   const commentCacheController = new CommentCacheController(commentsCache, fileDirectoryController, fileDecoratorController, rangeController);
   fileDecorationProvider.setProvideDecorationClause(commentCacheController.fileHasComment);
 
@@ -140,9 +140,6 @@ export async function activate(context: vscode.ExtensionContext) {
   const commentController = new CommentController("assay-comments", "Assay", commentCacheController, fileDirectoryController, rangeController);
   const statusBarController = new StatusBarController(reviewCacheController, fileDirectoryController);
   const diffController = new DiffController();
-
-  // load comments on startup/reload
-  await fileDecoratorController.loadFileDecorator();
 
   // If a filePath exists, a version folder was just opened. Open the manifest.
   if (context.globalState.get("filePath") !== undefined) {
@@ -171,11 +168,6 @@ export async function activate(context: vscode.ExtensionContext) {
       statusBarController
   );
   
-  const loadFileDecoratorController = vscode.window.onDidChangeActiveTextEditor(
-    fileDecoratorController.loadFileDecorator,
-    fileDecoratorController
-  );
- 
   const fileDecorationProviderDisposable = vscode.window.registerFileDecorationProvider(fileDecorationProvider);
 
   // Execute linting.
@@ -184,7 +176,6 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     diffDisposable,
     updateStatusBarController,
-    loadFileDecoratorController,
     fileDecorationProviderDisposable
   );
 

@@ -137,7 +137,7 @@ export class CommentController {
   async getThreadLocation(thread: AssayThread) {
     const range = this.rangeController.rangeToString(thread.range);
     const { guid, version, filepath } = await this.getFilepathInfo(thread);
-    return { guid, version, filepath, range: range };
+    return { uri: thread.uri, guid, version, filepath, range: range };
   }
 
   /**

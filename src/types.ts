@@ -75,6 +75,7 @@ export type JSONReview = {
 };
 
 export type threadLocation = {
+  uri: Uri,
   guid: string,
   version: string,
   filepath: string,
