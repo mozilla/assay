@@ -1,10 +1,15 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
-import { getAddonController, getExtensionContext, getRootController } from "../config/globals";
+import { AddonController } from "./addonController";
+import { RootController } from "./rootController";
 import { stringToRange } from "../utils/helper";
 
 export class UrlController{
+
+  constructor(private context: vscode.ExtensionContext,
+              private addonController: AddonController,
+              private rootController: RootController){}
 
   async revealFile(uri: vscode.Uri, lineNumber?: string) {
     const editor = await vscode.window.showTextDocument(uri);
@@ -20,8 +25,7 @@ export class UrlController{
 
   // handles assay.get input
   async getAddonByUrl() {
-    const addonController = getAddonController();
-    const result = await addonController.downloadAndExtract();
+    const result = await this.addonController.downloadAndExtract();
     if (!result) {
       return;
     }
@@ -51,14 +55,12 @@ export class UrlController{
     filepath?: string,
     lineNumber?: string
   ) {
-    const rootController = getRootController();
-    const rootPath = await rootController.getRootFolderPath();
+    const rootPath = await this.rootController.getRootFolderPath();
     const versionPath = `${rootPath}/${guid}/${version}`;
     try {
       await fs.promises.stat(versionPath);
     } catch (error) {
-      const addonController = getAddonController();
-      await addonController.downloadAndExtract(guid, version);
+      await this.addonController.downloadAndExtract(guid, version);
     }
     await this.openWorkspace(versionPath, filepath, lineNumber);
   }
@@ -78,10 +80,9 @@ export class UrlController{
     }
     // Otherwise, store the filePath (since the extension must restart) to open on launch.
     else {
-      const context = getExtensionContext();
-      await context.globalState.update("filePath", filePath);
+      await this.context.globalState.update("filePath", filePath);
       if (lineNumber) {
-        await context.globalState.update("lineNumber", lineNumber);
+        await this.context.globalState.update("lineNumber", lineNumber);
       }
       vscode.commands.executeCommand("vscode.openFolder", versionUri, true);
     }

@@ -1,12 +1,17 @@
 import * as vscode from "vscode";
 
+import { CredentialController } from "./credentialController";
+import { ReviewCacheController } from "./reviewCacheController";
 import constants from "../config/config";
-import { getCredentialController, getDiagnosticCollection, getReviewCacheController } from "../config/globals";
 import { Message, MessageType, errorMessages } from "../types";
 import { readFile, splitUri } from "../utils/helper";
 import { showErrorMessage } from "../views/notificationView";
 
-export class LintController{
+export class LintController {
+  diagnosticCollection: vscode.DiagnosticCollection;
+  constructor(public name: string, private credentialController: CredentialController, private reviewCacheController: ReviewCacheController){
+    this.diagnosticCollection = vscode.languages.createDiagnosticCollection(name);
+  }
 
   /**
    * Lints the current workspace.
@@ -41,13 +46,12 @@ export class LintController{
       }
     };
 
-    const diagnosticCollection = getDiagnosticCollection();
     const diagnosticMap: Map<string, vscode.Diagnostic[]> = new Map();
     await populateDiagnostic(messages);
 
     diagnosticMap.forEach((diagnostics, file) => {
       const uri = this.getUriFromVersionPath(versionPath, file);
-      diagnosticCollection.set(uri, diagnostics);
+      this.diagnosticCollection.set(uri, diagnostics);
     });
   }
 
@@ -57,15 +61,13 @@ export class LintController{
    * @returns The lint information.
    */
   private async fetchLints(guid: string) {
-    const reviewCacheController = getReviewCacheController();
-    const { id: addonID, file_id: fileID } = await reviewCacheController.getReview([
+    const { id: addonID, file_id: fileID } = await this.reviewCacheController.getReview([
       guid,
     ]);
     
     const url = `${constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;
 
-    const credentialController = getCredentialController();
-    const headers = await credentialController.makeAuthHeader();
+    const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });
 
     if (!response.ok) {

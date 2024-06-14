@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { getAddonVersions } from "../controller/addonController";
+import { getAddonController } from "../config/globals";
 import { QPOption, addonVersion } from "../types";
 
 /**
@@ -20,7 +20,8 @@ export async function getVersionChoice(
   do {
     if (next || init) {
       init = false;
-      const res = await getAddonVersions(input, next);
+      const addonController = getAddonController();
+      const res = await addonController.getAddonVersions(input, next);
       versions.push(...res.results);
       next = res.next;
     }

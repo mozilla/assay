@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
-import { getRootController, getSidebarController } from "../config/globals";
+import { RootController } from "./rootController";
+import { SidebarController } from "./sidebarController";
 import { AssayCache } from "../model/cache";
 import { CommentsCache, JSONComment, threadLocation } from "../types";
 import { rangeTruncation, splitUri } from "../utils/helper";
@@ -9,7 +10,10 @@ import getDeleteCommentsPreference from "../views/exportView";
 export class CommentCacheController{
     private cache: AssayCache;
 
-    constructor(cacheName: string, storagePath: string){
+    constructor(storagePath: string,
+                public cacheName: string,
+                private rootController: RootController,
+                private sidebarController: SidebarController){
         this.cache = new AssayCache(cacheName, storagePath);
     }
 
@@ -31,7 +35,7 @@ export class CommentCacheController{
     async deleteCommentFromCache(location: threadLocation) {
         const { guid, version, filepath, range } = location;
         this.cache.removeFromCache([guid, version, filepath, range]);
-        await this.updateDecorator();
+        this.sidebarController.loadFileDecorator();
     }
 
     /*
@@ -47,9 +51,8 @@ export class CommentCacheController{
     async deleteComments(uri: vscode.Uri) {
         this.checkUri(uri);
         const { guid, version } = await splitUri(uri);
-        const rootController = getRootController();
-        const rootPath = await rootController.getRootFolderPath();
-        const comments = await this.fetchCommentsFromCache([guid, version]);
+        const rootPath = await this.rootController.getRootFolderPath();
+        const comments = await this.getComments([guid, version]);
 
         for (const [filepath] of Object.entries(comments)) {
             // Delete the file in cache.
@@ -58,7 +61,7 @@ export class CommentCacheController{
             const commentUri = vscode.Uri.file(
                 `${rootPath}/${guid}/${version}/${filepath}`
             );
-            this.updateDecorator(commentUri);
+            this.sidebarController.loadFileDecorator(commentUri);
         }
     }
 
@@ -109,6 +112,15 @@ export class CommentCacheController{
         return await this.exportCommentsToDocument(comments, uri);
     }
 
+     /**
+     * Fetch and return existing comments for the workspace from cache.
+     * @returns raw cache comments.
+     */
+     async getComments(keys?: string[]) {
+        return this.cache.getFromCache(keys);
+    }
+
+
     /**
      * Exports comments to a TextDocument.
      * @param compiledComments The comments as a string.
@@ -144,7 +156,7 @@ export class CommentCacheController{
      * @returns iterator function.
      */
     async getCachedCommentIterator() {
-    const comments = await this.fetchCommentsFromCache();
+    const comments = await this.getComments();
     return this.iterateByComment(comments);
     }
 
@@ -168,23 +180,6 @@ export class CommentCacheController{
         }
         }
     }
-    }
-
-    /**
-     * Updates the decorator of the uri.
-     * @param uri The uri to update the decorator of, if applicable
-     */
-    private async updateDecorator(uri?: vscode.Uri){
-        const sidebarController = getSidebarController();
-        await sidebarController.loadFileDecorator(uri);
-    }
-
-    /**
-     * Fetch and return existing comments for the workspace from cache.
-     * @returns raw cache comments.
-     */
-    private async fetchCommentsFromCache(keys?: string[]) {
-        return this.cache.getFromCache(keys);
     }
 
     /**

@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
 
-import { AssayCache } from "../model/cache";
+import { CommentCacheController } from "./commentCacheController";
 import { CustomFileDecorationProvider } from "../model/fileDecorationProvider";
 import { splitUri } from "../utils/helper";
 
 export class SidebarController{
   fileDecorator: CustomFileDecorationProvider;
-  constructor(private commentsCache: AssayCache){
+  constructor(private commentCacheController: CommentCacheController){
     this.fileDecorator = new CustomFileDecorationProvider(this.fileHasComment);
   }
 
@@ -31,7 +31,7 @@ export class SidebarController{
   
   async fileHasComment(uri: vscode.Uri) {
     const { guid, version, filepath } = await splitUri(uri);
-    const comments = await this.commentsCache.getFromCache();
+    const comments = await this.commentCacheController.getComments();
     if (comments?.[guid]?.[version]?.[filepath]) {
       return true;
     }

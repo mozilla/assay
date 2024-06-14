@@ -1,7 +1,8 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
-import { getReviewCacheController, getRootController } from "../config/globals";
+import { ReviewCacheController } from "./reviewCacheController";
+import { RootController } from "./rootController";
 import { ReviewStatusBarItem } from "../model/reviewStatusBarItem";
 
 /**
@@ -11,7 +12,8 @@ import { ReviewStatusBarItem } from "../model/reviewStatusBarItem";
  */
 export class StatusBarController {
   private reviewItem: ReviewStatusBarItem;
-  constructor(){
+  constructor(private reviewCacheController: ReviewCacheController,
+              private rootController: RootController){
     this.reviewItem = new ReviewStatusBarItem();
   }
 
@@ -23,8 +25,7 @@ export class StatusBarController {
   
     const doc = activeEditor.document;
     const filePath = doc.uri.fsPath;
-    const rootController = getRootController();
-    const rootFolder = await rootController.getRootFolderPath();
+    const rootFolder = await this.rootController.getRootFolderPath();
     if (!filePath.startsWith(rootFolder)) {
       this.reviewItem.hide();
       throw new Error("File is not in the root folder.");
@@ -38,8 +39,7 @@ export class StatusBarController {
       throw new Error("No guid found.");
     }
   
-    const reviewCacheController = getReviewCacheController();
-    const reviewUrl = await reviewCacheController.getReview([guid, "reviewUrl"]);
+    const reviewUrl = await this.reviewCacheController.getReview([guid, "reviewUrl"]);
     this.reviewItem.updateAndShow(guid, reviewUrl);
     return true;
   }

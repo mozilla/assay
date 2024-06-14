@@ -3,8 +3,10 @@ import * as fs from "fs";
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
+import { CredentialController } from "./credentialController";
+import { ReviewCacheController } from "./reviewCacheController";
+import { RootController } from "./rootController";
 import constants from "../config/config";
-import { getCredentialController, getReviewCacheController, getRootController } from "../config/globals";
 import { addonInfoResponse, errorMessages } from "../types";
 import {
   getInput,
@@ -15,6 +17,10 @@ import { promptProgress, showErrorMessage } from "../views/notificationView";
 
 export class AddonController{
   
+  constructor(private credentialController: CredentialController,
+              private reviewCacheController: ReviewCacheController,
+              private rootController: RootController){}
+
   /**
    * Fetches version information for a given add-on.
    * @param input A string identifying a given add-on.
@@ -28,8 +34,7 @@ export class AddonController{
       ? next
       : `${constants.apiBaseURL}addons/addon/${slug}/versions?filter=all_with_deleted`;
 
-    const credentialController = getCredentialController();
-    const headers = await credentialController.makeAuthHeader();
+    const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });
     if (!response.ok) {
       const errorMessages: errorMessages = {
@@ -80,12 +85,10 @@ export class AddonController{
       const guid = json.guid;
       const addonID = json.id;
 
-      const rootController = getRootController();
-      const workspaceFolder = await rootController.getRootFolderPath();
+      const workspaceFolder = await this.rootController.getRootFolderPath();
       const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
 
-      const reviewCache = getReviewCacheController();
-      reviewCache.addReview(guid, {
+      this.reviewCacheController.addReview(guid, {
         reviewUrl: json.review_url,
         fileID: addonFileID,
         id: addonID,
@@ -112,8 +115,7 @@ export class AddonController{
   private async getAddonInfo(input: string): Promise<addonInfoResponse> {
     const slug: string = this.getAddonSlug(input);
     const url = `${constants.apiBaseURL}addons/addon/${slug}`;
-    const credentialController = getCredentialController();
-    const headers = await credentialController.makeAuthHeader();
+    const headers = await this.credentialController.makeAuthHeader();
 
     const response = await fetch(url, { headers: headers });
     if (!response.ok) {
@@ -150,8 +152,7 @@ export class AddonController{
    */
   private async fetchDownloadFile(fileId: string) {
     const url = `${constants.downloadBaseURL}${fileId}`;
-    const credentialController = getCredentialController();
-    const headers = await credentialController.makeAuthHeader();
+    const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });
     if (!response.ok) {
       const errorMessages: errorMessages = {

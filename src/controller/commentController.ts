@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { getCommentsCacheController } from "../config/globals";
+import { CommentCacheController } from "./commentCacheController";
 import { AssayComment, AssayReply, AssayThread } from "../model/comment";
 import { contextValues } from "../types";
 import {
@@ -12,7 +12,9 @@ import {
 
 export class AssayCommentController {
   controller: vscode.CommentController;
-  constructor(private id: string, private label: string) {
+  constructor(public id: string,
+              public label: string,
+              private commentCacheController: CommentCacheController) {
     this.controller = vscode.comments.createCommentController(id, label);
     this.activateController();
   }
@@ -102,8 +104,7 @@ export class AssayCommentController {
    * Export comments from current version.
    */
   async exportComments(thread: AssayThread) {
-    const commentsCacheController = getCommentsCacheController();
-    const didDelete = await commentsCacheController.exportVersionComments(thread.uri);
+    const didDelete = await this.commentCacheController.exportVersionComments(thread.uri);
     if(didDelete){
       this.refetchComments();
     }
@@ -226,8 +227,7 @@ export class AssayCommentController {
   private async saveCommentToCache(comment: AssayComment) {
     const location = await this.getThreadLocation(comment.thread);
     const formattedComment = this.formatCacheComment(comment);
-    const commentCacheController = getCommentsCacheController();
-    commentCacheController.saveCommentToCache(location, formattedComment);
+    this.commentCacheController.saveCommentToCache(location, formattedComment);
   }
 
   /**
@@ -236,8 +236,7 @@ export class AssayCommentController {
    */
   private async deleteCommentFromCache(comment: AssayComment) {
     const location = await this.getThreadLocation(comment.thread);
-    const commentCacheController = getCommentsCacheController();
-    commentCacheController.deleteCommentFromCache(location);
+    this.commentCacheController.deleteCommentFromCache(location);
   }
 
   /**
@@ -258,8 +257,7 @@ export class AssayCommentController {
    * Populates workspace with comments.
    */
   private async loadCommentsFromCache() {
-    const commentCacheController = getCommentsCacheController();
-    const comments = await commentCacheController.getCachedCommentIterator();
+    const comments = await this.commentCacheController.getCachedCommentIterator();
     for (const comment of comments) {
       const { uri, body, contextValue, lineNumber } = comment;
       const range = await stringToRange(lineNumber);
