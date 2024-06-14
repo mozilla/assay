@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { Uri } from "vscode";
 
 import { AddonCacheController } from "./controller/addonCacheController";
 import { AddonController } from "./controller/addonController";
@@ -151,7 +150,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const diffDisposable = vscode.commands.registerCommand(
     "assay.openInDiffTool",
-    async (_e: Uri, uris?: [Uri, Uri]) => {
+    async (_e: vscode.Uri, uris?: [vscode.Uri, vscode.Uri]) => {
       if (!uris) {
         return;
       }
