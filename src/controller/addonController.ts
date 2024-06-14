@@ -7,11 +7,11 @@ import { CredentialController } from "./credentialController";
 import { FileDirectoryController } from "./fileDirectoryController";
 import { ReviewCacheController } from "./reviewCacheController";
 import constants from "../config/config";
-import { addonInfoResponse, errorMessages } from "../types";
+import { addonInfoResponse, addonVersion, errorMessages } from "../types";
 import {
   getInput,
-  getVersionChoice,
   promptOverwrite,
+  promptVersionChoice,
 } from "../views/addonView";
 import { promptProgress, showErrorMessage } from "../views/notificationView";
 
@@ -78,8 +78,7 @@ export class AddonController{
     try {
       const input = urlGuid || (await getInput());
       const json: addonInfoResponse = await this.getAddonInfo(input);
-
-      const versionInfo = await getVersionChoice(input, urlVersion);
+      const versionInfo = await this.getVersionChoice(input, urlVersion);
       const addonFileID = versionInfo.fileID;
       const version = versionInfo.version;
       const guid = json.guid;
@@ -106,6 +105,53 @@ export class AddonController{
       console.error(error);
     }
   }
+
+  async getVersionChoice(
+    input: string,
+    urlVersion?: string
+  ){
+    const versions: addonVersion[] = [];
+    let next: string | undefined = undefined;
+    let init = true;
+  
+    do {
+      if (next || init) {
+        init = false;
+        const res = await this.getAddonVersions(input, next);
+        versions.push(...res.results);
+        next = res.next;
+      }
+  
+      const versionItems = versions.map((version) => version.version);
+      next ? versionItems.push("More") : null;
+  
+      // if opened from a vscode:// link, use the version from the link
+      const choice = urlVersion || await promptVersionChoice(versionItems);
+
+      if (choice === "More") {
+        continue;
+      } else if (choice) {
+        const chosenVersion = versions.find(
+          (version) => version.version === choice
+        );
+  
+        if (chosenVersion) {
+          return {
+            fileID: chosenVersion.file.id,
+            version: chosenVersion.version,
+          };
+        } else {
+          vscode.window.showErrorMessage("No version file found");
+          throw new Error("No version file found");
+        }
+      } else {
+        throw new Error("No version choice selected");
+      }
+      // eslint-disable-next-line no-constant-condition
+    } while (true);
+  }
+
+
 
   /**
    * Fetches the information about a given add-on.

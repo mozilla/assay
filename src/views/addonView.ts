@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 
-import { getAddonController } from "../config/globals";
-import { QPOption, addonVersion } from "../types";
+import { QPOption } from "../types";
 
 /**
  * Retrieve the user's desired add-on to download.
@@ -9,54 +8,12 @@ import { QPOption, addonVersion } from "../types";
  * @param urlVersion add-on version, if any.
  * @returns
  */
-export async function getVersionChoice(
-  input: string,
-  urlVersion?: string
-): Promise<{ fileID: string; version: string }> {
-  const versions: addonVersion[] = [];
-  let next: string | undefined = undefined;
-  let init = true;
-
-  do {
-    if (next || init) {
-      init = false;
-      const addonController = getAddonController();
-      const res = await addonController.getAddonVersions(input, next);
-      versions.push(...res.results);
-      next = res.next;
-    }
-
-    const versionItems = versions.map((version) => version.version);
-    next ? versionItems.push("More") : null;
-
-    // if opened from a vscode:// link, use the version from the link
-    const choice =
-      urlVersion ||
-      (await vscode.window.showQuickPick(versionItems, {
-        placeHolder: "Choose a version",
-      }));
-
-    if (choice === "More") {
-      continue;
-    } else if (choice) {
-      const chosenVersion = versions.find(
-        (version) => version.version === choice
-      );
-
-      if (chosenVersion) {
-        return {
-          fileID: chosenVersion.file.id,
-          version: chosenVersion.version,
-        };
-      } else {
-        vscode.window.showErrorMessage("No version file found");
-        throw new Error("No version file found");
-      }
-    } else {
-      throw new Error("No version choice selected");
-    }
-    // eslint-disable-next-line no-constant-condition
-  } while (true);
+export async function promptVersionChoice(
+  versionItems: string[]
+) {
+  return await vscode.window.showQuickPick(versionItems, {
+    placeHolder: "Choose a version:",
+  });
 }
 
 /**
@@ -70,7 +27,7 @@ export async function getInput(): Promise<string> {
     ignoreFocusOut: true,
   });
   if (!input) {
-    throw new Error("No input provided");
+    throw new Error("No input provided.");
   }
   return input;
 }
