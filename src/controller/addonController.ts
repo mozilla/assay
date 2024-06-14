@@ -3,9 +3,9 @@ import * as fs from "fs";
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
+import { AddonCacheController } from "./addonCacheController";
 import { CredentialController } from "./credentialController";
-import { FileDirectoryController } from "./fileDirectoryController";
-import { ReviewCacheController } from "./reviewCacheController";
+import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
 import { addonInfoResponse, addonVersion, errorMessages } from "../types";
 import {
@@ -16,15 +16,15 @@ import {
 import { promptProgress, showErrorMessage } from "../views/notificationView";
 
 export class AddonController{
-  
+
   constructor(private credentialController: CredentialController,
-              private reviewCacheController: ReviewCacheController,
-              private fileDirectoryController: FileDirectoryController){}
+              private addonCacheController: AddonCacheController,
+              private directoryController: DirectoryController){}
 
   /**
    * Fetches version information for a given add-on.
    * @param input A string identifying a given add-on.
-   * @param next tthe URL of the next batch of add-ons, if any
+   * @param next the URL of the next batch of add-ons, if any
    * @returns The version information for an add-on.
    */
   async getAddonVersions(input: string, next?: string) {
@@ -69,7 +69,7 @@ export class AddonController{
    * Downloads and extracts an add-on to the root folder. If no add-on is specified, prompts the user.
    * @param urlGuid GUID of the add-on.
    * @param urlVersion The version to download.
-   * @returns
+   * @returns the workspace folder, guid, and version.
    */
   async downloadAndExtract(
     urlGuid?: string,
@@ -84,10 +84,10 @@ export class AddonController{
       const guid = json.guid;
       const addonID = json.id;
 
-      const workspaceFolder = await this.fileDirectoryController.getRootFolderPath();
+      const workspaceFolder = await this.directoryController.getRootFolderPath();
       const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
 
-      this.reviewCacheController.addReview(guid, {
+      this.addonCacheController.addAddonToCache(guid, {
         reviewUrl: json.review_url,
         fileID: addonFileID,
         id: addonID,
@@ -106,6 +106,12 @@ export class AddonController{
     }
   }
 
+  /**
+   * Cycles through the versions of an addon.
+   * @param input A string identifying a given add-on.
+   * @param urlVersion the linked version, if any
+   * @returns 
+   */
   async getVersionChoice(
     input: string,
     urlVersion?: string
@@ -150,8 +156,6 @@ export class AddonController{
       // eslint-disable-next-line no-constant-condition
     } while (true);
   }
-
-
 
   /**
    * Fetches the information about a given add-on.

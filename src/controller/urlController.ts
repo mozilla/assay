@@ -2,16 +2,21 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { AddonController } from "./addonController";
-import { FileDirectoryController } from "./fileDirectoryController";
+import { DirectoryController } from "./directoryController";
 import { RangeController } from "./rangeController";
 
 export class UrlController implements vscode.UriHandler {
 
   constructor(private context: vscode.ExtensionContext,
               private addonController: AddonController,
-              private fileDirectoryController: FileDirectoryController,
+              private directoryController: DirectoryController,
               private rangeController: RangeController){}
 
+  /**
+   * Given a file and line(s), focuses VS Code onto the file and line(s).
+   * @param uri The URI of the file.
+   * @param lineNumber The line(s) to focus on, as its string representation.
+   */
   async revealFile(uri: vscode.Uri, lineNumber?: string) {
     const editor = await vscode.window.showTextDocument(uri);
     if (lineNumber) {
@@ -24,7 +29,9 @@ export class UrlController implements vscode.UriHandler {
     }
   }
 
-  // handles assay.get input
+  /**
+   * Handles getting an addon by its URL.
+   */
   async getAddonByUrl() {
     const result = await this.addonController.downloadAndExtract();
     if (!result) {
@@ -35,7 +42,10 @@ export class UrlController implements vscode.UriHandler {
     await this.openWorkspace(versionPath);
   }
 
-  // handles vscode://mozilla.assay/... urls
+  /**
+   * Handles vscode://mozilla.assay/... urls
+   * @param uri The vscode:// link.
+   */
   async handleUri(uri: vscode.Uri) {
     const { path, query, fragment } = uri;
     const filepath = new URLSearchParams(query).get("path");
@@ -48,15 +58,36 @@ export class UrlController implements vscode.UriHandler {
     }
   }
 
+  /**
+   * Opens the file at globalState's filePath if any was stored.
+   * This occurs when a new window of VS Code is opened, and thus a new instance of the extension.
+   */
+  async openCachedFile(){
+    if (this.context.globalState.get("filePath") !== undefined) {
+      const filePath = this.context.globalState.get("filePath")?.toString();
+      const lineNumber = this.context.globalState.get("lineNumber")?.toString();
+      await this.context.globalState.update("filePath", undefined);
+      await this.context.globalState.update("lineNumber", undefined);
+      if (filePath) {
+        this.revealFile(vscode.Uri.file(filePath), lineNumber);
+      }
+    }
+  }
 
-  // handles urls of the form /review/<guid>/<version>?path=<file>
+  /**
+   * Handles urls of the form /review/<guid>/<version>?path=<file>
+   * @param guid 
+   * @param version 
+   * @param filepath 
+   * @param lineNumber 
+   */
   private async handleReviewUrl(
     guid: string,
     version: string,
     filepath?: string,
     lineNumber?: string
   ) {
-    const rootPath = await this.fileDirectoryController.getRootFolderPath();
+    const rootPath = await this.directoryController.getRootFolderPath();
     const versionPath = `${rootPath}/${guid}/${version}`;
     try {
       await fs.promises.stat(versionPath);
@@ -66,6 +97,12 @@ export class UrlController implements vscode.UriHandler {
     await this.openWorkspace(versionPath, filepath, lineNumber);
   }
 
+  /**
+   * Opens a workspace to the given version.
+   * @param versionPath 
+   * @param filepath 
+   * @param lineNumber 
+   */
   private async openWorkspace(
     versionPath: string,
     filepath?: string,

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
+import { DirectoryController } from "./directoryController";
 import { FileDecoratorController } from "./fileDecoratorController";
-import { FileDirectoryController } from "./fileDirectoryController";
 import { RangeController } from "./rangeController";
 import { AssayCache } from "../model/cache";
 import { CommentsCache, JSONComment, threadLocation } from "../types";
@@ -10,10 +10,23 @@ import getDeleteCommentsPreference from "../views/exportView";
 export class CommentCacheController{
 
     constructor(private cache: AssayCache,
-                private fileDirectoryController: FileDirectoryController,
+                private directoryController: DirectoryController,
                 private sidebarController: FileDecoratorController,
-                private rangeController: RangeController){
-    }
+                private rangeController: RangeController){}
+
+    /**
+     * Returns a boolean representing whether the provided uri has any comments.
+     * @param uri The uri to check.
+     * @returns whether the uri has comments.
+     */
+    fileHasComment = async (uri: vscode.Uri) => {
+        const { guid, version, filepath } = await this.directoryController.splitUri(uri);
+        const comments = await this.cache.getFromCache();
+        if (comments?.[guid]?.[version]?.[filepath]) {
+          return true;
+        }
+        return false;
+    };
 
     /**
      * Save the given comment to cache.
@@ -49,9 +62,9 @@ export class CommentCacheController{
     // the uri when iterating by file.
     async deleteComments(uri: vscode.Uri) {
         this.checkUri(uri);
-        const { guid, version } = await this.fileDirectoryController.splitUri(uri);
-        const rootPath = await this.fileDirectoryController.getRootFolderPath();
-        const comments = await this.getComments([guid, version]);
+        const { guid, version } = await this.directoryController.splitUri(uri);
+        const rootPath = await this.directoryController.getRootFolderPath();
+        const comments = await this.cache.getFromCache([guid, version]);
 
         for (const [filepath] of Object.entries(comments)) {
             // Delete the file in cache.
@@ -106,17 +119,9 @@ export class CommentCacheController{
      */
     async exportVersionComments(uri: vscode.Uri) {
         this.checkUri(uri, true);
-        const { guid, version } = await this.fileDirectoryController.splitUri(uri);
+        const { guid, version } = await this.directoryController.splitUri(uri);
         const comments = await this.compileComments(guid, version);
         return await this.exportCommentsToDocument(comments, uri);
-    }
-
-     /**
-     * Fetch and return existing comments for the workspace from cache.
-     * @returns raw cache comments.
-     */
-     async getComments(keys?: string[]) {
-        return this.cache.getFromCache(keys);
     }
 
      /**
@@ -124,23 +129,9 @@ export class CommentCacheController{
      * @returns iterator function.
      */
     async getCachedCommentIterator() {
-    const comments = await this.getComments();
+    const comments = await this.cache.getFromCache();
     return this.iterateByComment(comments);
     }
-
-    /**
-     * Returns a boolean representing whether the provided uri has any comments.
-     * @param uri The uri to check.
-     * @returns whether the uri has comments.
-     */
-    fileHasComment = async (uri: vscode.Uri) => {
-        const { guid, version, filepath } = await this.fileDirectoryController.splitUri(uri);
-        const comments = await this.getComments();
-        if (comments?.[guid]?.[version]?.[filepath]) {
-          return true;
-        }
-        return false;
-    };
 
     /**
      * Exports comments to a TextDocument.
@@ -170,34 +161,12 @@ export class CommentCacheController{
         }
         return deleteCachedComments;
     }  
-   
-    /**
-     * Iterates through each comment in cache.
-     * @param comments The raw cache object.
-     */
-    private *iterateByComment(comments: CommentsCache) {
-    for (const guid in comments) {
-        for (const version in comments[guid]) {
-        for (const filepath in comments[guid][version]) {
-            for (const lineNumber in comments[guid][version][filepath]) {
-            yield {
-                ...comments[guid][version][filepath][lineNumber],
-                lineNumber,
-                filepath,
-                version,
-                guid,
-            };
-            }
-        }
-        }
-    }
-    }
 
     /**
      * Error-checking for uris that are passed into the controller.
      */
     private async checkUri(uri: vscode.Uri, strict?: boolean){
-    const { rootFolder, fullPath, guid, version } = await this.fileDirectoryController.splitUri(uri);
+    const { rootFolder, fullPath, guid, version } = await this.directoryController.splitUri(uri);
         if (!fullPath.startsWith(rootFolder)) {
             vscode.window.showErrorMessage(
             "(Assay) File is not in the Addons root folder."
@@ -212,4 +181,27 @@ export class CommentCacheController{
             throw new Error("No guid or version found");
         }
     }
+
+    /**
+     * Iterates through each comment in cache.
+     * @param comments The raw cache object.
+     */
+    private *iterateByComment(comments: CommentsCache) {
+        for (const guid in comments) {
+            for (const version in comments[guid]) {
+            for (const filepath in comments[guid][version]) {
+                for (const lineNumber in comments[guid][version][filepath]) {
+                yield {
+                    ...comments[guid][version][filepath][lineNumber],
+                    lineNumber,
+                    filepath,
+                    version,
+                    guid,
+                };
+                }
+            }
+            }
+        }
+    }
+
 }

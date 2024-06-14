@@ -6,6 +6,10 @@ import * as vscode from "vscode";
 
 export class UpdateController{
 
+  /**
+   * Updates Assay.
+   * @returns Whether Assay was updated.
+   */
   async updateAssay() {
     const downloadInfo = await this.checkAndGetNewVersion();
     if (!downloadInfo) {
@@ -16,6 +20,11 @@ export class UpdateController{
     return true;
   }
 
+  /**
+   * Installs the new version of Assay.
+   * @param downloadUrl The URL of the extension.
+   * @param version The version installed.
+   */
   private async installNewVersion(downloadUrl: string, version: string) {
     const savePath = await this.downloadVersion(downloadUrl);
     const downloadProcess = spawn("code", ["--install-extension", savePath]);
@@ -38,6 +47,11 @@ export class UpdateController{
     });
   }
 
+  /**
+   * Downloads the new version of Assay.
+   * @param downloadUrl The URL of the extension.
+   * @returns The location of the saved extension.
+   */
   private async downloadVersion(downloadUrl: string) {
     return await vscode.window.withProgress(
       { title: "Assay", location: vscode.ProgressLocation.Notification },
@@ -73,6 +87,10 @@ export class UpdateController{
     );
   } 
 
+  /**
+   * Checks if Assay needs to be updated.
+   * @returns the downloadLink and new version, if any
+   */
    private async checkAndGetNewVersion() {
     const apiUrl = `https://api.github.com/repos/mozilla/assay/releases/latest`;
     const response = await fetch(apiUrl);

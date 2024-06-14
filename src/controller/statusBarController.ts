@@ -1,31 +1,32 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
-import { FileDirectoryController } from "./fileDirectoryController";
-import { ReviewCacheController } from "./reviewCacheController";
+import { AddonCacheController } from "./addonCacheController";
+import { DirectoryController } from "./directoryController";
 import { ReviewStatusBarItem } from "../model/reviewStatusBarItem";
 
-/**
- * Handles the logic for status bar related behaviour.
- * For UI interface naming conventions, see
- * https://code.visualstudio.com/docs/getstarted/userinterface
- */
 export class StatusBarController {
+
   private reviewItem: ReviewStatusBarItem;
-  constructor(private reviewCacheController: ReviewCacheController,
-              private fileDirectoryController: FileDirectoryController){
+
+  constructor(private addonCacheController: AddonCacheController,
+              private directoryController: DirectoryController){
     this.reviewItem = new ReviewStatusBarItem();
   }
 
+  /**
+   * Updates the status bar.
+   * @returns whether the status bar was updated.
+   */
   async updateStatusBar() {
     const activeEditor = vscode.window.activeTextEditor;
     if (!activeEditor) {
-      return;
+      return false;
     }
   
     const doc = activeEditor.document;
     const filePath = doc.uri.fsPath;
-    const rootFolder = await this.fileDirectoryController.getRootFolderPath();
+    const rootFolder = await this.directoryController.getRootFolderPath();
     if (!filePath.startsWith(rootFolder)) {
       this.reviewItem.hide();
       throw new Error("File is not in the root folder.");
@@ -39,7 +40,7 @@ export class StatusBarController {
       throw new Error("No guid found.");
     }
   
-    const reviewUrl = await this.reviewCacheController.getReview([guid, "reviewUrl"]);
+    const reviewUrl = await this.addonCacheController.getAddonFromCache([guid, "reviewUrl"]);
     this.reviewItem.updateAndShow(guid, reviewUrl);
     return true;
   }

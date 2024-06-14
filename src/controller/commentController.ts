@@ -1,16 +1,18 @@
 import * as vscode from "vscode";
 
 import { CommentCacheController } from "./commentCacheController";
-import { FileDirectoryController } from "./fileDirectoryController";
+import { DirectoryController } from "./directoryController";
 import { RangeController } from "./rangeController";
 import { AssayComment, AssayReply, AssayThread } from "../model/comment";
 import { contextValues } from "../types";
 export class CommentController {
+
   controller: vscode.CommentController;
+
   constructor(public id: string,
               public label: string,
               private commentCacheController: CommentCacheController,
-              private fileDirectoryController: FileDirectoryController,
+              private directoryController: DirectoryController,
               private rangeController: RangeController) {
     this.controller = vscode.comments.createCommentController(id, label);
     this.activateController();
@@ -118,7 +120,7 @@ export class CommentController {
 
   /**
    * Copies a link to the selected line(s) to the clipboard for sharing.
-   * @param thread
+   * @param thread The thread containing the selected lines
    * @return the generated link.
    */
   async copyLinkFromThread(thread: AssayThread) {
@@ -182,7 +184,7 @@ export class CommentController {
    * @returns The guid, version, and filepath of the thread.
    */
   private async getFilepathInfo(thread: AssayThread) {
-    const { rootFolder, fullPath, guid, version, filepath } = await this.fileDirectoryController.splitUri(
+    const { rootFolder, fullPath, guid, version, filepath } = await this.directoryController.splitUri(
       thread.uri
     );
     if (!fullPath.startsWith(rootFolder)) {

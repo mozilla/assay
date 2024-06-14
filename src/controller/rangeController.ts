@@ -1,18 +1,28 @@
 import * as vscode from "vscode";
 
-import { FileDirectoryController } from "./fileDirectoryController";
-
+import { DirectoryController } from "./directoryController";
 
 export class RangeController{
 
-    constructor(private fileDirectoryController: FileDirectoryController){}
+    constructor(private directoryController: DirectoryController){}
 
+    /**
+     * Returns a VS Code Range as its string representation.
+     * @param range 
+     * @returns The string representation of the Range.
+     */
     rangeToString(range: vscode.Range) {
     return range.start.line === range.end.line
         ? `#L${range.start.line}`
         : `#L${range.start.line}-${range.end.line}`;
     }
 
+    /**
+     * Returns a VS Code Range from its string representation.
+     * @param str The string to convert.
+     * @param uri The location of the Range, if any
+     * @returns A VS Code Range
+     */
     async stringToRange(str: string, uri?: vscode.Uri) {
     const list = str.match(/\d+/g);
     if (!list || !/#L[0-9]+(-[0-9]+)?(?!-)/.test(str)) {
@@ -25,7 +35,7 @@ export class RangeController{
 
     // if given a file URI, set the the end range to eol
     if (uri) {
-        const buffer = await this.fileDirectoryController.readFile(uri);
+        const buffer = await this.directoryController.readFile(uri);
         const content = buffer?.toString()?.split("\n");
         endCharacter = content[endLine]?.length;
     }
@@ -36,8 +46,12 @@ export class RangeController{
     return new vscode.Range(startPosition, endPosition);
     }
 
-    // adjusts the range string to account for lines starting from 1 in the editor rather than 0 in the backend.
-    // use this whenever the line number is exposed to the user.
+    /**
+     * Adjusts the range string to account for lines starting from 1 in the editor rather than 0 in the backend.
+     * Use this whenever the line number is exposed to the user.
+     * @param str 
+     * @returns The truncated range string.
+     */
     rangeTruncation(str: string) {
     const list = str.match(/\d+/g);
     if (!list || !/#L[0-9]+(-[0-9]+)?(?!-)/.test(str)) {

@@ -4,7 +4,9 @@ import * as vscode from "vscode";
 import { promptDiffCommand } from "../views/diffView";
 
 export class DiffController{
+
   private config: vscode.WorkspaceConfiguration;
+  
   constructor(){
     this.config = vscode.workspace.getConfiguration("assay");
   }

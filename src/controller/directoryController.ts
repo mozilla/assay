@@ -4,7 +4,8 @@ import * as vscode from "vscode";
 import { filesReadonlyIncludeConfig } from "../types";
 import { selectRootFolder } from "../views/rootView";
 
-export class FileDirectoryController{
+export class DirectoryController{
+
   private cachedRootFolder: string | undefined;
 
   constructor(private assayConfig: vscode.WorkspaceConfiguration,
@@ -13,6 +14,10 @@ export class FileDirectoryController{
     this.setCachedRootFolder(rootFolder);
   }
 
+  /**
+   * Gets the root folder stored in config.
+   * @returns the root folder in config.
+   */
   async getRootFolderPath() {
     const rootFolder = this.assayConfig.get<string>("rootFolder");
 
@@ -45,6 +50,11 @@ export class FileDirectoryController{
     }
   }
 
+  /**
+   * Splits a uri inside the rootFolder into its individual pieces.
+   * @param uri The uri to split.
+   * @returns the pieces of the uri.
+   */
   async splitUri(uri: vscode.Uri) {
     const fullPath = uri.fsPath;
     const rootFolder = await this.getRootFolderPath();
@@ -64,6 +74,24 @@ export class FileDirectoryController{
     };
   }
 
+  /**
+   * Determines whether uri is in the rootFolder.
+   * @param uri 
+   * @returns whether the uri is in rootFolder.
+   */
+  async inRoot(uri: vscode.Uri){
+    const { rootFolder, fullPath } = await this.splitUri(uri);
+    if (fullPath.startsWith(rootFolder)) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Read the file located at uri.
+   * @param uri
+   * @returns Uint8Array of the file at uri.
+   */
   async readFile(uri: vscode.Uri) {
     try {
       return await vscode.workspace.fs.readFile(uri);

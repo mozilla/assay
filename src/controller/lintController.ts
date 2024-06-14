@@ -1,18 +1,20 @@
 import * as vscode from "vscode";
 
+import { AddonCacheController } from "./addonCacheController";
 import { CredentialController } from "./credentialController";
-import { FileDirectoryController } from "./fileDirectoryController";
-import { ReviewCacheController } from "./reviewCacheController";
+import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
 import { Message, MessageType, errorMessages } from "../types";
 import { showErrorMessage } from "../views/notificationView";
 
 export class LintController {
+
   diagnosticCollection: vscode.DiagnosticCollection;
+
   constructor(public name: string,
               private credentialController: CredentialController,
-              private reviewCacheController: ReviewCacheController,
-              private fileDirectoryController: FileDirectoryController){
+              private addonCacheController: AddonCacheController,
+              private directoryController: DirectoryController){
     this.diagnosticCollection = vscode.languages.createDiagnosticCollection(name);
   }
 
@@ -25,7 +27,7 @@ export class LintController {
       return;
     }
 
-    const { versionPath, guid } = await this.fileDirectoryController.splitUri(workspace.uri);
+    const { versionPath, guid } = await this.directoryController.splitUri(workspace.uri);
     if (!versionPath) {
       return;
     }
@@ -64,7 +66,7 @@ export class LintController {
    * @returns The lint information.
    */
   private async fetchLints(guid: string) {
-    const { id: addonID, file_id: fileID } = await this.reviewCacheController.getReview([
+    const { id: addonID, file_id: fileID } = await this.addonCacheController.getAddonFromCache([
       guid,
     ]);
     
@@ -118,7 +120,7 @@ export class LintController {
     };
 
     const fileUri = this.getUriFromVersionPath(versionPath, notice.file);
-    const buffer = await this.fileDirectoryController.readFile(fileUri);
+    const buffer = await this.directoryController.readFile(fileUri);
     const fileText = buffer?.toString()?.split("\n");
     const lineNumber = notice.line ? notice.line - 1 : 0;
     const lineText = fileText?.at(lineNumber);

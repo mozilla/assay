@@ -9,6 +9,7 @@ import { getApiKeyInputFromUser, getSecretInputFromUser } from "../views/apiKeyV
 import { showErrorMessage } from "../views/notificationView";
 
 export class CredentialController{
+  
   constructor(private secrets: vscode.SecretStorage){}
 
   /**
@@ -108,18 +109,6 @@ export class CredentialController{
   }
 
   /**
-   * Generates a shorter version of the secret that we can show to the user
-   * @param str The secret.
-   * @param size The number of characters to remove from the centre of the secret.
-   * @returns The truncated secret.
-   */
-  private truncateSecret(str: string, size = 4) {
-    const head = str.substring(0, size);
-    const tail = str.substring(str.length - size);
-    return `${head}...${tail}`;
-  }
-
-  /**
    * Creates a JWT token as per
    * https://addons-server.readthedocs.io/en/latest/topics/api/auth.html
    * @returns JWT Token.
@@ -137,5 +126,17 @@ export class CredentialController{
 
     return jwt.sign(payload, secret, { algorithm: "HS256" });
   }
+
+  /**
+   * Generates a shorter version of the secret that we can show to the user
+   * @param str The secret.
+   * @param size The number of characters to remove from the centre of the secret.
+   * @returns The truncated secret.
+   */
+    private truncateSecret(str: string, size = 4) {
+      const head = str.substring(0, size);
+      const tail = str.substring(str.length - size);
+      return `${head}...${tail}`;
+    }
 
 }
