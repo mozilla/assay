@@ -1,4 +1,7 @@
+import { Uri } from "vscode";
+
 export type addonInfoResponse = {
+  id: string;
   slug: string;
   name: {
     [key: string]: string;
@@ -42,3 +45,63 @@ export type errorMessages = {
     [code: string]: string;
   };
 };
+
+export type contextValues = "markForReview" | "comment";
+
+export type CommentsCache = {
+  [guid: string]: {
+    [version: string]: {
+      [filepath: string]: {
+        [lineNumber: string]: {
+          uri: Uri;
+          body: string;
+          contextValue: contextValues;
+        };
+      };
+    };
+  };
+};
+
+export type JSONComment = {
+  uri: Uri,
+  body: string,
+  contextValue: contextValues,
+};
+
+export type JSONReview = {
+  reviewUrl: string,
+  fileID: string,
+  id: string
+};
+
+export type threadLocation = {
+  uri: Uri,
+  guid: string,
+  version: string,
+  filepath: string,
+  range: string
+};
+
+
+export type filesReadonlyIncludeConfig = {
+  [key: string]: boolean;
+};
+
+export type MessageType = "error" | "notice" | "warning";
+
+export type Message = {
+  type: MessageType;
+  code: string;
+  message: string;
+  description: string;
+  file: string;
+  line: number | undefined;
+};
+
+export enum QPOption {
+  Save = "Save my Preference",
+  Ask = "Ask Every Time",
+  None = "No Preference",
+  Yes = "Yes",
+  No = "No",
+}

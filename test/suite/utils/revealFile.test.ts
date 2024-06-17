@@ -3,7 +3,7 @@ import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import * as getThreadLocation from "../../../src/utils/getThreadLocation";
+import * as getThreadLocation from "../../../src/utils/helper";
 import revealFile from "../../../src/utils/revealFile";
 
 describe("revealFile.ts", async () => {

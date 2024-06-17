@@ -4,7 +4,7 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { activate, deactivate } from "../../src/extension";
-import * as reviewRootDir from "../../src/utils/reviewRootDir";
+import * as reviewRootDir from "../../src/controller/directoryController";
 
 function makeContext() {
   return {

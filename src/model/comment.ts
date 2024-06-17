@@ -1,22 +1,8 @@
 import * as vscode from "vscode";
 
+import { contextValues } from "../types";
+
 let commentId = 0;
-
-export type contextValues = "markForReview" | "comment";
-export interface CommentsCache {
-  [guid: string]: {
-    [version: string]: {
-      [filepath: string]: {
-        [lineNumber: string]: {
-          uri: vscode.Uri;
-          body: string;
-          contextValue: contextValues;
-        };
-      };
-    };
-  };
-}
-
 export class AssayThread implements vscode.CommentThread {
   canReply: boolean;
   constructor(

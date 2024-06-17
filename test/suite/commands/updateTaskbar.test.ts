@@ -4,7 +4,7 @@ import { afterEach, describe, it } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { updateTaskbar } from "../../../src/commands/updateTaskbar";
+import { updateTaskbar } from "../../../src/controller/statusBarController";
 import { setExtensionStoragePath } from "../../../src/config/globals";
 
 const guid = "emailguid@guid.com";

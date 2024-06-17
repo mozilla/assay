@@ -4,8 +4,8 @@ import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { openInDiffTool } from "../../../src/commands/launchDiff";
-import * as diffTool from "../../../src/utils/diffTool";
+import { openInDiffTool } from "../../../src/controller/diffController";
+import * as diffTool from "../../../src/views/diffView";
 
 describe("launchDiff.ts", async () => {
   afterEach(() => {

@@ -7,10 +7,10 @@ import {
   compileComments,
   exportComments,
   exportVersionComments
-} from "../../../src/commands/exportComments";
-import * as addonCache from "../../../src/utils/addonCache";
-import * as getdeleteComments from "../../../src/utils/getDeleteCommentsPreference";
-import * as reviewRootDir from "../../../src/utils/reviewRootDir";
+} from "../../../src/controller/exportController";
+import * as addonCache from "../../../src/model/cache";
+import * as getdeleteComments from "../../../src/views/exportView";
+import * as reviewRootDir from "../../../src/controller/directoryController";
 
 describe("exportComments.ts", () => {
   afterEach(() => {

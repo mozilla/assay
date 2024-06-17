@@ -4,9 +4,9 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import * as constants from "../../../src/config/globals";
-import * as cacheFunctions from "../../../src/utils/addonCache";
+import * as cacheFunctions from "../../../src/model/cache";
 import { loadFileDecorator } from "../../../src/utils/loadFileDecorator";
-import * as reviewRootDir from "../../../src/utils/reviewRootDir";
+import * as reviewRootDir from "../../../src/controller/directoryController";
 
 describe("loadFileDecorator.ts", async () => {
   beforeEach(() => {
@@ -23,9 +23,9 @@ describe("loadFileDecorator.ts", async () => {
     sinon.restore();
   });
 
-  describe("loadFileDecorator()", async () => {
+  describe("loadFileDecoratorByUri()", async () => {
     it("should return if there is no activeTextEditor.", async () => {
-      const result = await loadFileDecorator();
+      const result = await loadFileDecoratorByUri();
       expect(result).to.be.undefined;
     });
 
@@ -49,7 +49,7 @@ describe("loadFileDecorator.ts", async () => {
       getRootFolderPathStub.resolves("test-root-folder-path");
 
       try {
-        await loadFileDecorator();
+        await loadFileDecoratorByUri();
       } catch (err: any) {
         expect(err.message).to.equal("File is not in the root folder");
       }
@@ -79,7 +79,7 @@ describe("loadFileDecorator.ts", async () => {
       const getFromCacheStub = sinon.stub(cacheFunctions, "getFromCache");
       getFromCacheStub.resolves(undefined);
 
-      const result = await loadFileDecorator();
+      const result = await loadFileDecoratorByUri();
       expect(result).to.be.undefined;
     });
   });

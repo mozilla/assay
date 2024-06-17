@@ -5,8 +5,8 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { getFileDecorator } from "../../../src/config/globals";
-import * as addonCache from "../../../src/utils/addonCache";
-import * as reviewRootDir from "../../../src/utils/reviewRootDir";
+import * as addonCache from "../../../src/model/cache";
+import * as reviewRootDir from "../../../src/controller/directoryController";
 import {
   fileHasComment
 } from "../../../src/views/fileDecorations";

@@ -5,12 +5,10 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import constants from "../../../src/config/config";
+import { getAddonVersions } from "../../../src/controller/addonController";
 import { addonVersion } from "../../../src/types";
-import {
-  getAddonVersions,
-  getVersionChoice,
-} from "../../../src/utils/addonVersions";
 import * as authUtils from "../../../src/utils/requestAuth";
+import { getVersionChoice } from "../../../src/views/addonView";
 
 const firstVersions: addonVersion[] = [];
 for (let i = 0; i < 25; i++) {

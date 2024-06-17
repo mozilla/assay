@@ -9,7 +9,7 @@ import {
   addToCache,
   getFromCache,
   clearCache,
-} from "../../../src/utils/addonCache";
+} from "../../../src/model/cache";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
 const storagePath = path.resolve(workspaceFolder, ".test_assay");

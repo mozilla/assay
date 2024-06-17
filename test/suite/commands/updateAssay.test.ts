@@ -12,7 +12,7 @@ import {
   checkAndGetNewVersion,
   installNewVersion,
   downloadVersion,
-} from "../../../src/commands/updateAssay";
+} from "../../../src/controller/updateController";
 
 describe("updateAssay.ts", () => {
   afterEach(() => {
