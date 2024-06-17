@@ -49,7 +49,7 @@ async function formatNotice(versionPath: string, n: Message) {
 }
 
 async function fetchLints(guid: string) {
-  const { id: addonID, file_id: fileID } = await getFromCache("reviewMeta", [
+  const { id: addonID, file_id: fileID } = await getFromCache("addonMeta", [
     guid,
   ]);
   const url = `${constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;

@@ -32,7 +32,7 @@ export async function updateTaskbar() {
     throw new Error("No guid found");
   }
 
-  const reviewUrl = await getFromCache("reviewMeta", [guid, "review_url"]);
+  const reviewUrl = await getFromCache("addonMeta", [guid, "review_url"]);
 
   statusBarItem.text = `${guid} - Review Page`;
   statusBarItem.tooltip = reviewUrl;
