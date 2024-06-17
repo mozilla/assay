@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 
 import { setExtensionStoragePath } from "../../../src/config/globals";
 import { QPOption } from "../../../src/types";
-import getDeleteCommentsPreference from "../../../src/utils/getDeleteCommentsPreference";
+import getDeleteCommentsPreference from "../../../src/views/exportView";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
 const storagePath = path.resolve(workspaceFolder, ".test_assay");

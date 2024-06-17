@@ -4,11 +4,11 @@ import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { handleUri, openWorkspace, getAddonByUrl } from "../../../src/commands/openFromUrl";
-import * as openFromUrl from "../../../src/commands/openFromUrl";
+import { handleUri, openWorkspace, getAddonByUrl } from "../../../src/controller/urlController";
+import * as openFromUrl from "../../../src/controller/urlController";
 import * as globals from "../../../src/config/globals";
 import * as addonController from "../../../src/controller/addonController";
-import * as reviewRootDir from "../../../src/utils/reviewRootDir";
+import * as reviewRootDir from "../../../src/controller/directoryController";
 
 
 describe("openFromUrl.ts", async () => {

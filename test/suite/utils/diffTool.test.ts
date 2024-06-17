@@ -3,7 +3,7 @@ import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { setDiffCommand, getDiffCommand } from "../../../src/utils/diffTool";
+import { setDiffCommand, getDiffCommand } from "../../../src/views/diffView";
 
 describe("diffTool.ts", async () => {
   afterEach(() => {

@@ -5,8 +5,8 @@ import * as vscode from "vscode";
 
 import { lintWorkspace } from "../../../src/commands/lintAddon";
 import * as globals from "../../../src/config/globals";
-import * as cacheFunctions from "../../../src/utils/addonCache";
-import * as getThreadLocation from "../../../src/utils/getThreadLocation";
+import * as cacheFunctions from "../../../src/model/cache";
+import * as getThreadLocation from "../../../src/utils/helper";
 import * as authUtils from "../../../src/utils/requestAuth";
 import * as splitUri from "../../../src/utils/splitUri";
 import * as notificationView from "../../../src/views/notificationView";

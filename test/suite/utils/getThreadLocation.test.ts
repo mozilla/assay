@@ -3,10 +3,10 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { AssayThread } from "../../../src/config/comment";
+import { AssayThread } from "../../../src/model/comment";
 import { contextValues } from "../../../src/types";
-import { getThreadLocation, rangeToString, rangeTruncation, stringToRange } from "../../../src/utils/getThreadLocation";
-import * as reviewRootDir from "../../../src/utils/reviewRootDir";
+import { getThreadLocation, rangeToString, rangeTruncation, stringToRange } from "../../../src/utils/helper";
+import * as reviewRootDir from "../../../src/controller/directoryController";
 
 
 const cmt = {

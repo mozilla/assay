@@ -9,7 +9,7 @@ import {
   handleRootConfigurationChange,
   selectRootFolder,
   setCachedRootFolder,
-} from "../../../src/utils/reviewRootDir";
+} from "../../../src/controller/directoryController";
 
 describe("reviewRootDir.ts", async () => {
   afterEach(() => {
