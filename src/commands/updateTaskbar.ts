@@ -2,7 +2,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 
 import { getFromCache } from "../utils/addonCache";
-import { getRootFolderPath } from "../utils/reviewRootDir";
+import { splitUri } from "../utils/splitUri";
 
 export const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
@@ -16,16 +16,18 @@ export async function updateTaskbar() {
     return;
   }
 
-  const doc = activeEditor.document;
-  const filePath = doc.uri.fsPath;
-  const rootFolder = await getRootFolderPath();
-  if (!filePath.startsWith(rootFolder)) {
+  const filePath = activeEditor.document.uri;
+  const { guid, rootFolder } = await splitUri(filePath);
+
+  // in comment mode. still in the same file, just not in editor itself
+  if (guid === "mozilla.assay") {
+    return;
+  }
+
+  if (!filePath.fsPath.startsWith(rootFolder)) {
     statusBarItem.hide();
     throw new Error("File is not in the root folder");
   }
-
-  const relativePath = filePath.replace(rootFolder, "");
-  const guid = relativePath.split(path.sep)[1];
 
   if (!guid) {
     statusBarItem.hide();
