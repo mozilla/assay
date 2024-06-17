@@ -20,7 +20,7 @@ export async function updateTaskbar() {
   const { guid, rootFolder } = await splitUri(filePath);
 
   // in comment mode. still in the same file, just not in editor itself
-  if(guid === "mozilla.assay"){
+  if (guid === "mozilla.assay") {
     return;
   }
 
