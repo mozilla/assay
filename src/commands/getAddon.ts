@@ -10,7 +10,7 @@ import { getRootFolderPath } from "../utils/reviewRootDir";
 
 export async function getInput(): Promise<string> {
   const input = await vscode.window.showInputBox({
-    prompt: "Enter Addon Slug, GUID, or URL",
+    prompt: "Enter Addon Slug, GUID, AMO ID, or URL",
     title: "Assay",
     ignoreFocusOut: true,
   });
