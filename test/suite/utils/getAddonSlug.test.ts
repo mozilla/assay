@@ -45,5 +45,11 @@
 //         const result = getAddonSlug(url);
 //         expect(result).to.equal("adblock-plus");
 //     });
+
+// it("should just return the input if no delimiter is identified, regardless of whether it really is a slug or not.", () => {
+//   const url = "nonsense-or-slug";
+//   const result = getAddonSlug(url);
+//   expect(result).to.equal("nonsense-or-slug");
+// });
 //   });
 // });
