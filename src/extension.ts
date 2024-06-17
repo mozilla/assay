@@ -23,7 +23,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
   const assayConfig = vscode.workspace.getConfiguration("assay");
   const fileConfig = vscode.workspace.getConfiguration("files");
-  const reviewsCache = new AssayCache("reviewMeta", storagePath);
+  const reviewsCache = new AssayCache("addonMeta", storagePath);
 
   // Menu Controllers
   const addonCacheController = new AddonCacheController(reviewsCache);
