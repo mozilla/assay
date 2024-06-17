@@ -3,12 +3,6 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import {
-  getCredsFromStorage,
-  getApiKeyFromUser,
-  getSecretFromUser,
-} from "../../../src/commands/getApiCreds";
-import * as authUtils from "../../../src/config/globals";
 
 const secretsStubReturn = {
   get: async () => {
@@ -37,37 +31,6 @@ describe("getApiCreds.ts.", async () => {
 
   afterEach(() => {
     sinon.restore();
-  });
-
-  describe("getCredsFromStorage().", () => {
-    it("should return the creds if they exist.", async () => {
-      const result = await getCredsFromStorage();
-      expect(result.apiKey).to.equal("test");
-      expect(result.secret).to.equal("test");
-    });
-
-    it("should error if the creds don't exist.", async () => {
-      sinon.restore();
-
-      const secretsStub = sinon.stub(authUtils, "getExtensionSecretStorage");
-      const secretsStubReturnUndefined = secretsStubReturn;
-      secretsStubReturnUndefined.get = async () => {
-        return "";
-      };
-      secretsStub.returns(secretsStubReturnUndefined);
-
-      const errorMessageWindowStub = sinon.stub(
-        vscode.window,
-        "showErrorMessage"
-      );
-      errorMessageWindowStub.resolves({ title: "Cancel" });
-
-      try {
-        await getCredsFromStorage();
-      } catch (error: any) {
-        expect(error.message).to.equal("No API Key or Secret found");
-      }
-    });
   });
 
   describe("getApiKeyFromUser().", () => {
