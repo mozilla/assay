@@ -12,11 +12,12 @@
  * - "review-unlisted/" - A unlisted listed add-on in the AMO reviewer tools.
  */
 export default function getAddonSlug(input: string) {
-  const delimiter = input.includes("review/")
-    ? "review/"
-    : input.includes("review-unlisted/")
-    ? "review-unlisted/"
-    : "addon/";
+  let delimiter = "addon/";
+  if (input.includes("review/")) {
+    delimiter = "review/";
+  } else if (input.includes("review-unlisted/")) {
+    delimiter = "review-unlisted/";
+  }
 
   return input.includes("/") ? input.split(delimiter)[1]?.split("/")[0] : input;
 }
