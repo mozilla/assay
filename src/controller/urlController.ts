@@ -6,11 +6,12 @@ import { DirectoryController } from "./directoryController";
 import { RangeController } from "./rangeController";
 
 export class UrlController implements vscode.UriHandler {
-
-  constructor(private context: vscode.ExtensionContext,
-              private addonController: AddonController,
-              private directoryController: DirectoryController,
-              private rangeController: RangeController){}
+  constructor(
+    private context: vscode.ExtensionContext,
+    private addonController: AddonController,
+    private directoryController: DirectoryController,
+    private rangeController: RangeController
+  ) {}
 
   /**
    * Given a file and line(s), focuses VS Code onto the file and line(s).
@@ -21,7 +22,10 @@ export class UrlController implements vscode.UriHandler {
     const editor = await vscode.window.showTextDocument(uri);
     if (lineNumber) {
       // highlight offending lines
-      const lineRange = await this.rangeController.stringToRange(lineNumber, uri);
+      const lineRange = await this.rangeController.stringToRange(
+        lineNumber,
+        uri
+      );
       const selection = new vscode.Selection(lineRange.start, lineRange.end);
       editor.selections = [selection];
       // move editor to focus on line(s)
@@ -54,7 +58,12 @@ export class UrlController implements vscode.UriHandler {
     const [_, action, ...rest] = path.split("/");
     if (action === "review") {
       const [guid, version] = rest;
-      await this.handleReviewUrl(guid, version, filepath || undefined, lineNumber);
+      await this.handleReviewUrl(
+        guid,
+        version,
+        filepath || undefined,
+        lineNumber
+      );
     }
   }
 
@@ -62,7 +71,7 @@ export class UrlController implements vscode.UriHandler {
    * Opens the file at globalState's filePath if any was stored.
    * This occurs when a new window of VS Code is opened, and thus a new instance of the extension.
    */
-  async openCachedFile(){
+  async openCachedFile() {
     if (this.context.globalState.get("filePath") !== undefined) {
       const filePath = this.context.globalState.get("filePath")?.toString();
       const lineNumber = this.context.globalState.get("lineNumber")?.toString();
@@ -76,10 +85,10 @@ export class UrlController implements vscode.UriHandler {
 
   /**
    * Handles urls of the form /review/<guid>/<version>?path=<file>
-   * @param guid 
-   * @param version 
-   * @param filepath 
-   * @param lineNumber 
+   * @param guid
+   * @param version
+   * @param filepath
+   * @param lineNumber
    */
   private async handleReviewUrl(
     guid: string,
@@ -99,9 +108,9 @@ export class UrlController implements vscode.UriHandler {
 
   /**
    * Opens a workspace to the given version.
-   * @param versionPath 
-   * @param filepath 
-   * @param lineNumber 
+   * @param versionPath
+   * @param filepath
+   * @param lineNumber
    */
   private async openWorkspace(
     versionPath: string,
@@ -125,5 +134,4 @@ export class UrlController implements vscode.UriHandler {
       vscode.commands.executeCommand("vscode.openFolder", versionUri, true);
     }
   }
-
 }

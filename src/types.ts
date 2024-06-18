@@ -1,6 +1,6 @@
 import { Uri } from "vscode";
 
-export type addonInfoResponse = {
+export type AddonInfoResponse = {
   id: string;
   slug: string;
   name: {
@@ -20,7 +20,7 @@ export type addonInfoResponse = {
   guid: string;
 };
 
-export type addonVersion = {
+export type AddonVersion = {
   map(
     arg0: (version: any) => any
   ): readonly string[] | Thenable<readonly string[]>;
@@ -31,13 +31,13 @@ export type addonVersion = {
   };
 };
 
-export type configConstants = {
+export type ConfigConstants = {
   apiBaseURL: string;
   reviewBaseURL: string;
   downloadBaseURL: string;
 };
 
-export type errorMessages = {
+export type ErrorMessages = {
   window: {
     [code: string]: string;
   };
@@ -46,7 +46,7 @@ export type errorMessages = {
   };
 };
 
-export type contextValues = "markForReview" | "comment";
+export type ContextValues = "markForReview" | "comment";
 
 export type CommentsCache = {
   [guid: string]: {
@@ -55,7 +55,7 @@ export type CommentsCache = {
         [lineNumber: string]: {
           uri: Uri;
           body: string;
-          contextValue: contextValues;
+          contextValue: ContextValues;
         };
       };
     };
@@ -63,27 +63,26 @@ export type CommentsCache = {
 };
 
 export type JSONComment = {
-  uri: Uri,
-  body: string,
-  contextValue: contextValues,
+  uri: Uri;
+  body: string;
+  contextValue: ContextValues;
 };
 
 export type JSONReview = {
-  reviewUrl: string,
-  fileID: string,
-  id: string
+  reviewUrl: string;
+  fileID: string;
+  id: string;
 };
 
-export type threadLocation = {
-  uri: Uri,
-  guid: string,
-  version: string,
-  filepath: string,
-  range: string
+export type ThreadLocation = {
+  uri: Uri;
+  guid: string;
+  version: string;
+  filepath: string;
+  range: string;
 };
 
-
-export type filesReadonlyIncludeConfig = {
+export type FilesReadonlyIncludeConfig = {
   [key: string]: boolean;
 };
 

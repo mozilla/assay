@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { QPOption } from "../types";
 
-export default async function getDeleteCommentsPreference() {
+export async function getDeleteCommentsPreference() {
   const config = vscode.workspace.getConfiguration("assay");
   const savedPreference =
     (config.get<string>("deleteCommentsOnExport") as QPOption) || QPOption.None;

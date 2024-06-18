@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { errorMessages } from "../types";
+import { ErrorMessages } from "../types";
 
 /**
  * Shows progress in the editor. Progress is shown while running the given task.
@@ -32,8 +32,8 @@ export async function promptProgress(
  * @returns
  */
 export async function showErrorMessage(
-  errorMessages: errorMessages,
-  status: keyof errorMessages["window"] | keyof errorMessages["thrown"],
+  errorMessages: ErrorMessages,
+  status: keyof ErrorMessages["window"] | keyof ErrorMessages["thrown"],
   tryAgainFunction?: (...args: any[]) => Promise<any>,
   tryAgainFunctionParams: any[] = []
 ) {

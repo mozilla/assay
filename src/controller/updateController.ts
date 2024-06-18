@@ -4,8 +4,7 @@ import fetch from "node-fetch";
 import path = require("path");
 import * as vscode from "vscode";
 
-export class UpdateController{
-
+export class UpdateController {
   /**
    * Updates Assay.
    * @returns Whether Assay was updated.
@@ -15,7 +14,7 @@ export class UpdateController{
     if (!downloadInfo) {
       return false;
     }
-    const {downloadLink, version } = downloadInfo.downloadLink;
+    const { downloadLink, version } = downloadInfo.downloadLink;
     this.installNewVersion(downloadLink, version);
     return true;
   }
@@ -85,13 +84,13 @@ export class UpdateController{
         return savePath;
       }
     );
-  } 
+  }
 
   /**
    * Checks if Assay needs to be updated.
    * @returns the downloadLink and new version, if any
    */
-   private async checkAndGetNewVersion() {
+  private async checkAndGetNewVersion() {
     const apiUrl = `https://api.github.com/repos/mozilla/assay/releases/latest`;
     const response = await fetch(apiUrl);
 

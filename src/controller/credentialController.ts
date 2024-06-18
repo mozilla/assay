@@ -1,16 +1,16 @@
-
-
 import * as jwt from "jsonwebtoken";
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
 import constants from "../config/config";
-import { getApiKeyInputFromUser, getSecretInputFromUser } from "../views/apiKeyView";
+import {
+  getApiKeyInputFromUser,
+  getSecretInputFromUser,
+} from "../views/apiKeyView";
 import { showErrorMessage } from "../views/notificationView";
 
-export class CredentialController{
-  
-  constructor(private secrets: vscode.SecretStorage){}
+export class CredentialController {
+  constructor(private secrets: vscode.SecretStorage) {}
 
   /**
    * Retrieves the API key and secret from storage.
@@ -20,7 +20,6 @@ export class CredentialController{
     apiKey: string;
     secret: string;
   }> {
-
     const [apiKey, secret] = await Promise.all([
       this.secrets.get("amoApiKey"),
       this.secrets.get("amoApiSecret"),
@@ -50,12 +49,11 @@ export class CredentialController{
    */
   async getApiKeyFromUser() {
     const placeHolder = await this.secrets.get("amoApiKey");
-    try{
+    try {
       const apiKey = await getApiKeyInputFromUser(placeHolder);
       await this.secrets.store("amoApiKey", apiKey);
       return true;
-    }
-    catch{
+    } catch {
       return false;
     }
   }
@@ -65,15 +63,16 @@ export class CredentialController{
    * @returns whether the secret is successfully stored.
    */
   async getSecretFromUser() {
-      const placeHolder = this.truncateSecret((await this.secrets.get("amoApiSecret")) || "");
-      try{
-        const apiSecret = await getSecretInputFromUser(placeHolder);
-        await this.secrets.store("amoApiSecret", apiSecret);
-        return true;
-      }
-      catch {
-        return false;
-      }
+    const placeHolder = this.truncateSecret(
+      (await this.secrets.get("amoApiSecret")) || ""
+    );
+    try {
+      const apiSecret = await getSecretInputFromUser(placeHolder);
+      await this.secrets.store("amoApiSecret", apiSecret);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -133,10 +132,9 @@ export class CredentialController{
    * @param size The number of characters to remove from the centre of the secret.
    * @returns The truncated secret.
    */
-    private truncateSecret(str: string, size = 4) {
-      const head = str.substring(0, size);
-      const tail = str.substring(str.length - size);
-      return `${head}...${tail}`;
-    }
-
+  private truncateSecret(str: string, size = 4) {
+    const head = str.substring(0, size);
+    const tail = str.substring(str.length - size);
+    return `${head}...${tail}`;
+  }
 }

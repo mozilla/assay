@@ -8,9 +8,7 @@ import { QPOption } from "../types";
  * @param urlVersion add-on version, if any.
  * @returns
  */
-export async function promptVersionChoice(
-  versionItems: string[]
-) {
+export async function promptVersionChoice(versionItems: string[]) {
   return await vscode.window.showQuickPick(versionItems, {
     placeHolder: "Choose a version:",
   });

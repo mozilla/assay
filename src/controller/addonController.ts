@@ -7,7 +7,7 @@ import { AddonCacheController } from "./addonCacheController";
 import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
-import { addonInfoResponse, addonVersion, errorMessages } from "../types";
+import { AddonInfoResponse, AddonVersion, ErrorMessages } from "../types";
 import {
   getInput,
   promptOverwrite,
@@ -15,11 +15,12 @@ import {
 } from "../views/addonView";
 import { promptProgress, showErrorMessage } from "../views/notificationView";
 
-export class AddonController{
-
-  constructor(private credentialController: CredentialController,
-              private addonCacheController: AddonCacheController,
-              private directoryController: DirectoryController){}
+export class AddonController {
+  constructor(
+    private credentialController: CredentialController,
+    private addonCacheController: AddonCacheController,
+    private directoryController: DirectoryController
+  ) {}
 
   /**
    * Fetches version information for a given add-on.
@@ -37,7 +38,7 @@ export class AddonController{
     const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });
     if (!response.ok) {
-      const errorMessages: errorMessages = {
+      const errorMessages: ErrorMessages = {
         window: {
           404: next
             ? `(Status ${response.status}): "Could not fetch more versions"`
@@ -71,20 +72,18 @@ export class AddonController{
    * @param urlVersion The version to download.
    * @returns the workspace folder, guid, and version.
    */
-  async downloadAndExtract(
-    urlGuid?: string,
-    urlVersion?: string
-  ) {
+  async downloadAndExtract(urlGuid?: string, urlVersion?: string) {
     try {
       const input = urlGuid || (await getInput());
-      const json: addonInfoResponse = await this.getAddonInfo(input);
+      const json: AddonInfoResponse = await this.getAddonInfo(input);
       const versionInfo = await this.getVersionChoice(input, urlVersion);
       const addonFileID = versionInfo.fileID;
       const version = versionInfo.version;
       const guid = json.guid;
       const addonID = json.id;
 
-      const workspaceFolder = await this.directoryController.getRootFolderPath();
+      const workspaceFolder =
+        await this.directoryController.getRootFolderPath();
       const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
 
       this.addonCacheController.addAddonToCache(guid, {
@@ -93,7 +92,10 @@ export class AddonController{
         id: addonID,
       });
 
-      const writeStream = await this.downloadAddon(addonFileID, compressedFilePath);
+      const writeStream = await this.downloadAddon(
+        addonFileID,
+        compressedFilePath
+      );
       await new Promise((resolve) => writeStream.on("finish", resolve));
       await this.extractAddon(
         compressedFilePath,
@@ -110,16 +112,13 @@ export class AddonController{
    * Cycles through the versions of an addon.
    * @param input A string identifying a given add-on.
    * @param urlVersion the linked version, if any
-   * @returns 
+   * @returns
    */
-  async getVersionChoice(
-    input: string,
-    urlVersion?: string
-  ){
-    const versions: addonVersion[] = [];
+  async getVersionChoice(input: string, urlVersion?: string) {
+    const versions: AddonVersion[] = [];
     let next: string | undefined = undefined;
     let init = true;
-  
+
     do {
       if (next || init) {
         init = false;
@@ -127,12 +126,12 @@ export class AddonController{
         versions.push(...res.results);
         next = res.next;
       }
-  
+
       const versionItems = versions.map((version) => version.version);
       next ? versionItems.push("More") : null;
-  
+
       // if opened from a vscode:// link, use the version from the link
-      const choice = urlVersion || await promptVersionChoice(versionItems);
+      const choice = urlVersion || (await promptVersionChoice(versionItems));
 
       if (choice === "More") {
         continue;
@@ -140,7 +139,7 @@ export class AddonController{
         const chosenVersion = versions.find(
           (version) => version.version === choice
         );
-  
+
         if (chosenVersion) {
           return {
             fileID: chosenVersion.file.id,
@@ -162,14 +161,14 @@ export class AddonController{
    * @param input A string identifying a given addon.
    * @returns The addon information.
    */
-  private async getAddonInfo(input: string): Promise<addonInfoResponse> {
+  private async getAddonInfo(input: string): Promise<AddonInfoResponse> {
     const slug: string = this.getAddonSlug(input);
     const url = `${constants.apiBaseURL}addons/addon/${slug}`;
     const headers = await this.credentialController.makeAuthHeader();
 
     const response = await fetch(url, { headers: headers });
     if (!response.ok) {
-      const errorMessages: errorMessages = {
+      const errorMessages: ErrorMessages = {
         window: {
           404: `(Status ${response.status}): Addon not found`,
           401: `(Status ${response.status}): Unauthorized request`,
@@ -205,7 +204,7 @@ export class AddonController{
     const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });
     if (!response.ok) {
-      const errorMessages: errorMessages = {
+      const errorMessages: ErrorMessages = {
         window: {
           404: `(Status ${response.status}): XPI download file not found`,
           401: `(Status ${response.status}): Unauthorized request for XPI file`,
@@ -238,7 +237,7 @@ export class AddonController{
   private async downloadAddon(fileID: string, filepath: string) {
     const dest = fs.createWriteStream(filepath, { flags: "w" });
     const handleError = async () => {
-      const errorMessages: errorMessages = {
+      const errorMessages: ErrorMessages = {
         window: {
           other: `Could not download addon to ${filepath}`,
         },
@@ -293,7 +292,7 @@ export class AddonController{
     await fs.promises.unlink(compressedFilePath);
 
     if (!fs.existsSync(addonVersionFolderPath)) {
-      const errorMessages: errorMessages = {
+      const errorMessages: ErrorMessages = {
         window: {
           other: `Extraction failed. Could not find ${addonVersionFolderPath}.`,
         },
@@ -346,7 +345,8 @@ export class AddonController{
     } else if (input.includes("review-unlisted/")) {
       delimiter = "review-unlisted/";
     }
-    return input.includes("/") ? input.split(delimiter)[1]?.split("/")[0] : input;
+    return input.includes("/")
+      ? input.split(delimiter)[1]?.split("/")[0]
+      : input;
   }
-
 }

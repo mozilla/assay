@@ -19,7 +19,6 @@ import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
-
   const storagePath: string = context.globalStorageUri.fsPath;
   const assayConfig = vscode.workspace.getConfiguration("assay");
   const fileConfig = vscode.workspace.getConfiguration("files");
@@ -31,8 +30,17 @@ export async function activate(context: vscode.ExtensionContext) {
   const directoryController = new DirectoryController(assayConfig, fileConfig);
   const rangeController = new RangeController(directoryController);
 
-  const addonController = new AddonController(credentialController, addonCacheController, directoryController);
-  const urlController = new UrlController(context, addonController, directoryController, rangeController);
+  const addonController = new AddonController(
+    credentialController,
+    addonCacheController,
+    directoryController
+  );
+  const urlController = new UrlController(
+    context,
+    addonController,
+    directoryController,
+    rangeController
+  );
   const updateController = new UpdateController();
   const diffController = new DiffController();
 
@@ -88,7 +96,10 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   const handleRootConfigurationChangeDisposable =
-    vscode.workspace.onDidChangeConfiguration(directoryController.handleRootConfigurationChange, directoryController);
+    vscode.workspace.onDidChangeConfiguration(
+      directoryController.handleRootConfigurationChange,
+      directoryController
+    );
 
   context.subscriptions.push(
     UriHandlerDisposable,
@@ -114,9 +125,8 @@ export async function activate(context: vscode.ExtensionContext) {
   const workspace = vscode.workspace.workspaceFolders;
   if (workspace) {
     const uri = workspace[0].uri;
-    if(!directoryController.inRoot(uri)){
+    if (!directoryController.inRoot(uri)) {
       return;
-
     }
   }
 
@@ -130,18 +140,42 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Review Controllers
   const fileDecorationProvider = new CustomFileDecorationProvider();
-  const fileDecoratorController = new FileDecoratorController(fileDecorationProvider);
-  const commentCacheController = new CommentCacheController(commentsCache, directoryController, fileDecoratorController, rangeController);
-  fileDecorationProvider.setProvideDecorationClause(commentCacheController.fileHasComment);
+  const fileDecoratorController = new FileDecoratorController(
+    fileDecorationProvider
+  );
+  const commentCacheController = new CommentCacheController(
+    commentsCache,
+    directoryController,
+    fileDecoratorController,
+    rangeController
+  );
+  fileDecorationProvider.setProvideDecorationClause(
+    commentCacheController.fileHasComment
+  );
 
-  const lintController = new LintController("addons-linter", credentialController, addonCacheController, directoryController);
-  const commentController = new CommentController("assay-comments", "Assay", commentCacheController, directoryController, rangeController);
-  const statusBarController = new StatusBarController(addonCacheController, directoryController);
+  const lintController = new LintController(
+    "addons-linter",
+    credentialController,
+    addonCacheController,
+    directoryController
+  );
+  const commentController = new CommentController(
+    "assay-comments",
+    "Assay",
+    commentCacheController,
+    directoryController,
+    rangeController
+  );
+  const statusBarController = new StatusBarController(
+    addonCacheController,
+    directoryController
+  );
 
   urlController.openCachedFile();
-  lintController.lintWorkspace(); 
+  lintController.lintWorkspace();
 
-  const fileDecorationProviderDisposable = vscode.window.registerFileDecorationProvider(fileDecorationProvider);
+  const fileDecorationProviderDisposable =
+    vscode.window.registerFileDecorationProvider(fileDecorationProvider);
 
   const updateStatusBarController = vscode.window.onDidChangeActiveTextEditor(
     statusBarController.updateStatusBar,
@@ -241,7 +275,6 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentsFolderDisposable,
     deleteCommentsFolderDisposable
   );
-
 }
 
 export function deactivate() {

@@ -4,16 +4,17 @@ import { CommentCacheController } from "./commentCacheController";
 import { DirectoryController } from "./directoryController";
 import { RangeController } from "./rangeController";
 import { AssayComment, AssayReply, AssayThread } from "../model/comment";
-import { contextValues } from "../types";
+import { ContextValues } from "../types";
 export class CommentController {
-
   controller: vscode.CommentController;
 
-  constructor(public id: string,
-              public label: string,
-              private commentCacheController: CommentCacheController,
-              private directoryController: DirectoryController,
-              private rangeController: RangeController) {
+  constructor(
+    public id: string,
+    public label: string,
+    private commentCacheController: CommentCacheController,
+    private directoryController: DirectoryController,
+    private rangeController: RangeController
+  ) {
     this.controller = vscode.comments.createCommentController(id, label);
     this.activateController();
   }
@@ -103,8 +104,10 @@ export class CommentController {
    * Export comments from current version.
    */
   async exportComments(thread: AssayThread) {
-    const didDelete = await this.commentCacheController.exportVersionComments(thread.uri);
-    if(didDelete){
+    const didDelete = await this.commentCacheController.exportVersionComments(
+      thread.uri
+    );
+    if (didDelete) {
       this.refetchComments();
     }
   }
@@ -124,7 +127,9 @@ export class CommentController {
    * @return the generated link.
    */
   async copyLinkFromThread(thread: AssayThread) {
-    const { guid, version, filepath, range } = await this.getThreadLocation(thread);
+    const { guid, version, filepath, range } = await this.getThreadLocation(
+      thread
+    );
     const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
     vscode.env.clipboard.writeText(link);
     vscode.window.showInformationMessage("Link copied to clipboard.");
@@ -184,9 +189,8 @@ export class CommentController {
    * @returns The guid, version, and filepath of the thread.
    */
   private async getFilepathInfo(thread: AssayThread) {
-    const { rootFolder, fullPath, guid, version, filepath } = await this.directoryController.splitUri(
-      thread.uri
-    );
+    const { rootFolder, fullPath, guid, version, filepath } =
+      await this.directoryController.splitUri(thread.uri);
     if (!fullPath.startsWith(rootFolder)) {
       vscode.window.showErrorMessage(
         "(Assay) File is not in the Addons root folder."
@@ -201,11 +205,13 @@ export class CommentController {
    * @returns the newly created comment.
    */
   private async createComment(
-    contextValue: contextValues,
+    contextValue: ContextValues,
     body: vscode.MarkdownString,
     thread: AssayThread | vscode.CommentThread
   ) {
-    const { filepath, range } = await this.getThreadLocation(thread as AssayThread);
+    const { filepath, range } = await this.getThreadLocation(
+      thread as AssayThread
+    );
     thread.label = `${filepath}${this.rangeController.rangeTruncation(range)}`;
 
     const newComment = new AssayComment(
@@ -231,7 +237,7 @@ export class CommentController {
 
   /**
    * Delete the given comment from cache.
-   * @param comment 
+   * @param comment
    */
   private async deleteCommentFromCache(comment: AssayComment) {
     const location = await this.getThreadLocation(comment.thread);
@@ -256,7 +262,8 @@ export class CommentController {
    * Populates workspace with comments.
    */
   private async loadCommentsFromCache() {
-    const comments = await this.commentCacheController.getCachedCommentIterator();
+    const comments =
+      await this.commentCacheController.getCachedCommentIterator();
     for (const comment of comments) {
       const { uri, body, contextValue, lineNumber } = comment;
       const range = await this.rangeController.stringToRange(lineNumber);
@@ -264,5 +271,4 @@ export class CommentController {
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);
     }
   }
-
 }

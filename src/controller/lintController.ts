@@ -4,18 +4,20 @@ import { AddonCacheController } from "./addonCacheController";
 import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
-import { Message, MessageType, errorMessages } from "../types";
+import { Message, MessageType, ErrorMessages } from "../types";
 import { showErrorMessage } from "../views/notificationView";
 
 export class LintController {
-
   diagnosticCollection: vscode.DiagnosticCollection;
 
-  constructor(public name: string,
-              private credentialController: CredentialController,
-              private addonCacheController: AddonCacheController,
-              private directoryController: DirectoryController){
-    this.diagnosticCollection = vscode.languages.createDiagnosticCollection(name);
+  constructor(
+    public name: string,
+    private credentialController: CredentialController,
+    private addonCacheController: AddonCacheController,
+    private directoryController: DirectoryController
+  ) {
+    this.diagnosticCollection =
+      vscode.languages.createDiagnosticCollection(name);
   }
 
   /**
@@ -27,7 +29,9 @@ export class LintController {
       return;
     }
 
-    const { versionPath, guid } = await this.directoryController.splitUri(workspace.uri);
+    const { versionPath, guid } = await this.directoryController.splitUri(
+      workspace.uri
+    );
     if (!versionPath) {
       return;
     }
@@ -66,17 +70,16 @@ export class LintController {
    * @returns The lint information.
    */
   private async fetchLints(guid: string) {
-    const { id: addonID, file_id: fileID } = await this.addonCacheController.getAddonFromCache([
-      guid,
-    ]);
-    
+    const { id: addonID, file_id: fileID } =
+      await this.addonCacheController.getAddonFromCache([guid]);
+
     const url = `${constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;
 
     const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });
 
     if (!response.ok) {
-      const errorMessages: errorMessages = {
+      const errorMessages: ErrorMessages = {
         window: {
           404: `(Status ${response.status}): Failed to lint. Validation not found.`,
           401: `(Status ${response.status}): Failed to lint. Unauthorized request.`,
@@ -91,7 +94,9 @@ export class LintController {
         },
       };
 
-      await showErrorMessage(errorMessages, response.status, this.fetchLints, [guid]);
+      await showErrorMessage(errorMessages, response.status, this.fetchLints, [
+        guid,
+      ]);
 
       return;
     }
@@ -151,5 +156,4 @@ export class LintController {
   private getUriFromVersionPath(versionPath: string, filepath: string) {
     return vscode.Uri.file(`${versionPath}/${filepath}`);
   }
-
 }

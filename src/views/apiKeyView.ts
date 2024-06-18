@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 
-
 export async function getApiKeyInputFromUser(placeHolder: string | undefined) {
   const apiKey = await vscode.window.showInputBox({
     prompt: "Enter your AMO API Key (e.g. user:12345678:123)",
@@ -13,7 +12,6 @@ export async function getApiKeyInputFromUser(placeHolder: string | undefined) {
   }
   return apiKey;
 }
-
 
 export async function getSecretInputFromUser(placeHolder: string | undefined) {
   const apiSecret = await vscode.window.showInputBox({

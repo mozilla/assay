@@ -4,7 +4,7 @@ import * as path from "path";
 export class AssayCache {
   cacheFolderPath: string;
   cacheFilePath: string;
-  constructor(public cacheName: string, public storagePath: string){
+  constructor(public cacheName: string, public storagePath: string) {
     this.cacheFolderPath = path.join(storagePath, ".cache");
     this.cacheFilePath = path.join(this.cacheFolderPath, `${cacheName}.json`);
   }
@@ -21,11 +21,7 @@ export class AssayCache {
   // may not exist. This function creates that folder and the cache folder
   // if they do not exist.
   // The folder mozilla.assay will continue to exist after this.
-  async addToCache(
-    keys: string[],
-    value: any
-  ) {
-
+  async addToCache(keys: string[], value: any) {
     if (!fs.existsSync(this.cacheFolderPath)) {
       await fs.promises.mkdir(this.cacheFolderPath, { recursive: true });
     }
@@ -64,17 +60,16 @@ export class AssayCache {
    * Removes a value at keys in cache cacheName.
    * @param keys The key(s) of the value.
    */
-  async removeFromCache(keys: string[]){
+  async removeFromCache(keys: string[]) {
     await this.addToCache(keys, "");
   }
 
   /**
-   * 
+   *
    * @param keys The key(s) of the value.
    * @returns the value stored at key(s).
    */
   async getFromCache(keys: string[] = []) {
-
     if (!fs.existsSync(this.cacheFilePath)) {
       return;
     }
@@ -107,7 +102,7 @@ export class AssayCache {
   /**
    * Upon removing comments, we need to remove empty objects from the cache
    * so that our file tree indicators are correct.
-   * @param levelObjects 
+   * @param levelObjects
    */
   private removeEmptyObjectsFromCache(levelObjects: any[]) {
     while (levelObjects.length > 0) {
@@ -118,5 +113,4 @@ export class AssayCache {
       }
     }
   }
-
 }

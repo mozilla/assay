@@ -1,15 +1,16 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
-import { filesReadonlyIncludeConfig } from "../types";
+import { FilesReadonlyIncludeConfig } from "../types";
 import { selectRootFolder } from "../views/rootView";
 
-export class DirectoryController{
-
+export class DirectoryController {
   private cachedRootFolder: string | undefined;
 
-  constructor(private assayConfig: vscode.WorkspaceConfiguration,
-              private fileConfig: vscode.WorkspaceConfiguration){
+  constructor(
+    private assayConfig: vscode.WorkspaceConfiguration,
+    private fileConfig: vscode.WorkspaceConfiguration
+  ) {
     const rootFolder = this.assayConfig.get<string>("rootFolder");
     this.setCachedRootFolder(rootFolder);
   }
@@ -39,9 +40,7 @@ export class DirectoryController{
    * 2) the new one is added.
    * @param event The configuration change event.
    */
-  async handleRootConfigurationChange(
-    event: vscode.ConfigurationChangeEvent
-  ) {
+  async handleRootConfigurationChange(event: vscode.ConfigurationChangeEvent) {
     if (
       event.affectsConfiguration("assay.rootFolder") ||
       event.affectsConfiguration("files.readonlyInclude")
@@ -62,7 +61,9 @@ export class DirectoryController{
     const guid = relativePath.split("/")[1];
     const version = relativePath.split("/")[2];
     const filepath = relativePath.split(version)[1];
-    const versionPath = version ? `${rootFolder}/${guid}/${version}` : undefined;
+    const versionPath = version
+      ? `${rootFolder}/${guid}/${version}`
+      : undefined;
     return {
       rootFolder,
       versionPath,
@@ -76,10 +77,10 @@ export class DirectoryController{
 
   /**
    * Determines whether uri is in the rootFolder.
-   * @param uri 
+   * @param uri
    * @returns whether the uri is in rootFolder.
    */
-  async inRoot(uri: vscode.Uri){
+  async inRoot(uri: vscode.Uri) {
     const { rootFolder, fullPath } = await this.splitUri(uri);
     if (fullPath.startsWith(rootFolder)) {
       return true;
@@ -108,7 +109,7 @@ export class DirectoryController{
 
     const readOnlyFiles = this.fileConfig.get(
       "readonlyInclude"
-    ) as filesReadonlyIncludeConfig;
+    ) as FilesReadonlyIncludeConfig;
 
     // remove the cachedRootFolder's readonly property.
     const globInitialFolder = `${this.cachedRootFolder}/**`;
@@ -145,5 +146,4 @@ export class DirectoryController{
   private setCachedRootFolder(filepath: string | undefined) {
     this.cachedRootFolder = filepath;
   }
-
 }

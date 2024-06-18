@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { contextValues } from "../types";
+import { ContextValues } from "../types";
 
 let commentId = 0;
 export class AssayThread implements vscode.CommentThread {
@@ -32,7 +32,7 @@ export class AssayComment implements vscode.Comment {
     public mode: vscode.CommentMode,
     public author: vscode.CommentAuthorInformation,
     public thread: AssayThread,
-    public contextValue: contextValues
+    public contextValue: ContextValues
   ) {
     this.id = ++commentId;
     this.savedBody = body;

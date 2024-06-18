@@ -3,11 +3,10 @@ import * as vscode from "vscode";
 
 import { promptDiffCommand } from "../views/diffView";
 
-export class DiffController{
-
+export class DiffController {
   private config: vscode.WorkspaceConfiguration;
-  
-  constructor(){
+
+  constructor() {
     this.config = vscode.workspace.getConfiguration("assay");
   }
 
@@ -53,15 +52,13 @@ export class DiffController{
    * @returns the saved diff command, if any
    */
   private async setDiffCommand() {
-    try{
+    try {
       const input = promptDiffCommand();
       await this.config.update("diffTool", input, true);
       return input;
-    }
-    catch{
+    } catch {
       console.error("No diff command provided.");
       return undefined;
     }
   }
-
 }

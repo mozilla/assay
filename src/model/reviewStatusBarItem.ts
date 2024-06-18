@@ -10,12 +10,11 @@ export class ReviewStatusBarItem {
   );
   text = "Assay";
 
-  public hide(){
+  public hide() {
     this.statusBarItem.hide();
   }
 
-  public updateAndShow(guid: string, reviewUrl: string){
-
+  public updateAndShow(guid: string, reviewUrl: string) {
     this.statusBarItem.text = `${guid} - Review Page`;
     this.statusBarItem.tooltip = reviewUrl;
     this.statusBarItem.command = {
