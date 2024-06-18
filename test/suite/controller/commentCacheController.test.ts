@@ -8,9 +8,13 @@ import { DirectoryController } from "../../../src/controller/directoryController
 import { FileDecoratorController } from "../../../src/controller/fileDecoratorController";
 import { RangeController } from "../../../src/controller/rangeController";
 import { AssayCache } from "../../../src/model/cache";
+import * as exportView from "../../../src/views/exportView";
 
 
-let assayCacheStub, directoryControllerStub: DirectoryController, fileDecoratorControllerStub, rangeControllerStub: RangeController;
+let assayCacheStub: sinon.SinonStubbedInstance<AssayCache>,
+directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
+fileDecoratorControllerStub: sinon.SinonStubbedInstance<FileDecoratorController>, 
+rangeControllerStub: RangeController;
 let commentCacheController: CommentCacheController;
 
 
@@ -24,20 +28,17 @@ describe("commentCacheController.ts", () => {
     assayCacheStub = sinon.createStubInstance(AssayCache);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
     fileDecoratorControllerStub = sinon.createStubInstance(FileDecoratorController);
-    rangeControllerStub = sinon.createStubInstance(RangeController);
+    rangeControllerStub = new RangeController(directoryControllerStub);
 
-    sinon.stub(DirectoryController.prototype, "getRootFolderPath").resolves("/test-root");
-    // sinon.stub(DirectoryController.prototype, "splitUri");
-    // sinon.stub(RangeController.prototype, "rangeTruncation");
+    directoryControllerStub.getRootFolderPath.resolves("/test-root");
 
     commentCacheController = new CommentCacheController(assayCacheStub, directoryControllerStub, fileDecoratorControllerStub, rangeControllerStub);
 
   });
 
   describe("compileComments()", () => {
-
     it("should return the compiled comments.", async () => {
-      sinon.stub(AssayCache.prototype, "getFromCache").resolves({
+      assayCacheStub.getFromCache.resolves({
         "/test-filepath": {
           "#L1": {
             "body": "test-comment"
@@ -52,37 +53,20 @@ describe("commentCacheController.ts", () => {
     });
   });
 
-  describe("exportCommentsFromContext()", () => {
-
+  describe("checkUri()", () => {
     it("should throw an error if the file is not in the root folder.", async () => {
-      const editor = {
-        document: {
-          uri: {
-            fsPath: "/test-filepath",
-          },
-        },
-      } as vscode.TextEditor;
-      sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
-
+      directoryControllerStub.splitUri.resolves({rootFolder: "/test-root", fullPath: "/not-root"} as any);
       try {
-        await commentCacheController.exportVersionComments(vscode.Uri.file("/not-root"));
+        await commentCacheController["checkUri"](vscode.Uri.file("/not-root"));
       } catch (err: any) {
         expect(err.message).to.equal("File is not in the root folder");
       }
     });
 
     it("should throw an error if there is no guid or version.", async () => {
-      const editor = {
-        document: {
-          uri: {
-            fsPath: "/test-root",
-          },
-        },
-      } as vscode.TextEditor;
-      sinon.stub(vscode.window, "activeTextEditor").get(() => editor);
-
+      directoryControllerStub.splitUri.resolves({rootFolder: "/test-root", fullPath: "/test-root"} as any);
       try {
-        await commentCacheController.exportVersionComments(vscode.Uri.file("/test-root"));
+        await commentCacheController["checkUri"](vscode.Uri.file("/test-root"));
       } catch (err: any) {
         expect(err.message).to.equal("No guid or version found");
       }
@@ -91,40 +75,44 @@ describe("commentCacheController.ts", () => {
   
   describe("deleteComments", () => {
     it("should delete all comments in the URI's GUID and version.", async () => {
+      directoryControllerStub.splitUri.resolves({rootFolder: "/test-root",
+      guid: "guid", version: "version"} as any);
+
       sinon.stub(Object, 'entries').returns([
         ["filepath", "comments"]
       ]);
-      const deleteCommentFromCacheStub = sinon.stub(CommentCacheController.prototype, "deleteCommentFromCache");
-      const loadFileDecoratorStub = sinon.stub(FileDecoratorController.prototype, "loadFileDecoratorByUri");
 
       await commentCacheController.deleteComments(vscode.Uri.file("/test-root/guid/version"));
-      expect(deleteCommentFromCacheStub.called).to.be.true;
-      expect(loadFileDecoratorStub.called).to.be.true;
+      expect(assayCacheStub.removeFromCache.called).to.be.true;
+      expect(fileDecoratorControllerStub.loadFileDecoratorByUri.called).to.be.true;
     });
   });
 
   describe("exportVersionComments", () => {
-
     it("should open an information message.", async () => {
+      assayCacheStub.getFromCache.resolves({
+        "/test-filepath": {
+          "#L1": {
+            "body": "test-comment"
+          },
+        },
+      });
+
+      directoryControllerStub.splitUri.resolves({rootFolder: "/test-root",
+      guid: "guid", version: "version"} as any);
 
       const showInformationMessageStub = sinon.stub(
         vscode.window,
         "showInformationMessage"
       );
 
-      const removeFromCacheStub = sinon.stub(AssayCache.prototype, "removeFromCache");
-      const fileDecoratorStub = sinon.stub(FileDecoratorController.prototype, "loadFileDecoratorByUri");
-      
-      await commentCacheController.exportVersionComments(vscode.Uri.file("guid"));
-      expect(removeFromCacheStub.called).to.be.true;
-      expect(fileDecoratorStub.called).to.be.true;
+      const getPreferenceStub = sinon.stub(exportView, "getDeleteCommentsPreference");
+      getPreferenceStub.resolves(false);
 
+      await commentCacheController.exportVersionComments(vscode.Uri.file("guid"));
       vscode.commands.executeCommand('workbench.action.closeActiveEditor');
       expect(showInformationMessageStub.called).to.be.true;
-
     });
-
-    
   });
 
 });
