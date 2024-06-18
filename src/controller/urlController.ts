@@ -3,14 +3,13 @@ import * as vscode from "vscode";
 
 import { AddonController } from "./addonController";
 import { DirectoryController } from "./directoryController";
-import { RangeController } from "./rangeController";
+import { RangeHelper } from "../helper/rangeHelper";
 
 export class UrlController implements vscode.UriHandler {
   constructor(
     private context: vscode.ExtensionContext,
     private addonController: AddonController,
-    private directoryController: DirectoryController,
-    private rangeController: RangeController
+    private directoryController: DirectoryController
   ) {}
 
   /**
@@ -18,13 +17,19 @@ export class UrlController implements vscode.UriHandler {
    * @param uri The URI of the file.
    * @param lineNumber The line(s) to focus on, as its string representation.
    */
-  async revealFile(uri: vscode.Uri, lineNumber?: string) {
+  async revealFile(uri: vscode.Uri, lineNumber: string | undefined) {
     const editor = await vscode.window.showTextDocument(uri);
+
     if (lineNumber) {
+      const { endLine } = RangeHelper.splitString(lineNumber);
+      const buffer = await this.directoryController.readFile(uri);
+      const content = buffer?.toString()?.split("\n");
+      const endCharacter = content[endLine]?.length;
+
       // highlight offending lines
-      const lineRange = await this.rangeController.stringToRange(
+      const lineRange = await RangeHelper.fromString(
         lineNumber,
-        uri
+        endCharacter
       );
       const selection = new vscode.Selection(lineRange.start, lineRange.end);
       editor.selections = [selection];

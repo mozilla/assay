@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { CommentCacheController } from "./commentCacheController";
 import { DirectoryController } from "./directoryController";
-import { RangeController } from "./rangeController";
+import { RangeHelper } from "../helper/rangeHelper";
 import { AssayComment, AssayReply, AssayThread } from "../model/comment";
 import { ContextValues } from "../types";
 export class CommentController {
@@ -12,8 +12,7 @@ export class CommentController {
     public id: string,
     public label: string,
     private commentCacheController: CommentCacheController,
-    private directoryController: DirectoryController,
-    private rangeController: RangeController
+    private directoryController: DirectoryController
   ) {
     this.controller = vscode.comments.createCommentController(id, label);
     this.activateController();
@@ -142,7 +141,7 @@ export class CommentController {
    * @returns The location of the thread.
    */
   async getThreadLocation(thread: AssayThread) {
-    const range = this.rangeController.rangeToString(thread.range);
+    const range = RangeHelper.toString(thread.range);
     const { guid, version, filepath } = await this.getFilepathInfo(thread);
     return { uri: thread.uri, guid, version, filepath, range: range };
   }
@@ -212,7 +211,7 @@ export class CommentController {
     const { filepath, range } = await this.getThreadLocation(
       thread as AssayThread
     );
-    thread.label = `${filepath}${this.rangeController.rangeTruncation(range)}`;
+    thread.label = `${filepath}${RangeHelper.truncate(range)}`;
 
     const newComment = new AssayComment(
       body,
@@ -266,7 +265,7 @@ export class CommentController {
       await this.commentCacheController.getCachedCommentIterator();
     for (const comment of comments) {
       const { uri, body, contextValue, lineNumber } = comment;
-      const range = await this.rangeController.stringToRange(lineNumber);
+      const range = await RangeHelper.fromString(lineNumber);
       const thread = this.controller.createCommentThread(uri, range, []);
       this.createComment(contextValue, new vscode.MarkdownString(body), thread);
     }

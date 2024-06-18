@@ -9,10 +9,10 @@ import { DiffController } from "./controller/diffController";
 import { DirectoryController } from "./controller/directoryController";
 import { FileDecoratorController } from "./controller/fileDecoratorController";
 import { LintController } from "./controller/lintController";
-import { RangeController } from "./controller/rangeController";
 import { StatusBarController } from "./controller/statusBarController";
 import { UpdateController } from "./controller/updateController";
 import { UrlController } from "./controller/urlController";
+import { RangeHelper } from "./helper/rangeHelper";
 import { AssayCache } from "./model/cache";
 import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
 import { AssayTreeDataProvider } from "./views/sidebarView";
@@ -28,7 +28,6 @@ export async function activate(context: vscode.ExtensionContext) {
   const addonCacheController = new AddonCacheController(reviewsCache);
   const credentialController = new CredentialController(context.secrets);
   const directoryController = new DirectoryController(assayConfig, fileConfig);
-  const rangeController = new RangeController(directoryController);
 
   const addonController = new AddonController(
     credentialController,
@@ -38,8 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const urlController = new UrlController(
     context,
     addonController,
-    directoryController,
-    rangeController
+    directoryController
   );
   const updateController = new UpdateController();
   const diffController = new DiffController();
@@ -146,8 +144,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const commentCacheController = new CommentCacheController(
     commentsCache,
     directoryController,
-    fileDecoratorController,
-    rangeController
+    fileDecoratorController
   );
   fileDecorationProvider.setProvideDecorationClause(
     commentCacheController.fileHasComment
@@ -163,8 +160,7 @@ export async function activate(context: vscode.ExtensionContext) {
     "assay-comments",
     "Assay",
     commentCacheController,
-    directoryController,
-    rangeController
+    directoryController
   );
   const statusBarController = new StatusBarController(
     addonCacheController,

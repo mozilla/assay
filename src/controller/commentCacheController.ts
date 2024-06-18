@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { DirectoryController } from "./directoryController";
 import { FileDecoratorController } from "./fileDecoratorController";
-import { RangeController } from "./rangeController";
+import { RangeHelper } from "../helper/rangeHelper";
 import { AssayCache } from "../model/cache";
 import { CommentsCache, JSONComment, ThreadLocation } from "../types";
 import { getDeleteCommentsPreference } from "../views/exportView";
@@ -11,8 +11,7 @@ export class CommentCacheController {
   constructor(
     public cache: AssayCache,
     private directoryController: DirectoryController,
-    private fileDecoratorController: FileDecoratorController,
-    private rangeController: RangeController
+    private fileDecoratorController: FileDecoratorController
   ) {}
 
   /**
@@ -90,7 +89,7 @@ export class CommentCacheController {
 
     for (const filepath in comments) {
       for (const lineNumber in comments[filepath]) {
-        compiledComments += `File:\n${filepath}${this.rangeController.rangeTruncation(
+        compiledComments += `File:\n${filepath}${RangeHelper.truncate(
           lineNumber
         )}\n\n`;
         const comment = comments[filepath][lineNumber].body;
