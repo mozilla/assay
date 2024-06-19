@@ -3,20 +3,16 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import * as constants from "../../../src/config/globals";
-import * as cacheFunctions from "../../../src/model/cache";
-import { loadFileDecorator } from "../../../src/utils/loadFileDecorator";
-import * as reviewRootDir from "../../../src/controller/directoryController";
+import { FileDecoratorController } from "../../../src/controller/fileDecoratorController";
+import { CustomFileDecorationProvider } from "../../../src/model/fileDecorationProvider";
+
+let customFileDecorationProviderStub: sinon.SinonStubbedInstance<CustomFileDecorationProvider>;
+let fileDecoratorController: FileDecoratorController;
 
 describe("loadFileDecorator.ts", async () => {
   beforeEach(() => {
-    const getFileDecoratorStub = sinon.stub(
-      constants,
-      "getFileDecorator"
-    );
-    getFileDecoratorStub.returns({
-      updateDecorations: sinon.stub(),
-    } as any);
+    customFileDecorationProviderStub = sinon.createStubInstance(CustomFileDecorationProvider);
+    fileDecoratorController = new FileDecoratorController(customFileDecorationProviderStub);
   });
 
   afterEach(async () => {
@@ -24,63 +20,10 @@ describe("loadFileDecorator.ts", async () => {
   });
 
   describe("loadFileDecoratorByUri()", async () => {
-    it("should return if there is no activeTextEditor.", async () => {
-      const result = await loadFileDecoratorByUri();
-      expect(result).to.be.undefined;
-    });
-
-    it("should throw an error if the file is not in the root folder.", async () => {
-      const activeTextEditorStub = sinon.stub(
-        vscode.window,
-        "activeTextEditor"
-      );
-      activeTextEditorStub.value({
-        document: {
-          uri: {
-            fsPath: "test-fs-path",
-          },
-        },
-      });
-
-      const getRootFolderPathStub = sinon.stub(
-        reviewRootDir,
-        "getRootFolderPath"
-      );
-      getRootFolderPathStub.resolves("test-root-folder-path");
-
-      try {
-        await loadFileDecoratorByUri();
-      } catch (err: any) {
-        expect(err.message).to.equal("File is not in the root folder");
-      }
-    });
-
-    it("should return if there are no comments.", async () => {
-      const activeTextEditorStub = sinon.stub(
-        vscode.window,
-        "activeTextEditor"
-      );
-      activeTextEditorStub.value({
-        document: {
-          uri: {
-            fsPath:
-              "test-root-folder-path/test-guid/test-version/test-filepath",
-          },
-        },
-        setDecorations: sinon.stub(),
-      });
-
-      const getRootFolderPathStub = sinon.stub(
-        reviewRootDir,
-        "getRootFolderPath"
-      );
-      getRootFolderPathStub.resolves("test-root-folder-path");
-
-      const getFromCacheStub = sinon.stub(cacheFunctions, "getFromCache");
-      getFromCacheStub.resolves(undefined);
-
-      const result = await loadFileDecoratorByUri();
-      expect(result).to.be.undefined;
+    it("should call the fileDecorationProvider.", async () => {
+        const uri = vscode.Uri.parse("test-uri");
+        await fileDecoratorController.loadFileDecoratorByUri(uri);
+        expect(customFileDecorationProviderStub.updateDecorations.calledOnceWith(uri)).to.be.true;
     });
   });
 });

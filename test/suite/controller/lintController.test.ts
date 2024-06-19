@@ -1,27 +1,22 @@
 import { expect } from "chai";
-import { afterEach, describe, it } from "mocha";
+import { afterEach, describe, it, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { lintWorkspace } from "../../../src/commands/lintAddon";
-import * as globals from "../../../src/config/globals";
-import * as cacheFunctions from "../../../src/model/cache";
-import * as getThreadLocation from "../../../src/utils/helper";
-import * as authUtils from "../../../src/utils/requestAuth";
-import * as splitUri from "../../../src/utils/splitUri";
-import * as notificationView from "../../../src/views/notificationView";
+import { AddonCacheController } from "../../../src/controller/addonCacheController";
+import { CredentialController } from "../../../src/controller/credentialController";
+import { DirectoryController } from "../../../src/controller/directoryController";
+import { LintController } from "../../../src/controller/lintController";
+import { NotificationView } from "../../../src/views/notificationView";
+let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
+addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
+directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
+let lintController: LintController;
+let collection: vscode.DiagnosticCollection;
 
-describe("addonDownload.ts", async () => {
+describe("lintController.ts", async () => {
 
-  afterEach(async () => {
-    sinon.restore();
-  });
-
-  describe("lintWorkspace()", () => {
-    it("should correctly create a set Diagnostic[] from lint results and set it in the diagnosticCollection.", async () => {
-        
-        const readFileStub = sinon.stub(getThreadLocation, 'readFile');
-        readFileStub.resolves(new Uint8Array());
+    beforeEach(() => {
 
         const workspaceFoldersStub = sinon.stub(vscode.workspace, "workspaceFolders");
         workspaceFoldersStub.value([
@@ -30,8 +25,17 @@ describe("addonDownload.ts", async () => {
             },
         ]);
 
-        const splitUriStub = sinon.stub(splitUri, "splitUri");
-        splitUriStub.resolves({
+         collection = vscode.languages.createDiagnosticCollection("test-linter");
+
+        credentialControllerStub = sinon.createStubInstance(CredentialController);
+        credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
+
+        addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
+        addonCacheControllerStub.getAddonFromCache.resolves({id: "id", file_id: "fileID"});
+
+        directoryControllerStub = sinon.createStubInstance(DirectoryController);
+        directoryControllerStub.readFile.resolves(new Uint8Array());
+        directoryControllerStub.splitUri.resolves({
             rootFolder: "",
             versionPath: "version",
             fullPath: "",
@@ -41,11 +45,16 @@ describe("addonDownload.ts", async () => {
             filepath: ""
         });
 
-        const getFromCacheStub = sinon.stub(cacheFunctions, "getFromCache");
-        getFromCacheStub.resolves({id: "id", file_id: "fileID"});
+        lintController = new LintController(collection, credentialControllerStub, addonCacheControllerStub, directoryControllerStub);
 
-        const authStub = sinon.stub(authUtils, "makeAuthHeader");
-        authStub.resolves({ Authorization: "test" });
+    });
+
+  afterEach(async () => {
+    sinon.restore();
+  });
+
+  describe("lintWorkspace()", () => {
+    it("should correctly create a set Diagnostic[] from lint results and set it in the diagnosticCollection.", async () => {
 
         const data = {
             success: true,
@@ -88,11 +97,7 @@ describe("addonDownload.ts", async () => {
             ok: true
         } as unknown as Response);
 
-        const collection = vscode.languages.createDiagnosticCollection("addons-linter");
-        const getDiagnosticCollectionStub = sinon.stub(globals, "getDiagnosticCollection");
-        getDiagnosticCollectionStub.returns(collection);
-
-        await lintWorkspace();
+        await lintController.lintWorkspace();
 
         const errorUri = vscode.Uri.parse("version/file1.js");
         expect(collection.has(errorUri)).to.be.equal(true);
@@ -146,34 +151,7 @@ describe("addonDownload.ts", async () => {
       });
 
     it("should show an error message when fetch fails with a 404", async () => {
-        const readFileStub = sinon.stub(getThreadLocation, 'readFile');
-        readFileStub.resolves(new Uint8Array());
-
-        const workspaceFoldersStub = sinon.stub(vscode.workspace, "workspaceFolders");
-        workspaceFoldersStub.value([
-            {
-            uri: "rootUri",
-            },
-        ]);
-
-        const splitUriStub = sinon.stub(splitUri, "splitUri");
-        splitUriStub.resolves({
-            rootFolder: "",
-            versionPath: "version",
-            fullPath: "",
-            relativePath: "",
-            guid: "",
-            version: "",
-            filepath: ""
-        });
-
-        const getFromCacheStub = sinon.stub(cacheFunctions, "getFromCache");
-        getFromCacheStub.resolves({id: "id", file_id: "fileID"});
-
-        const showErrorMessageStub = sinon.stub(notificationView, "showErrorMessage");
-
-        const authStub = sinon.stub(authUtils, "makeAuthHeader");
-        authStub.resolves({ Authorization: "test" });
+        const showErrorMessageStub = sinon.stub(NotificationView, "showErrorMessage");
 
         const data = {
             success: true,
@@ -185,7 +163,7 @@ describe("addonDownload.ts", async () => {
             status: 404
         } as unknown as Response);
 
-        await lintWorkspace();
+        await lintController.lintWorkspace();
         
         expect(showErrorMessageStub.called).to.be.true;
     });

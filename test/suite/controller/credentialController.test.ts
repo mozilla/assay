@@ -3,7 +3,9 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-const secretsStubReturn = {
+import { CredentialController } from "../../../src/controller/credentialController";
+
+const secretStorageStub = {
   get: async () => {
     return "test";
   },
@@ -22,85 +24,55 @@ const secretsStubReturn = {
   },
 };
 
-describe("getApiCreds.ts.", async () => {
-  beforeEach(() => {
-    const secretsStub = sinon.stub(authUtils, "getExtensionSecretStorage");
-    secretsStub.returns(secretsStubReturn);
-  });
+const creds = {
+    apiKey: "test",
+    secret: "test",
+};
+    
+describe("credentialController.ts.", async () => {
 
-  afterEach(() => {
-    sinon.restore();
-  });
-
-  describe("getCredsFromStorage().", () => {
-    it("should return the creds if they exist.", async () => {
-      const result = await getCredsFromStorage();
-      expect(result.apiKey).to.equal("test");
-      expect(result.secret).to.equal("test");
+    afterEach(() => {
+        sinon.restore();
     });
 
-    it("should error if the creds don't exist.", async () => {
-      sinon.restore();
+    describe("getCredsFromStorage().", () => {
+        it("should return the creds if they exist.", async () => {
+            const credentialController = new CredentialController(secretStorageStub);
+            const result = await credentialController.getCredsFromStorage();
+            expect(result.apiKey).to.equal("test");
+            expect(result.secret).to.equal("test");
+        });
 
-      const secretsStub = sinon.stub(authUtils, "getExtensionSecretStorage");
-      const secretsStubReturnUndefined = secretsStubReturn;
-      secretsStubReturnUndefined.get = async () => {
-        return "";
-      };
-      secretsStub.returns(secretsStubReturnUndefined);
+        it("should error if the creds don't exist.", async () => {
 
-      const errorMessageWindowStub = sinon.stub(
-        vscode.window,
-        "showErrorMessage"
-      );
-      errorMessageWindowStub.resolves({ title: "Cancel" });
+            const secretStorageStubUndefined = secretStorageStub;
+            secretStorageStubUndefined.get = async () => {
+                return "";
+            };
 
-      try {
-        await getCredsFromStorage();
-      } catch (error: any) {
-        expect(error.message).to.equal("No API Key or Secret found");
-      }
+            const credentialController = new CredentialController(secretStorageStubUndefined);
+
+
+            const errorMessageWindowStub = sinon.stub(
+                vscode.window,
+                "showErrorMessage"
+            );
+            errorMessageWindowStub.resolves({ title: "Cancel" });
+
+            try {
+                await credentialController.getCredsFromStorage();
+            } catch (error: any) {
+                expect(error.message).to.equal("No API Key or Secret found");
+            }
+        });
     });
-  });
 
+    describe("makeAuthHeader()", () => {
+        it("should return the auth header.", async () => {
+            const credentialController = new CredentialController(secretStorageStub);
+            sinon.stub(credentialController, "getCredsFromStorage").resolves(creds);
+        const result = await credentialController.makeAuthHeader();
+        expect(result).to.have.property("Authorization");
+        });
+    });
 });
-
-import { expect } from "chai";
-import { describe, it, afterEach } from "mocha";
-import * as sinon from "sinon";
-
-import * as credUtils from "../../../src/commands/getApiCreds";
-import { makeToken, makeAuthHeader } from "../../../src/utils/requestAuth";
-
-describe("requestAuth.ts", () => {
-  afterEach(() => {
-    sinon.restore();
-  });
-
-  describe("makeToken()", () => {
-    it("should return the token.", async () => {
-      const creds = {
-        apiKey: "test",
-        secret: "test",
-      };
-      const getCredsStub = sinon.stub(credUtils, "getCredsFromStorage");
-      getCredsStub.resolves(creds);
-      const result = await makeToken();
-      expect(result).to.be.a("string");
-    });
-  });
-
-  describe("makeAuthHeader()", () => {
-    it("should return the auth header.", async () => {
-      const creds = {
-        apiKey: "test",
-        secret: "test",
-      };
-      const getCredsStub = sinon.stub(credUtils, "getCredsFromStorage");
-      getCredsStub.resolves(creds);
-      const result = await makeAuthHeader();
-      expect(result).to.have.property("Authorization");
-    });
-  });
-});
-

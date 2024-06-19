@@ -1,17 +1,33 @@
 import { expect } from "chai";
 import * as fs from "fs";
-import { describe, it, afterEach } from "mocha";
+import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { handleUri, openWorkspace, getAddonByUrl } from "../../../src/controller/urlController";
-import * as openFromUrl from "../../../src/controller/urlController";
-import * as globals from "../../../src/config/globals";
-import * as addonController from "../../../src/controller/addonController";
-import * as reviewRootDir from "../../../src/controller/directoryController";
+import { AddonController } from "../../../src/controller/addonController";
+import { DirectoryController } from "../../../src/controller/directoryController";
+import { UrlController } from "../../../src/controller/urlController";
+
+const context = {
+    globalState: {
+      update: sinon.stub(),
+    },
+} as any;
+
+let addonControllerStub: sinon.SinonStubbedInstance<AddonController>,
+directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
+
+let urlController: UrlController;
 
 
-describe("openFromUrl.ts", async () => {
+describe("urlController.ts", async () => {
+
+    beforeEach(() => {
+        addonControllerStub = sinon.createStubInstance(AddonController);
+        directoryControllerStub = sinon.createStubInstance(DirectoryController);
+        urlController = new UrlController(context, addonControllerStub, directoryControllerStub);
+    });
+
   afterEach(async () => {
     sinon.restore();
   });
@@ -21,12 +37,9 @@ describe("openFromUrl.ts", async () => {
       const uri = {
         path: "/test-action/test-guid/test-version",
       };
-      const getRootFolderPathStub = sinon.stub(
-        reviewRootDir,
-        "getRootFolderPath"
-      );
-      await handleUri(uri as any);
-      expect(getRootFolderPathStub.called).to.be.false;
+
+      await urlController.handleUri(uri as any);
+      expect(directoryControllerStub.getRootFolderPath.called).to.be.false;
     });
 
     it("should fail the stat check and call downloadAndExtract() if the manifest does not exist.", async () => {
@@ -38,20 +51,11 @@ describe("openFromUrl.ts", async () => {
         path: "/review/test-guid/test-version",
       };
       
-      const getRootFolderPathStub = sinon.stub(
-        reviewRootDir,
-        "getRootFolderPath"
-      );
-      getRootFolderPathStub.resolves("test-root-folder-path");
+      directoryControllerStub.getRootFolderPath.resolves("test-root-folder-path");
+      addonControllerStub.downloadAndExtract.resolves();
 
       const fsStatStub = sinon.stub(fs.promises, "stat");
       fsStatStub.rejects();
-
-      const downloadAndExtractStub = sinon.stub(
-        addonController,
-        "downloadAndExtract"
-      );
-      downloadAndExtractStub.resolves();
 
       const showTextDocumentStub = sinon.stub(
         vscode.window,
@@ -59,19 +63,8 @@ describe("openFromUrl.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
-      const context = {
-        globalState: {
-          update: sinon.stub(),
-        },
-      };
-      const getExtensionContextStub = sinon.stub(
-        globals,
-        "getExtensionContext"
-      );
-      getExtensionContextStub.returns(context as any);
-
-      await handleUri(uri as any);
-      expect(downloadAndExtractStub.called).to.be.true;
+      await urlController.handleUri(uri as any);
+      expect(addonControllerStub.downloadAndExtract.called).to.be.true;
     });
 
     it("should not fail the stat check and not call downloadAndExtract().", async () => {
@@ -82,19 +75,10 @@ describe("openFromUrl.ts", async () => {
       const uri = {
         path: "/review/test-guid/test-version",
       };
-      const getRootFolderPathStub = sinon.stub(
-        reviewRootDir,
-        "getRootFolderPath"
-      );
-      getRootFolderPathStub.resolves("test-root-folder-path");
+      directoryControllerStub.getRootFolderPath.resolves("test-root-folder-path");
 
       const fsStatStub = sinon.stub(fs.promises, "stat");
       fsStatStub.resolves();
-
-      const downloadAndExtractStub = sinon.stub(
-        addonController,
-        "downloadAndExtract"
-      );
 
       const showTextDocumentStub = sinon.stub(
         vscode.window,
@@ -102,36 +86,15 @@ describe("openFromUrl.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
-      const context = {
-        globalState: {
-          update: sinon.stub(),
-        },
-      };
-      const getExtensionContextStub = sinon.stub(
-        globals,
-        "getExtensionContext"
-      );
-      getExtensionContextStub.returns(context as any);
 
-      await handleUri(uri as any);
-      expect(downloadAndExtractStub.called).to.be.false;
+      await urlController.handleUri(uri as any);
+      expect(addonControllerStub.downloadAndExtract.called).to.be.false;
     });
   });
 
   describe("openWorkspace()", async () => {
     it("should open the manifest if the workspace is already open.", async () => {
       
-      const context = {
-        globalState: {
-          update: sinon.stub(),
-        },
-      };
-      const getExtensionContextStub = sinon.stub(
-        globals,
-        "getExtensionContext"
-      );
-      getExtensionContextStub.returns(context as any);
-
       const executeCommandStub = sinon.stub(
         vscode.commands,
         "executeCommand"
@@ -140,11 +103,7 @@ describe("openFromUrl.ts", async () => {
 
       const manifestUri = vscode.Uri.parse("test-manifest-uri");
       const rootUri = vscode.Uri.parse("test-root-uri");
-      const getRootFolderPathStub = sinon.stub(
-        reviewRootDir,
-        "getRootFolderPath"
-      );
-      getRootFolderPathStub.resolves(rootUri.fsPath);
+      directoryControllerStub.getRootFolderPath.resolves(rootUri.fsPath);
 
       const workspaceFoldersStub = sinon.stub(vscode.workspace, "workspaceFolders");
       workspaceFoldersStub.value([
@@ -159,64 +118,36 @@ describe("openFromUrl.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
-      await openWorkspace(manifestUri.fsPath);
+      await urlController["openWorkspace"](manifestUri.fsPath);
       expect(executeCommandStub.calledOnceWith("vscode.openFolder")).to.be.true;
     });
   });
 
   describe("getAddonByUrl", async () => {
     it("should receive a result from downloadAndExtract and correctly call openWorkspace.", async () => {
-      const context = {
-        globalState: {
-          update: sinon.stub(),
-        },
-      };
-      const getExtensionContextStub = sinon.stub(
-        globals,
-        "getExtensionContext"
-      );
-      getExtensionContextStub.returns(context as any);
-      const downloadAndExtractStub = sinon.stub(
-        addonController,
-        "downloadAndExtract"
-      );
-      downloadAndExtractStub.resolves({ workspaceFolder: "workspace", guid: "guid", version: "version" });
-      const openWorkspaceStub = sinon.stub(openFromUrl, "openWorkspace");
-      await getAddonByUrl();
+
+      addonControllerStub.downloadAndExtract.resolves({ workspaceFolder: "workspace", guid: "guid", version: "version" });
+      const openWorkspaceStub = sinon.stub(urlController, <any>"openWorkspace");
+      await urlController.getAddonByUrl();
       expect(openWorkspaceStub.calledWith('workspace/guid/version'));
     });
 
   });
-});
 
-
-import { expect } from "chai";
-import { describe, it, afterEach } from "mocha";
-import * as sinon from "sinon";
-import * as vscode from "vscode";
-
-import * as getThreadLocation from "../../../src/utils/helper";
-import revealFile from "../../../src/utils/revealFile";
-
-describe("revealFile.ts", async () => {
-  afterEach(() => {
-    sinon.restore();
-  });
   describe("revealFile()", () => {
     
     it("should reveal the document located at URI.", async () => {
         const showTextDocumentStub = sinon.stub(vscode.window, "showTextDocument");
         const URI = vscode.Uri.parse("index.html");
 
-        await revealFile(URI);
+        await urlController.revealFile(URI, "#L1");
 
         expect(showTextDocumentStub.calledOnce).to.be.true;
         expect(showTextDocumentStub.firstCall.args[0]).to.deep.equal(URI);
     });
 
     it("should reveal the document located at URI and correctly highlight and reveal the desired range", async () => {
-        const range = new vscode.Range(new vscode.Position(24, 0), new vscode.Position(24, 0));
-        const stringToRangeStub = sinon.stub(getThreadLocation, "stringToRange").resolves(range);
+        const range = new vscode.Range(new vscode.Position(25, 0), new vscode.Position(25, 0));
         const revealRangeStub = sinon.stub();
 
         const fakeEditor = {
@@ -230,13 +161,10 @@ describe("revealFile.ts", async () => {
         const showTextDocumentStub = sinon.stub(vscode.window, "showTextDocument");
         showTextDocumentStub.resolves(fakeEditor);
 
-        await revealFile(URI, lineNumber);
+        await urlController.revealFile(URI, lineNumber);
 
-        expect(stringToRangeStub.calledOnce).to.be.true;
         expect(revealRangeStub.calledOnce).to.be.true;
         expect(revealRangeStub.firstCall.args[0]).to.deep.equal(range);
     });
-  
-
   });
 });

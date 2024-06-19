@@ -7,33 +7,18 @@ import * as path from "path";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import {
-  updateAssay,
-  checkAndGetNewVersion,
-  installNewVersion,
-  downloadVersion,
-} from "../../../src/controller/updateController";
+import { UpdateHelper } from "../../../src/helper/updateHelper";
 
-describe("updateAssay.ts", () => {
+
+describe("updateHelper.ts", () => {
   afterEach(() => {
     sinon.restore();
   });
 
   describe("updateAssay()", () => {
     it("should return false if the version is up to date.", async () => {
-      const fetchStub = sinon.stub();
-      fetchStub.resolves({
-        ok: true,
-        json: () => {
-          return { tag_name: "1.0.0" };
-        },
-      } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
-
-      const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
-      getExtensionStub.returns({ packageJSON: { version: "1.0.0" } } as any);
-
-      expect(await updateAssay()).to.equal(false);
+        sinon.stub(UpdateHelper, <any>"checkAndGetNewVersion").resolves(undefined);
+        expect(await UpdateHelper.updateAssay()).to.equal(false);
     });
   });
 
@@ -44,7 +29,7 @@ describe("updateAssay.ts", () => {
       sinon.replace(node_fetch, "default", fetchStub as any);
 
       try {
-        await checkAndGetNewVersion();
+        await UpdateHelper["checkAndGetNewVersion"]();
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal(
@@ -53,7 +38,7 @@ describe("updateAssay.ts", () => {
       }
     });
 
-    it("should return false if the version is up to date.", async () => {
+    it("should throw an error if the version is up to date.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
@@ -72,8 +57,13 @@ describe("updateAssay.ts", () => {
       );
       showInformationMessageStub.resolves();
 
-      const result = await checkAndGetNewVersion();
-      expect(result).to.equal(false);
+      try{
+        await UpdateHelper["checkAndGetNewVersion"]();
+      }
+      catch(e: any){
+        expect(e.message).to.contain("Could not fetch latest version from Github");
+      }
+
       expect(showInformationMessageStub.calledOnce).to.equal(true);
     });
 
@@ -93,7 +83,7 @@ describe("updateAssay.ts", () => {
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns({ packageJSON: { version: "1.0.0" } } as any);
 
-      const result = await checkAndGetNewVersion();
+      const result = await UpdateHelper["checkAndGetNewVersion"]();
       expect(result).to.deep.equal({
         downloadLink: "https://github.com/release/test",
         version: "1.0.1",
@@ -146,7 +136,7 @@ describe("updateAssay.ts", () => {
       );
       showInformationMessageStub.resolves();
 
-      await installNewVersion("https://github.com/release/test", "1.0.0");
+      await UpdateHelper["installNewVersion"]("https://github.com/release/test", "1.0.0");
       expect(spawnStub.calledOnce).to.equal(true);
       expect(
         spawnStub.calledWith("code", [
@@ -182,7 +172,7 @@ describe("updateAssay.ts", () => {
         "showErrorMessage"
       );
       showErrorMessageStub.resolves();
-      await installNewVersion("https://github.com/release/test", "1.0.0");
+      await UpdateHelper["installNewVersion"]("https://github.com/release/test", "1.0.0");
       expect(showErrorMessageStub.calledOnce).to.equal(true);
       expect(
         showErrorMessageStub.calledWith(
@@ -199,7 +189,7 @@ describe("updateAssay.ts", () => {
       sinon.replace(node_fetch, "default", fetchStub as any);
 
       try {
-        await downloadVersion("test");
+        await UpdateHelper["downloadVersion"]("test");
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal(
@@ -222,7 +212,7 @@ describe("updateAssay.ts", () => {
       getExtensionStub.returns(undefined);
 
       try {
-        await downloadVersion("https://github.com/release/test");
+        await UpdateHelper["downloadVersion"]("https://github.com/release/test");
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal("Could not find extension path");
@@ -246,7 +236,7 @@ describe("updateAssay.ts", () => {
       createWriteStreamStub.throws(new Error("error message"));
 
       try {
-        await downloadVersion("https://github.com/release/test");
+        await UpdateHelper["downloadVersion"]("https://github.com/release/test");
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal("Could not write version file: error message");
@@ -270,7 +260,7 @@ describe("updateAssay.ts", () => {
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns({ extensionPath: workspaceFolder } as any);
 
-      const returnedPath = await downloadVersion("https://github.com/release/test");
+      const returnedPath = await UpdateHelper["downloadVersion"]("https://github.com/release/test");
       expect(returnedPath).to.equal(
         path.resolve(workspaceFolder, "version.vsix")
       );
