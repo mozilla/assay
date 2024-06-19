@@ -1,4 +1,4 @@
-import { AssayCache } from "../model/cache";
+import { AssayCache } from "../model/assayCache";
 import { JSONReview } from "../types";
 
 export class AddonCacheController {

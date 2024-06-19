@@ -20,16 +20,16 @@ export class UrlController implements vscode.UriHandler {
   async revealFile(uri: vscode.Uri, lineNumber: string | undefined) {
     const editor = await vscode.window.showTextDocument(uri);
 
-    if (lineNumber) {
+    if (editor && lineNumber) {
       const { endLine } = RangeHelper.splitString(lineNumber);
       const buffer = await this.directoryController.readFile(uri);
       const content = buffer?.toString()?.split("\n");
-      const endCharacter = content[endLine]?.length;
+      const endCharacter = content?.at(endLine)?.length;
 
       // highlight offending lines
       const lineRange = await RangeHelper.fromString(
         lineNumber,
-        endCharacter
+        endCharacter ?? 0
       );
       const selection = new vscode.Selection(lineRange.start, lineRange.end);
       editor.selections = [selection];

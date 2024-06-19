@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { FilesReadonlyIncludeConfig } from "../types";
-import { selectRootFolder } from "../views/rootView";
+import { RootView } from "../views/rootView";
 
 export class DirectoryController {
   private cachedRootFolder: string | undefined;
@@ -24,7 +24,7 @@ export class DirectoryController {
 
     // check if the folder still exists. if it doesn't, prompt the user to select a new one
     if ((rootFolder && !fs.existsSync(rootFolder)) || !rootFolder) {
-      const newRootFolder = await selectRootFolder();
+      const newRootFolder = await RootView.selectRootFolder();
       if (!newRootFolder) {
         throw new Error("No root folder selected");
       }

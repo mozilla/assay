@@ -3,9 +3,9 @@ import * as vscode from "vscode";
 import { DirectoryController } from "./directoryController";
 import { FileDecoratorController } from "./fileDecoratorController";
 import { RangeHelper } from "../helper/rangeHelper";
-import { AssayCache } from "../model/cache";
+import { AssayCache } from "../model/assayCache";
 import { CommentsCache, JSONComment, ThreadLocation } from "../types";
-import { getDeleteCommentsPreference } from "../views/exportView";
+import { ExportView } from "../views/exportView";
 
 export class CommentCacheController {
   constructor(
@@ -155,7 +155,7 @@ export class CommentCacheController {
       vscode.window.showInformationMessage("Comments copied to clipboard.");
     }
 
-    const deleteCachedComments = await getDeleteCommentsPreference();
+    const deleteCachedComments = await ExportView.getDeleteCommentsPreference();
     if (deleteCachedComments) {
       await this.deleteComments(uri);
     }
@@ -168,7 +168,6 @@ export class CommentCacheController {
   private async checkUri(uri: vscode.Uri, strict?: boolean) {
     const { rootFolder, fullPath, guid, version } =
       await this.directoryController.splitUri(uri);
-    return rootFolder;
     if (!fullPath.startsWith(rootFolder)) {
       vscode.window.showErrorMessage(
         "(Assay) File is not in the Addons root folder."

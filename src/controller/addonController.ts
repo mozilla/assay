@@ -8,12 +8,8 @@ import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
 import { AddonInfoResponse, AddonVersion, ErrorMessages } from "../types";
-import {
-  getInput,
-  promptOverwrite,
-  promptVersionChoice,
-} from "../views/addonView";
-import { promptProgress, showErrorMessage } from "../views/notificationView";
+import { AddonView } from "../views/addonView";
+import { NotificationView } from "../views/notificationView";
 
 export class AddonController {
   constructor(
@@ -55,7 +51,7 @@ export class AddonController {
         },
       };
 
-      return await showErrorMessage(
+      return await NotificationView.showErrorMessage(
         errorMessages,
         response.status,
         this.getAddonVersions,
@@ -74,7 +70,7 @@ export class AddonController {
    */
   async downloadAndExtract(urlGuid?: string, urlVersion?: string) {
     try {
-      const input = urlGuid || (await getInput());
+      const input = urlGuid || (await AddonView.getInput());
       const json: AddonInfoResponse = await this.getAddonInfo(input);
       const versionInfo = await this.getVersionChoice(input, urlVersion);
       const addonFileID = versionInfo.fileID;
@@ -131,7 +127,7 @@ export class AddonController {
       next ? versionItems.push("More") : null;
 
       // if opened from a vscode:// link, use the version from the link
-      const choice = urlVersion || (await promptVersionChoice(versionItems));
+      const choice = urlVersion || (await AddonView.promptVersionChoice(versionItems));
 
       if (choice === "More") {
         continue;
@@ -183,7 +179,7 @@ export class AddonController {
         },
       };
 
-      return await showErrorMessage(
+      return await NotificationView.showErrorMessage(
         errorMessages,
         response.status,
         this.getAddonInfo,
@@ -219,7 +215,7 @@ export class AddonController {
         },
       };
 
-      return await showErrorMessage(
+      return await NotificationView.showErrorMessage(
         errorMessages,
         response.status,
         this.fetchDownloadFile,
@@ -245,7 +241,7 @@ export class AddonController {
           other: "Download failed",
         },
       };
-      await showErrorMessage(errorMessages, "other", this.downloadAddon, [
+      await NotificationView.showErrorMessage(errorMessages, "other", this.downloadAddon, [
         fileID,
         filepath,
       ]);
@@ -253,7 +249,7 @@ export class AddonController {
     };
 
     dest.on("error", handleError);
-    promptProgress("Downloading Addon", async () => {
+    NotificationView.promptProgress("Downloading Addon", async () => {
       try {
         const response = await this.fetchDownloadFile(fileID);
         const buffer = await response.buffer();
@@ -278,7 +274,7 @@ export class AddonController {
     // if the directory exists, ask to overwrite.
     if (!(await this.dirExistsOrMake(addonVersionFolderPath))) {
       try {
-        await promptOverwrite();
+        await AddonView.promptOverwrite();
       } catch {
         await fs.promises.unlink(compressedFilePath);
         return;
@@ -300,7 +296,7 @@ export class AddonController {
         },
       };
 
-      return await showErrorMessage(errorMessages, "other", this.extractAddon, [
+      return await NotificationView.showErrorMessage(errorMessages, "other", this.extractAddon, [
         compressedFilePath,
         addonVersionFolderPath,
       ]);

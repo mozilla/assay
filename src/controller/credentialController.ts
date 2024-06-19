@@ -3,11 +3,8 @@ import fetch from "node-fetch";
 import * as vscode from "vscode";
 
 import constants from "../config/config";
-import {
-  getApiKeyInputFromUser,
-  getSecretInputFromUser,
-} from "../views/apiKeyView";
-import { showErrorMessage } from "../views/notificationView";
+import { ApiKeyView } from "../views/apiKeyView";
+import { NotificationView } from "../views/notificationView";
 
 export class CredentialController {
   constructor(private secrets: vscode.SecretStorage) {}
@@ -26,7 +23,7 @@ export class CredentialController {
     ]);
 
     if (!apiKey || !secret) {
-      return await showErrorMessage(
+      return await NotificationView.showErrorMessage(
         {
           window: {
             other: "No API Key or Secret found",
@@ -50,7 +47,7 @@ export class CredentialController {
   async getApiKeyFromUser() {
     const placeHolder = await this.secrets.get("amoApiKey");
     try {
-      const apiKey = await getApiKeyInputFromUser(placeHolder);
+      const apiKey = await ApiKeyView.getApiKeyInputFromUser(placeHolder);
       await this.secrets.store("amoApiKey", apiKey);
       return true;
     } catch {
@@ -67,7 +64,7 @@ export class CredentialController {
       (await this.secrets.get("amoApiSecret")) || ""
     );
     try {
-      const apiSecret = await getSecretInputFromUser(placeHolder);
+      const apiSecret = await ApiKeyView.getSecretInputFromUser(placeHolder);
       await this.secrets.store("amoApiSecret", apiSecret);
       return true;
     } catch {

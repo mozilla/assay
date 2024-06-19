@@ -4,18 +4,18 @@ import fetch from "node-fetch";
 import path = require("path");
 import * as vscode from "vscode";
 
-export class UpdateController {
+export class UpdateHelper {
   /**
    * Updates Assay.
    * @returns Whether Assay was updated.
    */
-  async updateAssay() {
-    const downloadInfo = await this.checkAndGetNewVersion();
+  static async updateAssay() {
+    const downloadInfo = await UpdateHelper.checkAndGetNewVersion();
     if (!downloadInfo) {
       return false;
     }
     const { downloadLink, version } = downloadInfo.downloadLink;
-    this.installNewVersion(downloadLink, version);
+    UpdateHelper.installNewVersion(downloadLink, version);
     return true;
   }
 
@@ -24,8 +24,8 @@ export class UpdateController {
    * @param downloadUrl The URL of the extension.
    * @param version The version installed.
    */
-  private async installNewVersion(downloadUrl: string, version: string) {
-    const savePath = await this.downloadVersion(downloadUrl);
+  private static async installNewVersion(downloadUrl: string, version: string) {
+    const savePath = await UpdateHelper.downloadVersion(downloadUrl);
     const downloadProcess = spawn("code", ["--install-extension", savePath]);
 
     downloadProcess.on("exit", (code) => {
@@ -51,7 +51,7 @@ export class UpdateController {
    * @param downloadUrl The URL of the extension.
    * @returns The location of the saved extension.
    */
-  private async downloadVersion(downloadUrl: string) {
+  private static async downloadVersion(downloadUrl: string) {
     return await vscode.window.withProgress(
       { title: "Assay", location: vscode.ProgressLocation.Notification },
       async function (progress) {
@@ -90,7 +90,7 @@ export class UpdateController {
    * Checks if Assay needs to be updated.
    * @returns the downloadLink and new version, if any
    */
-  private async checkAndGetNewVersion() {
+  private static async checkAndGetNewVersion() {
     const apiUrl = `https://api.github.com/repos/mozilla/assay/releases/latest`;
     const response = await fetch(apiUrl);
 

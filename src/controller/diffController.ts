@@ -1,14 +1,11 @@
 import { spawn } from "child_process";
 import * as vscode from "vscode";
 
-import { promptDiffCommand } from "../views/diffView";
+import { DiffView } from "../views/diffView";
+
 
 export class DiffController {
-  private config: vscode.WorkspaceConfiguration;
-
-  constructor() {
-    this.config = vscode.workspace.getConfiguration("assay");
-  }
+  constructor(private config: vscode.WorkspaceConfiguration) {}
 
   /**
    * Launches the external diff tool.
@@ -53,7 +50,7 @@ export class DiffController {
    */
   private async setDiffCommand() {
     try {
-      const input = promptDiffCommand();
+      const input = DiffView.promptDiffCommand();
       await this.config.update("diffTool", input, true);
       return input;
     } catch {

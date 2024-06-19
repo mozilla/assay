@@ -10,10 +10,9 @@ import { DirectoryController } from "./controller/directoryController";
 import { FileDecoratorController } from "./controller/fileDecoratorController";
 import { LintController } from "./controller/lintController";
 import { StatusBarController } from "./controller/statusBarController";
-import { UpdateController } from "./controller/updateController";
 import { UrlController } from "./controller/urlController";
-import { RangeHelper } from "./helper/rangeHelper";
-import { AssayCache } from "./model/cache";
+import { UpdateHelper } from "./helper/updateHelper";
+import { AssayCache } from "./model/assayCache";
 import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
 import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
@@ -39,8 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
     addonController,
     directoryController
   );
-  const updateController = new UpdateController();
-  const diffController = new DiffController();
+  const diffController = new DiffController(assayConfig);
 
   const UriHandlerDisposable = vscode.window.registerUriHandler(urlController);
 
@@ -50,8 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const assayUpdaterDisposable = vscode.commands.registerCommand(
     "assay.checkForUpdates",
-    updateController.updateAssay,
-    updateController
+    UpdateHelper.updateAssay
   );
 
   const welcomeDisposable = vscode.commands.registerCommand(
@@ -150,8 +147,11 @@ export async function activate(context: vscode.ExtensionContext) {
     commentCacheController.fileHasComment
   );
 
+  const diagnosticCollection =
+    vscode.languages.createDiagnosticCollection("addons-linter");
+
   const lintController = new LintController(
-    "addons-linter",
+    diagnosticCollection,
     credentialController,
     addonCacheController,
     directoryController

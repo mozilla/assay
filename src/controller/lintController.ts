@@ -5,20 +5,15 @@ import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
 import { Message, MessageType, ErrorMessages } from "../types";
-import { showErrorMessage } from "../views/notificationView";
+import { NotificationView } from "../views/notificationView";
 
 export class LintController {
-  diagnosticCollection: vscode.DiagnosticCollection;
-
   constructor(
-    public name: string,
+    private diagnosticCollection: vscode.DiagnosticCollection,
     private credentialController: CredentialController,
     private addonCacheController: AddonCacheController,
     private directoryController: DirectoryController
-  ) {
-    this.diagnosticCollection =
-      vscode.languages.createDiagnosticCollection(name);
-  }
+  ) {}
 
   /**
    * Lints the current workspace.
@@ -94,7 +89,7 @@ export class LintController {
         },
       };
 
-      await showErrorMessage(errorMessages, response.status, this.fetchLints, [
+      await NotificationView.showErrorMessage(errorMessages, response.status, this.fetchLints, [
         guid,
       ]);
 

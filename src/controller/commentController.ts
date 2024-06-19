@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { CommentCacheController } from "./commentCacheController";
 import { DirectoryController } from "./directoryController";
 import { RangeHelper } from "../helper/rangeHelper";
-import { AssayComment, AssayReply, AssayThread } from "../model/comment";
+import { AssayComment, AssayReply, AssayThread } from "../model/assayComment";
 import { ContextValues } from "../types";
 export class CommentController {
   controller: vscode.CommentController;
@@ -76,9 +76,9 @@ export class CommentController {
    * @param thread The associated thread containing the comment.
    */
   async deleteThread(thread: AssayThread) {
-    thread.comments.forEach(async (cmt) => {
+    for (const cmt of thread.comments) {
       await this.deleteCommentFromCache(cmt);
-    });
+    }
     thread.dispose();
   }
 
