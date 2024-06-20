@@ -5,9 +5,6 @@ import * as vscode from "vscode";
 
 import { AddonView } from "../../../src/views/addonView";
 
-
-
-
 describe("addonView.ts", () => {
 
     afterEach(()=>{

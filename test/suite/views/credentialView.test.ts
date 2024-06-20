@@ -5,8 +5,6 @@ import * as vscode from "vscode";
 
 import { CredentialView } from "../../../src/views/credentialView";
 
-
-
 describe("CredentialView.ts.", async () => {
   afterEach(() => {
     sinon.restore();

@@ -8,7 +8,7 @@ import { CustomFileDecorationProvider } from "../../../src/model/fileDecorationP
 
 let fileDecorationProvider: CustomFileDecorationProvider;
 
-describe("fileDecorations.ts", async () => {
+describe("fileDecorationProvider.ts", async () => {
   beforeEach(() => {
     
 

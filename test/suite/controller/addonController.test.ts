@@ -14,74 +14,50 @@ import { CredentialController } from "../../../src/controller/credentialControll
 import { DirectoryController } from "../../../src/controller/directoryController";
 import { AddonInfoResponse, AddonVersion, QPOption } from "../../../src/types";
 
-const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
-
-const badResponse = {
-  ok: false,
-  buffer: () => {
-    return "test data";
-  },
+const populateVersion = (version: AddonVersion[], start: number, end: number) => {
+  for (let i = start; i < end; i++) {
+    version.push({
+      version: i.toString(),
+      id: i.toString(),
+      file: {
+        id: i.toString(),
+      },
+      map(
+        arg0: (version: any) => any
+      ): readonly string[] | Thenable<readonly string[]> {
+        throw new Error("Method not implemented.");
+      },
+    });
+  }
 };
 
-const goodResponse = {
-  ok: true,
-  buffer: () => {
-    return "test data";
-  },
-};
-
-const addonId = "123456";
-const addonSlug = "test-addon";
-const downloadedFilePath = path.resolve(workspaceFolder, `${addonSlug}.xpi`);
-const compressedFilePath = path.resolve(workspaceFolder, "test-addon.xpi");
-const addonGUID = "test-addon";
-const addonVersion = "1.0.0";
-const extractedworkspaceFolder = path.resolve(workspaceFolder, addonGUID);
-const extractedVersionFolder = path.resolve(
-  addonVersion
-);
-
-const firstVersions: AddonVersion[] = [];
-for (let i = 0; i < 25; i++) {
-  firstVersions.push({
-    version: i.toString(),
-    id: i.toString(),
-    file: {
-      id: i.toString(),
-    },
-    map(
-      arg0: (version: any) => any
-    ): readonly string[] | Thenable<readonly string[]> {
-      throw new Error("Method not implemented.");
-    },
-  });
-}
-
-const secondVersions: AddonVersion[] = [];
-for (let i = 25; i < 30; i++) {
-  secondVersions.push({
-    version: i.toString(),
-    id: i.toString(),
-    file: {
-      id: i.toString(),
-    },
-    map(
-      arg0: (version: any) => any
-    ): readonly string[] | Thenable<readonly string[]> {
-      throw new Error("Method not implemented.");
-    },
-  });
-}
-
-async function createXPI() {
+const createXPI = async () => {
   const zip = new jszip();
   zip.file("test.txt", "test data inside txt");
   await zip.generateAsync({ type: "nodebuffer" }).then((content) => {
     fs.writeFileSync(compressedFilePath, content);
   });
-}
+};
 
+const addonSlug = "test-addon";
+const addonVersion = "1.0.0";
+const addonId = "123456";
+
+const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
 const addonUrl = `https://addons.mozilla.org/en-US/firefox/addon/${addonSlug}`;
+const downloadedFilePath = path.resolve(workspaceFolder, `${addonSlug}.xpi`);
+const compressedFilePath = path.resolve(workspaceFolder, "test-addon.xpi");
+const extractedworkspaceFolder = path.resolve(workspaceFolder, addonSlug);
+const extractedVersionFolder = path.resolve(
+  addonVersion
+);
+
+const firstVersions: AddonVersion[] = [];
+const secondVersions: AddonVersion[] = [];
+
+populateVersion(firstVersions, 0, 25);
+populateVersion(secondVersions, 25, 30);
+
 const expected: AddonInfoResponse = {
   id: "id",
   slug: addonSlug,
@@ -102,6 +78,20 @@ const expected: AddonInfoResponse = {
   guid: "guid@firebird.com",
 };
 
+const badResponse = {
+  ok: false,
+  buffer: () => {
+    return "test data";
+  },
+};
+
+const goodResponse = {
+  ok: true,
+  buffer: () => {
+    return "test data";
+  },
+};
+
 let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
 addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
 directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
@@ -112,15 +102,15 @@ describe("addonController.ts", async () => {
   beforeEach(async () => {
 
     credentialControllerStub = sinon.createStubInstance(CredentialController);
+    credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
     addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
     addonController = new AddonController(credentialControllerStub, addonCacheControllerStub, directoryControllerStub);
-  
-    credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
 
     if (!fs.existsSync(workspaceFolder)) {
       fs.promises.mkdir(workspaceFolder);
     }
+
   });
 
   afterEach(async () => {
@@ -136,6 +126,8 @@ describe("addonController.ts", async () => {
   describe("getAddonVersions()", () => {
     it("should return a json if the input is a link.", async () => {
       const fetchStub = sinon.stub();
+      sinon.replace(fetch, "default", fetchStub as any);
+      
       fetchStub.onCall(0).returns({
         json: () => {
           return {
@@ -143,15 +135,15 @@ describe("addonController.ts", async () => {
           };
         },
         ok: true,
-      });
-      sinon.replace(fetch, "default", fetchStub as any);
-
-      const json = await addonController.getAddonVersions(
-        `${constants.apiBaseURL}addons/addon/slug/versions/`
-      );
-      expect(json.results).to.be.an("array");
-      expect(json.results).to.have.lengthOf(25);
     });
+      
+
+    const json = await addonController.getAddonVersions(
+      `${constants.apiBaseURL}addons/addon/slug/versions/`
+    );
+    expect(json.results).to.be.an("array");
+    expect(json.results).to.have.lengthOf(25);
+  });
 
     it("should return a json if the input is a slug/guid.", async () => {
       const fetchStub = sinon.stub();

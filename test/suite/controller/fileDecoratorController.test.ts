@@ -9,7 +9,7 @@ import { CustomFileDecorationProvider } from "../../../src/model/fileDecorationP
 let customFileDecorationProviderStub: sinon.SinonStubbedInstance<CustomFileDecorationProvider>;
 let fileDecoratorController: FileDecoratorController;
 
-describe("loadFileDecorator.ts", async () => {
+describe("fileDecoratorController.ts", async () => {
   beforeEach(() => {
     customFileDecorationProviderStub = sinon.createStubInstance(CustomFileDecorationProvider);
     fileDecoratorController = new FileDecoratorController(customFileDecorationProviderStub);

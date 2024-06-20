@@ -31,7 +31,6 @@ const rng = new vscode.Range(pos, pos);
 describe("CommentController.ts", () => {
 
   beforeEach(() => {
-
     commentCacheControllerStub = sinon.createStubInstance(CommentCacheController);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
 
@@ -44,9 +43,6 @@ describe("CommentController.ts", () => {
         version: "version", 
         filepath: "filepath"
     } as any);
-
-
-
 
     if (!fs.existsSync(workspaceFolder)) {
       fs.mkdirSync(workspaceFolder);
@@ -65,7 +61,6 @@ describe("CommentController.ts", () => {
 
   describe("addComment", async () => {
     it("should create a comment & thread from non-empty reply and save the comment to cache.", async () => {
-
         const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
         const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
         const reply = new AssayReply(thread, cmt.body);

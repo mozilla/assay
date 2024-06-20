@@ -6,7 +6,6 @@ import * as vscode from "vscode";
 
 import { DiffController } from "../../../src/controller/diffController";
 
-
 describe("diffController.ts", async () => {
   afterEach(() => {
     sinon.restore();
@@ -117,5 +116,4 @@ describe("diffController.ts", async () => {
       expect(config.get.calledOnce).to.be.true;
     });
   });
-
 });

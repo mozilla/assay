@@ -19,17 +19,10 @@ function makeContext() {
 
 describe("extension.ts", () => {
   beforeEach(() => {
-    const rootUri = vscode.Uri.parse("test-root-uri");
-    //   const getRootFolderPathStub = sinon.stub(
-    //     reviewRootDir,
-    //     "getRootFolderPath"
-    //   );
-    //   getRootFolderPathStub.resolves(rootUri.fsPath);
-
       const workspaceFoldersStub = sinon.stub(vscode.workspace, "workspaceFolders");
       workspaceFoldersStub.value([
         {
-          uri: rootUri,
+          uri: vscode.Uri.parse("test-root-uri"),
         },
       ]);
   });

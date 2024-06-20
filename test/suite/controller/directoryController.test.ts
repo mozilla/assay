@@ -131,7 +131,6 @@ describe("directoryController.ts", async () => {
     };
 
     const directoryController = new DirectoryController(assayConfig, fileConfig);
-
     const updateStub = sinon.stub();
 
     directoryController["setCachedRootFolder"]("/old-folder");

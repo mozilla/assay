@@ -9,12 +9,10 @@ import { FileDecoratorController } from "../../../src/controller/fileDecoratorCo
 import { AssayCache } from "../../../src/model/assayCache";
 import { ExportView } from "../../../src/views/exportView";
 
-
 let assayCacheStub: sinon.SinonStubbedInstance<AssayCache>,
 directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
 fileDecoratorControllerStub: sinon.SinonStubbedInstance<FileDecoratorController>;
 let commentCacheController: CommentCacheController;
-
 
 describe("commentCacheController.ts", () => {
   afterEach(() => {
@@ -22,15 +20,12 @@ describe("commentCacheController.ts", () => {
   });
 
   beforeEach(() => {
-
     assayCacheStub = sinon.createStubInstance(AssayCache);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
     fileDecoratorControllerStub = sinon.createStubInstance(FileDecoratorController);
-
-    directoryControllerStub.getRootFolderPath.resolves("/test-root");
-
     commentCacheController = new CommentCacheController(assayCacheStub, directoryControllerStub, fileDecoratorControllerStub);
 
+    directoryControllerStub.getRootFolderPath.resolves("/test-root");
   });
 
   describe("compileComments()", () => {
@@ -93,7 +88,7 @@ describe("commentCacheController.ts", () => {
             "body": "test-comment"
           },
         },
-      });
+    });
 
       directoryControllerStub.splitUri.resolves({rootFolder: "/test-root",
       guid: "guid", version: "version"} as any);
@@ -112,62 +107,34 @@ describe("commentCacheController.ts", () => {
     });
   });
 
-
-describe("fileHasComment()", async () => {
-  it("should return false if there are no comments in file.", async () => {
-    assayCacheStub.getFromCache.resolves({
-      "test-guid": {
-        "test-version-1" : {
-          "filepath-one": {
-            "#L1": {
-              "body": "test-comment",
-              "uri": vscode.Uri.file(
-                "test-root-folder-path/test-guid/test-version-1/filepath-one"
-              )
-            },
-          },
-        },
-        "test-version-2" : {
-          "filepath-two": {
-            "#L1": {
-              "body": "test-comment",
-              "uri": vscode.Uri.file(
-                "test-root-folder-path/test-guid/test-version-2/filepath-two"
-              )
-            },
-          },
-        }
-      }
-    });
-    directoryControllerStub.splitUri.resolves({guid: "test-guid", version: "test-version", filepath: "test-filepath"} as any);
-
-
-    const result = await commentCacheController.fileHasComment(
-      vscode.Uri.file(
-        "test-root-folder-path/test-guid/test-version/test-filepath"
-      )
-    );
-
-    expect(result).to.be.false;
-  });
-
-  it("should return true if there are comments in file.", async () => {
+  describe("fileHasComment()", async () => {
+    it("should return false if there are no comments in file.", async () => {
       assayCacheStub.getFromCache.resolves({
         "test-guid": {
-          "test-version" : {
-            "test-filepath": {
+          "test-version-1" : {
+            "filepath-one": {
               "#L1": {
                 "body": "test-comment",
                 "uri": vscode.Uri.file(
-                  "test-root-folder-path/test-guid/test-version/test-filepath"
+                  "test-root-folder-path/test-guid/test-version-1/filepath-one"
+                )
+              },
+            },
+          },
+          "test-version-2" : {
+            "filepath-two": {
+              "#L1": {
+                "body": "test-comment",
+                "uri": vscode.Uri.file(
+                  "test-root-folder-path/test-guid/test-version-2/filepath-two"
                 )
               },
             },
           }
         }
-        
       });
       directoryControllerStub.splitUri.resolves({guid: "test-guid", version: "test-version", filepath: "test-filepath"} as any);
+
 
       const result = await commentCacheController.fileHasComment(
         vscode.Uri.file(
@@ -175,8 +142,35 @@ describe("fileHasComment()", async () => {
         )
       );
 
-      expect(result).to.be.true;
+      expect(result).to.be.false;
+    });
+
+    it("should return true if there are comments in file.", async () => {
+        assayCacheStub.getFromCache.resolves({
+          "test-guid": {
+            "test-version" : {
+              "test-filepath": {
+                "#L1": {
+                  "body": "test-comment",
+                  "uri": vscode.Uri.file(
+                    "test-root-folder-path/test-guid/test-version/test-filepath"
+                  )
+                },
+              },
+            }
+          }
+          
+        });
+        directoryControllerStub.splitUri.resolves({guid: "test-guid", version: "test-version", filepath: "test-filepath"} as any);
+
+        const result = await commentCacheController.fileHasComment(
+          vscode.Uri.file(
+            "test-root-folder-path/test-guid/test-version/test-filepath"
+          )
+        );
+
+        expect(result).to.be.true;
+    });
   });
-});
 
 });
