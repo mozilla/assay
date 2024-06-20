@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import * as vscode from "vscode";
 
 import constants from "../config/config";
-import { ApiKeyView } from "../views/apiKeyView";
+import { CredentialView } from "../views/credentialView";
 import { NotificationView } from "../views/notificationView";
 
 export class CredentialController {
@@ -47,7 +47,7 @@ export class CredentialController {
   async getApiKeyFromUser() {
     const placeHolder = await this.secrets.get("amoApiKey");
     try {
-      const apiKey = await ApiKeyView.getApiKeyInputFromUser(placeHolder);
+      const apiKey = await CredentialView.getApiKeyInputFromUser(placeHolder);
       await this.secrets.store("amoApiKey", apiKey);
       return true;
     } catch {
@@ -64,7 +64,9 @@ export class CredentialController {
       (await this.secrets.get("amoApiSecret")) || ""
     );
     try {
-      const apiSecret = await ApiKeyView.getSecretInputFromUser(placeHolder);
+      const apiSecret = await CredentialView.getSecretInputFromUser(
+        placeHolder
+      );
       await this.secrets.store("amoApiSecret", apiSecret);
       return true;
     } catch {

@@ -3,7 +3,6 @@ import * as vscode from "vscode";
 
 import { DiffView } from "../views/diffView";
 
-
 export class DiffController {
   constructor(private config: vscode.WorkspaceConfiguration) {}
 

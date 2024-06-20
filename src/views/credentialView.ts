@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export class ApiKeyView {
+export class CredentialView {
   static async getApiKeyInputFromUser(placeHolder: string | undefined) {
     const apiKey = await vscode.window.showInputBox({
       prompt: "Enter your AMO API Key (e.g. user:12345678:123)",
@@ -9,7 +9,7 @@ export class ApiKeyView {
       ignoreFocusOut: true,
     });
     if (!apiKey) {
-      throw new Error("No API Key provided");
+      throw new Error("No API Key provided.");
     }
     return apiKey;
   }

@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
 
-
-  export class RootView{
-
+export class RootView {
   // TODO: very sudden. do a prompt before it first
   static async selectRootFolder() {
     const options: vscode.OpenDialogOptions = {
@@ -17,5 +15,4 @@ import * as vscode from "vscode";
       return selectedFolders[0].fsPath;
     }
   }
-  
 }

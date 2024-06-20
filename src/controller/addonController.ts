@@ -88,11 +88,6 @@ export class AddonController {
         id: addonID,
       });
 
-      const writeStream = await this.downloadAddon(
-        addonFileID,
-        compressedFilePath
-      );
-
       await this.extractAddon(
         compressedFilePath,
         `${workspaceFolder}/${guid}/${version}`
@@ -127,7 +122,8 @@ export class AddonController {
       next ? versionItems.push("More") : null;
 
       // if opened from a vscode:// link, use the version from the link
-      const choice = urlVersion || (await AddonView.promptVersionChoice(versionItems));
+      const choice =
+        urlVersion || (await AddonView.promptVersionChoice(versionItems));
 
       if (choice === "More") {
         continue;
@@ -241,10 +237,12 @@ export class AddonController {
           other: "Download failed",
         },
       };
-      await NotificationView.showErrorMessage(errorMessages, "other", this.downloadAddon, [
-        fileID,
-        filepath,
-      ]);
+      await NotificationView.showErrorMessage(
+        errorMessages,
+        "other",
+        this.downloadAddon,
+        [fileID, filepath]
+      );
       dest.close();
     };
 
@@ -296,10 +294,12 @@ export class AddonController {
         },
       };
 
-      return await NotificationView.showErrorMessage(errorMessages, "other", this.extractAddon, [
-        compressedFilePath,
-        addonVersionFolderPath,
-      ]);
+      return await NotificationView.showErrorMessage(
+        errorMessages,
+        "other",
+        this.extractAddon,
+        [compressedFilePath, addonVersionFolderPath]
+      );
     }
 
     vscode.window.showInformationMessage("Extraction complete.");

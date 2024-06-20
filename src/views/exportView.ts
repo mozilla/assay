@@ -2,13 +2,12 @@ import * as vscode from "vscode";
 
 import { QPOption } from "../types";
 
-
 export class ExportView {
-
   static async getDeleteCommentsPreference() {
     const config = vscode.workspace.getConfiguration("assay");
     const savedPreference =
-      (config.get<string>("deleteCommentsOnExport") as QPOption) || QPOption.None;
+      (config.get<string>("deleteCommentsOnExport") as QPOption) ||
+      QPOption.None;
 
     if ([QPOption.Yes, QPOption.No].includes(savedPreference)) {
       return savedPreference === QPOption.Yes;
@@ -67,5 +66,4 @@ export class ExportView {
       true
     );
   }
-
 }

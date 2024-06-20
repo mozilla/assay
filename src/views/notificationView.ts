@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 
 import { ErrorMessages } from "../types";
 
-
 export class NotificationView {
   /**
    * Shows progress in the editor. Progress is shown while running the given task.
@@ -10,10 +9,7 @@ export class NotificationView {
    * @param task The async task to perform.
    * @returns the result of the task.
    */
-  static async promptProgress(
-    message: string,
-    task: () => Promise<void>
-  ) {
+  static async promptProgress(message: string, task: () => Promise<void>) {
     return await vscode.window.withProgress(
       { title: "Assay", location: vscode.ProgressLocation.Notification },
       async (progress) => {

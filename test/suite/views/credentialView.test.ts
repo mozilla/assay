@@ -1,53 +1,32 @@
 import { expect } from "chai";
-import { describe, it, afterEach, beforeEach } from "mocha";
+import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
+import { CredentialView } from "../../../src/views/credentialView";
 
-const secretsStubReturn = {
-  get: async () => {
-    return "test";
-  },
-  store: async () => {
-    return;
-  },
-  delete: function (key: string): Thenable<void> {
-    throw new Error("Function not implemented.");
-  },
-  onDidChange: function (
-    listener: (e: vscode.SecretStorageChangeEvent) => any,
-    thisArgs?: any,
-    disposables?: vscode.Disposable[] | undefined
-  ): vscode.Disposable {
-    throw new Error("Function not implemented.");
-  },
-};
 
-describe("getApiCreds.ts.", async () => {
-  beforeEach(() => {
-    const secretsStub = sinon.stub(authUtils, "getExtensionSecretStorage");
-    secretsStub.returns(secretsStubReturn);
-  });
 
+describe("CredentialView.ts.", async () => {
   afterEach(() => {
     sinon.restore();
   });
 
   describe("getApiKeyFromUser().", () => {
-    it("should return true the input is provided.", async () => {
+    it("should return the input if provided.", async () => {
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.onFirstCall().resolves("test");
-      const result = await getApiKeyFromUser();
-      expect(result).to.be.true;
+      const result = await CredentialView.getApiKeyInputFromUser("placeholder");
+      expect(result).to.equal("test");
     });
 
     it("should raise an error if no input is provided.", async () => {
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.onFirstCall().resolves(undefined);
       try {
-        await getApiKeyFromUser();
+        await CredentialView.getApiKeyInputFromUser("placeholder");
       } catch (error: any) {
-        expect(error.message).to.equal("No API Key provided");
+        expect(error.message).to.equal("No API Key provided.");
       }
     });
   });
@@ -56,18 +35,17 @@ describe("getApiCreds.ts.", async () => {
     it("should return true if the input is provided.", async () => {
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.onFirstCall().resolves("test");
-
-      const result = await getSecretFromUser();
-      expect(result).to.be.true;
+      const result = await CredentialView.getSecretInputFromUser("placeholder");
+      expect(result).to.equal("test");
     });
 
     it("should raise an error if no input is provided.", async () => {
       const inputBoxStub = sinon.stub(vscode.window, "showInputBox");
       inputBoxStub.onFirstCall().resolves(undefined);
       try {
-        await getSecretFromUser();
+        await CredentialView.getSecretInputFromUser("placeholder");
       } catch (error: any) {
-        expect(error.message).to.equal("No API Secret provided");
+        expect(error.message).to.equal("No API Secret provided.");
       }
     });
   });

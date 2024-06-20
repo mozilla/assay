@@ -12,4 +12,3 @@ export class DiffView {
     return input;
   }
 }
-

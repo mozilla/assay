@@ -89,9 +89,12 @@ export class LintController {
         },
       };
 
-      await NotificationView.showErrorMessage(errorMessages, response.status, this.fetchLints, [
-        guid,
-      ]);
+      await NotificationView.showErrorMessage(
+        errorMessages,
+        response.status,
+        this.fetchLints,
+        [guid]
+      );
 
       return;
     }

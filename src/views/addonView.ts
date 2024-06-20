@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { QPOption } from "../types";
 
-export class addonView {
+export class AddonView {
   /**
    * Retrieve the user's desired add-on to download.
    * @param input The user input representing the add-on.
