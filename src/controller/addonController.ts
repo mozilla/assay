@@ -88,6 +88,12 @@ export class AddonController {
         id: addonID,
       });
 
+const writeStream = await this.downloadAddon(
+        addonFileID,
+        compressedFilePath
+      );
+      await new Promise((resolve) => writeStream.on("finish", resolve));
+
       await this.extractAddon(
         compressedFilePath,
         `${workspaceFolder}/${guid}/${version}`
@@ -253,11 +259,12 @@ export class AddonController {
         const buffer = await response.buffer();
         dest.write(buffer);
         dest.end();
-        await new Promise((resolve) => dest.on("finish", resolve));
       } catch (error) {
         handleError();
       }
     });
+
+    return dest;
   }
 
   /**
