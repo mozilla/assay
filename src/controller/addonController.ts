@@ -88,7 +88,7 @@ export class AddonController {
         id: addonID,
       });
 
-const writeStream = await this.downloadAddon(
+      const writeStream = await this.downloadAddon(
         addonFileID,
         compressedFilePath
       );
