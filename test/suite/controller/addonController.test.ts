@@ -96,7 +96,7 @@ const goodResponse = {
 let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
 addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
 directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
-sidebarControllerStub: sinon.SinonStubbedInstance<SidebarController>;
+sidebarControllerStub;
 
 let addonController: AddonController;
 
@@ -108,7 +108,7 @@ describe("addonController.ts", async () => {
     credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
     addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
-    sidebarControllerStub = sinon.createStubInstance(SidebarController);
+    sidebarControllerStub = {refresh: () => undefined} as SidebarController;
 
     addonController = new AddonController(credentialControllerStub, addonCacheControllerStub, directoryControllerStub, sidebarControllerStub);
 

@@ -26,9 +26,11 @@ export async function activate(context: vscode.ExtensionContext) {
   const credentialController = new CredentialController(context.secrets);
   const directoryController = new DirectoryController();
 
-
   const rootFolderPath = await directoryController.getRootFolderPath();
-  const sidebarController = new SidebarController( "assayCommands", rootFolderPath);
+  const sidebarController = new SidebarController(
+    "assayCommands",
+    rootFolderPath
+  );
   const sidebarTreeViewDisposable = sidebarController.treeView;
 
   const sidebarRefreshDisposable = vscode.commands.registerCommand(
