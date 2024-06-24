@@ -1,8 +1,10 @@
 import { expect } from "chai";
+import * as fs from "fs";
 import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
+import { SidebarController } from "../../src/controller/sidebarController";
 import { UrlController } from "../../src/controller/urlController";
 import { activate, deactivate } from "../../src/extension";
 
@@ -37,6 +39,8 @@ describe("extension.ts", () => {
   });
 
   it("should load the manifest if launched with the intention to do so.", async () => {
+    sinon.stub(SidebarController.prototype, "getTreeView").resolves({refresh: () => undefined, treeView: {dispose: () => undefined} as any});
+
     const context = makeContext();
     sinon.stub(context.globalState, 'get').withArgs("filePath").returns("test");
 

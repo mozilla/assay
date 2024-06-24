@@ -1,15 +1,27 @@
 import { spawn } from "child_process";
 import * as vscode from "vscode";
 
+import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
 import { DiffView } from "../views/diffView";
 
 export class DiffController {
+  /**
+   * Open an addon for view from a TreeView<AddonTreeItem>.
+   * @param _ The specific AddonTreeItem the user opened the context menu on.
+   * @param list Selected AddonTreeItems
+   * @returns Whether the diff tool successfully launched.
+   */
+  async diffFromSidebar(_: unknown, list: AddonTreeItem[]) {
+    const [first, second] = list;
+    return this.openInDiffTool([first.uri, second.uri]);
+  }
+
   /**
    * Launches the external diff tool.
    * @param uris The files to compare.
    * @returns Whether the diff tool successfully launched.
    */
-  async openInDiffTool(uris: [vscode.Uri, vscode.Uri]) {
+  private async openInDiffTool(uris: [vscode.Uri, vscode.Uri]) {
     const [left, right] = uris;
     const leftUri = vscode.Uri.parse(left.toString());
     const rightUri = vscode.Uri.parse(right.toString());
