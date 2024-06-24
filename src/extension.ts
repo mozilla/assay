@@ -26,10 +26,21 @@ export async function activate(context: vscode.ExtensionContext) {
   const credentialController = new CredentialController(context.secrets);
   const directoryController = new DirectoryController();
 
+
+  const rootFolderPath = await directoryController.getRootFolderPath();
+  const sidebarController = new SidebarController( "assayCommands", rootFolderPath);
+  const sidebarTreeViewDisposable = sidebarController.treeView;
+
+  const sidebarRefreshDisposable = vscode.commands.registerCommand(
+    "assay.refresh",
+    sidebarController.refresh
+  );
+
   const addonController = new AddonController(
     credentialController,
     addonCacheController,
-    directoryController
+    directoryController,
+    sidebarController
   );
   const urlController = new UrlController(
     context,
@@ -39,19 +50,6 @@ export async function activate(context: vscode.ExtensionContext) {
   const diffController = new DiffController();
 
   const UriHandlerDisposable = vscode.window.registerUriHandler(urlController);
-
-  const sidebarController = new SidebarController(
-    "assayCommands",
-    directoryController
-  );
-
-  const { refresh, treeView: sidebarTreeViewDisposable } =
-    await sidebarController.getTreeView();
-
-  const sidebarRefreshDisposable = vscode.commands.registerCommand(
-    "assay.refresh",
-    refresh
-  );
 
   const viewAddonDisposable = vscode.commands.registerCommand(
     "assay.viewAddon",

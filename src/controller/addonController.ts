@@ -6,6 +6,7 @@ import * as vscode from "vscode";
 import { AddonCacheController } from "./addonCacheController";
 import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
+import { SidebarController } from "./sidebarController";
 import constants from "../config/config";
 import { AddonInfoResponse, AddonVersion, ErrorMessages } from "../types";
 import { AddonView } from "../views/addonView";
@@ -15,7 +16,8 @@ export class AddonController {
   constructor(
     private credentialController: CredentialController,
     private addonCacheController: AddonCacheController,
-    private directoryController: DirectoryController
+    private directoryController: DirectoryController,
+    private sidebarController: SidebarController
   ) {}
 
   /**
@@ -98,6 +100,8 @@ export class AddonController {
         compressedFilePath,
         `${workspaceFolder}/${guid}/${version}`
       );
+
+      this.sidebarController.refresh();
 
       return { workspaceFolder, guid, version };
     } catch (error) {
