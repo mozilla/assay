@@ -7,11 +7,9 @@ import { RootView } from "../views/rootView";
 export class DirectoryController {
   private cachedRootFolder: string | undefined;
 
-  constructor(
-    private assayConfig: vscode.WorkspaceConfiguration,
-    private fileConfig: vscode.WorkspaceConfiguration
-  ) {
-    const rootFolder = this.assayConfig.get<string>("rootFolder");
+  constructor() {
+    const assayConfig = vscode.workspace.getConfiguration("assay");
+    const rootFolder = assayConfig.get<string>("rootFolder");
     this.setCachedRootFolder(rootFolder);
   }
 
@@ -20,7 +18,8 @@ export class DirectoryController {
    * @returns the root folder in config.
    */
   async getRootFolderPath() {
-    const rootFolder = this.assayConfig.get<string>("rootFolder");
+    const assayConfig = vscode.workspace.getConfiguration("assay");
+    const rootFolder = assayConfig.get<string>("rootFolder");
 
     // check if the folder still exists. if it doesn't, prompt the user to select a new one
     if ((rootFolder && !fs.existsSync(rootFolder)) || !rootFolder) {
@@ -105,9 +104,11 @@ export class DirectoryController {
    * Sets the root to read-only.
    */
   private async setRootToReadonly() {
-    const rootFolder = this.assayConfig.get<string>("rootFolder");
+    const assayConfig = vscode.workspace.getConfiguration("assay");
+    const rootFolder = assayConfig.get<string>("rootFolder");
 
-    const readOnlyFiles = this.fileConfig.get(
+    const fileConfig = vscode.workspace.getConfiguration("files");
+    const readOnlyFiles = fileConfig.get(
       "readonlyInclude"
     ) as FilesReadonlyIncludeConfig;
 
@@ -117,7 +118,7 @@ export class DirectoryController {
       readOnlyFiles[globInitialFolder] = false;
     }
 
-    await this.fileConfig.update(
+    await fileConfig.update(
       "readonlyInclude",
       { ...readOnlyFiles, [`${rootFolder}/**`]: true },
       vscode.ConfigurationTarget.Global
@@ -132,7 +133,8 @@ export class DirectoryController {
    * @param rootFolder The location of the root folder.
    */
   private async storeRootFolderSetting(rootFolder: string) {
-    await this.assayConfig.update(
+    const assayConfig = vscode.workspace.getConfiguration("assay");
+    await assayConfig.update(
       "rootFolder",
       rootFolder,
       vscode.ConfigurationTarget.Global
