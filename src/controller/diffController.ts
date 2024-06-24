@@ -4,8 +4,6 @@ import * as vscode from "vscode";
 import { DiffView } from "../views/diffView";
 
 export class DiffController {
-  constructor(private config: vscode.WorkspaceConfiguration) {}
-
   /**
    * Launches the external diff tool.
    * @param uris The files to compare.
@@ -38,8 +36,9 @@ export class DiffController {
    * @returns The diff command, if defined.
    */
   private async getDiffCommand() {
+    const config = vscode.workspace.getConfiguration("assay");
     const diffCommand =
-      this.config.get<string>("diffTool") || (await this.setDiffCommand());
+      config.get<string>("diffTool") || (await this.setDiffCommand());
     return diffCommand;
   }
 
@@ -50,7 +49,8 @@ export class DiffController {
   private async setDiffCommand() {
     try {
       const input = DiffView.promptDiffCommand();
-      await this.config.update("diffTool", input, true);
+      const config = vscode.workspace.getConfiguration("assay");
+      await config.update("diffTool", input, true);
       return input;
     } catch {
       console.error("No diff command provided.");

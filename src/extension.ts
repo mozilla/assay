@@ -38,7 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
     addonController,
     directoryController
   );
-  const diffController = new DiffController(assayConfig);
+  const diffController = new DiffController();
 
   const UriHandlerDisposable = vscode.window.registerUriHandler(urlController);
 
