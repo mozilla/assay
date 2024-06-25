@@ -13,24 +13,7 @@ export class AddonTreeItem extends vscode.TreeItem {
   ) {
     super(label, collapsibleState);
     this.iconPath = showIcon
-      ? {
-          dark: path.join(
-            __filename,
-            "..",
-            "..",
-            "media",
-            "sidebarIcons",
-            "puzzle_inverse.svg"
-          ),
-          light: path.join(
-            __filename,
-            "..",
-            "..",
-            "media",
-            "sidebarIcons",
-            "puzzle.svg"
-          ),
-        }
+      ? new vscode.ThemeIcon("assay-addon")
       : undefined;
   }
 }
