@@ -24,14 +24,13 @@ export class LintController {
       return;
     }
 
-    const { versionPath, guid } = await this.directoryController.splitUri(
-      workspace.uri
-    );
+    const { versionPath, guid, version } =
+      await this.directoryController.splitUri(workspace.uri);
     if (!versionPath) {
       return;
     }
 
-    const { success, messages } = (await this.fetchLints(guid)) || [
+    const { success, messages } = (await this.fetchLints(guid, version)) || [
       undefined,
       undefined,
     ];
@@ -64,9 +63,14 @@ export class LintController {
    * @param guid The add-on to fetch lints for.
    * @returns The lint information.
    */
-  private async fetchLints(guid: string) {
-    const { id: addonID, file_id: fileID } =
+  private async fetchLints(guid: string, version: string) {
+    const { id: addonID, file_ids: fileIDs } =
       await this.addonCacheController.getAddonFromCache([guid]);
+
+    const fileID = fileIDs[version];
+    if (!fileID || !addonID) {
+      return;
+    }
 
     const url = `${constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;
 

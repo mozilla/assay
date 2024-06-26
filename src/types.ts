@@ -70,6 +70,7 @@ export type JSONComment = {
 
 export type JSONReview = {
   reviewUrl: string;
+  version: string;
   fileID: string;
   id: string;
 };
