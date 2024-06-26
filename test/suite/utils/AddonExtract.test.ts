@@ -6,6 +6,7 @@ import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
+import { QPOption } from "../../../src/types";
 import { extractAddon, dirExistsOrMake } from "../../../src/utils/addonExtract";
 
 const workspaceFolder = path.resolve(__dirname, "..", "test_workspace");
@@ -71,7 +72,7 @@ describe("AddonExtract.ts", async () => {
 
       // make a stub for the quickpick and force it to say yes
       const showQuickPickStub = sinon.stub();
-      showQuickPickStub.onCall(0).returns("Yes");
+      showQuickPickStub.onCall(0).returns(QPOption.Yes);
       sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
       await extractAddon(
@@ -107,7 +108,7 @@ describe("AddonExtract.ts", async () => {
 
       // make a stub for the quickpick and force it to say no
       const showQuickPickStub = sinon.stub();
-      showQuickPickStub.onCall(0).returns("No");
+      showQuickPickStub.onCall(0).returns(QPOption.No);
       sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
       try {

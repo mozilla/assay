@@ -1,12 +1,15 @@
 import * as vscode from "vscode";
 
+import { QPOption } from "../types";
+
 export default async function getDeleteCommentsPreference() {
   const config = vscode.workspace.getConfiguration("assay");
   const savedPreference =
-    config.get<string>("deleteCommentsOnExport") || "No Preference";
+    (config.get<string>("deleteCommentsOnExport") as QPOption) ||
+    QPOption.None;
 
-  if (["Yes", "No"].includes(savedPreference)) {
-    return savedPreference === "Yes";
+  if ([QPOption.Yes, QPOption.No].includes(savedPreference)) {
+    return savedPreference === QPOption.Yes;
   } else {
     // No preference or ask every time.
     return await promptdeleteComments(config, savedPreference);
@@ -17,32 +20,35 @@ async function promptdeleteComments(
   config: vscode.WorkspaceConfiguration,
   savedPreference: string
 ) {
-  const selectedPreference = await vscode.window.showQuickPick(["Yes", "No"], {
-    title: "Delete version comments after exporting?",
-    ignoreFocusOut: true,
-  });
+  const selectedPreference = await vscode.window.showQuickPick(
+    [QPOption.Yes, QPOption.No],
+    {
+      title: "Delete version comments after exporting?",
+      ignoreFocusOut: true,
+    }
+  );
 
   if (!selectedPreference) {
     return false;
   }
 
   // Ask to save preference.
-  if (savedPreference === "No Preference") {
-    await setdeleteCommentsPreference(config, selectedPreference);
+  if (savedPreference === QPOption.None) {
+    await setDeleteCommentsPreference(config, selectedPreference);
   }
 
-  return selectedPreference === "Yes";
+  return selectedPreference === QPOption.Yes;
 }
 
-async function setdeleteCommentsPreference(
+async function setDeleteCommentsPreference(
   config: vscode.WorkspaceConfiguration,
   selectedPreference: string
 ) {
   const input = await vscode.window.showQuickPick(
-    ["Save my Preference", "Ask Every Time"],
+    [QPOption.Save, QPOption.Ask],
     {
       title:
-        selectedPreference === "Yes"
+        selectedPreference === QPOption.No
           ? "Delete comments on every export?"
           : "Keep comments on every export?",
       ignoreFocusOut: true,
@@ -55,7 +61,7 @@ async function setdeleteCommentsPreference(
 
   await config.update(
     "deleteCommentsOnExport",
-    input === "Save my Preference" ? selectedPreference : "Ask Every Time",
+    input === QPOption.Save ? selectedPreference : QPOption.Ask,
     true
   );
 }

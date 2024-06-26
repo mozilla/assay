@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 
 import { showErrorMessage } from "./processErrors";
-import { errorMessages } from "../types";
+import { QPOption, errorMessages } from "../types";
 
 export async function dirExistsOrMake(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -18,10 +18,13 @@ export async function extractAddon(
   addonVersionFolderPath: string
 ) {
   if (!(await dirExistsOrMake(addonVersionFolderPath))) {
-    const choice = await vscode.window.showQuickPick(["Yes", "No"], {
-      placeHolder: "Addon already exists. Overwrite?",
-    });
-    if (choice === "No" || !choice) {
+    const choice = await vscode.window.showQuickPick(
+      [QPOption.Yes, QPOption.No],
+      {
+        placeHolder: "Addon already exists. Overwrite?",
+      }
+    );
+    if (choice === QPOption.No || !choice) {
       await fs.promises.unlink(compressedFilePath);
       throw new Error("Extraction cancelled");
     }
