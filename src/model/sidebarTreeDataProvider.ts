@@ -6,15 +6,16 @@ import * as vscode from "vscode";
 export class AddonTreeItem extends vscode.TreeItem {
   constructor(
     public readonly label: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     public readonly uri: vscode.Uri,
-    public readonly contextValue: string | undefined,
-    showIcon?: boolean
+    isGuidFolder?: boolean
   ) {
+    const collapsibleState = isGuidFolder
+      ? vscode.TreeItemCollapsibleState.Expanded
+      : vscode.TreeItemCollapsibleState.None;
+
     super(label, collapsibleState);
-    this.iconPath = showIcon
-      ? new vscode.ThemeIcon("assay-addon")
-      : undefined;
+    this.contextValue = isGuidFolder ? "guidDirectory" : undefined;
+    this.iconPath = isGuidFolder ? new vscode.ThemeIcon("assay-addon") : undefined;
   }
 }
 
@@ -47,18 +48,8 @@ export class AddonTreeDataProvider
           const isDirectory = fs.statSync(filePath).isDirectory();
           if (isDirectory) {
             const isGuidFolder = depth < 2;
-            const contextValue = isGuidFolder ? "guidDirectory" : undefined;
-            const collapsibleState = isGuidFolder
-              ? vscode.TreeItemCollapsibleState.Expanded
-              : vscode.TreeItemCollapsibleState.None;
             children.push(
-              new AddonTreeItem(
-                file,
-                collapsibleState,
-                vscode.Uri.file(filePath),
-                contextValue,
-                isGuidFolder
-              )
+              new AddonTreeItem(file, vscode.Uri.file(filePath), isGuidFolder)
             );
           }
         });
