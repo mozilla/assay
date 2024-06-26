@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 import { AddonController } from "./addonController";
 import { DirectoryController } from "./directoryController";
 import { RangeHelper } from "../helper/rangeHelper";
+import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
 
 export class UrlController implements vscode.UriHandler {
   constructor(
@@ -11,6 +12,17 @@ export class UrlController implements vscode.UriHandler {
     private addonController: AddonController,
     private directoryController: DirectoryController
   ) {}
+
+  /**
+   * Open an addon for view from a TreeView<AddonTreeItem>.
+   * @param item the user-chosen add-on.
+   */
+  async viewAddon(item: AddonTreeItem) {
+    const { versionPath } = await this.directoryController.splitUri(item.uri);
+    if (versionPath) {
+      this.openWorkspace(versionPath);
+    }
+  }
 
   /**
    * Given a file and line(s), focuses VS Code onto the file and line(s).

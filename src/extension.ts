@@ -9,12 +9,12 @@ import { DiffController } from "./controller/diffController";
 import { DirectoryController } from "./controller/directoryController";
 import { FileDecoratorController } from "./controller/fileDecoratorController";
 import { LintController } from "./controller/lintController";
+import { SidebarController } from "./controller/sidebarController";
 import { StatusBarController } from "./controller/statusBarController";
 import { UrlController } from "./controller/urlController";
 import { UpdateHelper } from "./helper/updateHelper";
 import { AssayCache } from "./model/assayCache";
 import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
-import { AssayTreeDataProvider } from "./views/sidebarView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -26,10 +26,23 @@ export async function activate(context: vscode.ExtensionContext) {
   const credentialController = new CredentialController(context.secrets);
   const directoryController = new DirectoryController();
 
+  const rootFolderPath = await directoryController.getRootFolderPath();
+  const sidebarController = new SidebarController(
+    "assayCommands",
+    rootFolderPath
+  );
+  const sidebarTreeViewDisposable = sidebarController.treeView;
+
+  const sidebarRefreshDisposable = vscode.commands.registerCommand(
+    "assay.refresh",
+    sidebarController.refresh
+  );
+
   const addonController = new AddonController(
     credentialController,
     addonCacheController,
-    directoryController
+    directoryController,
+    sidebarController
   );
   const urlController = new UrlController(
     context,
@@ -40,9 +53,17 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const UriHandlerDisposable = vscode.window.registerUriHandler(urlController);
 
-  const sidebarDisposable = vscode.window.createTreeView("assayCommands", {
-    treeDataProvider: new AssayTreeDataProvider(),
-  });
+  const viewAddonDisposable = vscode.commands.registerCommand(
+    "assay.viewAddon",
+    urlController.viewAddon,
+    urlController
+  );
+
+  const diffDisposable = vscode.commands.registerCommand(
+    "assay.sidebarDiff",
+    diffController.diffFromSidebar,
+    diffController
+  );
 
   const assayUpdaterDisposable = vscode.commands.registerCommand(
     "assay.checkForUpdates",
@@ -102,7 +123,10 @@ export async function activate(context: vscode.ExtensionContext) {
     apiKeyDisposable,
     apiSecretDisposable,
     apiCredentialsTestDisposable,
-    sidebarDisposable,
+    sidebarTreeViewDisposable,
+    sidebarRefreshDisposable,
+    viewAddonDisposable,
+    diffDisposable,
     assayUpdaterDisposable,
     handleRootConfigurationChangeDisposable
   );
@@ -176,17 +200,6 @@ export async function activate(context: vscode.ExtensionContext) {
     statusBarController
   );
 
-  const diffDisposable = vscode.commands.registerCommand(
-    "assay.openInDiffTool",
-    async (_e: vscode.Uri, uris?: [vscode.Uri, vscode.Uri]) => {
-      if (!uris) {
-        return;
-      }
-      await diffController.openInDiffTool(uris);
-    },
-    diffController
-  );
-
   const exportCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.exportCommentsFromContext",
     commentCacheController.exportVersionComments,
@@ -253,7 +266,6 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    diffDisposable,
     updateStatusBarController,
     fileDecorationProviderDisposable,
     commentController.controller,

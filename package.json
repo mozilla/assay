@@ -43,6 +43,30 @@
       }
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "assay.get",
+          "group": "navigation@2",
+          "when": "view == assayCommands"
+        },
+        {
+          "command": "assay.refresh",
+          "group": "navigation@1",
+          "when": "view == assayCommands"
+        }
+
+      ],
+      "view/item/context": [
+        {
+          "command": "assay.sidebarDiff",
+          "when": "viewItem !== guidDirectory && view == assayCommands && listDoubleSelection"
+        },
+        {
+          "command": "assay.viewAddon",
+          "group": "inline",
+          "when": "viewItem !== guidDirectory && view == assayCommands"
+        }
+      ],
       "explorer/context": [
         {
           
@@ -112,14 +136,29 @@
 				}
 			]
     },
+    "viewsContainers": {
+      "activitybar": [
+        {
+            "id": "assay-menu",
+            "title": "Assay",
+            "icon": "media/assay.svg"
+        }
+    ]
+    },
     "views": {
-      "explorer": [
+      "assay-menu": [
         {
           "id": "assayCommands",
-          "name": "Assay"
+          "name": "Addons"
         }
       ]
     },
+    "viewsWelcome": [
+      {
+          "view": "assayCommands",
+          "contents": "You do not have any addons installed.\n[+ Review New Addon](command:assay.get)\n In order to use Assay, you must generate an API key and secret in the [Reviewer Tools](https://addons.mozilla.org/en-US/firefox/) section of AMO. \n[Enter API Key](command:assay.getApiKey)\n[Enter Secret](command:assay.getSecret)\nYou can [Test API Credentials](command:assay.testApiCredentials) if needed.\nNew to Assay? [View Instructions](command:assay.welcome)"
+      }
+    ],
     "commands": [
       {
         "command": "assay.welcome",
@@ -140,6 +179,42 @@
       {
         "command": "assay.checkForUpdates",
         "title": "(Assay) Check For Updates"
+      },
+      {
+        "command": "assay.get",
+        "title": "(Assay) Review New Addon",
+        "icon": {
+          "dark": "media/sidebarIcons/add_inverse.svg",
+					"light": "media/sidebarIcons/add.svg"
+        }
+      },
+      {
+        "command": "assay.refresh",
+        "title": "Refresh Addons",
+        "icon": {
+          "dark": "media/sidebarIcons/refresh_inverse.svg",
+					"light": "media/sidebarIcons/refresh.svg"
+        }
+      },
+      {
+        "command": "assay.sidebarDiff",
+        "title": "Open Versions in Diff Tool"
+      },
+      {
+        "command": "assay.viewAddon",
+        "title": "View Addon in New Window",
+        "icon": {
+          "dark": "media/sidebarIcons/view_inverse.svg",
+					"light": "media/sidebarIcons/view.svg"
+        }
+      },
+      {
+        "command": "assay.getApiKey",
+        "title": "(Assay) Enter API Key"
+      },
+      {
+        "command": "assay.getSecret",
+        "title": "(Assay) Enter Secret Key"
       },
       {
 				"command": "assay.copyLinkFromReply",

@@ -1,10 +1,14 @@
 import { expect } from "chai";
+import * as fs from "fs";
 import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
+
+import { DirectoryController } from "../../src/controller/directoryController";
 import { UrlController } from "../../src/controller/urlController";
 import { activate, deactivate } from "../../src/extension";
+import { AddonTreeDataProvider } from "../../src/model/sidebarTreeDataProvider";
 
 function makeContext() {
   return {
@@ -37,6 +41,13 @@ describe("extension.ts", () => {
   });
 
   it("should load the manifest if launched with the intention to do so.", async () => {
+    const directoryControllerStub = sinon.stub(DirectoryController.prototype, 'getRootFolderPath');
+    directoryControllerStub.resolves('test');
+    const existsSyncStub = sinon.stub(fs, "existsSync");
+    existsSyncStub.returns(true);
+
+    sinon.stub(vscode.window, 'createTreeView').returns({dispose: () => undefined} as any);
+
     const context = makeContext();
     sinon.stub(context.globalState, 'get').withArgs("filePath").returns("test");
 
