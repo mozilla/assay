@@ -9,8 +9,16 @@ export class AddonCacheController {
    * @param guid The GUID of the add-on.
    * @param review The review.
    */
-  async addAddonToCache(guid: string, review: JSONReview) {
-    await this.cache.addToCache([guid], review);
+  async addAddonToCache(guid: string, rawReviewMeta: JSONReview) {
+    const existingVersions =
+      (await this.cache.getFromCache([guid, "file_ids"])) || {};
+    const { version, fileID, ...reviewMeta } = rawReviewMeta;
+    existingVersions[version] = fileID;
+
+    await this.cache.addToCache([guid], {
+      ...reviewMeta,
+      file_ids: existingVersions,
+    });
   }
 
   /**

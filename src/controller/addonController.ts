@@ -84,6 +84,7 @@ export class AddonController {
 
       this.addonCacheController.addAddonToCache(guid, {
         reviewUrl: json.review_url,
+        version: version,
         fileID: addonFileID,
         id: addonID,
       });

@@ -31,7 +31,7 @@ describe("lintController.ts", async () => {
         credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
 
         addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
-        addonCacheControllerStub.getAddonFromCache.resolves({id: "id", file_id: "fileID"});
+        addonCacheControllerStub.getAddonFromCache.resolves({id: "id", file_ids: {"version": "fileID"}});
 
         directoryControllerStub = sinon.createStubInstance(DirectoryController);
         directoryControllerStub.readFile.resolves(new Uint8Array());
@@ -41,7 +41,7 @@ describe("lintController.ts", async () => {
             fullPath: "",
             relativePath: "",
             guid: "",
-            version: "",
+            version: "version",
             filepath: ""
         });
 
