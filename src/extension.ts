@@ -8,10 +8,12 @@ import {
   testApiCredentials,
 } from "./commands/getApiCreds";
 import { openInDiffTool } from "./commands/launchDiff";
+import { lintWorkspace } from "./commands/lintAddon";
 import { getAddonByUrl, handleUri } from "./commands/openFromUrl";
 import { updateAssay } from "./commands/updateAssay";
 import { updateTaskbar } from "./commands/updateTaskbar";
 import {
+  setDiagnosticCollection,
   setCommentManager,
   setExtensionContext,
   setExtensionSecretStorage,
@@ -21,6 +23,10 @@ import {
 import { CommentManager } from "./utils/commentManager";
 import { loadFileDecorator } from "./utils/loadFileDecorator";
 import revealFile from "./utils/revealFile";
+import {
+  handleRootConfigurationChange,
+  setCachedRootFolder,
+} from "./utils/reviewRootDir";
 import { splitUri } from "./utils/splitUri";
 import { CustomFileDecorationProvider } from "./views/fileDecorations";
 import { AssayTreeDataProvider } from "./views/sidebarView";
@@ -114,6 +120,19 @@ export async function activate(context: vscode.ExtensionContext) {
     treeDataProvider: new AssayTreeDataProvider(),
   });
 
+  // Configure watchers for the rootFolder.
+  const config = vscode.workspace.getConfiguration("assay");
+  const rootFolder = config.get<string>("rootFolder");
+  setCachedRootFolder(rootFolder);
+  const handleRootConfigurationChangeDisposable =
+    vscode.workspace.onDidChangeConfiguration(handleRootConfigurationChange);
+
+  // Execute linting.
+  const diagnosticCollection =
+    vscode.languages.createDiagnosticCollection("addons-linter");
+  setDiagnosticCollection(diagnosticCollection);
+  lintWorkspace();
+
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -131,7 +150,8 @@ export async function activate(context: vscode.ExtensionContext) {
       async () => await loadFileDecorator()
     ),
     vscode.window.registerFileDecorationProvider(fileDecorator),
-    assayUpdaterDisposable
+    assayUpdaterDisposable,
+    handleRootConfigurationChangeDisposable
   );
 
   // Comment API

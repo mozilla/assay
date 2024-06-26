@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { addonInfoResponse } from "../types";
-import { addToCache } from "../utils/addonCache";
+import { addToCache, getFromCache } from "../utils/addonCache";
 import { downloadAddon } from "../utils/addonDownload";
 import { extractAddon } from "../utils/addonExtract";
 import { getAddonInfo } from "../utils/addonInfo";
@@ -27,20 +27,29 @@ export async function downloadAndExtract(
 ) {
   try {
     const input = urlGuid || (await getInput());
-
     const json: addonInfoResponse = await getAddonInfo(input);
 
     const versionInfo = await getVersionChoice(input, urlVersion);
-    const addonFileId = versionInfo.fileID;
+    const addonFileID = versionInfo.fileID;
     const version = versionInfo.version;
     const guid = json.guid;
+    const addonID = json.id;
 
     const workspaceFolder = await getRootFolderPath();
     const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
 
-    await addToCache("reviewUrls", [guid], json.review_url);
+    const existingVersions =
+      (await getFromCache("addonMeta", [guid, "file_ids"])) || {};
 
-    await downloadAddon(addonFileId, compressedFilePath);
+    existingVersions[version] = addonFileID;
+
+    await addToCache("addonMeta", [guid], {
+      review_url: json.review_url,
+      file_ids: existingVersions,
+      id: addonID,
+    });
+
+    await downloadAddon(addonFileID, compressedFilePath);
 
     await extractAddon(
       compressedFilePath,

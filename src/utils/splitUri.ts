@@ -9,5 +9,14 @@ export async function splitUri(uri: Uri) {
   const guid = relativePath.split("/")[1];
   const version = relativePath.split("/")[2];
   const filepath = relativePath.split(version)[1];
-  return { rootFolder, fullPath, relativePath, guid, version, filepath };
+  const versionPath = version ? `${rootFolder}/${guid}/${version}` : undefined;
+  return {
+    rootFolder,
+    versionPath,
+    fullPath,
+    relativePath,
+    guid,
+    version,
+    filepath,
+  };
 }

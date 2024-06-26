@@ -13,6 +13,7 @@ const addonSlug = "test-addon";
 const addonId = "123456";
 const addonUrl = `https://addons.mozilla.org/en-US/firefox/addon/${addonSlug}`;
 const expected: addonInfoResponse = {
+  id: "id",
   slug: addonSlug,
   name: {
     en: "Test addon",
