@@ -48,10 +48,16 @@ async function formatNotice(versionPath: string, n: Message) {
   return diagnostic;
 }
 
-async function fetchLints(guid: string) {
-  const { id: addonID, file_id: fileID } = await getFromCache("addonMeta", [
+async function fetchLints(guid: string, version: string) {
+  const { id: addonID, file_ids: fileIDs } = await getFromCache("addonMeta", [
     guid,
   ]);
+  const fileID = fileIDs[version];
+
+  if(!fileID || !addonID){
+    return;
+  }
+
   const url = `${constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;
 
   const headers = await makeAuthHeader();
@@ -89,12 +95,12 @@ export async function lintWorkspace() {
     return;
   }
 
-  const { versionPath, guid } = await splitUri(workspace.uri);
+  const { versionPath, guid, version } = await splitUri(workspace.uri);
   if (!versionPath) {
     return;
   }
 
-  const { success, messages } = (await fetchLints(guid)) || [
+  const { success, messages } = (await fetchLints(guid, version)) || [
     undefined,
     undefined,
   ];
