@@ -37,12 +37,12 @@ describe("addonDownload.ts", async () => {
             fullPath: "",
             relativePath: "",
             guid: "",
-            version: "",
+            version: "version",
             filepath: ""
         });
 
         const getFromCacheStub = sinon.stub(cacheFunctions, "getFromCache");
-        getFromCacheStub.resolves({id: "id", file_id: "fileID"});
+        getFromCacheStub.resolves({id: "id", file_ids: {"version": "fileID"}});
 
         const authStub = sinon.stub(authUtils, "makeAuthHeader");
         authStub.resolves({ Authorization: "test" });
@@ -163,12 +163,12 @@ describe("addonDownload.ts", async () => {
             fullPath: "",
             relativePath: "",
             guid: "",
-            version: "",
+            version: "version",
             filepath: ""
         });
 
         const getFromCacheStub = sinon.stub(cacheFunctions, "getFromCache");
-        getFromCacheStub.resolves({id: "id", file_id: "fileID"});
+        getFromCacheStub.resolves({id: "id", file_ids: {"version": "fileID"}});
 
         const showErrorMessageStub = sinon.stub(processErrors, "showErrorMessage");
 

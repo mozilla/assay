@@ -54,7 +54,7 @@ async function fetchLints(guid: string, version: string) {
   ]);
   const fileID = fileIDs[version];
 
-  if(!fileID || !addonID){
+  if (!fileID || !addonID) {
     return;
   }
 

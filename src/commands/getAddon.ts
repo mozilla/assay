@@ -38,7 +38,8 @@ export async function downloadAndExtract(
     const workspaceFolder = await getRootFolderPath();
     const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
 
-    const existingVersions = await getFromCache("addonMeta", [guid, "file_ids"]) || {};
+    const existingVersions =
+      (await getFromCache("addonMeta", [guid, "file_ids"])) || {};
 
     existingVersions[version] = addonFileID;
 
