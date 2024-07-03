@@ -38,7 +38,7 @@ describe("commentCacheController.ts", () => {
         },
       });
 
-      const result = await commentCacheController.compileComments("guid", "version");
+      const result = await commentCacheController.compileComments("xpi", "guid", "version");
       expect(result).to.contain("test-filepath");
       expect(result).to.contain("#L2");
       expect(result).to.contain("test-comment");

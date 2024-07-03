@@ -36,6 +36,7 @@ describe("lintController.ts", async () => {
         directoryControllerStub = sinon.createStubInstance(DirectoryController);
         directoryControllerStub.readFile.resolves(new Uint8Array());
         directoryControllerStub.splitUri.resolves({
+            type: "",
             rootFolder: "",
             versionPath: "version",
             fullPath: "",

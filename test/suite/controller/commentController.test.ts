@@ -217,6 +217,7 @@ describe("CommentController.ts", () => {
       const showInformationMessageStub = sinon.stub(vscode.window, 'showInformationMessage');
       const getThreadLocationStub = sinon.stub(cmtController, 'getThreadLocation').resolves({
         uri: vscode.Uri.parse("/test-root/guid/version/filepath/with/slashes.py"),
+        type: 'xpi',
         guid: 'guid',
         version: 'version',
         filepath: 'filepath/with/slashes.py',

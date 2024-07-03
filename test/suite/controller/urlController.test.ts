@@ -7,6 +7,7 @@ import * as vscode from "vscode";
 import { AddonController } from "../../../src/controller/addonController";
 import { DirectoryController } from "../../../src/controller/directoryController";
 import { UrlController } from "../../../src/controller/urlController";
+import { TypeOption } from "../../../src/types";
 
 const context = {
     globalState: {
@@ -118,7 +119,7 @@ describe("urlController.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
-      await urlController["openWorkspace"](manifestUri.fsPath);
+      await urlController["openWorkspace"](TypeOption.Xpi, manifestUri.fsPath);
       expect(executeCommandStub.calledOnceWith("vscode.openFolder")).to.be.true;
     });
   });
@@ -126,7 +127,7 @@ describe("urlController.ts", async () => {
   describe("getAddonByUrl", async () => {
     it("should receive a result from downloadAndExtract and correctly call openWorkspace.", async () => {
 
-      addonControllerStub.downloadAndExtract.resolves({ workspaceFolder: "workspace", guid: "guid", version: "version" });
+      addonControllerStub.downloadAndExtract.resolves({ workspaceFolder: "workspace", type: TypeOption.Xpi, guid: "guid", version: "version" });
       const openWorkspaceStub = sinon.stub(urlController, <any>"openWorkspace");
       await urlController.getAddonByUrl();
       expect(openWorkspaceStub.calledWith('workspace/guid/version'));

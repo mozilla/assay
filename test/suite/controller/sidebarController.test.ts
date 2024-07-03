@@ -9,7 +9,7 @@ let sidebarController: SidebarController;
 
 describe("fileDecoratorController.ts", async () => {
   beforeEach(() => {
-    sidebarController = new SidebarController("test", "testRootFolderPath");
+    sidebarController = new SidebarController("testXpi", "testSrc", "testRootFolderPath");
   });
 
   afterEach(async () => {
@@ -18,7 +18,7 @@ describe("fileDecoratorController.ts", async () => {
 
   describe("SidebarController.ts", async () => {
     it("should construct the treeView and refresh function.", async () => {
-        expect(sidebarController.treeView).to.not.be.undefined;
+        expect(sidebarController.xpiTreeView).to.not.be.undefined;
         const refreshStub = sinon.stub(AddonTreeDataProvider.prototype, "refresh");
         sidebarController.refresh();
         expect(refreshStub.called).to.be.true;
