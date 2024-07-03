@@ -28,14 +28,25 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const rootFolderPath = await directoryController.getRootFolderPath();
   const sidebarController = new SidebarController(
-    "assayCommands",
+    "xpiCommands",
+    "srcCommands",
     rootFolderPath
   );
-  const sidebarTreeViewDisposable = sidebarController.treeView;
+
+  const sidebarTreeViewDisposable = sidebarController.xpiTreeView;
+  const srcSidebarTreeViewDisposable = sidebarController.srcTreeView;
 
   const sidebarRefreshDisposable = vscode.commands.registerCommand(
     "assay.refresh",
     sidebarController.refresh
+  );
+
+  const sidebarDeleteDisposable = vscode.commands.registerCommand(
+    "assay.sidebarDelete",
+    (treeItem, list) => {
+      // console.log(treeItem, list);
+      directoryController.deleteUriSync(treeItem, list).then(sidebarController.refresh);
+    }
   );
 
   const addonController = new AddonController(
@@ -124,12 +135,15 @@ export async function activate(context: vscode.ExtensionContext) {
     apiSecretDisposable,
     apiCredentialsTestDisposable,
     sidebarTreeViewDisposable,
+    srcSidebarTreeViewDisposable,
     sidebarRefreshDisposable,
+    sidebarDeleteDisposable,
     viewAddonDisposable,
     diffDisposable,
     assayUpdaterDisposable,
     handleRootConfigurationChangeDisposable
   );
+
 
   await vscode.commands.executeCommand(
     "setContext",

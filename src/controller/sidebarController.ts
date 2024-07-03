@@ -1,21 +1,31 @@
 import * as vscode from "vscode";
 
 import { AddonTreeDataProvider } from "../model/sidebarTreeDataProvider";
+import { TypeOption } from "../types";
 
 export class SidebarController {
   public refresh: () => void;
-  public treeView: vscode.TreeView<vscode.TreeItem>;
+  public xpiTreeView: vscode.TreeView<vscode.TreeItem>;
+  public srcTreeView: vscode.TreeView<vscode.TreeItem>;
 
-  constructor(public id: string, rootFolderPath: string) {
-    const treeProvider = new AddonTreeDataProvider(rootFolderPath);
+  constructor(public xpiID: string, public srcID: string, rootFolderPath: string) {
+    const srcTreeProvider = new AddonTreeDataProvider(`${rootFolderPath}/${TypeOption.Source}`);
+    const xpiTreeProvider = new AddonTreeDataProvider(`${rootFolderPath}/${TypeOption.Xpi}`);
 
     this.refresh = () => {
-      treeProvider.refresh();
+      srcTreeProvider.refresh();
+      xpiTreeProvider.refresh();
     };
 
-    this.treeView = vscode.window.createTreeView(this.id, {
-      treeDataProvider: treeProvider,
+    this.xpiTreeView = vscode.window.createTreeView(this.xpiID, {
+      treeDataProvider: xpiTreeProvider,
       canSelectMany: true,
     });
+
+    this.srcTreeView = vscode.window.createTreeView(this.srcID, {
+      treeDataProvider: srcTreeProvider,
+      canSelectMany: true,
+    });
+
   }
 }

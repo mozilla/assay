@@ -49,7 +49,8 @@ export type ErrorMessages = {
 export type ContextValues = "markForReview" | "comment";
 
 export type CommentsCache = {
-  [guid: string]: {
+  [type: string] : {
+    [guid: string]: {
     [version: string]: {
       [filepath: string]: {
         [lineNumber: string]: {
@@ -59,7 +60,9 @@ export type CommentsCache = {
         };
       };
     };
+  }
   };
+  
 };
 
 export type JSONComment = {
@@ -76,6 +79,7 @@ export type JSONReview = {
 };
 
 export type ThreadLocation = {
+  type: string;
   uri: Uri;
   guid: string;
   version: string;
@@ -104,4 +108,11 @@ export enum QPOption {
   None = "No Preference",
   Yes = "Yes",
   No = "No",
+  Xpi = "XPI Package",
+  Source = "Source Package"
+}
+
+export enum TypeOption {
+  Xpi = "xpi",
+  Source = "source",
 }

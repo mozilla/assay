@@ -8,7 +8,7 @@ import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import { SidebarController } from "./sidebarController";
 import constants from "../config/config";
-import { AddonInfoResponse, AddonVersion, ErrorMessages } from "../types";
+import { AddonInfoResponse, AddonVersion, ErrorMessages, TypeOption } from "../types";
 import { AddonView } from "../views/addonView";
 import { NotificationView } from "../views/notificationView";
 
@@ -72,9 +72,18 @@ export class AddonController {
    */
   async downloadAndExtract(urlGuid?: string, urlVersion?: string) {
     try {
-      const input = urlGuid || (await AddonView.getInput());
+      const input = urlGuid || await AddonView.getInput();
       const json: AddonInfoResponse = await this.getAddonInfo(input);
       const versionInfo = await this.getVersionChoice(input, urlVersion);
+      const addon = await this.getAddon(input, versionInfo.version);
+
+      const xpiUrl = addon.file.url;
+      const sourceUrl = addon.source?.url;
+
+      // if urlGuid was passed or source dne, type is xpi. Else, prompt for xpi.
+      const type = urlGuid || !sourceUrl ? TypeOption.Xpi : await AddonView.promptType();
+      const fetchUrl = type === TypeOption.Xpi ? xpiUrl : sourceUrl;
+
       const addonFileID = versionInfo.fileID;
       const version = versionInfo.version;
       const guid = json.guid;
@@ -92,19 +101,19 @@ export class AddonController {
       });
 
       const writeStream = await this.downloadAddon(
-        addonFileID,
+        fetchUrl,
         compressedFilePath
       );
       await new Promise((resolve) => writeStream.on("finish", resolve));
 
       await this.extractAddon(
         compressedFilePath,
-        `${workspaceFolder}/${guid}/${version}`
+        `${workspaceFolder}/${type}/${guid}/${version}`
       );
 
       this.sidebarController.refresh();
 
-      return { workspaceFolder, guid, version };
+      return { workspaceFolder, type, guid, version };
     } catch (error) {
       console.error(error);
     }
@@ -198,14 +207,53 @@ export class AddonController {
   }
 
   /**
+   * Fetches a given add-on.
+   * @param input A string identifying a given addon.
+   * @param version The version to fetch.
+   * @returns The addon information.
+   */
+  private async getAddon(input: string, version: string) {
+    const slug: string = this.getAddonSlug(input);
+    const url = `${constants.apiBaseURL}addons/addon/${slug}/versions/${version}`;
+    const headers = await this.credentialController.makeAuthHeader();
+
+    const response = await fetch(url, { headers: headers });
+    if (!response.ok) {
+      const errorMessages: ErrorMessages = {
+        window: {
+          404: `(Status ${response.status}): Addon not found`,
+          401: `(Status ${response.status}): Unauthorized request`,
+          403: `(Status ${response.status}): Inadequate permissions`,
+          other: `(Status ${response.status}): Could not fetch addon info`,
+        },
+        thrown: {
+          404: "Failed to fetch addon info",
+          401: "Unauthorized request",
+          403: "Forbidden request",
+          other: "Failed to fetch addon info",
+        },
+      };
+
+      return await NotificationView.showErrorMessage(
+        errorMessages,
+        response.status,
+        this.getAddonInfo,
+        [input]
+      );
+    }
+    const json = await response.json();
+    return json;
+  }
+
+  /**
    * Fetches and returns the response for the file fetch.
    * @param fileId id of the xpi.
    * @returns The response given by the API.
    */
-  private async fetchDownloadFile(fileId: string) {
-    const url = `${constants.downloadBaseURL}${fileId}`;
+  private async fetchDownloadFile(fetchUrl: string) {
+
     const headers = await this.credentialController.makeAuthHeader();
-    const response = await fetch(url, { headers });
+    const response = await fetch(fetchUrl, { headers });
     if (!response.ok) {
       const errorMessages: ErrorMessages = {
         window: {
@@ -226,7 +274,7 @@ export class AddonController {
         errorMessages,
         response.status,
         this.fetchDownloadFile,
-        [fileId]
+        [fetchUrl]
       );
     }
     return response;
@@ -237,7 +285,7 @@ export class AddonController {
    * @param fileId The fileId of the add-on's xpi
    * @param path The path to save the add-on to.
    */
-  private async downloadAddon(fileID: string, filepath: string) {
+  private async downloadAddon(fetchUrl: string, filepath: string) {
     const dest = fs.createWriteStream(filepath, { flags: "w" });
     const handleError = async () => {
       const errorMessages: ErrorMessages = {
@@ -252,7 +300,7 @@ export class AddonController {
         errorMessages,
         "other",
         this.downloadAddon,
-        [fileID, filepath]
+        [fetchUrl, filepath]
       );
       dest.close();
     };
@@ -260,7 +308,7 @@ export class AddonController {
     dest.on("error", handleError);
     NotificationView.promptProgress("Downloading Addon", async () => {
       try {
-        const response = await this.fetchDownloadFile(fileID);
+        const response = await this.fetchDownloadFile(fetchUrl);
         const buffer = await response.buffer();
         dest.write(buffer);
         dest.end();

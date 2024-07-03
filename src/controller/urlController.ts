@@ -5,6 +5,7 @@ import { AddonController } from "./addonController";
 import { DirectoryController } from "./directoryController";
 import { RangeHelper } from "../helper/rangeHelper";
 import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
+import { TypeOption } from "../types";
 
 export class UrlController implements vscode.UriHandler {
   constructor(
@@ -18,9 +19,9 @@ export class UrlController implements vscode.UriHandler {
    * @param item the user-chosen add-on.
    */
   async viewAddon(item: AddonTreeItem) {
-    const { versionPath } = await this.directoryController.splitUri(item.uri);
+    const { type, versionPath } = await this.directoryController.splitUri(item.uri);
     if (versionPath) {
-      this.openWorkspace(versionPath);
+      this.openWorkspace(type, versionPath);
     }
   }
 
@@ -58,9 +59,9 @@ export class UrlController implements vscode.UriHandler {
     if (!result) {
       return;
     }
-    const { workspaceFolder, guid, version } = result;
-    const versionPath = `${workspaceFolder}/${guid}/${version}`;
-    await this.openWorkspace(versionPath);
+    const { workspaceFolder, type, guid, version } = result;
+    const versionPath = `${workspaceFolder}/${type}/${guid}/${version}`;
+    await this.openWorkspace(type, versionPath);
   }
 
   /**
@@ -113,14 +114,15 @@ export class UrlController implements vscode.UriHandler {
     filepath?: string,
     lineNumber?: string
   ) {
+    const type = TypeOption.Xpi;
     const rootPath = await this.directoryController.getRootFolderPath();
-    const versionPath = `${rootPath}/${guid}/${version}`;
+    const versionPath = `${rootPath}/${TypeOption.Xpi}/${guid}/${version}`;
     try {
       await fs.promises.stat(versionPath);
     } catch (error) {
       await this.addonController.downloadAndExtract(guid, version);
     }
-    await this.openWorkspace(versionPath, filepath, lineNumber);
+    await this.openWorkspace(type, versionPath, filepath, lineNumber);
   }
 
   /**
@@ -130,6 +132,7 @@ export class UrlController implements vscode.UriHandler {
    * @param lineNumber
    */
   private async openWorkspace(
+    type: string,
     versionPath: string,
     filepath?: string,
     lineNumber?: string

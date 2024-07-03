@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
+import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
 import { FilesReadonlyIncludeConfig } from "../types";
 import { RootView } from "../views/rootView";
 
@@ -11,6 +12,32 @@ export class DirectoryController {
     const assayConfig = vscode.workspace.getConfiguration("assay");
     const rootFolder = assayConfig.get<string>("rootFolder");
     this.setCachedRootFolder(rootFolder);
+  }
+
+  /**
+   * Deletes the associated uri of all selected AddonTreeItems.
+   * @param _ The specific AddonTreeItem the user opened the context menu on.
+   * @param list Selected AddonTreeItems
+   * @returns whether all were successfully deleted.
+   */
+  async deleteUriSync(treeItem: AddonTreeItem, list: AddonTreeItem[] | undefined) {
+    const success = false;
+
+    const deleteUri = async (uri: vscode.Uri) => {
+      if(await vscode.workspace.fs.stat(uri)){
+        await vscode.workspace.fs.delete(uri, {recursive: true});
+      }
+    };
+
+    await deleteUri(treeItem.uri);
+
+    if(list){
+      list.forEach(async (item) => {
+        await deleteUri(item.uri);
+      });
+    }
+    
+    return success;
   }
 
   /**
@@ -56,14 +83,21 @@ export class DirectoryController {
   async splitUri(uri: vscode.Uri) {
     const fullPath = uri.fsPath;
     const rootFolder = await this.getRootFolderPath();
+    
     const relativePath = fullPath.replace(rootFolder, "");
-    const guid = relativePath.split("/")[1];
-    const version = relativePath.split("/")[2];
+
+    // root  /src/guid/version/filepath
+
+    const type = relativePath.split("/")[1];
+
+    const guid = relativePath.split("/")[2];
+    const version = relativePath.split("/")[3];
     const filepath = relativePath.split(version)[1];
     const versionPath = version
-      ? `${rootFolder}/${guid}/${version}`
+      ? `${rootFolder}/${type}/${guid}/${version}`
       : undefined;
     return {
+      type,
       rootFolder,
       versionPath,
       fullPath,

@@ -105,24 +105,27 @@
         {
           "command": "assay.get",
           "group": "navigation@2",
-          "when": "view == assayCommands"
+          "when": "view == xpiCommands || view === srcCommands"
         },
         {
           "command": "assay.refresh",
           "group": "navigation@1",
-          "when": "view == assayCommands"
+          "when": "view == xpiCommands || view === srcCommands"
         }
-
       ],
       "view/item/context": [
         {
           "command": "assay.sidebarDiff",
-          "when": "viewItem !== guidDirectory && view == assayCommands && listDoubleSelection"
+          "when": "viewItem !== guidDirectory && (view == xpiCommands || view === srcCommands) && listDoubleSelection"
+        },
+        {
+          "command": "assay.sidebarDelete",
+          "when": "(view == xpiCommands || view === srcCommands)"
         },
         {
           "command": "assay.viewAddon",
           "group": "inline",
-          "when": "viewItem !== guidDirectory && view == assayCommands"
+          "when": "viewItem !== guidDirectory && (view == xpiCommands || view === srcCommands)"
         }
       ],
       "explorer/context": [
@@ -206,15 +209,24 @@
     "views": {
       "assay-menu": [
         {
-          "id": "assayCommands",
-          "name": "Addons"
+          "id": "xpiCommands",
+          "name": "XPI Packages"
+        },
+        {
+          "id": "srcCommands",
+          "name": "Source Packages",
+          "visibility": "collapsed"
         }
       ]
     },
     "viewsWelcome": [
       {
-          "view": "assayCommands",
+          "view": "xpiCommands",
           "contents": "You do not have any addons installed.\n[+ Review New Addon](command:assay.get)\n In order to use Assay, you must generate an API key and secret in the [Reviewer Tools](https://addons.mozilla.org/en-US/firefox/) section of AMO. \n[Enter API Key](command:assay.getApiKey)\n[Enter Secret](command:assay.getSecret)\nYou can [Test API Credentials](command:assay.testApiCredentials) if needed.\nNew to Assay? [View Instructions](command:assay.welcome)"
+      },
+      {
+        "view": "srcCommands",
+        "contents": "No source code packages installed."
       }
     ],
     "commands": [
@@ -251,6 +263,10 @@
       {
         "command": "assay.sidebarDiff",
         "title": "Open Versions in Diff Tool"
+      },
+      {
+        "command": "assay.sidebarDelete",
+        "title": "Delete"
       },
       {
         "command": "assay.viewAddon",

@@ -11,7 +11,7 @@ export class DiffController {
    * @param list Selected AddonTreeItems
    * @returns Whether the diff tool successfully launched.
    */
-  async diffFromSidebar(_: unknown, list: AddonTreeItem[]) {
+  async diffFromSidebar(treeItem: AddonTreeItem, list: AddonTreeItem[]) {
     const [first, second] = list;
     return this.openInDiffTool([first.uri, second.uri]);
   }

@@ -20,11 +20,11 @@ export class CommentCacheController {
    * @returns whether the uri has comments.
    */
   fileHasComment = async (uri: vscode.Uri) => {
-    const { guid, version, filepath } = await this.directoryController.splitUri(
+    const { type, guid, version, filepath } = await this.directoryController.splitUri(
       uri
     );
     const comments = await this.cache.getFromCache();
-    if (comments?.[guid]?.[version]?.[filepath]) {
+    if (comments?.[type]?.[guid]?.[version]?.[filepath]) {
       return true;
     }
     return false;
@@ -35,8 +35,8 @@ export class CommentCacheController {
    * @param comment
    */
   async saveCommentToCache(location: ThreadLocation, comment: JSONComment) {
-    const { uri, guid, version, filepath, range } = location;
-    await this.cache.addToCache([guid, version, filepath, range], comment);
+    const { uri, type, guid, version, filepath, range } = location;
+    await this.cache.addToCache([type, guid, version, filepath, range], comment);
     this.fileDecoratorController.loadFileDecoratorByUri(uri);
   }
 
@@ -45,8 +45,8 @@ export class CommentCacheController {
    * @param comment
    */
   async deleteCommentFromCache(location: ThreadLocation) {
-    const { uri, guid, version, filepath, range } = location;
-    await this.cache.removeFromCache([guid, version, filepath, range]);
+    const { uri, type, guid, version, filepath, range } = location;
+    await this.cache.removeFromCache([type, guid, version, filepath, range]);
     this.fileDecoratorController.loadFileDecoratorByUri(uri);
   }
 
@@ -62,16 +62,16 @@ export class CommentCacheController {
   // the uri when iterating by file.
   async deleteComments(uri: vscode.Uri) {
     this.checkUri(uri);
-    const { guid, version } = await this.directoryController.splitUri(uri);
+    const { type, guid, version } = await this.directoryController.splitUri(uri);
     const rootPath = await this.directoryController.getRootFolderPath();
-    const comments = await this.cache.getFromCache([guid, version]);
+    const comments = await this.cache.getFromCache([type, guid, version]);
 
     for (const [filepath] of Object.entries(comments)) {
       // Delete the file in cache.
-      await this.cache.removeFromCache([guid, version, filepath]);
+      await this.cache.removeFromCache([type, guid, version, filepath]);
       // Update the file's decorator.
       const commentUri = vscode.Uri.file(
-        `${rootPath}/${guid}/${version}/${filepath}`
+        `${rootPath}/${type}/${guid}/${version}/${filepath}`
       );
       this.fileDecoratorController.loadFileDecoratorByUri(commentUri);
     }
@@ -83,8 +83,8 @@ export class CommentCacheController {
    * @param version The version to export.
    * @returns string representation of the comments.
    */
-  async compileComments(guid: string, version: string) {
-    const comments = await this.cache.getFromCache([guid, version]);
+  async compileComments(type: string, guid: string, version: string) {
+    const comments = await this.cache.getFromCache([type, guid, version]);
     let compiledComments = "";
 
     for (const filepath in comments) {
@@ -119,8 +119,8 @@ export class CommentCacheController {
    */
   async exportVersionComments(uri: vscode.Uri) {
     this.checkUri(uri, true);
-    const { guid, version } = await this.directoryController.splitUri(uri);
-    const comments = await this.compileComments(guid, version);
+    const { type, guid, version } = await this.directoryController.splitUri(uri);
+    const comments = await this.compileComments(type, guid, version);
     return await this.exportCommentsToDocument(comments, uri);
   }
 
@@ -188,20 +188,23 @@ export class CommentCacheController {
    * @param comments The raw cache object.
    */
   private *iterateByComment(comments: CommentsCache) {
-    for (const guid in comments) {
-      for (const version in comments[guid]) {
-        for (const filepath in comments[guid][version]) {
-          for (const lineNumber in comments[guid][version][filepath]) {
-            yield {
-              ...comments[guid][version][filepath][lineNumber],
-              lineNumber,
-              filepath,
-              version,
-              guid,
-            };
+    for (const type in comments){
+      for (const guid in comments[type]) {
+        for (const version in comments[type][guid]) {
+          for (const filepath in comments[type][guid][version]) {
+            for (const lineNumber in comments[type][guid][version][filepath]) {
+              yield {
+                ...comments[type][guid][version][filepath][lineNumber],
+                lineNumber,
+                filepath,
+                version,
+                guid,
+              };
+            }
           }
         }
       }
     }
+    
   }
 }

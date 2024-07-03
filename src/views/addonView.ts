@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { QPOption } from "../types";
+import { QPOption, TypeOption } from "../types";
 
 export class AddonView {
   /**
@@ -29,6 +29,24 @@ export class AddonView {
       throw new Error("No input provided.");
     }
     return input;
+  }
+
+  /**
+   * Prompts the user whether to download the source code or the xpi.
+   */
+  static async promptType() {
+    const choice = await vscode.window.showQuickPick(
+      [QPOption.Xpi, QPOption.Source],
+      {
+        placeHolder: "A source code package is available. Select type to download:",
+      }
+    );
+
+    switch(choice){
+      case QPOption.Xpi: return TypeOption.Xpi;
+      case QPOption.Source: return TypeOption.Source;
+      default: throw new Error("No input provided.");
+    }
   }
 
   /**
