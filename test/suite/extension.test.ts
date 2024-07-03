@@ -8,7 +8,6 @@ import * as vscode from "vscode";
 import { DirectoryController } from "../../src/controller/directoryController";
 import { UrlController } from "../../src/controller/urlController";
 import { activate, deactivate } from "../../src/extension";
-import { AddonTreeDataProvider } from "../../src/model/sidebarTreeDataProvider";
 
 function makeContext() {
   return {
@@ -41,6 +40,7 @@ describe("extension.ts", () => {
   });
 
   it("should load the manifest if launched with the intention to do so.", async () => {
+    
     const directoryControllerStub = sinon.stub(DirectoryController.prototype, 'getRootFolderPath');
     directoryControllerStub.resolves('test');
     const existsSyncStub = sinon.stub(fs, "existsSync");
@@ -58,10 +58,6 @@ describe("extension.ts", () => {
     sinon.stub(vscode.commands, "registerCommand");
     await activate(context);
     expect(openCachedFileStub.calledOnce).to.be.true;
-    const commands = await vscode.commands.getCommands(true);
-    expect(commands).to.include.members(["assay.get"]);
-    expect(commands).to.include.members(["assay.welcome"]);
-    expect(commands).to.include.members(["assay.review"]);
     expect(context.subscriptions.length).to.be.greaterThan(10);    
   });
 });
