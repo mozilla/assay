@@ -11,13 +11,13 @@ export class AddonCacheController {
    */
   async addAddonToCache(guid: string, rawReviewMeta: JSONReview) {
     const existingVersions =
-      (await this.cache.getFromCache([guid, "file_ids"])) || {};
+      (await this.cache.getFromCache([guid, "fileIDs"])) || {};
     const { version, fileID, ...reviewMeta } = rawReviewMeta;
     existingVersions[version] = fileID;
 
     await this.cache.addToCache([guid], {
       ...reviewMeta,
-      file_ids: existingVersions,
+      fileIDs: existingVersions,
     });
   }
 
