@@ -45,7 +45,9 @@ export async function activate(context: vscode.ExtensionContext) {
     "assay.sidebarDelete",
     (treeItem, list) => {
       // console.log(treeItem, list);
-      directoryController.deleteUriSync(treeItem, list).then(sidebarController.refresh);
+      directoryController
+        .deleteUriSync(treeItem, list)
+        .then(sidebarController.refresh);
     }
   );
 
@@ -143,7 +145,6 @@ export async function activate(context: vscode.ExtensionContext) {
     assayUpdaterDisposable,
     handleRootConfigurationChangeDisposable
   );
-
 
   await vscode.commands.executeCommand(
     "setContext",

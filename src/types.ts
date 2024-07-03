@@ -49,20 +49,19 @@ export type ErrorMessages = {
 export type ContextValues = "markForReview" | "comment";
 
 export type CommentsCache = {
-  [type: string] : {
+  [type: string]: {
     [guid: string]: {
-    [version: string]: {
-      [filepath: string]: {
-        [lineNumber: string]: {
-          uri: Uri;
-          body: string;
-          contextValue: ContextValues;
+      [version: string]: {
+        [filepath: string]: {
+          [lineNumber: string]: {
+            uri: Uri;
+            body: string;
+            contextValue: ContextValues;
+          };
         };
       };
     };
-  }
   };
-  
 };
 
 export type JSONComment = {
@@ -109,7 +108,7 @@ export enum QPOption {
   Yes = "Yes",
   No = "No",
   Xpi = "XPI Package",
-  Source = "Source Package"
+  Source = "Source Package",
 }
 
 export enum TypeOption {

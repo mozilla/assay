@@ -355,11 +355,11 @@ describe("addonController.ts", async () => {
       const existsSyncStub = sinon.stub(fs, "existsSync");
       existsSyncStub.onFirstCall().returns(true);
 
-      await (addonController as any).downloadAddon(addonId, downloadedFilePath);
+      await (addonController as any).downloadAddon("fetch url", downloadedFilePath);
       sinon.restore();
 
       expect(fetchStub.calledOnce).to.be.true;
-      expect(fetchStub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
+      expect(fetchStub.calledWith("fetch url")).to.be
         .true;
 
       // wait for file to be written (there should be a better way to do this)
@@ -376,11 +376,11 @@ describe("addonController.ts", async () => {
       showErrorMessageStub.resolves({ title: "Cancel" });
 
       try {
-        await (addonController as any).downloadAddon(addonId, downloadedFilePath);
+        await (addonController as any).downloadAddon("addon url", downloadedFilePath);
       } catch (e: any) {
         expect(e.message).to.equal("Download request failed");
         expect(fetchStub.calledOnce).to.be.true;
-        expect(fetchStub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to
+        expect(fetchStub.calledWith("addon url")).to
           .be.true;
 
         await new Promise((resolve) => setTimeout(resolve, 200));
@@ -401,7 +401,7 @@ describe("addonController.ts", async () => {
       showErrorMessageStub.resolves({ title: "Cancel" });
 
       try {
-        await (addonController as any).downloadAddon(addonId, downloadedFilePath);
+        await (addonController as any).downloadAddon("addon url", downloadedFilePath);
       } catch (e: any) {
         expect(e.message).to.equal("Download failed");
       }

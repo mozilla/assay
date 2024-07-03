@@ -147,21 +147,22 @@ describe("commentCacheController.ts", () => {
 
     it("should return true if there are comments in file.", async () => {
         assayCacheStub.getFromCache.resolves({
-          "test-guid": {
-            "test-version" : {
-              "test-filepath": {
-                "#L1": {
-                  "body": "test-comment",
-                  "uri": vscode.Uri.file(
-                    "test-root-folder-path/test-guid/test-version/test-filepath"
-                  )
+          "xpi": {
+              "test-guid": {
+              "test-version" : {
+                "test-filepath": {
+                  "#L1": {
+                    "body": "test-comment",
+                    "uri": vscode.Uri.file(
+                      "test-root-folder-path/test-guid/test-version/test-filepath"
+                    )
+                  },
                 },
-              },
+              }
             }
           }
-          
         });
-        directoryControllerStub.splitUri.resolves({guid: "test-guid", version: "test-version", filepath: "test-filepath"} as any);
+        directoryControllerStub.splitUri.resolves({type: "xpi", guid: "test-guid", version: "test-version", filepath: "test-filepath"} as any);
 
         const result = await commentCacheController.fileHasComment(
           vscode.Uri.file(

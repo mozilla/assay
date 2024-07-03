@@ -8,7 +8,12 @@ import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import { SidebarController } from "./sidebarController";
 import constants from "../config/config";
-import { AddonInfoResponse, AddonVersion, ErrorMessages, TypeOption } from "../types";
+import {
+  AddonInfoResponse,
+  AddonVersion,
+  ErrorMessages,
+  TypeOption,
+} from "../types";
 import { AddonView } from "../views/addonView";
 import { NotificationView } from "../views/notificationView";
 
@@ -72,7 +77,7 @@ export class AddonController {
    */
   async downloadAndExtract(urlGuid?: string, urlVersion?: string) {
     try {
-      const input = urlGuid || await AddonView.getInput();
+      const input = urlGuid || (await AddonView.getInput());
       const json: AddonInfoResponse = await this.getAddonInfo(input);
       const versionInfo = await this.getVersionChoice(input, urlVersion);
       const addon = await this.getAddon(input, versionInfo.version);
@@ -81,7 +86,8 @@ export class AddonController {
       const sourceUrl = addon.source?.url;
 
       // if urlGuid was passed or source dne, type is xpi. Else, prompt for xpi.
-      const type = urlGuid || !sourceUrl ? TypeOption.Xpi : await AddonView.promptType();
+      const type =
+        urlGuid || !sourceUrl ? TypeOption.Xpi : await AddonView.promptType();
       const fetchUrl = type === TypeOption.Xpi ? xpiUrl : sourceUrl;
 
       const addonFileID = versionInfo.fileID;
@@ -251,7 +257,6 @@ export class AddonController {
    * @returns The response given by the API.
    */
   private async fetchDownloadFile(fetchUrl: string) {
-
     const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(fetchUrl, { headers });
     if (!response.ok) {

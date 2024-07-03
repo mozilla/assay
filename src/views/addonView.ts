@@ -38,14 +38,18 @@ export class AddonView {
     const choice = await vscode.window.showQuickPick(
       [QPOption.Xpi, QPOption.Source],
       {
-        placeHolder: "A source code package is available. Select type to download:",
+        placeHolder:
+          "A source code package is available. Select type to download:",
       }
     );
 
-    switch(choice){
-      case QPOption.Xpi: return TypeOption.Xpi;
-      case QPOption.Source: return TypeOption.Source;
-      default: throw new Error("No input provided.");
+    switch (choice) {
+      case QPOption.Xpi:
+        return TypeOption.Xpi;
+      case QPOption.Source:
+        return TypeOption.Source;
+      default:
+        throw new Error("No input provided.");
     }
   }
 

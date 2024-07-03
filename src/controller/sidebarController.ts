@@ -8,9 +8,17 @@ export class SidebarController {
   public xpiTreeView: vscode.TreeView<vscode.TreeItem>;
   public srcTreeView: vscode.TreeView<vscode.TreeItem>;
 
-  constructor(public xpiID: string, public srcID: string, rootFolderPath: string) {
-    const srcTreeProvider = new AddonTreeDataProvider(`${rootFolderPath}/${TypeOption.Source}`);
-    const xpiTreeProvider = new AddonTreeDataProvider(`${rootFolderPath}/${TypeOption.Xpi}`);
+  constructor(
+    public xpiID: string,
+    public srcID: string,
+    rootFolderPath: string
+  ) {
+    const srcTreeProvider = new AddonTreeDataProvider(
+      `${rootFolderPath}/${TypeOption.Source}`
+    );
+    const xpiTreeProvider = new AddonTreeDataProvider(
+      `${rootFolderPath}/${TypeOption.Xpi}`
+    );
 
     this.refresh = () => {
       srcTreeProvider.refresh();
@@ -26,6 +34,5 @@ export class SidebarController {
       treeDataProvider: srcTreeProvider,
       canSelectMany: true,
     });
-
   }
 }

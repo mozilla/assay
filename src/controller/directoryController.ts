@@ -20,23 +20,26 @@ export class DirectoryController {
    * @param list Selected AddonTreeItems
    * @returns whether all were successfully deleted.
    */
-  async deleteUriSync(treeItem: AddonTreeItem, list: AddonTreeItem[] | undefined) {
+  async deleteUriSync(
+    treeItem: AddonTreeItem,
+    list: AddonTreeItem[] | undefined
+  ) {
     const success = false;
 
     const deleteUri = async (uri: vscode.Uri) => {
-      if(await vscode.workspace.fs.stat(uri)){
-        await vscode.workspace.fs.delete(uri, {recursive: true});
+      if (await vscode.workspace.fs.stat(uri)) {
+        await vscode.workspace.fs.delete(uri, { recursive: true });
       }
     };
 
     await deleteUri(treeItem.uri);
 
-    if(list){
+    if (list) {
       list.forEach(async (item) => {
         await deleteUri(item.uri);
       });
     }
-    
+
     return success;
   }
 
@@ -83,7 +86,7 @@ export class DirectoryController {
   async splitUri(uri: vscode.Uri) {
     const fullPath = uri.fsPath;
     const rootFolder = await this.getRootFolderPath();
-    
+
     const relativePath = fullPath.replace(rootFolder, "");
 
     // root  /src/guid/version/filepath

@@ -20,9 +20,8 @@ export class CommentCacheController {
    * @returns whether the uri has comments.
    */
   fileHasComment = async (uri: vscode.Uri) => {
-    const { type, guid, version, filepath } = await this.directoryController.splitUri(
-      uri
-    );
+    const { type, guid, version, filepath } =
+      await this.directoryController.splitUri(uri);
     const comments = await this.cache.getFromCache();
     if (comments?.[type]?.[guid]?.[version]?.[filepath]) {
       return true;
@@ -36,7 +35,10 @@ export class CommentCacheController {
    */
   async saveCommentToCache(location: ThreadLocation, comment: JSONComment) {
     const { uri, type, guid, version, filepath, range } = location;
-    await this.cache.addToCache([type, guid, version, filepath, range], comment);
+    await this.cache.addToCache(
+      [type, guid, version, filepath, range],
+      comment
+    );
     this.fileDecoratorController.loadFileDecoratorByUri(uri);
   }
 
@@ -62,7 +64,9 @@ export class CommentCacheController {
   // the uri when iterating by file.
   async deleteComments(uri: vscode.Uri) {
     this.checkUri(uri);
-    const { type, guid, version } = await this.directoryController.splitUri(uri);
+    const { type, guid, version } = await this.directoryController.splitUri(
+      uri
+    );
     const rootPath = await this.directoryController.getRootFolderPath();
     const comments = await this.cache.getFromCache([type, guid, version]);
 
@@ -119,7 +123,9 @@ export class CommentCacheController {
    */
   async exportVersionComments(uri: vscode.Uri) {
     this.checkUri(uri, true);
-    const { type, guid, version } = await this.directoryController.splitUri(uri);
+    const { type, guid, version } = await this.directoryController.splitUri(
+      uri
+    );
     const comments = await this.compileComments(type, guid, version);
     return await this.exportCommentsToDocument(comments, uri);
   }
@@ -188,7 +194,7 @@ export class CommentCacheController {
    * @param comments The raw cache object.
    */
   private *iterateByComment(comments: CommentsCache) {
-    for (const type in comments){
+    for (const type in comments) {
       for (const guid in comments[type]) {
         for (const version in comments[type][guid]) {
           for (const filepath in comments[type][guid][version]) {
@@ -205,6 +211,5 @@ export class CommentCacheController {
         }
       }
     }
-    
   }
 }

@@ -19,7 +19,9 @@ export class UrlController implements vscode.UriHandler {
    * @param item the user-chosen add-on.
    */
   async viewAddon(item: AddonTreeItem) {
-    const { type, versionPath } = await this.directoryController.splitUri(item.uri);
+    const { type, versionPath } = await this.directoryController.splitUri(
+      item.uri
+    );
     if (versionPath) {
       this.openWorkspace(type, versionPath);
     }

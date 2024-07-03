@@ -142,7 +142,9 @@ export class CommentController {
    */
   async getThreadLocation(thread: AssayThread) {
     const range = RangeHelper.toString(thread.range);
-    const { type, guid, version, filepath } = await this.getFilepathInfo(thread);
+    const { type, guid, version, filepath } = await this.getFilepathInfo(
+      thread
+    );
     return { uri: thread.uri, type, guid, version, filepath, range };
   }
 
@@ -188,8 +190,9 @@ export class CommentController {
    * @returns The type, guid, version, and filepath of the thread.
    */
   private async getFilepathInfo(thread: AssayThread) {
-    const { type, guid, version, filepath } = await this.directoryController.splitUri(thread.uri);
-    if (!this.directoryController.inRoot(thread.uri)) {
+    const { type, guid, version, filepath, fullPath, rootFolder } =
+      await this.directoryController.splitUri(thread.uri);
+    if (!fullPath.startsWith(rootFolder)) {
       vscode.window.showErrorMessage(
         "(Assay) File is not in the Addons root folder."
       );

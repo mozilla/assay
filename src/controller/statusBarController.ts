@@ -1,3 +1,4 @@
+import * as path from "path";
 import * as vscode from "vscode";
 
 import { AddonCacheController } from "./addonCacheController";
@@ -25,11 +26,15 @@ export class StatusBarController {
     }
 
     const doc = activeEditor.document;
-    if (!await this.directoryController.inRoot(doc.uri)) {
+    const filePath = doc.uri.fsPath;
+    const rootFolder = await this.directoryController.getRootFolderPath();
+    if (!filePath.startsWith(rootFolder)) {
       this.reviewItem.hide();
       throw new Error("File is not in the root folder.");
     }
-    const { guid } = await this.directoryController.splitUri(doc.uri);
+
+    const relativePath = filePath.replace(rootFolder, "");
+    const guid = relativePath.split(path.sep)[1];
 
     if (!guid) {
       this.reviewItem.hide();
