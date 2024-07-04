@@ -43,12 +43,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const sidebarDeleteDisposable = vscode.commands.registerCommand(
     "assay.sidebarDelete",
-    (treeItem, list) => {
-      // console.log(treeItem, list);
-      directoryController
-        .deleteUriSync(treeItem, list)
-        .then(sidebarController.refresh);
-    }
+    sidebarController.delete,
+    sidebarController
   );
 
   const addonController = new AddonController(

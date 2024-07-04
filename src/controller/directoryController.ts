@@ -15,35 +15,6 @@ export class DirectoryController {
   }
 
   /**
-   * Deletes the associated uri of all selected AddonTreeItems.
-   * @param _ The specific AddonTreeItem the user opened the context menu on.
-   * @param list Selected AddonTreeItems
-   * @returns whether all were successfully deleted.
-   */
-  async deleteUriSync(
-    treeItem: AddonTreeItem,
-    list: AddonTreeItem[] | undefined
-  ) {
-    const success = false;
-
-    const deleteUri = async (uri: vscode.Uri) => {
-      if (await vscode.workspace.fs.stat(uri)) {
-        await vscode.workspace.fs.delete(uri, { recursive: true });
-      }
-    };
-
-    await deleteUri(treeItem.uri);
-
-    if (list) {
-      list.forEach(async (item) => {
-        await deleteUri(item.uri);
-      });
-    }
-
-    return success;
-  }
-
-  /**
    * Gets the root folder stored in config.
    * @returns the root folder in config.
    */
@@ -135,6 +106,24 @@ export class DirectoryController {
     } catch {
       return new Uint8Array();
     }
+  }
+
+  /**
+   * Deletes the associated uri of all selected AddonTreeItems.
+   * @param list Selected AddonTreeItems
+   * @returns whether all were successfully deleted.
+   */
+  static async deleteUri(
+    list: AddonTreeItem[]
+  ) {
+    let success = false;
+    list.forEach(async (item) => {
+      if (await vscode.workspace.fs.stat(item.uri)) {
+        await vscode.workspace.fs.delete(item.uri, { recursive: true });
+        success = true;
+      }
+    });
+    return success;
   }
 
   /**
