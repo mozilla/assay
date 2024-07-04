@@ -28,8 +28,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const rootFolderPath = await directoryController.getRootFolderPath();
   const sidebarController = new SidebarController(
-    "xpiCommands",
-    "srcCommands",
+    "assay.xpiCommands",
+    "assay.srcCommands",
     rootFolderPath
   );
 

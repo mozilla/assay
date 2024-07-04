@@ -105,27 +105,27 @@
         {
           "command": "assay.get",
           "group": "navigation@2",
-          "when": "view == xpiCommands || view === srcCommands"
+          "when": "view == assay.xpiCommands || view === assay.srcCommands"
         },
         {
           "command": "assay.refresh",
           "group": "navigation@1",
-          "when": "view == xpiCommands || view === srcCommands"
+          "when": "view == assay.xpiCommands || view === assay.srcCommands"
         }
       ],
       "view/item/context": [
         {
           "command": "assay.sidebarDiff",
-          "when": "viewItem !== guidDirectory && (view == xpiCommands || view === srcCommands) && listDoubleSelection"
+          "when": "viewItem !== guidDirectory && (view == assay.xpiCommands || view === assay.srcCommands) && listDoubleSelection"
         },
         {
           "command": "assay.sidebarDelete",
-          "when": "(view == xpiCommands || view === srcCommands)"
+          "when": "(view == assay.xpiCommands || view === assay.srcCommands)"
         },
         {
           "command": "assay.viewAddon",
           "group": "inline",
-          "when": "viewItem !== guidDirectory && (view == xpiCommands || view === srcCommands)"
+          "when": "viewItem !== guidDirectory && (view == assay.xpiCommands || view === assay.srcCommands)"
         }
       ],
       "explorer/context": [
@@ -209,11 +209,11 @@
     "views": {
       "assay-menu": [
         {
-          "id": "xpiCommands",
+          "id": "assay.xpiCommands",
           "name": "XPI Packages"
         },
         {
-          "id": "srcCommands",
+          "id": "assay.srcCommands",
           "name": "Source Packages",
           "visibility": "collapsed"
         }
@@ -221,11 +221,11 @@
     },
     "viewsWelcome": [
       {
-          "view": "xpiCommands",
+          "view": "assay.xpiCommands",
           "contents": "You do not have any addons installed.\n[+ Review New Addon](command:assay.get)\n In order to use Assay, you must generate an API key and secret in the [Reviewer Tools](https://addons.mozilla.org/en-US/firefox/) section of AMO. \n[Enter API Key](command:assay.getApiKey)\n[Enter Secret](command:assay.getSecret)\nYou can [Test API Credentials](command:assay.testApiCredentials) if needed.\nNew to Assay? [View Instructions](command:assay.welcome)"
       },
       {
-        "view": "srcCommands",
+        "view": "assay.srcCommands",
         "contents": "No source code packages installed."
       }
     ],
