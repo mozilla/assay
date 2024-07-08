@@ -38,6 +38,12 @@ export async function activate(context: vscode.ExtensionContext) {
     sidebarController.refresh
   );
 
+  const sidebarDeleteDisposable = vscode.commands.registerCommand(
+    "assay.sidebarDelete",
+    sidebarController.delete,
+    sidebarController
+  );
+
   const addonController = new AddonController(
     credentialController,
     addonCacheController,
@@ -125,6 +131,7 @@ export async function activate(context: vscode.ExtensionContext) {
     apiCredentialsTestDisposable,
     sidebarTreeViewDisposable,
     sidebarRefreshDisposable,
+    sidebarDeleteDisposable,
     viewAddonDisposable,
     diffDisposable,
     assayUpdaterDisposable,

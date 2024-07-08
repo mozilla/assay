@@ -62,6 +62,10 @@
           "when": "viewItem !== guidDirectory && view == assayCommands && listDoubleSelection"
         },
         {
+          "command": "assay.sidebarDelete",
+          "when": "view == assayCommands"
+        },
+        {
           "command": "assay.viewAddon",
           "group": "inline",
           "when": "viewItem !== guidDirectory && view == assayCommands"
@@ -75,7 +79,6 @@
           "when": "assay.commentsEnabled && explorerResourceIsFolder && listDoubleSelection"
         },
         {
-          
           "command": "assay.exportCommentsFromContext",
           "group": "navigation",
           "when": "assay.commentsEnabled && explorerResourceIsFolder"
@@ -199,6 +202,10 @@
       {
         "command": "assay.sidebarDiff",
         "title": "Open Versions in Diff Tool"
+      },
+      {
+        "command": "assay.sidebarDelete",
+        "title": "Delete"
       },
       {
         "command": "assay.viewAddon",
