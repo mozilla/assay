@@ -1,4 +1,7 @@
-export type addonInfoResponse = {
+import { Uri } from "vscode";
+
+export type AddonInfoResponse = {
+  id: string;
   slug: string;
   name: {
     [key: string]: string;
@@ -17,7 +20,7 @@ export type addonInfoResponse = {
   guid: string;
 };
 
-export type addonVersion = {
+export type AddonVersion = {
   map(
     arg0: (version: any) => any
   ): readonly string[] | Thenable<readonly string[]>;
@@ -28,19 +31,71 @@ export type addonVersion = {
   };
 };
 
-export type configConstants = {
+export type ConfigConstants = {
   apiBaseURL: string;
   reviewBaseURL: string;
   downloadBaseURL: string;
 };
 
-export type errorMessages = {
+export type ErrorMessages = {
   window: {
     [code: string]: string;
   };
   thrown: {
     [code: string]: string;
   };
+};
+
+export type ContextValues = "markForReview" | "comment";
+
+export type CommentsCache = {
+  [guid: string]: {
+    [version: string]: {
+      [filepath: string]: {
+        [lineNumber: string]: {
+          uri: Uri;
+          body: string;
+          contextValue: ContextValues;
+        };
+      };
+    };
+  };
+};
+
+export type JSONComment = {
+  uri: Uri;
+  body: string;
+  contextValue: ContextValues;
+};
+
+export type JSONReview = {
+  reviewUrl: string;
+  version: string;
+  fileID: string;
+  id: string;
+};
+
+export type ThreadLocation = {
+  uri: Uri;
+  guid: string;
+  version: string;
+  filepath: string;
+  range: string;
+};
+
+export type FilesReadonlyIncludeConfig = {
+  [key: string]: boolean;
+};
+
+export type MessageType = "error" | "notice" | "warning";
+
+export type Message = {
+  type: MessageType;
+  code: string;
+  message: string;
+  description: string;
+  file: string;
+  line: number | undefined;
 };
 
 export enum QPOption {
