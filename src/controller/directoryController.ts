@@ -102,10 +102,10 @@ export class DirectoryController {
   }
 
   /**
-     * Deletes the associated uri of all selected AddonTreeItems.
-     * @param list Selected AddonTreeItems
-     * @returns whether all were successfully deleted.
-     */
+   * Deletes the associated uri of all selected AddonTreeItems.
+   * @param list Selected AddonTreeItems
+   * @returns whether all were successfully deleted.
+   */
   static async deleteUri(list: AddonTreeItem[]) {
     let success = false;
     list.forEach(async (item) => {

@@ -64,7 +64,6 @@ export class LintController {
    * @returns The lint information.
    */
   private async fetchLints(guid: string, version: string) {
-
     const { id: addonID, fileIDs: fileIDs } =
       await this.addonCacheController.getAddonFromCache([guid]);
 
