@@ -97,7 +97,6 @@ let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
 addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
 directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
 sidebarControllerStub;
-
 let addonController: AddonController;
 
 describe("addonController.ts", async () => {
@@ -109,9 +108,7 @@ describe("addonController.ts", async () => {
     addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
     sidebarControllerStub = {refresh: () => undefined} as SidebarController;
-
     addonController = new AddonController(credentialControllerStub, addonCacheControllerStub, directoryControllerStub, sidebarControllerStub);
-
     if (!fs.existsSync(workspaceFolder)) {
       fs.promises.mkdir(workspaceFolder);
     }
