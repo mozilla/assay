@@ -21,6 +21,64 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "icons": {
+      "assay-edit": {
+        "description": "edit",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb04"
+        }
+      },
+      "assay-export": {
+        "description": "export",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb47"
+        }
+      },
+      "assay-share": {
+        "description": "share",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb21"
+        }
+      },
+      "assay-delete": {
+        "description": "close",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb55"
+        }
+      },
+      "assay-add": {
+        "description": "add",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb0b"
+        }
+      },
+      "assay-addon": {
+        "description": "addon",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb10"
+        }
+      },
+      "assay-refresh": {
+        "description": "refresh",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb13"
+        }
+      },
+      "assay-view": {
+        "description": "view",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\fb79"
+        }
+      }
+    },
     "configuration": {
       "title": "Assay",
       "properties": {
@@ -186,18 +244,12 @@
       {
         "command": "assay.get",
         "title": "(Assay) Review New Addon",
-        "icon": {
-          "dark": "media/sidebarIcons/add_inverse.svg",
-					"light": "media/sidebarIcons/add.svg"
-        }
+        "icon": "$(assay-add)"
       },
       {
         "command": "assay.refresh",
         "title": "Refresh Addons",
-        "icon": {
-          "dark": "media/sidebarIcons/refresh_inverse.svg",
-					"light": "media/sidebarIcons/refresh.svg"
-        }
+        "icon": "$(assay-refresh)"
       },
       {
         "command": "assay.sidebarDiff",
@@ -210,10 +262,7 @@
       {
         "command": "assay.viewAddon",
         "title": "View Addon in New Window",
-        "icon": {
-          "dark": "media/sidebarIcons/view_inverse.svg",
-					"light": "media/sidebarIcons/view.svg"
-        }
+        "icon": "$(assay-view)"
       },
       {
         "command": "assay.getApiKey",
@@ -234,18 +283,12 @@
 			{
 				"command": "assay.editComment",
 				"title": "Edit Comment",
-				"icon": {
-					"dark": "media/commentIcons/edit_inverse.svg",
-					"light": "media/commentIcons/edit.svg"
-				}
+				"icon": "$(assay-edit)"
 			},
 			{
 				"command": "assay.deleteComment",
 				"title": "Delete",
-				"icon": {
-					"dark": "media/commentIcons/close_inverse.svg",
-					"light": "media/commentIcons/close.svg"
-				}
+				"icon": "$(assay-delete)"
 			},
 			{
 				"command": "assay.saveComment",
@@ -262,18 +305,12 @@
       {
 				"command": "assay.exportComments",
 				"title": "Export Version Comments",
-				"icon": {
-					"dark": "media/commentIcons/export_inverse.svg",
-					"light": "media/commentIcons/export.svg"
-				}
+        "icon": "$(assay-export)"
 			},
       {
 				"command": "assay.copyLinkFromThread",
 				"title": "Copy Link",
-				"icon": {
-					"dark": "media/commentIcons/link_inverse.svg",
-					"light": "media/commentIcons/link.svg"
-				}
+				"icon": "$(assay-share)"
 			}
     ]
   },
