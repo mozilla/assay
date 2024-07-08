@@ -27,7 +27,6 @@ describe("diffController.ts", async () => {
         const diffController = new DiffController();
         const getDiffCommandStub = sinon.stub(diffController, <any>"getDiffCommand");
         getDiffCommandStub.returns(undefined);
-
         const treeItemOne = {uri: vscode.Uri.parse("file:///path/to/file1")} as AddonTreeItem;
         const treeItemTwo = {uri: vscode.Uri.parse("file:///path/to/file2")} as AddonTreeItem;
 
@@ -58,7 +57,6 @@ describe("diffController.ts", async () => {
         on: sinon.stub(),
         } as unknown as child_process.ChildProcess;
         spawnStub.returns(fakeChildProcess);
-
         const treeItemOne = {uri: vscode.Uri.parse("file:///path/to/file1")} as AddonTreeItem;
         const treeItemTwo = {uri: vscode.Uri.parse("file:///path/to/file2")} as AddonTreeItem;
 

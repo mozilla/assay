@@ -15,9 +15,7 @@ export class AddonTreeItem extends vscode.TreeItem {
 
     super(label, collapsibleState);
     this.contextValue = isGuidFolder ? "guidDirectory" : undefined;
-    this.iconPath = isGuidFolder
-      ? new vscode.ThemeIcon("assay-addon")
-      : undefined;
+    this.iconPath = isGuidFolder ? new vscode.ThemeIcon("assay-addon") : undefined;
   }
 }
 

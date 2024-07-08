@@ -73,7 +73,6 @@ export async function activate(context: vscode.ExtensionContext) {
     diffController.diffFromSidebar,
     diffController
   );
-
   const assayUpdaterDisposable = vscode.commands.registerCommand(
     "assay.checkForUpdates",
     UpdateHelper.updateAssay

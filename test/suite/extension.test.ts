@@ -4,7 +4,6 @@ import { describe, it, afterEach, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-
 import { DirectoryController } from "../../src/controller/directoryController";
 import { UrlController } from "../../src/controller/urlController";
 import { activate, deactivate } from "../../src/extension";
@@ -19,7 +18,7 @@ function makeContext() {
     },
   } as unknown as vscode.ExtensionContext;
 }
-
+ 
 describe("extension.ts", () => {
   beforeEach(() => {
       const workspaceFoldersStub = sinon.stub(vscode.workspace, "workspaceFolders");

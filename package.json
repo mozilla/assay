@@ -123,6 +123,10 @@
           "when": "(view == assay.xpiCommands || view === assay.srcCommands)"
         },
         {
+          "command": "assay.sidebarDelete",
+          "when": "view == assayCommands"
+        },
+        {
           "command": "assay.viewAddon",
           "group": "inline",
           "when": "viewItem !== guidDirectory && (view == assay.xpiCommands || view === assay.srcCommands)"
@@ -136,7 +140,6 @@
           "when": "assay.commentsEnabled && explorerResourceIsFolder && listDoubleSelection"
         },
         {
-          
           "command": "assay.exportCommentsFromContext",
           "group": "navigation",
           "when": "assay.commentsEnabled && explorerResourceIsFolder"

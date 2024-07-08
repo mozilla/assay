@@ -111,10 +111,8 @@ export class DirectoryController {
   static async deleteUri(list: AddonTreeItem[]) {
     let success = false;
     list.forEach(async (item) => {
-      if (await vscode.workspace.fs.stat(item.uri)) {
-        await vscode.workspace.fs.delete(item.uri, { recursive: true });
-        success = true;
-      }
+      await vscode.workspace.fs.delete(item.uri, { recursive: true });
+      success = true;
     });
     return success;
   }
