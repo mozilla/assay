@@ -52,3 +52,4 @@ export class SidebarController {
     this.refresh();
     return result;
   }
+}
