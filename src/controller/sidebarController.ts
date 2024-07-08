@@ -52,17 +52,3 @@ export class SidebarController {
     this.refresh();
     return result;
   }
-
-  /**
-   * Deletes the selected uris and refreshes the sidebar.
-   * @param treeItem The specific AddonTreeItem the user opened the context menu on.
-   * @param list Selected AddonTreeItems
-   * @returns whether all were successfully deleted.
-   */
-  async delete(treeItem: AddonTreeItem, list: AddonTreeItem[] | undefined) {
-    list = list || [treeItem];
-    const result = await DirectoryController.deleteUri(list);
-    this.refresh();
-    return result;
-  }
-}
