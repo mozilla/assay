@@ -137,7 +137,6 @@
           "when": "assay.commentsEnabled && explorerResourceIsFolder && listDoubleSelection"
         },
         {
-          
           "command": "assay.exportCommentsFromContext",
           "group": "navigation",
           "when": "assay.commentsEnabled && explorerResourceIsFolder"
