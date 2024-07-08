@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 
+import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
 import { FilesReadonlyIncludeConfig } from "../types";
 import { RootView } from "../views/rootView";
 
@@ -98,6 +99,20 @@ export class DirectoryController {
     } catch {
       return new Uint8Array();
     }
+  }
+
+  /**
+   * Deletes the associated uri of all selected AddonTreeItems.
+   * @param list Selected AddonTreeItems
+   * @returns whether all were successfully deleted.
+   */
+  static async deleteUri(list: AddonTreeItem[]) {
+    let success = false;
+    list.forEach(async (item) => {
+      await vscode.workspace.fs.delete(item.uri, { recursive: true });
+      success = true;
+    });
+    return success;
   }
 
   /**

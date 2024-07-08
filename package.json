@@ -120,6 +120,10 @@
           "when": "viewItem !== guidDirectory && view == assayCommands && listDoubleSelection"
         },
         {
+          "command": "assay.sidebarDelete",
+          "when": "view == assayCommands"
+        },
+        {
           "command": "assay.viewAddon",
           "group": "inline",
           "when": "viewItem !== guidDirectory && view == assayCommands"
@@ -251,6 +255,10 @@
       {
         "command": "assay.sidebarDiff",
         "title": "Open Versions in Diff Tool"
+      },
+      {
+        "command": "assay.sidebarDelete",
+        "title": "Delete"
       },
       {
         "command": "assay.viewAddon",
