@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
 
 import { DirectoryController } from "./directoryController";
-import { AddonTreeDataProvider, AddonTreeItem } from "../model/sidebarTreeDataProvider";
+import {
+  AddonTreeDataProvider,
+  AddonTreeItem,
+} from "../model/sidebarTreeDataProvider";
 import { TypeOption } from "../types";
 
 export class SidebarController {
@@ -43,11 +46,10 @@ export class SidebarController {
    * @param list Selected AddonTreeItems
    * @returns whether all were successfully deleted.
    */
-  async delete(treeItem: AddonTreeItem, list: AddonTreeItem[] | undefined){
+  async delete(treeItem: AddonTreeItem, list: AddonTreeItem[] | undefined) {
     list = list || [treeItem];
     const result = await DirectoryController.deleteUri(list);
     this.refresh();
     return result;
   }
-
 }
