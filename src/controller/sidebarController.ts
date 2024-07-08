@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 
-import { AddonTreeDataProvider } from "../model/sidebarTreeDataProvider";
+import { DirectoryController } from "./directoryController";
+import {
+  AddonTreeDataProvider,
+  AddonTreeItem,
+} from "../model/sidebarTreeDataProvider";
 
 export class SidebarController {
   public refresh: () => void;
@@ -17,5 +21,18 @@ export class SidebarController {
       treeDataProvider: treeProvider,
       canSelectMany: true,
     });
+  }
+
+  /**
+   * Deletes the selected uris and refreshes the sidebar.
+   * @param treeItem The specific AddonTreeItem the user opened the context menu on.
+   * @param list Selected AddonTreeItems
+   * @returns whether all were successfully deleted.
+   */
+  async delete(treeItem: AddonTreeItem, list: AddonTreeItem[] | undefined) {
+    list = list || [treeItem];
+    const result = await DirectoryController.deleteUri(list);
+    this.refresh();
+    return result;
   }
 }

@@ -19,7 +19,7 @@ function makeContext() {
     },
   } as unknown as vscode.ExtensionContext;
 }
-
+ 
 describe("extension.ts", () => {
   beforeEach(() => {
       const workspaceFoldersStub = sinon.stub(vscode.workspace, "workspaceFolders");
