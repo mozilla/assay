@@ -140,11 +140,10 @@ export class UrlController implements vscode.UriHandler {
     }
     // Otherwise, store the filePath (since the extension must restart) to open on launch.
     else {
-      this.context.globalState.update("filePath", filePath).then(() => {
-        if (lineNumber) {
-          this.context.globalState.update("lineNumber", lineNumber);
-        }
-      });
+      Promise.all([
+        this.context.globalState.update("filePath", filePath),
+        this.context.globalState.update("lineNumber", lineNumber),
+      ]);
       vscode.commands.executeCommand("vscode.openFolder", versionUri, true);
     }
   }
