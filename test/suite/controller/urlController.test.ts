@@ -118,7 +118,7 @@ describe("urlController.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
-      await urlController["openWorkspace"](manifestUri.fsPath);
+      urlController["openWorkspace"](manifestUri.fsPath);
       expect(executeCommandStub.calledOnceWith("vscode.openFolder")).to.be.true;
     });
   });
