@@ -49,6 +49,8 @@ describe("directoryController.ts", async () => {
 
     it("should throw an error if the folder is not set.", async () => {
         const configStub = sinon.stub(vscode.workspace, "getConfiguration");
+        sinon.stub(vscode.window, 'showInformationMessage').resolves();
+
         const assayConfig = {
             update: sinon.stub(),
             get: () => {
@@ -85,6 +87,8 @@ describe("directoryController.ts", async () => {
 
     it("should return the new folder if the old one doesn't exist.", async () => {
         const configStub = sinon.stub(vscode.workspace, "getConfiguration");
+        const showInformationMessageStub = sinon.stub(vscode.window, 'showInformationMessage').resolves();
+
         const assayConfig = {
             get: () => {
             return undefined;
@@ -106,7 +110,7 @@ describe("directoryController.ts", async () => {
         };
 
         configStub.withArgs("assay").returns(assayConfig);
-    configStub.withArgs("files").returns(fileConfig);
+        configStub.withArgs("files").returns(fileConfig);
 
         const directoryController = new DirectoryController();
 
@@ -115,6 +119,7 @@ describe("directoryController.ts", async () => {
         showOpenDialogStub.resolves([uri]);
 
         const result = await directoryController.getRootFolderPath();
+        expect(showInformationMessageStub.called).to.be.true;
         expect(result).to.equal("/test");
     });
   });
