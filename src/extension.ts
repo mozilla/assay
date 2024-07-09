@@ -15,6 +15,7 @@ import { UrlController } from "./controller/urlController";
 import { UpdateHelper } from "./helper/updateHelper";
 import { AssayCache } from "./model/assayCache";
 import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
+import { AddonTreeItem } from "./model/sidebarTreeDataProvider";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -40,8 +41,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const sidebarDeleteDisposable = vscode.commands.registerCommand(
     "assay.sidebarDelete",
-    sidebarController.delete,
-    sidebarController
+    (treeItem: AddonTreeItem, list: AddonTreeItem[]) => {
+      commentController.deleteCommentsFromMenu(treeItem, list);
+      sidebarController.delete(treeItem, list);
+    }
   );
 
   const addonController = new AddonController(
@@ -214,8 +217,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.deleteCommentsFromContext",
-    commentCacheController.deleteComments,
-    commentCacheController
+    commentController.deleteCommentsFromMenu,
+    commentController
   );
 
   const exportCommentDisposable = vscode.commands.registerCommand(
