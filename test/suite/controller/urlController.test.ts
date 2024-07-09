@@ -10,7 +10,7 @@ import { UrlController } from "../../../src/controller/urlController";
 
 const context = {
     globalState: {
-      update: sinon.stub(),
+      update: sinon.stub().resolves(),
     },
 } as any;
 
