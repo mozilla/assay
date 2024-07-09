@@ -25,10 +25,13 @@ export class CommentController {
    * @param list Selected AddonTreeItems
    * @returns whether all were successfully deleted.
    */
-  async deleteCommentsFromMenu(treeItem: AddonTreeItem, list: AddonTreeItem[] | undefined) {
+  async deleteCommentsFromMenu(
+    treeItem: AddonTreeItem,
+    list: AddonTreeItem[] | undefined
+  ) {
     let success = false;
     list = list || [treeItem];
-    for(const item of list){
+    for (const item of list) {
       await this.commentCacheController.deleteComments(item.uri);
       success = true;
     }

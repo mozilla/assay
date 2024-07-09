@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
 
 import { DirectoryController } from "./directoryController";
-import { AddonTreeDataProvider, AddonTreeItem } from "../model/sidebarTreeDataProvider";
+import {
+  AddonTreeDataProvider,
+  AddonTreeItem,
+} from "../model/sidebarTreeDataProvider";
 
 export class SidebarController {
   public refresh: () => void;

@@ -143,8 +143,7 @@ export class CommentCacheController {
     compiledComments: string,
     uri: vscode.Uri
   ) {
-
-    if(compiledComments.length < 1 ){
+    if (compiledComments.length < 1) {
       vscode.window.showInformationMessage("No comments to export.");
       return false;
     }
