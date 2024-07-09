@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 
 export class RootView {
-  // TODO: very sudden. do a prompt before it first
   static async selectRootFolder() {
     const options: vscode.OpenDialogOptions = {
       canSelectFiles: false,
