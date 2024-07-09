@@ -12,6 +12,7 @@ import { AddonCacheController } from "../../../src/controller/addonCacheControll
 import { AddonController } from "../../../src/controller/addonController";
 import { CredentialController } from "../../../src/controller/credentialController";
 import { DirectoryController } from "../../../src/controller/directoryController";
+import { SidebarController } from "../../../src/controller/sidebarController";
 import { AddonInfoResponse, AddonVersion, QPOption } from "../../../src/types";
 
 const populateVersion = (version: AddonVersion[], start: number, end: number) => {
@@ -94,7 +95,8 @@ const goodResponse = {
 
 let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
 addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
-directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
+directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
+sidebarControllerStub;
 let addonController: AddonController;
 
 describe("addonController.ts", async () => {
@@ -105,8 +107,8 @@ describe("addonController.ts", async () => {
     credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
     addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
-    addonController = new AddonController(credentialControllerStub, addonCacheControllerStub, directoryControllerStub);
-
+    sidebarControllerStub = {refresh: () => undefined} as SidebarController;
+    addonController = new AddonController(credentialControllerStub, addonCacheControllerStub, directoryControllerStub, sidebarControllerStub);
     if (!fs.existsSync(workspaceFolder)) {
       fs.promises.mkdir(workspaceFolder);
     }

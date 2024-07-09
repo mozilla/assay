@@ -5,13 +5,14 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 import { DiffController } from "../../../src/controller/diffController";
+import { AddonTreeItem } from "../../../src/model/sidebarTreeDataProvider";
 
 describe("diffController.ts", async () => {
   afterEach(() => {
     sinon.restore();
   });
 
-  describe("openInDiffTool()", () => {
+  describe("diffFromSidebar()", () => {
     it("should return false if no diff command is provided.", async () => {
       const configStub = sinon.stub(vscode.workspace, "getConfiguration");
         const config = {
@@ -26,10 +27,12 @@ describe("diffController.ts", async () => {
         const diffController = new DiffController();
         const getDiffCommandStub = sinon.stub(diffController, <any>"getDiffCommand");
         getDiffCommandStub.returns(undefined);
+        const treeItemOne = {uri: vscode.Uri.parse("file:///path/to/file1")} as AddonTreeItem;
+        const treeItemTwo = {uri: vscode.Uri.parse("file:///path/to/file2")} as AddonTreeItem;
 
-        const result = await diffController.openInDiffTool([
-            vscode.Uri.parse("file:///path/to/file1"),
-            vscode.Uri.parse("file:///path/to/file2"),
+        const result = await diffController.diffFromSidebar(treeItemOne, [
+          treeItemOne,
+          treeItemTwo,
         ]);
         expect(result).to.be.false;
     });
@@ -54,10 +57,12 @@ describe("diffController.ts", async () => {
         on: sinon.stub(),
         } as unknown as child_process.ChildProcess;
         spawnStub.returns(fakeChildProcess);
+        const treeItemOne = {uri: vscode.Uri.parse("file:///path/to/file1")} as AddonTreeItem;
+        const treeItemTwo = {uri: vscode.Uri.parse("file:///path/to/file2")} as AddonTreeItem;
 
-        const result = await diffController.openInDiffTool([
-        vscode.Uri.parse("file:///path/to/file1"),
-        vscode.Uri.parse("file:///path/to/file2"),
+        const result = await diffController.diffFromSidebar(treeItemOne, [
+          treeItemOne,
+          treeItemTwo,
         ]);
         expect(result).to.be.true;
     });
