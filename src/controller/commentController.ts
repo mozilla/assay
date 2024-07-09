@@ -118,11 +118,11 @@ export class CommentController {
   }
 
   /**
-   * Export comments from current version.
+   * Export comments from current version via menu.
    */
-  async exportComments(thread: AssayThread) {
+  async exportComments(item: AssayThread | AddonTreeItem) {
     const didDelete = await this.commentCacheController.exportVersionComments(
-      thread.uri
+      item.uri
     );
     if (didDelete) {
       this.refetchComments();

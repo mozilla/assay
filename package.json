@@ -131,14 +131,14 @@
           "when": "viewItem !== guidDirectory && view == assayCommands"
         },
         {
-          "command": "assay.exportCommentsFromContext",
+          "command": "assay.exportComments",
           "group": "primary@2",
           "when": "viewItem !== guidDirectory && assay.commentsEnabled && !listMultiSelection"
         },
         {
           "command": "assay.deleteCommentsFromContext",
           "group": "primary@3",
-          "when": "viewItem !== guidDirectory && assay.commentsEnabled && !listMultiSelection"
+          "when": "viewItem !== guidDirectory && assay.commentsEnabled"
         }
       ],
       "comments/commentThread/title": [
@@ -224,10 +224,6 @@
         "title": "(Assay) Open in Diff Tool"
       },
       {
-        "command": "assay.exportCommentsFromContext",
-        "title": "Export Comments"
-      },
-      {
         "command": "assay.deleteCommentsFromContext",
         "title": "Delete Comments"
       },
@@ -298,7 +294,7 @@
 			},
       {
 				"command": "assay.exportComments",
-				"title": "Export Version Comments",
+				"title": "Export Comments",
         "icon": "$(assay-export)"
 			},
       {

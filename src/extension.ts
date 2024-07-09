@@ -209,12 +209,6 @@ export async function activate(context: vscode.ExtensionContext) {
     statusBarController
   );
 
-  const exportCommentsFolderDisposable = vscode.commands.registerCommand(
-    "assay.exportCommentsFromContext",
-    commentCacheController.exportVersionComments,
-    commentCacheController
-  );
-
   const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.deleteCommentsFromContext",
     commentController.deleteCommentsFromMenu,
@@ -287,7 +281,6 @@ export async function activate(context: vscode.ExtensionContext) {
     disposeCommentDisposable,
     copyLinkFromReplyDisposable,
     copyLinkFromThreadDisposable,
-    exportCommentsFolderDisposable,
     deleteCommentsFolderDisposable
   );
 }
