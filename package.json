@@ -133,12 +133,12 @@
         {
           "command": "assay.exportCommentsFromContext",
           "group": "primary@2",
-          "when": "viewItem !== guidDirectory && assay.commentsEnabled"
+          "when": "viewItem !== guidDirectory && assay.commentsEnabled && !listMultiSelection"
         },
         {
           "command": "assay.deleteCommentsFromContext",
           "group": "primary@3",
-          "when": "viewItem !== guidDirectory && assay.commentsEnabled"
+          "when": "viewItem !== guidDirectory && assay.commentsEnabled && !listMultiSelection"
         }
       ],
       "comments/commentThread/title": [
