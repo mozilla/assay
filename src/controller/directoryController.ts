@@ -104,15 +104,20 @@ export class DirectoryController {
   /**
    * Deletes the associated uri of all selected AddonTreeItems.
    * @param list Selected AddonTreeItems
-   * @returns whether all were successfully deleted.
+   * @returns the failed uris.
    */
   static async deleteUri(list: AddonTreeItem[]) {
-    let success = false;
-    list.forEach(async (item) => {
-      await vscode.workspace.fs.delete(item.uri, { recursive: true });
-      success = true;
-    });
-    return success;
+    const promises = [];
+    const failedUris: vscode.Uri[] = [];
+
+    for (const item of list) {
+      const thenable = vscode.workspace.fs.delete(item.uri, { recursive: true });
+        const promise = Promise.resolve(thenable).catch(() => failedUris.push(item.uri));
+        promises.push(promise);
+    }
+
+    await Promise.allSettled(promises);
+    return failedUris;
   }
 
   /**
