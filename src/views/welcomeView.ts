@@ -84,12 +84,10 @@ export class WelcomeView {
             .img-wrapper {
               display: flex;
               flex-direction: column;
+              justify-content: center;
               gap: 0.5em;
-              margin: 1em;
-            }
-
-            img {
-              width: 100%;
+              margin: 1em 3em;
+              
             }
 
             h1,
@@ -108,7 +106,7 @@ export class WelcomeView {
 
         <body>
           <main>
-            <h1>Welcome To Assay</h1>
+            <h1>Welcome To Assay!</h1>
 
             <hr>
 
@@ -117,7 +115,7 @@ export class WelcomeView {
             <h3>1. API Keys</h3>
             <div class="img-wrapper">
               <img src="${mediaFolderSrc}/commands.png" />
-              <div class="subtitle">This is a subtitle.</div>
+              <div class="subtitle">Assay's Primary Sidebar.</div>
             </div>
             You will need a JWT Issuer and a JWT Secret to use Assay. Both of these can be
             obtained from the
@@ -153,8 +151,7 @@ export class WelcomeView {
             <h3>1. Downloading add-ons & Versions</h3>
             <h4>A. From VS Code</h4>
             <div class="img-wrapper">
-              <img src="${mediaFolderSrc}/placeholder.gif" />
-              <div class="subtitle">This is a subtitle.</div>
+              <img src="${mediaFolderSrc}/newAddon.png" />
             </div>
             To download an add-on version directly within VSCode:
             <ol>
@@ -165,8 +162,7 @@ export class WelcomeView {
             </ol>
             <h4>B. From Review Page</h4>
             <div class="img-wrapper">
-              <img src="${mediaFolderSrc}/reviewpage.gif" />
-              <div class="subtitle">This is a subtitle.</div>
+              <img src="${mediaFolderSrc}/reviewPage.png" />
             </div>
             To download an add-on version from AMO:
             <ol>
@@ -183,8 +179,7 @@ export class WelcomeView {
             <h3>2. Linting Versions</h3>
 
             <div class="img-wrapper">
-              <img src="${mediaFolderSrc}/commenting.gif" />
-              <div class="subtitle">This is a subtitle.</div>
+              <img src="${mediaFolderSrc}/linter.png" />
             </div>
 
             When open to a specific version, Assay will highlight any lines flagged by addons-linter.
@@ -196,7 +191,6 @@ export class WelcomeView {
             <h4>A. Reviewing Code</h4>
             <div class="img-wrapper">
               <img src="${mediaFolderSrc}/commenting.gif" />
-              <div class="subtitle">This is a subtitle.</div>
             </div>
 
             To mark or share offending lines:
@@ -220,8 +214,8 @@ export class WelcomeView {
             </ol>
 
             <div class="img-wrapper">
-              <img src="${mediaFolderSrc}/commenting.gif" />
-              <div class="subtitle">Annotated image of the buttons.</div>
+              <img src="${mediaFolderSrc}/buttons.png" />
+              <div class="subtitle">In order: Export, edit, copy, and delete.</div>
             </div>
             <h4>B. Exporting Comments</h4>
             To export the comments to a text format, you can:
@@ -238,7 +232,6 @@ export class WelcomeView {
             <h4>C. Opening Review Page</h4>
             <div class="img-wrapper">
               <img src="${mediaFolderSrc}/reviewlink.png" />
-              <div class="subtitle">This is a subtitle.</div>
             </div>
             If you are inside a file attributed to a certain review,
             to open the review page of an add-on:
@@ -251,8 +244,7 @@ export class WelcomeView {
             <h3>4. Diff Tool</h3>
 
             <div class="img-wrapper">
-              <img src="${mediaFolderSrc}/folder context.png" />
-              <div class="subtitle">This is a subtitle.</div>
+              <img src="${mediaFolderSrc}/folderContext.png" />
             </div>
 
             To compare folders of add-on versions:
@@ -272,6 +264,7 @@ export class WelcomeView {
               <div class="subtitle">This can be changed in the extension settings.</div>
             </div>
 
+            <br><br>
 
             <h3>5. Updates</h3>
             To update the extension:
