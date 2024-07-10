@@ -101,60 +101,6 @@
       }
     },
     "menus": {
-      "commandPalette": [
-        {
-          "command": "assay.refresh",
-          "when": "false"
-        },
-        {
-          "command": "assay.sidebarDiff",
-          "when": "false"
-        },
-        {
-          "command": "assay.sidebarDelete",
-          "when": "false"
-        },
-        {
-          "command": "assay.viewAddon",
-          "when": "false"
-        },
-        {
-          "command": "assay.copyLinkFromReply",
-          "when": "false"
-        },
-        {
-          "command": "assay.addComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.editComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.deleteComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.saveComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.cancelSaveComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.disposeComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.exportComments",
-          "when": "false"
-        },
-        {
-          "command": "assay.copyLinkFromThread",
-          "when": "false"
-        }
-      ],
       "view/title": [
         {
           "command": "assay.get",
@@ -301,14 +247,6 @@
         "icon": "$(assay-add)"
       },
       {
-        "command": "assay.getApiKey",
-        "title": "(Assay) Enter API Key"
-      },
-      {
-        "command": "assay.getSecret",
-        "title": "(Assay) Enter Secret Key"
-      },
-      {
         "command": "assay.refresh",
         "title": "Refresh Addons",
         "icon": "$(assay-refresh)"
@@ -325,6 +263,14 @@
         "command": "assay.viewAddon",
         "title": "View Addon in New Window",
         "icon": "$(assay-view)"
+      },
+      {
+        "command": "assay.getApiKey",
+        "title": "(Assay) Enter API Key"
+      },
+      {
+        "command": "assay.getSecret",
+        "title": "(Assay) Enter Secret Key"
       },
       {
 				"command": "assay.copyLinkFromReply",
