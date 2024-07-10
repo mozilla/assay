@@ -236,12 +236,13 @@ describe("CommentController.ts", () => {
     it("delete the comments of the given uri.", async () => {
       const uri = vscode.Uri.parse("uri");      
       const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+      commentCacheControllerStub.deleteComments.resolves();
       const result = await cmtController.deleteCommentsFromMenu({
         label: "",
         uri: uri
       }, undefined);
       expect(commentCacheControllerStub.deleteComments.calledWith(uri)).to.be.true;
-      expect(result).to.be.true;
+      expect(result).to.have.lengthOf(0);
     });
 
     it("delete the comments of given uris.", async () => {
@@ -250,6 +251,7 @@ describe("CommentController.ts", () => {
       const uriThree = vscode.Uri.parse("uri-three");      
 
       const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+      commentCacheControllerStub.deleteComments.resolves();
       const result = await cmtController.deleteCommentsFromMenu({
         label: "",
         uri: uriOne
@@ -268,8 +270,7 @@ describe("CommentController.ts", () => {
       expect(commentCacheControllerStub.deleteComments.calledWith(uriOne)).to.be.true;
       expect(commentCacheControllerStub.deleteComments.calledWith(uriTwo)).to.be.true;
       expect(commentCacheControllerStub.deleteComments.calledWith(uriThree)).to.be.true;
-
-      expect(result).to.be.true;
+      expect(result).to.have.lengthOf(0);
     });
   });
 

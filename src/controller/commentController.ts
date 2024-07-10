@@ -29,14 +29,18 @@ export class CommentController {
     treeItem: AddonTreeItem,
     list: AddonTreeItem[] | undefined
   ) {
-    let success = false;
+    const promises = [];
+    const failedUris: vscode.Uri[] = [];
     list = list || [treeItem];
+
     for (const item of list) {
-      await this.commentCacheController.deleteComments(item.uri);
-      success = true;
+        const promise = this.commentCacheController.deleteComments(item.uri).catch(() => failedUris.push(item.uri));
+        promises.push(promise);
     }
+
+    await Promise.allSettled(promises);
     this.refetchComments();
-    return success;
+    return failedUris;
   }
 
   /**
