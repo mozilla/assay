@@ -38,7 +38,7 @@ export class CommentController {
         promises.push(promise);
     }
 
-    await Promise.allSettled(promises);
+    await Promise.all(promises);
     this.refetchComments();
     return failedUris;
   }
