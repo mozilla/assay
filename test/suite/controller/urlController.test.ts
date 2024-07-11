@@ -10,7 +10,7 @@ import { UrlController } from "../../../src/controller/urlController";
 
 const context = {
     globalState: {
-      update: sinon.stub(),
+      update: sinon.stub().resolves(),
     },
 } as any;
 
@@ -118,7 +118,7 @@ describe("urlController.ts", async () => {
       );
       showTextDocumentStub.resolves();
 
-      await urlController["openWorkspace"](manifestUri.fsPath);
+      urlController["openWorkspace"](manifestUri.fsPath);
       expect(executeCommandStub.calledOnceWith("vscode.openFolder")).to.be.true;
     });
   });

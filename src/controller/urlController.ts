@@ -60,7 +60,7 @@ export class UrlController implements vscode.UriHandler {
     }
     const { workspaceFolder, guid, version } = result;
     const versionPath = `${workspaceFolder}/${guid}/${version}`;
-    await this.openWorkspace(versionPath);
+    this.openWorkspace(versionPath);
   }
 
   /**
@@ -120,7 +120,7 @@ export class UrlController implements vscode.UriHandler {
     } catch (error) {
       await this.addonController.downloadAndExtract(guid, version);
     }
-    await this.openWorkspace(versionPath, filepath, lineNumber);
+    this.openWorkspace(versionPath, filepath, lineNumber);
   }
 
   /**
@@ -129,7 +129,7 @@ export class UrlController implements vscode.UriHandler {
    * @param filepath
    * @param lineNumber
    */
-  private async openWorkspace(
+  private openWorkspace(
     versionPath: string,
     filepath?: string,
     lineNumber?: string
@@ -138,16 +138,24 @@ export class UrlController implements vscode.UriHandler {
     const filePath = `${versionPath}/${filepath ?? "manifest.json"}`;
     const workspace = vscode.workspace.workspaceFolders;
 
+    // If user does not have a workspace open, directly open the folder.
+    if (!workspace) {
+      vscode.commands
+        .executeCommand("vscode.openFolder", versionUri)
+        .then(() => {
+          this.revealFile(vscode.Uri.file(filePath), lineNumber);
+        });
+    }
     // If user already has the version folder opened, open the manifest.json
-    if (workspace && workspace[0].uri.fsPath === versionUri.fsPath) {
+    else if (workspace[0].uri.fsPath === versionUri.fsPath) {
       this.revealFile(vscode.Uri.file(filePath), lineNumber);
     }
     // Otherwise, store the filePath (since the extension must restart) to open on launch.
     else {
-      await this.context.globalState.update("filePath", filePath);
-      if (lineNumber) {
-        await this.context.globalState.update("lineNumber", lineNumber);
-      }
+      Promise.all([
+        this.context.globalState.update("filePath", filePath),
+        this.context.globalState.update("lineNumber", lineNumber),
+      ]);
       vscode.commands.executeCommand("vscode.openFolder", versionUri, true);
     }
   }
