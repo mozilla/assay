@@ -21,6 +21,64 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "icons": {
+      "assay-edit": {
+        "description": "edit",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb04"
+        }
+      },
+      "assay-export": {
+        "description": "export",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb47"
+        }
+      },
+      "assay-share": {
+        "description": "share",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb21"
+        }
+      },
+      "assay-delete": {
+        "description": "close",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb55"
+        }
+      },
+      "assay-add": {
+        "description": "add",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb0b"
+        }
+      },
+      "assay-addon": {
+        "description": "addon",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb10"
+        }
+      },
+      "assay-refresh": {
+        "description": "refresh",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\eb13"
+        }
+      },
+      "assay-view": {
+        "description": "view",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\fb79"
+        }
+      }
+    },
     "configuration": {
       "title": "Assay",
       "properties": {
@@ -43,6 +101,34 @@
       }
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "assay.get",
+          "group": "navigation@2",
+          "when": "view == assayCommands"
+        },
+        {
+          "command": "assay.refresh",
+          "group": "navigation@1",
+          "when": "view == assayCommands"
+        }
+
+      ],
+      "view/item/context": [
+        {
+          "command": "assay.sidebarDiff",
+          "when": "viewItem !== guidDirectory && view == assayCommands && listDoubleSelection"
+        },
+        {
+          "command": "assay.sidebarDelete",
+          "when": "view == assayCommands"
+        },
+        {
+          "command": "assay.viewAddon",
+          "group": "inline",
+          "when": "viewItem !== guidDirectory && view == assayCommands"
+        }
+      ],
       "explorer/context": [
         {
           
@@ -51,7 +137,6 @@
           "when": "assay.commentsEnabled && explorerResourceIsFolder && listDoubleSelection"
         },
         {
-          
           "command": "assay.exportCommentsFromContext",
           "group": "navigation",
           "when": "assay.commentsEnabled && explorerResourceIsFolder"
@@ -112,14 +197,29 @@
 				}
 			]
     },
+    "viewsContainers": {
+      "activitybar": [
+        {
+            "id": "assay-menu",
+            "title": "Assay",
+            "icon": "media/assay.svg"
+        }
+    ]
+    },
     "views": {
-      "explorer": [
+      "assay-menu": [
         {
           "id": "assayCommands",
-          "name": "Assay"
+          "name": "Addons"
         }
       ]
     },
+    "viewsWelcome": [
+      {
+          "view": "assayCommands",
+          "contents": "You do not have any addons installed.\n[+ Review New Addon](command:assay.get)\n In order to use Assay, you must generate an API key and secret in the [Reviewer Tools](https://addons.mozilla.org/en-US/firefox/) section of AMO. \n[Enter API Key](command:assay.getApiKey)\n[Enter Secret](command:assay.getSecret)\nYou can [Test API Credentials](command:assay.testApiCredentials) if needed.\nNew to Assay? [View Instructions](command:assay.welcome)"
+      }
+    ],
     "commands": [
       {
         "command": "assay.welcome",
@@ -142,6 +242,37 @@
         "title": "(Assay) Check For Updates"
       },
       {
+        "command": "assay.get",
+        "title": "(Assay) Review New Addon",
+        "icon": "$(assay-add)"
+      },
+      {
+        "command": "assay.refresh",
+        "title": "Refresh Addons",
+        "icon": "$(assay-refresh)"
+      },
+      {
+        "command": "assay.sidebarDiff",
+        "title": "Open Versions in Diff Tool"
+      },
+      {
+        "command": "assay.sidebarDelete",
+        "title": "Delete"
+      },
+      {
+        "command": "assay.viewAddon",
+        "title": "View Addon in New Window",
+        "icon": "$(assay-view)"
+      },
+      {
+        "command": "assay.getApiKey",
+        "title": "(Assay) Enter API Key"
+      },
+      {
+        "command": "assay.getSecret",
+        "title": "(Assay) Enter Secret Key"
+      },
+      {
 				"command": "assay.copyLinkFromReply",
 				"title": "Copy Link"
 			},
@@ -152,18 +283,12 @@
 			{
 				"command": "assay.editComment",
 				"title": "Edit Comment",
-				"icon": {
-					"dark": "media/commentIcons/edit_inverse.svg",
-					"light": "media/commentIcons/edit.svg"
-				}
+				"icon": "$(assay-edit)"
 			},
 			{
 				"command": "assay.deleteComment",
 				"title": "Delete",
-				"icon": {
-					"dark": "media/commentIcons/close_inverse.svg",
-					"light": "media/commentIcons/close.svg"
-				}
+				"icon": "$(assay-delete)"
 			},
 			{
 				"command": "assay.saveComment",
@@ -180,18 +305,12 @@
       {
 				"command": "assay.exportComments",
 				"title": "Export Version Comments",
-				"icon": {
-					"dark": "media/commentIcons/export_inverse.svg",
-					"light": "media/commentIcons/export.svg"
-				}
+        "icon": "$(assay-export)"
 			},
       {
 				"command": "assay.copyLinkFromThread",
 				"title": "Copy Link",
-				"icon": {
-					"dark": "media/commentIcons/link_inverse.svg",
-					"light": "media/commentIcons/link.svg"
-				}
+				"icon": "$(assay-share)"
 			}
     ]
   },
