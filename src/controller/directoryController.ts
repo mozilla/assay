@@ -29,6 +29,7 @@ export class DirectoryController {
         throw new Error("No root folder selected");
       }
       await this.storeRootFolderSetting(newRootFolder);
+      this.setRootToReadonly();
       return newRootFolder;
     }
     return rootFolder;
