@@ -61,7 +61,6 @@ export class DirectoryController {
    */
   async splitUri(uri: vscode.Uri) {
     const sep = DirectoryController.getFileSeparator();
-    console.log(sep);
     const fullPath = uri.fsPath;
     const rootFolder = await this.getRootFolderPath();
     const relativePath = fullPath.replace(rootFolder, "");
