@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";
 import * as vscode from "vscode";
 
 import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
@@ -12,6 +13,10 @@ export class DirectoryController {
     const assayConfig = vscode.workspace.getConfiguration("assay");
     const rootFolder = assayConfig.get<string>("rootFolder");
     this.setCachedRootFolder(rootFolder);
+  }
+
+  static getFileSeparator(){
+    return path.sep;
   }
 
   /**
@@ -55,14 +60,16 @@ export class DirectoryController {
    * @returns the pieces of the uri.
    */
   async splitUri(uri: vscode.Uri) {
+    const sep = DirectoryController.getFileSeparator();
+    console.log(sep);
     const fullPath = uri.fsPath;
     const rootFolder = await this.getRootFolderPath();
     const relativePath = fullPath.replace(rootFolder, "");
-    const guid = relativePath.split("/")[1];
-    const version = relativePath.split("/")[2];
+    const guid = relativePath.split(sep)[1];
+    const version = relativePath.split(sep)[2];
     const filepath = relativePath.split(version)[1];
     const versionPath = version
-      ? `${rootFolder}/${guid}/${version}`
+      ? [rootFolder, guid, version].join(sep)
       : undefined;
     return {
       rootFolder,
@@ -137,7 +144,6 @@ export class DirectoryController {
     if (globInitialFolder in readOnlyFiles) {
       readOnlyFiles[globInitialFolder] = false;
     }
-
     await fileConfig.update(
       "readonlyInclude",
       { ...readOnlyFiles, [`${rootFolder}/**`]: true },

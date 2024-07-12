@@ -72,6 +72,7 @@ export class AddonController {
    */
   async downloadAndExtract(urlGuid?: string, urlVersion?: string) {
     try {
+      const sep = DirectoryController.getFileSeparator();
       const input = urlGuid || (await AddonView.getInput());
       const json: AddonInfoResponse = await this.getAddonInfo(input);
       const versionInfo = await this.getVersionChoice(input, urlVersion);
@@ -82,7 +83,7 @@ export class AddonController {
 
       const workspaceFolder =
         await this.directoryController.getRootFolderPath();
-      const compressedFilePath = `${workspaceFolder}/${guid}_${version}.xpi`;
+      const compressedFilePath = [workspaceFolder, `${guid}_${version}.xpi`].join(sep);
 
       this.addonCacheController.addAddonToCache(guid, {
         reviewUrl: json.review_url,
@@ -99,7 +100,7 @@ export class AddonController {
 
       await this.extractAddon(
         compressedFilePath,
-        `${workspaceFolder}/${guid}/${version}`
+        [workspaceFolder, guid, version].join(sep)
       );
 
       this.sidebarController.refresh();

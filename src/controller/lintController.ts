@@ -156,6 +156,7 @@ export class LintController {
    * @returns the URI location.
    */
   private getUriFromVersionPath(versionPath: string, filepath: string) {
-    return vscode.Uri.file(`${versionPath}/${filepath}`);
+    const sep = DirectoryController.getFileSeparator();
+    return vscode.Uri.file([versionPath, filepath].join(sep));
   }
 }

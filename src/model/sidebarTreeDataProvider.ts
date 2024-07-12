@@ -2,6 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
+import { DirectoryController } from "../controller/directoryController";
+
 // Does not use resourceUri to avoid fileDecorationProvider providing to this tree.
 export class AddonTreeItem extends vscode.TreeItem {
   constructor(
@@ -34,8 +36,9 @@ export class AddonTreeDataProvider
   }
 
   getChildren(element?: AddonTreeItem): Thenable<AddonTreeItem[]> {
+    const sep = DirectoryController.getFileSeparator();
     const itemPath = element?.uri ? element.uri.fsPath : this.rootPath;
-    const depth = itemPath.split(this.rootPath)?.at(1)?.split("/").length;
+    const depth = itemPath.split(this.rootPath)?.at(1)?.split(sep).length;
     return new Promise((resolve) => {
       fs.readdir(itemPath, (err, files) => {
         if (err || !depth || depth > 2) {

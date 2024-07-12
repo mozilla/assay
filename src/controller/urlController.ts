@@ -58,8 +58,9 @@ export class UrlController implements vscode.UriHandler {
     if (!result) {
       return;
     }
+    const sep = DirectoryController.getFileSeparator();
     const { workspaceFolder, guid, version } = result;
-    const versionPath = `${workspaceFolder}/${guid}/${version}`;
+    const versionPath = [workspaceFolder, guid, version].join(sep);
     this.openWorkspace(versionPath);
   }
 
@@ -114,7 +115,8 @@ export class UrlController implements vscode.UriHandler {
     lineNumber?: string
   ) {
     const rootPath = await this.directoryController.getRootFolderPath();
-    const versionPath = `${rootPath}/${guid}/${version}`;
+    const sep = DirectoryController.getFileSeparator();
+    const versionPath = [rootPath, guid, version].join(sep);
     try {
       await fs.promises.stat(versionPath);
     } catch (error) {
@@ -134,8 +136,9 @@ export class UrlController implements vscode.UriHandler {
     filepath?: string,
     lineNumber?: string
   ) {
+    const sep = DirectoryController.getFileSeparator();
     const versionUri = vscode.Uri.file(versionPath);
-    const filePath = `${versionPath}/${filepath ?? "manifest.json"}`;
+    const filePath = [versionPath, filepath ?? "manifest.json"].join(sep);
     const workspace = vscode.workspace.workspaceFolders;
 
     // If user does not have a workspace open, directly open the folder.

@@ -65,13 +65,14 @@ export class CommentCacheController {
     const { guid, version } = await this.directoryController.splitUri(uri);
     const rootPath = await this.directoryController.getRootFolderPath();
     const comments = await this.cache.getFromCache([guid, version]);
+    const sep = DirectoryController.getFileSeparator();
 
     for (const [filepath] of Object.entries(comments)) {
       // Delete the file in cache.
       await this.cache.removeFromCache([guid, version, filepath]);
       // Update the file's decorator.
       const commentUri = vscode.Uri.file(
-        `${rootPath}/${guid}/${version}/${filepath}`
+        [rootPath, guid, version, filepath].join(sep)
       );
       this.fileDecoratorController.loadFileDecoratorByUri(commentUri);
     }
