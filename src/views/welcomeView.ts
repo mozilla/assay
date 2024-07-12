@@ -82,12 +82,16 @@ export class WelcomeView {
             }
 
             .img-wrapper {
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              gap: 0.5em;
-              margin: 1em 3em;
-              
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5em;
+                margin: 1em 3em; 
+            }
+
+            img {
+                width: 100%;
+                max-width: 35em;
             }
 
             h1,
