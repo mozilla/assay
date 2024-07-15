@@ -232,6 +232,48 @@ describe("CommentController.ts", () => {
     });
 });
 
+  describe("deleteCommentsFromMenu()", () => {
+    it("delete the comments of the given uri.", async () => {
+      const uri = vscode.Uri.parse("uri");      
+      const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+      commentCacheControllerStub.deleteComments.resolves();
+      const result = await cmtController.deleteCommentsFromMenu({
+        label: "",
+        uri: uri
+      }, undefined);
+      expect(commentCacheControllerStub.deleteComments.calledWith(uri)).to.be.true;
+      expect(result).to.have.lengthOf(0);
+    });
+
+    it("delete the comments of given uris.", async () => {
+      const uriOne = vscode.Uri.parse("uri-one");
+      const uriTwo = vscode.Uri.parse("uri-two");      
+      const uriThree = vscode.Uri.parse("uri-three");      
+
+      const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+      commentCacheControllerStub.deleteComments.resolves();
+      const result = await cmtController.deleteCommentsFromMenu({
+        label: "",
+        uri: uriOne
+      }, [{
+        label: "",
+        uri: uriOne
+      },
+      {
+        label: "",
+        uri: uriTwo
+      },
+      {
+        label: "",
+        uri: uriThree
+      }]);
+      expect(commentCacheControllerStub.deleteComments.calledWith(uriOne)).to.be.true;
+      expect(commentCacheControllerStub.deleteComments.calledWith(uriTwo)).to.be.true;
+      expect(commentCacheControllerStub.deleteComments.calledWith(uriThree)).to.be.true;
+      expect(result).to.have.lengthOf(0);
+    });
+  });
+
 
   describe("exportComments()", () => {
     it("call to export comments from cache and activate a new controller with re-fetched comments in place of the old one.", async () => {

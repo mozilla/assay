@@ -60,7 +60,7 @@ export class DiffController {
    */
   private async setDiffCommand() {
     try {
-      const input = await DiffView.promptDiffCommand();
+      const input = DiffView.promptDiffCommand();
       const config = vscode.workspace.getConfiguration("assay");
       await config.update("diffTool", input, true);
       return input;

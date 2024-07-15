@@ -171,34 +171,28 @@
       "view/item/context": [
         {
           "command": "assay.sidebarDiff",
+          "group": "primary@1",
           "when": "viewItem !== guidDirectory && view == assayCommands && listDoubleSelection"
         },
         {
           "command": "assay.sidebarDelete",
+          "group": "secondary@1",
           "when": "view == assayCommands"
         },
         {
           "command": "assay.viewAddon",
           "group": "inline",
           "when": "viewItem !== guidDirectory && view == assayCommands"
-        }
-      ],
-      "explorer/context": [
-        {
-          
-          "command": "assay.openInDiffTool",
-          "group": "navigation",
-          "when": "assay.commentsEnabled && explorerResourceIsFolder && listDoubleSelection"
         },
         {
-          "command": "assay.exportCommentsFromContext",
-          "group": "navigation",
-          "when": "assay.commentsEnabled && explorerResourceIsFolder"
+          "command": "assay.exportComments",
+          "group": "primary@2",
+          "when": "viewItem !== guidDirectory && assay.commentsEnabled && !listMultiSelection"
         },
         {
           "command": "assay.deleteCommentsFromContext",
-          "group": "navigation",
-          "when": "explorerResourceIsFolder"
+          "group": "primary@3",
+          "when": "viewItem !== guidDirectory && assay.commentsEnabled"
         }
       ],
       "comments/commentThread/title": [
@@ -234,9 +228,6 @@
 					"group": "inline@2",
 					"when": "assay.commentsEnabled && commentController == assay-comments && commentThreadIsEmpty"
 				}
-			],
-			"comments/comment/title": [
-				
 			],
 			"comments/comment/context": [
 				{
@@ -284,12 +275,8 @@
         "title": "(Assay) Open in Diff Tool"
       },
       {
-        "command": "assay.exportCommentsFromContext",
-        "title": "(Assay) Export Version Comments"
-      },
-      {
         "command": "assay.deleteCommentsFromContext",
-        "title": "(Assay) Delete Version Comments"
+        "title": "Delete Comments"
       },
       {
         "command": "assay.checkForUpdates",
@@ -311,7 +298,7 @@
       },
       {
         "command": "assay.sidebarDelete",
-        "title": "Delete"
+        "title": "Delete Selected"
       },
       {
         "command": "assay.viewAddon",
@@ -358,7 +345,7 @@
 			},
       {
 				"command": "assay.exportComments",
-				"title": "Export Version Comments",
+				"title": "Export Comments",
         "icon": "$(assay-export)"
 			},
       {

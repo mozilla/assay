@@ -4,6 +4,7 @@ import { CommentCacheController } from "./commentCacheController";
 import { DirectoryController } from "./directoryController";
 import { RangeHelper } from "../helper/rangeHelper";
 import { AssayComment, AssayReply, AssayThread } from "../model/assayComment";
+import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
 import { ContextValues } from "../types";
 export class CommentController {
   controller: vscode.CommentController;
@@ -16,6 +17,30 @@ export class CommentController {
   ) {
     this.controller = vscode.comments.createCommentController(id, label);
     this.activateController();
+  }
+
+  /**
+   * Deletes the comments from the selected uris.
+   * @param treeItem The specific AddonTreeItem the user opened the context menu on.
+   * @param list Selected AddonTreeItems
+   * @returns whether all were successfully deleted.
+   */
+  async deleteCommentsFromMenu(
+    treeItem: AddonTreeItem,
+    list: AddonTreeItem[] | undefined
+  ) {
+    const promises = [];
+    const failedUris: vscode.Uri[] = [];
+    list = list || [treeItem];
+
+    for (const item of list) {
+        const promise = this.commentCacheController.deleteComments(item.uri).catch(() => failedUris.push(item.uri));
+        promises.push(promise);
+    }
+
+    await Promise.all(promises);
+    this.refetchComments();
+    return failedUris;
   }
 
   /**
@@ -100,11 +125,11 @@ export class CommentController {
   }
 
   /**
-   * Export comments from current version.
+   * Export comments from current version via menu.
    */
-  async exportComments(thread: AssayThread) {
+  async exportComments(item: AssayThread | AddonTreeItem) {
     const didDelete = await this.commentCacheController.exportVersionComments(
-      thread.uri
+      item.uri
     );
     if (didDelete) {
       this.refetchComments();
