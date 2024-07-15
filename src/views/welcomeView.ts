@@ -64,115 +64,222 @@ export class WelcomeView {
   }
 
   private _getWebviewContent(mediaFolderSrc: vscode.Uri) {
-    return `<!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8" />
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>Welcome To Assay</h1>
-        <p>A reviewer tool for Mozilla Firefox addons!</p>
-        <h2>Instructions</h2>
-        <h3>API Keys</h3>
-        <img src="${mediaFolderSrc}/commands.png" width="200" />
-        <br />
-        You will need a JWT Issuer and a JWT Secret to use Assay. These can be
-        obtained from the
-        <a href="https://addons.mozilla.org/en-US/developers/addon/api/key/"
-          >Mozilla Developer Hub</a
-        >.<br /><br />
-        To add them to Assay, under the "Assay" menu, click "Enter API Key" and
-        "Enter API Secret" respectively.<br />
-        <h3>Root Directory</h3>
-        This extension relies on having a dedicated directory for your reviews. This
-        is so the guid and versions of an addon are consistently at the same folder
-        depth. So, decide on a location for where you will perform reviews. Upon
-        your first request to download an addon, you will be prompted to set the
-        root folder path.
-        <br /><br />
-        <img src="${mediaFolderSrc}/rootdir.png" width="300" />
-        <br /><br />
-        (This can be changed in the extension settings).
-        <h3>Diff Tool</h3>
-        <img src="${mediaFolderSrc}/folder context.png" width="300" />
-        <br /><br />
-        To compare folders of addon versions, simply select exactly two folders in
-        the sidebar. Then, from the context menu, click the command "(Assay) Open in
-        Diff Tool". If it's your first time, enter the command that would launch the
-        tool from the cli (e.g: "opendiff"). This will open your desired diff tool
-        with the two folders as arguments.<br /><br />
-        <img src="${mediaFolderSrc}/diff.png" width="300" />
-        <br /><br />
-        This can be changed in the extension settings.
-        <br /><br />
-        There is also an extension on the VSCode marketplace called
-        <a
-          href="https://marketplace.visualstudio.com/items?itemName=moshfeu.compare-folders"
-          >Compare Folders</a
-        >
-        which is a great tool to use within VSCode.
-        <h3>Downloading Addons & Versions</h3>
-        <h4>From an Input</h4>
-        You can download an addon version directly within VSCode by accessing the
-        command titled "Review New Addon Version" from the Assay menu. This will
-        prompt you for an addon identifier as well as the versions.
-        <br /><br />
-        You will require the API keys mentioned above to use this feature.
-        <h4>From Review Page</h4>
-        <img src="${mediaFolderSrc}/reviewpage.gif" width="600" />
-        <br /><br />
-        On the review page, there is now a new button titled "Open in VSC" under
-        each version. This will automatically launch VSCode, perform the download,
-        and open the manifest in a text editor.
-        <br /><br />
-        You will require the API keys mentioned above to use this feature.
-        <h3>Reviewing Versions</h3>
-        <h4>Adding/Removing Comments</h4>
-        <img src="${mediaFolderSrc}/commenting.gif" width="600" />
-        <br /><br />
-        To add a comment, either hover over a line or select multiple lines
-        and press the 'plus' popup in the gutter. The comment will be saved to cache upon submission and a visual
-        indicator in the gutter and file tree will be displayed. You can press the indicator
-        to hide or show the comment as needed.
-        <br /><br />
-        To remove a comment, open the comment and press the 'Delete Comment' button
-        in the top right corner, represented by an 'X' icon.
-        <h4>Exporting Comments</h4>
-        To export the comments to a text format, you can:
-        <ul>
-          <li>
-            Open the context menu of any file/folder that is a subfolder of the
-            specific version folder, or the version folder itself, then select
-            "(Assay) Export Version Comments".
-          </li>
-          <br />
-          <li>
-            Navigate to and open a file that belongs to a version. Open the command
-            palette and choose "(Assay) Export Version Comments". This will export all
-            comments for the version the file belongs to.
-          </li>
-          <br />
-          <li>
-            Press the 'Export Version Comments' button in the top right corner of
-            any expanded comment.
-          </li>
-        </ul>
-        <h4>Opening Review Page</h4>
-        <img src="${mediaFolderSrc}/reviewlink.png" width="200" />
-        <br /><br />
-        To open the review page of an addon, there is a taskbar button titled
-        "{guid} - Review Page". Clicking that will bring you to the review page.
-      <h3>Updates</h3>
-        To update the extension, simply look for "(Assay) Check for Updates" in the command palette. 
-        This will automatically update the extension if there is a new version available.
-      </body>
-    </html>
+    return `
+      <html>
+        <head>
+          <meta charset="UTF-8" />
+          <style>
+            body {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            main {
+              font-family: Arial, sans-serif;
+              margin: 1em;
+              max-width: 80%;
+            }
+
+            .img-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5em;
+                margin: 1em 3em; 
+            }
+
+            img {
+                width: 100%;
+                max-width: 35em;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+              text-align: center;
+            }
+
+            .subtitle {
+              opacity: 50%;
+              text-align: center;
+            }
+          </style>
+        </head>
+
+        <body>
+          <main>
+            <h1>Welcome To Assay!</h1>
+
+            <hr>
+
+            <h2>Set-up</h2>
+
+            <h3>1. API Keys</h3>
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/commands.png" />
+              <div class="subtitle">Assay's Primary Sidebar.</div>
+            </div>
+            You will need a JWT Issuer and a JWT Secret to use Assay. Both of these can be
+            obtained from the
+            <a href="https://add-ons.mozilla.org/en-US/developers/add-on/api/key/">Mozilla Developer Hub</a>.<br><br>
+            To add them to Assay for the first time --
+            <ol>
+              <li>Navigate to the Assay sidebar.</li>
+              <li>Press <code>'Enter API Key'</code> and enter the API key.</li>
+              <li>Press <code>'Enter Secret'</code> and enter the API's secret.</li>
+            </ol>
+
+            Once you've begun installing add-ons, this menu will no longer be visible.
+            To update your keys, you can open the command palette (<code>Ctrl+Shift+P</code>)
+            and enter <code>'Enter API Key'</code> or <code>'Enter Secret'</code>
+            to open their respective menus.
+
+            <br><br>
+
+            <h3>2. Root Directory</h3>
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/rootdir.png" />
+              <div class="subtitle">This can be changed in the extension settings.</div>
+            </div>
+            Upon first interacting with Assay, you will be prompted to set the root folder path.
+            Assay relies on having a dedicated directory for your reviews.
+            Decide on an empty directory for where you will perform reviews.
+
+            <br><br>
+
+            <hr>
+            <h2>Usage</h2>
+
+            <h3>1. Downloading add-ons & Versions</h3>
+            <h4>A. From VS Code</h4>
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/newAddon.png" />
+            </div>
+            To download an add-on version directly within VSCode:
+            <ol>
+              <li>Navigate to the Assay sidebar.</li>
+              <li>Press the '+' in the top-right corner of the menu.</li>
+              <li>Input an add-on identifier such as its URL, GUID, etc.</li>
+              <li>Select the version to download.</li>
+            </ol>
+            <h4>B. From Review Page</h4>
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/reviewPage.png" />
+            </div>
+            To download an add-on version from AMO:
+            <ol>
+              <li>Navigate to the add-on's review page.</li>
+              <li>Locate the 'Add-on History' section.</li>
+              <li>Under the desired version, select <code>'Open in VSC'</code>, OR</li>
+              <li>Click the file name of a flagged file.</li>
+            </ol>
+            This will launch VSCode, perform the download (if needed),
+            and open the desired file (or manifest if there is none) in a text editor.
+
+            <br><br>
+
+            <h3>2. Linting Versions</h3>
+
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/linter.png" />
+            </div>
+
+            When open to a specific version, Assay will highlight any lines flagged by addons-linter.
+            To view a summary of the messages and to jump between them, navigate to the Problems pane of VS Code.
+
+            <br><br>
+
+            <h3>3. Reviewing Versions</h3>
+            <h4>A. Reviewing Code</h4>
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/commenting.gif" />
+            </div>
+
+            To mark or share offending lines:
+
+            <ol>
+              <li>Hover over or select multiple lines and press the '+' popup in the gutter.</li>
+              <li>Here, you can:
+                <ol type="a">
+                  <li>Optionally leave a comment and mark the line for review, or</li>
+                  <li>Copy a link to the offending lines.</li>
+                </ol>
+              </li>
+              <li>Once submitted, you have similar options in the top-right corner:
+                <ol type="a">
+                  <li>Export the comments to your clipboard,</li>
+                  <li>Add or edit the comment,</li>
+                  <li>Copy a link to the lines,</li>
+                  <li>Delete the annotation entirely.</li>
+                </ol>
+              </li>
+            </ol>
+
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/buttons.png" />
+              <div class="subtitle">In order: Export, edit, copy, and delete.</div>
+            </div>
+            <h4>B. Exporting Comments</h4>
+            To export the comments to a text format, you can:
+            <ol>
+              <li>
+                Navigate to the Assay sidebar and right-click the desired version. Select
+                <code>'Export Comments'</code>.
+              </li>
+              <li>
+                Press the 'Export Version Comments' button in the top right corner of
+                any expanded comment.
+              </li>
+            </ol>
+            <h4>C. Opening Review Page</h4>
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/reviewlink.png" />
+            </div>
+            If you are inside a file attributed to a certain review,
+            to open the review page of an add-on:
+            <ol>
+              <li>Locate the status bar across the bottom of your window.</li>
+              <li>Locate the button <code>'{guid} - Review Page</code>.</li>
+              <li>Clicking it will bring you to the review page.</li>
+            </ol>
+
+            <h3>4. Diff Tool</h3>
+
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/folderContext.png" />
+            </div>
+
+            To compare folders of add-on versions:
+            <ol>
+              <li>Navigate to the Assay sidebar.</li>
+              <li>Select two versions (<code>Ctrl+Click</code>).</li>
+              <li>Right click and select <code>Open Versions in Diff Tool.</code></li>
+            </ol>
+
+            If this is your first time diff-ing, Assay will prompt you for a diff command.
+            Enter the command that would launch your preferred tool from the cli
+            (ex. "bcomp" for Beyond Compare). This will open your desired diff tool with the
+            two folders as arguments.
+
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/diff.png" />
+              <div class="subtitle">This can be changed in the extension settings.</div>
+            </div>
+
+            <br><br>
+
+            <h3>5. Updates</h3>
+            To update the extension:
+            <ol>
+              <li>Open the command palette (<code>Ctrl+Shift+P</code>).</li>
+              <li>Look for <code>'(Assay) Check for Updates'</code>.</li>
+            </ol>
+            This will automatically update the extension if there is a new version available.
+          </main>
+        </body>
+      </html>
     `;
   }
 }
