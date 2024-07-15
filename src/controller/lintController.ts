@@ -1,4 +1,4 @@
-import path = require("path");
+import * as path from "path";  
 import * as vscode from "vscode";
 
 import { AddonCacheController } from "./addonCacheController";
@@ -7,7 +7,6 @@ import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
 import { Message, MessageType, ErrorMessages } from "../types";
 import { NotificationView } from "../views/notificationView";
-
 
 export class LintController {
   constructor(

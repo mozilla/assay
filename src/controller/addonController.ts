@@ -1,7 +1,7 @@
 import * as extract from "extract-zip";
 import * as fs from "fs";
 import fetch from "node-fetch";
-import path = require("path");
+import * as path from "path";  
 import * as vscode from "vscode";
 
 import { AddonCacheController } from "./addonCacheController";
@@ -12,7 +12,6 @@ import constants from "../config/config";
 import { AddonInfoResponse, AddonVersion, ErrorMessages } from "../types";
 import { AddonView } from "../views/addonView";
 import { NotificationView } from "../views/notificationView";
-
 
 export class AddonController {
   constructor(
