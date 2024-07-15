@@ -229,9 +229,6 @@
 					"when": "assay.commentsEnabled && commentController == assay-comments && commentThreadIsEmpty"
 				}
 			],
-			"comments/comment/title": [
-				
-			],
 			"comments/comment/context": [
 				{
 					"command": "assay.cancelSaveComment",
