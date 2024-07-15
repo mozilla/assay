@@ -36,7 +36,7 @@ export class AddonTreeDataProvider
   }
 
   getChildren(element?: AddonTreeItem): Thenable<AddonTreeItem[]> {
-    const sep = DirectoryController.getFileSeparator();
+    const sep = path.sep;
     const itemPath = element?.uri ? element.uri.fsPath : this.rootPath;
     const depth = itemPath.split(this.rootPath)?.at(1)?.split(sep).length;
     return new Promise((resolve) => {

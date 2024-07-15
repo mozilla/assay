@@ -14,11 +14,7 @@ export class DirectoryController {
     const rootFolder = assayConfig.get<string>("rootFolder");
     this.setCachedRootFolder(rootFolder);
   }
-
-  static getFileSeparator(){
-    return path.sep;
-  }
-
+  
   /**
    * Gets the root folder stored in config.
    * @returns the root folder in config.
@@ -60,7 +56,7 @@ export class DirectoryController {
    * @returns the pieces of the uri.
    */
   async splitUri(uri: vscode.Uri) {
-    const sep = DirectoryController.getFileSeparator();
+    const sep = path.sep;
     const fullPath = uri.fsPath;
     const rootFolder = await this.getRootFolderPath();
     const relativePath = fullPath.replace(rootFolder, "");
@@ -68,7 +64,7 @@ export class DirectoryController {
     const version = relativePath.split(sep)[2];
     const filepath = relativePath.split(version)[1];
     const versionPath = version
-      ? [rootFolder, guid, version].join(sep)
+      ? path.join(rootFolder, guid, version)
       : undefined;
     return {
       rootFolder,

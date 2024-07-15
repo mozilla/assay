@@ -1,6 +1,7 @@
 import * as extract from "extract-zip";
 import * as fs from "fs";
 import fetch from "node-fetch";
+import path = require("path");
 import * as vscode from "vscode";
 
 import { AddonCacheController } from "./addonCacheController";
@@ -11,6 +12,7 @@ import constants from "../config/config";
 import { AddonInfoResponse, AddonVersion, ErrorMessages } from "../types";
 import { AddonView } from "../views/addonView";
 import { NotificationView } from "../views/notificationView";
+
 
 export class AddonController {
   constructor(
@@ -72,7 +74,6 @@ export class AddonController {
    */
   async downloadAndExtract(urlGuid?: string, urlVersion?: string) {
     try {
-      const sep = DirectoryController.getFileSeparator();
       const input = urlGuid || (await AddonView.getInput());
       const json: AddonInfoResponse = await this.getAddonInfo(input);
       const versionInfo = await this.getVersionChoice(input, urlVersion);
@@ -83,7 +84,7 @@ export class AddonController {
 
       const workspaceFolder =
         await this.directoryController.getRootFolderPath();
-      const compressedFilePath = [workspaceFolder, `${guid}_${version}.xpi`].join(sep);
+      const compressedFilePath = path.join(workspaceFolder, `${guid}_${version}.xpi`);
 
       this.addonCacheController.addAddonToCache(guid, {
         reviewUrl: json.review_url,
@@ -100,7 +101,7 @@ export class AddonController {
 
       await this.extractAddon(
         compressedFilePath,
-        [workspaceFolder, guid, version].join(sep)
+        path.join(workspaceFolder, guid, version)
       );
 
       this.sidebarController.refresh();

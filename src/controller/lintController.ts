@@ -1,3 +1,4 @@
+import path = require("path");
 import * as vscode from "vscode";
 
 import { AddonCacheController } from "./addonCacheController";
@@ -6,6 +7,7 @@ import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
 import { Message, MessageType, ErrorMessages } from "../types";
 import { NotificationView } from "../views/notificationView";
+
 
 export class LintController {
   constructor(
@@ -156,7 +158,6 @@ export class LintController {
    * @returns the URI location.
    */
   private getUriFromVersionPath(versionPath: string, filepath: string) {
-    const sep = DirectoryController.getFileSeparator();
-    return vscode.Uri.file([versionPath, filepath].join(sep));
+    return vscode.Uri.file(path.join(versionPath, filepath));
   }
 }
