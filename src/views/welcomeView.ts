@@ -123,7 +123,7 @@ export class WelcomeView {
             </div>
             You will need a JWT Issuer and a JWT Secret to use Assay. Both of these can be
             obtained from the
-            <a href="https://add-ons.mozilla.org/en-US/developers/add-on/api/key/">Mozilla Developer Hub</a>.<br><br>
+            <a href="https://addons.mozilla.org/en-US/developers/addon/api/key/">Mozilla Developer Hub</a>.<br><br>
             To add them to Assay for the first time --
             <ol>
               <li>Navigate to the Assay sidebar.</li>
