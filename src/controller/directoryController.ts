@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";
 import * as vscode from "vscode";
 
 import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
@@ -59,11 +60,10 @@ export class DirectoryController {
     const fullPath = uri.fsPath;
     const rootFolder = await this.getRootFolderPath();
     const relativePath = fullPath.replace(rootFolder, "");
-    const guid = relativePath.split("/")[1];
-    const version = relativePath.split("/")[2];
+    const [_, guid, version] = relativePath.split(path.sep);  
     const filepath = relativePath.split(version)[1];
     const versionPath = version
-      ? `${rootFolder}/${guid}/${version}`
+      ? path.join(rootFolder, guid, version)
       : undefined;
     return {
       rootFolder,
@@ -138,7 +138,6 @@ export class DirectoryController {
     if (globInitialFolder in readOnlyFiles) {
       readOnlyFiles[globInitialFolder] = false;
     }
-
     await fileConfig.update(
       "readonlyInclude",
       { ...readOnlyFiles, [`${rootFolder}/**`]: true },

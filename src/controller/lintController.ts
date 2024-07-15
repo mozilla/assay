@@ -1,3 +1,4 @@
+import * as path from "path";  
 import * as vscode from "vscode";
 
 import { AddonCacheController } from "./addonCacheController";
@@ -156,6 +157,6 @@ export class LintController {
    * @returns the URI location.
    */
   private getUriFromVersionPath(versionPath: string, filepath: string) {
-    return vscode.Uri.file(`${versionPath}/${filepath}`);
+    return vscode.Uri.file(path.join(versionPath, filepath));
   }
 }

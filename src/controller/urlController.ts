@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";  
 import * as vscode from "vscode";
 
 import { AddonController } from "./addonController";
@@ -58,8 +59,9 @@ export class UrlController implements vscode.UriHandler {
     if (!result) {
       return;
     }
+    
     const { workspaceFolder, guid, version } = result;
-    const versionPath = `${workspaceFolder}/${guid}/${version}`;
+    const versionPath = path.join(workspaceFolder, guid, version);
     this.openWorkspace(versionPath);
   }
 
@@ -114,7 +116,7 @@ export class UrlController implements vscode.UriHandler {
     lineNumber?: string
   ) {
     const rootPath = await this.directoryController.getRootFolderPath();
-    const versionPath = `${rootPath}/${guid}/${version}`;
+    const versionPath = path.join(rootPath, guid, version);
     try {
       await fs.promises.stat(versionPath);
     } catch (error) {
@@ -135,7 +137,7 @@ export class UrlController implements vscode.UriHandler {
     lineNumber?: string
   ) {
     const versionUri = vscode.Uri.file(versionPath);
-    const filePath = `${versionPath}/${filepath ?? "manifest.json"}`;
+    const filePath = path.join(versionPath, filepath ?? "manifest.json");
     const workspace = vscode.workspace.workspaceFolders;
 
     // If user does not have a workspace open, directly open the folder.

@@ -1,3 +1,4 @@
+import * as path from "path";  
 import * as vscode from "vscode";
 
 import { DirectoryController } from "./directoryController";
@@ -71,7 +72,7 @@ export class CommentCacheController {
       await this.cache.removeFromCache([guid, version, filepath]);
       // Update the file's decorator.
       const commentUri = vscode.Uri.file(
-        `${rootPath}/${guid}/${version}/${filepath}`
+        path.join(rootPath, guid, version, filepath)
       );
       this.fileDecoratorController.loadFileDecoratorByUri(commentUri);
     }
