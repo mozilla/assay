@@ -1,6 +1,13 @@
 import * as vscode from "vscode";
 
 export class RangeHelper {
+
+  static fromSelection(selection: vscode.Selection){
+    const startPosition = new vscode.Position(selection.start.line, selection.start.character);
+    const endPosition = new vscode.Position(selection.end.line, selection.end.character);
+    return new vscode.Range(startPosition, endPosition);
+  }
+
   /**
    * Splits a string into a start and end of a Range of lines.
    * @param str The string representation of the Range.
