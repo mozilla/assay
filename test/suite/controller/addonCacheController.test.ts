@@ -27,7 +27,8 @@ describe("addonCacheController.ts", () => {
             reviewUrl: "url",
             version: "version",
             fileID: "file-id",
-            id: "id"
+            id: "id",
+            isDirty: false
         };
 
         await addonCacheController.addAddonToCache("test-guid", rawReviewMeta);
@@ -42,28 +43,29 @@ describe("addonCacheController.ts", () => {
     });
 
     it("should update an addon's information in cache.", async () => {
-      assayCacheStub.getFromCache.resolves({
-        reviewUrl: "url",
-        version: "version",
-        fileIDs: {"version": "file-id"},
-        id: "id"
-    });
+        assayCacheStub.getFromCache.resolves({
+          reviewUrl: "url",
+          version: "version",
+          fileIDs: {"version": "file-id"},
+          id: "id"
+      });
 
-        const rawReviewMeta = {
-            reviewUrl: "url",
-            version: "version-two",
-            fileID: "file-id-two",
-            id: "id"
-        };
+      const rawReviewMeta = {
+          reviewUrl: "url",
+          version: "version-two",
+          fileID: "file-id-two",
+          id: "id",
+          isDirty: false
+      };
 
-        await addonCacheController.addAddonToCache("test-guid", rawReviewMeta);
+      await addonCacheController.addAddonToCache("test-guid", rawReviewMeta);
 
-        expect(assayCacheStub.addToCache.calledWith(["test-guid"], {
-            reviewUrl: "url",
-            version: "version",
-            fileIDs: {"version": "file-id", "version-two": "file-id-two"},
-            id: "id"
-        }));
+      expect(assayCacheStub.addToCache.calledWith(["test-guid"], {
+          reviewUrl: "url",
+          version: "version",
+          fileIDs: {"version": "file-id", "version-two": "file-id-two"},
+          id: "id"
+      }));
     });
 
   });

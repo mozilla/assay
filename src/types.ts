@@ -68,6 +68,7 @@ export type JSONReview = {
   version: string;
   fileID: string;
   id: string;
+  isDirty: boolean;
 };
 
 export type ThreadLocation = {
@@ -76,10 +77,6 @@ export type ThreadLocation = {
   version: string;
   filepath: string;
   range: string;
-};
-
-export type FilesReadonlyIncludeConfig = {
-  [key: string]: boolean;
 };
 
 export type MessageType = "error" | "notice" | "warning";

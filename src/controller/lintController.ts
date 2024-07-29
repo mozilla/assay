@@ -17,6 +17,15 @@ export class LintController {
   ) {}
 
   /**
+   * Clears existing lints if a document is saved.
+   */
+  async clearLintsOnDirty(document: vscode.TextDocument){
+    this.diagnosticCollection.clear();
+    const { guid, version } = await this.directoryController.splitUri(document.uri);
+    this.addonCacheController.setDirty(guid, version);
+  }
+
+  /**
    * Lints the current workspace.
    */
   async lintWorkspace() {
@@ -27,7 +36,12 @@ export class LintController {
 
     const { versionPath, guid, version } =
       await this.directoryController.splitUri(workspace.uri);
+      
     if (!versionPath) {
+      return;
+    }
+
+    if(await this.addonCacheController.isDirty(guid, version)){
       return;
     }
 

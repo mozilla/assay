@@ -29,4 +29,18 @@ export class AddonCacheController {
   async getAddonFromCache(keys: string[]) {
     return await this.cache.getFromCache(keys);
   }
+
+  /**
+   * Check if guid, version is dirtied. 
+   */
+  async isDirty(guid: string, version: string){
+    return await this.cache.getFromCache([guid, version, "isDirty"]);
+  }
+
+  /**
+   * Set guid, version to dirtied.
+   */
+  async setDirty(guid: string, version: string){
+    this.cache.addToCache([guid, version, "isDirty"], true);
+  }
 }

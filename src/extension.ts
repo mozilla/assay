@@ -117,12 +117,6 @@ export async function activate(context: vscode.ExtensionContext) {
     urlController
   );
 
-  const handleRootConfigurationChangeDisposable =
-    vscode.workspace.onDidChangeConfiguration(
-      directoryController.handleRootConfigurationChange,
-      directoryController
-    );
-
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -136,8 +130,7 @@ export async function activate(context: vscode.ExtensionContext) {
     sidebarDeleteDisposable,
     viewAddonDisposable,
     diffDisposable,
-    assayUpdaterDisposable,
-    handleRootConfigurationChangeDisposable
+    assayUpdaterDisposable
   );
 
   await vscode.commands.executeCommand(
@@ -201,6 +194,11 @@ export async function activate(context: vscode.ExtensionContext) {
   urlController.openCachedFile();
   lintController.lintWorkspace();
 
+  const clearLintDisposable = vscode.workspace.onDidSaveTextDocument(
+    lintController.clearLintsOnDirty,
+    lintController
+  );
+
   const fileDecorationProviderDisposable =
     vscode.window.registerFileDecorationProvider(fileDecorationProvider);
 
@@ -254,7 +252,8 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentDisposable,
     disposeCommentDisposable,
     copyLinkFromThreadDisposable,
-    deleteCommentsFolderDisposable
+    deleteCommentsFolderDisposable,
+    clearLintDisposable
   );
 }
 

@@ -93,6 +93,7 @@ export class AddonController {
         version: version,
         fileID: addonFileID,
         id: addonID,
+        isDirty: false
       });
 
       const writeStream = await this.downloadAddon(
@@ -107,6 +108,8 @@ export class AddonController {
       );
 
       this.sidebarController.refresh();
+
+      //TODO: lint workspace
 
       return { workspaceFolder, guid, version };
     } catch (error) {

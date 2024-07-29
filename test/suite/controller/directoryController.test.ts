@@ -137,43 +137,4 @@ describe("directoryController.ts", async () => {
     });
   });
 
-
-  describe("handleRootConfigurationChange()", async () => {
-    const configStub = sinon.stub(vscode.workspace, "getConfiguration");
-    const assayConfig = {
-        update: sinon.stub(),
-        get: () => {
-            return "/root-folder";
-        },
-        has: sinon.stub(),
-        let: sinon.stub(),
-        inspect: sinon.stub(),
-    };
-
-    const fileConfig = {
-        update: sinon.stub(),
-        get: () => {
-            return ["untouched-folder", "/old-folder/**"];
-          },
-        has: sinon.stub(),
-        let: sinon.stub(),
-        inspect: sinon.stub(),
-    };
-
-    configStub.withArgs("assay").returns(assayConfig);
-    configStub.withArgs("files").returns(fileConfig);
-
-    const directoryController = new DirectoryController();
-    const updateStub = sinon.stub();
-
-    directoryController["setCachedRootFolder"]("/old-folder");
-    const event = {affectsConfiguration: () => true} as vscode.ConfigurationChangeEvent;
-    await directoryController.handleRootConfigurationChange(event);
-
-    // assert old one was removed
-    expect(updateStub.calledWith("readonlyInclude",
-    { "untouched-folder": true, '/root-folder/**': true },
-    vscode.ConfigurationTarget.Global));
-
-  });
 });
