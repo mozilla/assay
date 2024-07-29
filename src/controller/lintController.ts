@@ -6,23 +6,59 @@ import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import constants from "../config/config";
 import { Message, MessageType, ErrorMessages } from "../types";
+import { LintView } from "../views/lintView";
 import { NotificationView } from "../views/notificationView";
 
 export class LintController {
+
+  private dirtyFiles: Set<string>;
+  
   constructor(
     private diagnosticCollection: vscode.DiagnosticCollection,
     private credentialController: CredentialController,
     private addonCacheController: AddonCacheController,
     private directoryController: DirectoryController
-  ) {}
+  ) {
+    this.dirtyFiles = new Set();
+  }
 
   /**
-   * Clears existing lints if a document is saved.
+   * Tracks currently dirtied files.
+   * @param event A vscode event describing a document change.
    */
-  async clearLintsOnDirty(document: vscode.TextDocument){
-    this.diagnosticCollection.clear();
-    const { guid, version } = await this.directoryController.splitUri(document.uri);
-    this.addonCacheController.setDirty(guid, version);
+  addDirty(event: vscode.TextDocumentChangeEvent){
+    const document = event.document;
+    if(document.isDirty){
+      this.dirtyFiles.add(document.uri.fsPath);
+    }
+    else if(event.reason && event.contentChanges){
+      this.dirtyFiles.delete(document.uri.fsPath);
+    }
+  }
+
+  /**
+   * Remove a dirtied file.
+   */
+  removeDirty(document: vscode.TextDocument){
+    this.dirtyFiles.delete(document.uri.fsPath);
+  }
+
+  /**
+   * Clears existing lints if a document is saved when it was dirtied.
+   */
+  clearLintsOnDirty(document: vscode.TextDocument){
+    console.log(this.dirtyFiles);
+    if(this.dirtyFiles.has(document.uri.fsPath)){
+      this.directoryController.splitUri(document.uri).then(result => {
+        const { guid, version } = result;
+        if( guid && version ){
+          this.addonCacheController.setDirty(guid, version);
+          this.diagnosticCollection.clear();
+          LintView.warnOnSave();
+        }
+      });
+    }
+    this.removeDirty(document);
   }
 
   /**

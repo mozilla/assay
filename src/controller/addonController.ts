@@ -109,8 +109,6 @@ export class AddonController {
 
       this.sidebarController.refresh();
 
-      //TODO: lint workspace
-
       return { workspaceFolder, guid, version };
     } catch (error) {
       console.error(error);
