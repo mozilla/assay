@@ -127,14 +127,6 @@
           "when": "false"
         },
         {
-          "command": "assay.saveComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.cancelSaveComment",
-          "when": "false"
-        },
-        {
           "command": "assay.disposeComment",
           "when": "false"
         },
@@ -143,7 +135,7 @@
           "when": "false"
         },
         {
-          "command": "assay.copyLinkFromThread",
+          "command": "assay.copyLink",
           "when": "false"
         }
       ],
@@ -194,7 +186,7 @@
           "when": "assay.commentsEnabled && !commentThreadIsEmpty"
 				},
         {
-					"command": "assay.copyLinkFromThread",
+					"command": "assay.copyLink",
 					"group": "inline@3",
           "when": "assay.commentsEnabled && !commentThreadIsEmpty"
 				},
@@ -204,18 +196,6 @@
 					"when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
 				}
       ],
-			"comments/comment/context": [
-				{
-					"command": "assay.cancelSaveComment",
-					"group": "inline@3",
-					"when": "assay.commentsEnabled && commentController == assay-comments"
-				},
-				{
-					"command": "assay.saveComment",
-					"group": "inline@2",
-					"when": "assay.commentsEnabled && commentController == assay-comments"
-				}
-			],
       "editor/context": [
         {
           "command": "assay.addComment",
@@ -284,7 +264,7 @@
       },
       {
         "command": "assay.viewAddon",
-        "title": "View Addon in New Window",
+        "title": "View Addon",
         "icon": "$(assay-view)"
       },
       {
@@ -297,24 +277,12 @@
       },
       {
 				"command": "assay.addComment",
-				"title": "Mark for Review"
-			},
-      {
-				"command": "assay.addComment",
 				"title": "(Assay) Mark for Review"
 			},
 			{
 				"command": "assay.deleteComment",
 				"title": "Delete",
 				"icon": "$(assay-delete)"
-			},
-			{
-				"command": "assay.saveComment",
-				"title": "Save"
-			},
-			{
-				"command": "assay.cancelSaveComment",
-				"title": "Cancel"
 			},
 			{
 				"command": "assay.disposeComment",
@@ -326,7 +294,7 @@
         "icon": "$(assay-export)"
 			},
       {
-				"command": "assay.copyLinkFromThread",
+				"command": "assay.copyLink",
 				"title": "Copy Link",
 				"icon": "$(assay-share)"
 			}
