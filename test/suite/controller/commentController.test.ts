@@ -58,20 +58,17 @@ describe("CommentController.ts", () => {
   });
 
   describe("deleteThread", () => {
-    // it("should delete the comment thread from a controller and its comments from cache.", async () => {
-    //     const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+    it("should delete the comment thread from a controller and its comments from cache.", async () => {
+        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
 
-    //     const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-    //     const disposeStub = sinon.stub(thread, "dispose");
-    //     const reply = new AssayReply(thread, cmt.body);         
-    //     const comment = await cmtController.addComment(reply);
-               
-    //     await cmtController.deleteThread(comment.thread);
-    //     expect(disposeStub.calledOnce).to.be.true;
+        const comment = await cmtController["createComment"](cmt.uri, rng);
+        const disposeStub = sinon.stub(comment.thread, "dispose");
+        await cmtController.deleteThread(comment.thread);
+        expect(disposeStub.calledOnce).to.be.true;
 
-    //     // was removed from cache
-    //     expect(commentCacheControllerStub.deleteCommentFromCache.called).to.be.true;
-    // });
+        // was removed from cache
+        expect(commentCacheControllerStub.deleteCommentFromCache.called).to.be.true;
+    });
   });
 
   describe("copyLinkFromThread", () => {
