@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as path from "path";  
+import * as path from "path";
 import * as vscode from "vscode";
 
 import { AddonController } from "./addonController";
@@ -59,7 +59,7 @@ export class UrlController implements vscode.UriHandler {
     if (!result) {
       return;
     }
-    
+
     const { workspaceFolder, guid, version } = result;
     const versionPath = path.join(workspaceFolder, guid, version);
     this.openWorkspace(versionPath);

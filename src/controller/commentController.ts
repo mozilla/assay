@@ -33,8 +33,10 @@ export class CommentController {
     list = list || [treeItem];
 
     for (const item of list) {
-        const promise = this.commentCacheController.deleteComments(item.uri).catch(() => failedUris.push(item.uri));
-        promises.push(promise);
+      const promise = this.commentCacheController
+        .deleteComments(item.uri)
+        .catch(() => failedUris.push(item.uri));
+      promises.push(promise);
     }
 
     await Promise.all(promises);
@@ -46,18 +48,14 @@ export class CommentController {
    * Creates the comment thread.
    * @returns the created comment.
    */
-  async addComment(){
+  async addComment() {
     const editor = vscode.window.activeTextEditor;
     if (editor) {
       const range = RangeHelper.fromSelection(editor.selections[0]);
       const document = editor.document;
-
       const comment = await this.createComment(document.uri, range);
-      if (comment) {
-        await this.saveCommentToCache(comment);
-      }
+      await this.saveCommentToCache(comment);
       return comment;
-
     } else {
       throw new Error("No active text editor found.");
     }
@@ -118,17 +116,18 @@ export class CommentController {
   dispose() {
     this.controller.dispose();
   }
-  
+
   /**
    * Creates a comment on uri with the selected range.
    * @param uri The file to create the comment on.
    * @param range The range of the comment.
    * @returns The created comment.
    */
-  private async createComment(uri: vscode.Uri, range: vscode.Range){
+  private async createComment(uri: vscode.Uri, range: vscode.Range) {
     const thread = this.controller.createCommentThread(uri, range, []);
-
-    const { filepath, range: rangeString } = await this.getThreadLocation( thread as AssayThread);
+    const { filepath, range: rangeString } = await this.getThreadLocation(
+      thread as AssayThread
+    );
     thread.label = `${filepath}${RangeHelper.truncate(rangeString)}`;
 
     const newComment = new AssayComment(
@@ -200,7 +199,7 @@ export class CommentController {
   private formatCacheComment(comment: AssayComment) {
     return {
       uri: comment.thread.uri,
-      body: comment.body
+      body: comment.body,
     };
   }
 
@@ -217,6 +216,4 @@ export class CommentController {
       this.createComment(uri, range);
     }
   }
-
-  
 }

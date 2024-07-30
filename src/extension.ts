@@ -234,7 +234,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   const copyLinkFromThreadDisposable = vscode.commands.registerCommand(
-    "assay.copyLinkFromThread",
+    "assay.copyLink",
     commentController.copyLinkFromThread,
     commentController
   );
@@ -254,7 +254,7 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentDisposable,
     disposeCommentDisposable,
     copyLinkFromThreadDisposable,
-    deleteCommentsFolderDisposable,
+    deleteCommentsFolderDisposable
   );
 }
 

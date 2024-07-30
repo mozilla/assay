@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import * as fs from "fs";
 import fetch from "node-fetch";
-import * as path from "path";  
+import * as path from "path";
 import * as vscode from "vscode";
 
 export class UpdateHelper {

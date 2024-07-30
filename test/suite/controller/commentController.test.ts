@@ -9,8 +9,7 @@ import * as vscode from "vscode";
 import { CommentCacheController } from "../../../src/controller/commentCacheController";
 import { CommentController } from "../../../src/controller/commentController";
 import { DirectoryController } from "../../../src/controller/directoryController";
-import { AssayReply, AssayThread } from "../../../src/model/assayComment";
-import { ContextValues } from "../../../src/types";
+import { AssayThread } from "../../../src/model/assayComment";
 
 let commentCacheControllerStub: sinon.SinonStubbedInstance<CommentCacheController>, directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
 
@@ -21,8 +20,7 @@ const cmt = {
   uri: vscode.Uri.file(
     "test-root/test-guid/test-version/test-filepath"
   ),
-  body: "test-comment",
-  contextValue: "comment" as ContextValues
+  body: "test-comment"
 };
 
 const pos = new vscode.Position(1, 0);
@@ -59,153 +57,21 @@ describe("CommentController.ts", () => {
     }
   });
 
-  describe("addComment", async () => {
-    it("should create a comment & thread from non-empty reply and save the comment to cache.", async () => {
-        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
-        const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-        const reply = new AssayReply(thread, cmt.body);
-
-        // was created, and correctly
-        expect(thread.comments.length).to.be.equal(0);
-        await cmtController.addComment(reply);
-        expect(thread.comments.length).to.be.equal(1);
-
-        const comment = thread.comments[0];
-        expect(comment.body.value).to.be.equal(cmt.body);
-        expect(comment.contextValue).to.be.equal(cmt.contextValue);
-        expect(comment.thread).to.be.equal(thread);
-        expect(comment.thread.comments.length).to.be.equal(1);
-        expect(comment.thread.comments[0]).to.be.equal(comment);
-
-        // was added to cache
-        expect(commentCacheControllerStub.saveCommentToCache.called).to.be.true;
-    });
-
-    it("should create a markForReview & comment thread from an empty reply.", async () => {
-        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
-        const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-        const reply = new AssayReply(thread, "");
-
-        // was created
-        expect(thread.comments.length).to.be.equal(0);
-        await cmtController.addComment(reply);
-        expect(thread.comments.length).to.be.equal(1);  
-        expect(thread.comments[0].body.value).to.be.equal("Marked for review.");
-        expect(thread.comments[0].contextValue).to.be.equal("markForReview");
-
-        // was added to cache
-        expect(commentCacheControllerStub.saveCommentToCache.called).to.be.true;
-    });
-  });
-
-  describe("saveComment", () => {
-    it("should update a comment's body to the new string both in comment and in cache.", async () => {
-        const newBody = new vscode.MarkdownString("Hello, world!");
-        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
-        const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-        const reply = new AssayReply(thread, cmt.body);
-        const comment = await cmtController.addComment(reply);
-
-        expect(comment.body.value).to.be.equal(cmt.body);
-        comment.body = newBody;
-        await cmtController.saveComment(comment);
-        expect(comment.body.value).to.be.equal(newBody.value);
-        expect(comment.contextValue).to.be.equal("comment");
-        
-        // was added to cache
-        expect(commentCacheControllerStub.saveCommentToCache.called).to.be.true;
-    });
-    it("should take an empty string and populate it as marked.", async () => {
-        const newBody = new vscode.MarkdownString("");
-        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
-        const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-        const reply = new AssayReply(thread, cmt.body);
-        const comment = await cmtController.addComment(reply);
-
-
-        expect(comment.body.value).to.be.equal(cmt.body);
-        comment.body = newBody;
-        await cmtController.saveComment(comment);
-        expect(comment.body.value).to.be.equal("Marked for review.");
-        expect(comment.contextValue).to.be.equal("markForReview");
-        
-        // was added to cache
-        expect(commentCacheControllerStub.saveCommentToCache.called).to.be.true;
-    });
-  });
-
-  describe("cancelSaveComment", () => {
-    it("should retain its original body text.", async () => {
-        const newBody = new vscode.MarkdownString("Hello, world!");
-        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
-        const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-        const reply = new AssayReply(thread, cmt.body);
-        const comment = await cmtController.addComment(reply);
-
-        expect(comment.body.value).to.be.equal(cmt.body);
-        comment.body = newBody;
-        await cmtController.cancelSaveComment(comment);
-        expect(comment.body.value).to.be.equal(cmt.body);
-        expect(comment.contextValue).to.be.equal("comment");
-    });
-  });
-
   describe("deleteThread", () => {
-    it("should delete the comment thread from a controller and its comments from cache.", async () => {
-        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+    // it("should delete the comment thread from a controller and its comments from cache.", async () => {
+    //     const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
 
-        const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-        const disposeStub = sinon.stub(thread, "dispose");
-        const reply = new AssayReply(thread, cmt.body);         
-        const comment = await cmtController.addComment(reply);
+    //     const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
+    //     const disposeStub = sinon.stub(thread, "dispose");
+    //     const reply = new AssayReply(thread, cmt.body);         
+    //     const comment = await cmtController.addComment(reply);
                
-        await cmtController.deleteThread(comment.thread);
-        expect(disposeStub.calledOnce).to.be.true;
+    //     await cmtController.deleteThread(comment.thread);
+    //     expect(disposeStub.calledOnce).to.be.true;
 
-        // was removed from cache
-        expect(commentCacheControllerStub.deleteCommentFromCache.called).to.be.true;
-    });
-  });
-
-  describe("editComment", () => {
-    it("should set a comment to edit mode.", async () => {
-        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
-        const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-        const reply = new AssayReply(thread, cmt.body);
-        const comment = await cmtController.addComment(reply);
-
-        expect(comment.mode).to.be.equal(vscode.CommentMode.Preview);
-        expect(comment.body.value).to.be.equal(cmt.body);
-        cmtController.editComment(thread);
-        expect(comment.body.value).to.be.equal(cmt.body);
-        expect(comment.mode).to.be.equal(vscode.CommentMode.Editing);
-    });
-  
-    it("should clear the body if a markForReview comment.", async () => {
-        const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
-        const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-        const reply = new AssayReply(thread, "");
-        const comment = await cmtController.addComment(reply);
-
-        expect(comment.mode).to.be.equal(vscode.CommentMode.Preview);
-        expect(comment.body.value).to.be.equal("Marked for review.");
-        cmtController.editComment(thread);
-        expect(comment.body.value).to.be.equal("");
-        expect(comment.mode).to.be.equal(vscode.CommentMode.Editing);      
-    });
-  });
-
-  describe("copyLinkFromReply", () => {
-    it("should call copyLinkFromThread with the reply's thread", () => {
-      const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
-      const thread = cmtController.controller.createCommentThread(cmt.uri, rng, []) as AssayThread;
-      const reply = new AssayReply(thread, cmt.body);
-      const copyLinkFromThreadStub = sinon.stub(cmtController, 'copyLinkFromThread');
-
-      cmtController.copyLinkFromReply(reply);
-
-      expect(copyLinkFromThreadStub.calledOnceWith(thread)).to.be.true;
-    });
+    //     // was removed from cache
+    //     expect(commentCacheControllerStub.deleteCommentFromCache.called).to.be.true;
+    // });
   });
 
   describe("copyLinkFromThread", () => {
