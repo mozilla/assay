@@ -16,6 +16,18 @@ export class DirectoryController {
   }
 
   /**
+   * Retrieve the line from uri.
+   * @param uri The uri to retrieve the line from
+   * @param lineNumber the line number to retrieve.
+   * @returns the line, or empty string if none is read.
+   */
+  async getLineFromFile(uri: vscode.Uri, lineNumber: number) {
+    const buffer = await this.readFile(uri);
+    const content = buffer?.toString()?.split("\n");
+    return content?.at(lineNumber) ?? "";
+  }
+
+  /**
    * Gets the root folder stored in config.
    * @returns the root folder in config.
    */

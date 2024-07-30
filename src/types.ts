@@ -52,7 +52,6 @@ export type CommentsCache = {
       [filepath: string]: {
         [lineNumber: string]: {
           uri: Uri;
-          body: string;
         };
       };
     };

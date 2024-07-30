@@ -32,9 +32,7 @@ describe("commentCacheController.ts", () => {
     it("should return the compiled comments.", async () => {
       assayCacheStub.getFromCache.resolves({
         "/test-filepath": {
-          "#L1": {
-            "body": "Marked for review."
-          },
+          "#L1": {},
         },
       });
 
@@ -83,9 +81,7 @@ describe("commentCacheController.ts", () => {
     it("should open an information message.", async () => {
       assayCacheStub.getFromCache.resolves({
         "/test-filepath": {
-          "#L1": {
-            "body": "test-comment"
-          },
+          "#L1": {},
         },
     });
 
@@ -113,7 +109,6 @@ describe("commentCacheController.ts", () => {
           "test-version-1" : {
             "filepath-one": {
               "#L1": {
-                "body": "test-comment",
                 "uri": vscode.Uri.file(
                   "test-root-folder-path/test-guid/test-version-1/filepath-one"
                 )
@@ -123,7 +118,6 @@ describe("commentCacheController.ts", () => {
           "test-version-2" : {
             "filepath-two": {
               "#L1": {
-                "body": "test-comment",
                 "uri": vscode.Uri.file(
                   "test-root-folder-path/test-guid/test-version-2/filepath-two"
                 )
@@ -150,7 +144,6 @@ describe("commentCacheController.ts", () => {
             "test-version" : {
               "test-filepath": {
                 "#L1": {
-                  "body": "test-comment",
                   "uri": vscode.Uri.file(
                     "test-root-folder-path/test-guid/test-version/test-filepath"
                   )

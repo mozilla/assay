@@ -1,15 +1,21 @@
 import * as vscode from "vscode";
 
 export class RangeHelper {
-  static fromSelection(selection: vscode.Selection) {
-    const startPosition = new vscode.Position(
-      selection.start.line,
-      selection.start.character
-    );
-    const endPosition = new vscode.Position(
-      selection.end.line,
-      selection.end.character
-    );
+  static fromNumber(start: number, end: number, endCharacter = 0) {
+    const startPosition = new vscode.Position(start, 0);
+    const endPosition = new vscode.Position(end, endCharacter);
+    return new vscode.Range(startPosition, endPosition);
+  }
+
+  /**
+   * Creates a range from a vscode Selection.
+   * @param selection the vscode Selection
+   * @param endCharacter The end character, if any
+   * @returns
+   */
+  static fromSelection(selection: vscode.Selection, endCharacter = 0) {
+    const startPosition = new vscode.Position(selection.start.line, 0);
+    const endPosition = new vscode.Position(selection.end.line, endCharacter);
     return new vscode.Range(startPosition, endPosition);
   }
 
@@ -35,13 +41,10 @@ export class RangeHelper {
    * @param endCharacter the character to stop at. Defaults to 0.
    * @returns A VS Code Range
    */
-  static async fromString(
-    str: string,
-    endCharacter: number | undefined = undefined
-  ) {
+  static fromString(str: string, endCharacter = 0) {
     const { startLine, endLine } = RangeHelper.splitString(str);
     const startPosition = new vscode.Position(startLine, 0);
-    const endPosition = new vscode.Position(endLine, endCharacter ?? 0);
+    const endPosition = new vscode.Position(endLine, endCharacter);
     return new vscode.Range(startPosition, endPosition);
   }
 
