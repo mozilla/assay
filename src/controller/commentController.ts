@@ -15,7 +15,6 @@ export class CommentController {
     private directoryController: DirectoryController
   ) {
     this.controller = vscode.comments.createCommentController(id, label);
-    this.controller.options;
     this.loadCommentsFromCache();
   }
 
