@@ -90,11 +90,9 @@ export class CommentCacheController {
 
     for (const filepath in comments) {
       for (const lineNumber in comments[filepath]) {
-        compiledComments += `File:\n${filepath}${RangeHelper.truncate(
+        compiledComments += `* ${filepath}${RangeHelper.truncate(
           lineNumber
-        )}\n\n`;
-        const comment = comments[filepath][lineNumber].body;
-        compiledComments += `${comment}\n\n`;
+        )}\n`;
       }
     }
     return compiledComments;

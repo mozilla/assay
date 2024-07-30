@@ -33,7 +33,7 @@ describe("commentCacheController.ts", () => {
       assayCacheStub.getFromCache.resolves({
         "/test-filepath": {
           "#L1": {
-            "body": "test-comment"
+            "body": "Marked for review."
           },
         },
       });
@@ -41,7 +41,6 @@ describe("commentCacheController.ts", () => {
       const result = await commentCacheController.compileComments("guid", "version");
       expect(result).to.contain("test-filepath");
       expect(result).to.contain("#L2");
-      expect(result).to.contain("test-comment");
     });
   });
 
