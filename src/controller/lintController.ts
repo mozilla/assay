@@ -61,7 +61,7 @@ export class LintController {
   clearLintsOnDelete(event: vscode.FileDeleteEvent) {
     let warnUser = true;
     for (const file of event.files) {
-      this.clearLints(vscode.Uri.parse(file.fsPath, warnUser));
+      this.clearLints(vscode.Uri.parse(file.fsPath), warnUser);
       warnUser = false;
     }
   }
