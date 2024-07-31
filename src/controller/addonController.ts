@@ -5,17 +5,17 @@ import * as path from "path";
 import * as vscode from "vscode";
 
 import { AddonCacheController } from "./addonCacheController";
+import { ConfigController } from "./configController";
 import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import { SidebarController } from "./sidebarController";
-import { Config } from "../config/config";
 import { AddonInfoResponse, AddonVersion, ErrorMessages } from "../types";
 import { AddonView } from "../views/addonView";
 import { NotificationView } from "../views/notificationView";
 
 export class AddonController {
   constructor(
-    private config: Config,
+    private config: ConfigController,
     private credentialController: CredentialController,
     private addonCacheController: AddonCacheController,
     private directoryController: DirectoryController,

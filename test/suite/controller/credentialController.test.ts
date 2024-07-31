@@ -5,11 +5,11 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 
-import { Config } from "../../../src/config/config";
+import { ConfigController } from "../../../src/controller/configController";
 import { CredentialController } from "../../../src/controller/credentialController";
 import { CredentialView } from "../../../src/views/credentialView";
 
-const config = new Config();
+const config = new ConfigController();
 
 const secretStorageStub = {
   get: async () => {

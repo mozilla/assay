@@ -2,12 +2,15 @@ import * as jwt from "jsonwebtoken";
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
-import { Config } from "../config/config";
+import { ConfigController } from "./configController";
 import { CredentialView } from "../views/credentialView";
 import { NotificationView } from "../views/notificationView";
 
 export class CredentialController {
-  constructor(private config: Config, private secrets: vscode.SecretStorage) {}
+  constructor(
+    private config: ConfigController,
+    private secrets: vscode.SecretStorage
+  ) {}
 
   /**
    * Retrieves the API key and secret from storage.

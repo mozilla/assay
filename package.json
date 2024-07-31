@@ -77,6 +77,13 @@
           "fontPath": "media/tabler-icons.woff",
           "fontCharacter": "\\fb79"
         }
+      },
+      "assay-environment": {
+        "description": "environment",
+        "default": {
+          "fontPath": "media/tabler-icons.woff",
+          "fontCharacter": "\\ec38"
+        }
       }
     },
     "configuration": {
@@ -142,15 +149,19 @@
       "view/title": [
         {
           "command": "assay.get",
-          "group": "navigation@2",
+          "group": "navigation@3",
           "when": "view == assayCommands"
         },
         {
           "command": "assay.refresh",
+          "group": "navigation@2",
+          "when": "view == assayCommands"
+        },
+        {
+          "command": "assay.changeEnv",
           "group": "navigation@1",
           "when": "view == assayCommands"
         }
-
       ],
       "view/item/context": [
         {
@@ -278,6 +289,11 @@
       {
 				"command": "assay.addComment",
 				"title": "(Assay) Mark for Review"
+			},
+      {
+				"command": "assay.changeEnv",
+				"title": "(Assay) Change Environment",
+				"icon": "$(assay-environment)"
 			},
 			{
 				"command": "assay.deleteComment",

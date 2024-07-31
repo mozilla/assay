@@ -97,3 +97,9 @@ export enum QPOption {
   Yes = "Yes",
   No = "No",
 }
+
+export enum EnvOption {
+  Dev = "Development",
+  Prod = "Production",
+  Stage = "Staging",
+}

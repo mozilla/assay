@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
-import { Config } from "./config/config";
 import { AddonCacheController } from "./controller/addonCacheController";
 import { AddonController } from "./controller/addonController";
 import { CommentCacheController } from "./controller/commentCacheController";
 import { CommentController } from "./controller/commentController";
+import { ConfigController } from "./controller/configController";
 import { CredentialController } from "./controller/credentialController";
 import { DiffController } from "./controller/diffController";
 import { DirectoryController } from "./controller/directoryController";
@@ -22,12 +22,12 @@ import { WelcomeView } from "./views/welcomeView";
 export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
   const reviewsCache = new AssayCache("addonMeta", storagePath);
-  const config = new Config();
+  const configController = new ConfigController();
 
   // Menu Controllers
   const addonCacheController = new AddonCacheController(reviewsCache);
   const credentialController = new CredentialController(
-    config,
+    configController,
     context.secrets
   );
   const directoryController = new DirectoryController();
@@ -56,7 +56,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.createDiagnosticCollection("addons-linter");
 
   const lintController = new LintController(
-    config,
+    configController,
     diagnosticCollection,
     credentialController,
     addonCacheController,
@@ -64,7 +64,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   const addonController = new AddonController(
-    config,
+    configController,
     credentialController,
     addonCacheController,
     directoryController,
@@ -136,6 +136,12 @@ export async function activate(context: vscode.ExtensionContext) {
     urlController
   );
 
+  const changeEnvDisposable = vscode.commands.registerCommand(
+    "assay.changeEnv",
+    configController.changeEnv,
+    configController
+  );
+
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -149,7 +155,8 @@ export async function activate(context: vscode.ExtensionContext) {
     sidebarDeleteDisposable,
     viewAddonDisposable,
     diffDisposable,
-    assayUpdaterDisposable
+    assayUpdaterDisposable,
+    changeEnvDisposable
   );
 
   await vscode.commands.executeCommand(

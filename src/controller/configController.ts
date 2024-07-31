@@ -1,7 +1,8 @@
-import { DEV, STAGE, PROD } from "./constants";
+import { DEV, STAGE, PROD } from "../config/constants";
 import { ConfigConstants } from "../types";
+import { ConfigView } from "../views/configView";
 
-export class Config {
+export class ConfigController {
   public constants: ConfigConstants;
 
   constructor() {
@@ -18,5 +19,13 @@ export class Config {
       this.constants = DEV;
     }
     return this.constants;
+  }
+
+  async changeEnv() {
+    const env = await ConfigView.promptEnvironment();
+    if (env) {
+      this.setEnvironment(env.toLowerCase());
+      ConfigView.promptEnvChange(env);
+    }
   }
 }

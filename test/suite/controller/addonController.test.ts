@@ -7,9 +7,9 @@ import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { Config } from "../../../src/config/config";
 import { AddonCacheController } from "../../../src/controller/addonCacheController";
 import { AddonController } from "../../../src/controller/addonController";
+import { ConfigController } from "../../../src/controller/configController";
 import { CredentialController } from "../../../src/controller/credentialController";
 import { DirectoryController } from "../../../src/controller/directoryController";
 import { SidebarController } from "../../../src/controller/sidebarController";
@@ -93,7 +93,7 @@ const goodResponse = {
   },
 };
 
-let config: Config;
+let config: ConfigController;
 let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
 addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
 directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
@@ -104,7 +104,7 @@ describe("addonController.ts", async () => {
 
   beforeEach(async () => {
 
-    config = new Config();
+    config = new ConfigController();
     credentialControllerStub = sinon.createStubInstance(CredentialController);
     credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
     addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);

@@ -3,8 +3,8 @@ import { afterEach, describe, it, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import { Config } from "../../../src/config/config";
 import { AddonCacheController } from "../../../src/controller/addonCacheController";
+import { ConfigController } from "../../../src/controller/configController";
 import { CredentialController } from "../../../src/controller/credentialController";
 import { DirectoryController } from "../../../src/controller/directoryController";
 import { LintController } from "../../../src/controller/lintController";
@@ -15,7 +15,7 @@ addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
 directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
 let lintController: LintController;
 let collection: vscode.DiagnosticCollection;
-const config = new Config();
+const config = new ConfigController();
 
 describe("lintController.ts", async () => {
 
