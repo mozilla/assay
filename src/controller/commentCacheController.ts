@@ -31,7 +31,7 @@ export class CommentCacheController {
     return false;
   };
 
-  static getCommentString(filepath: string, lineNumber: string){
+  static getCommentString(filepath: string, lineNumber: string) {
     return `* ${filepath}${RangeHelper.truncate(lineNumber)}\n`;
   }
 
@@ -94,7 +94,10 @@ export class CommentCacheController {
 
     for (const filepath in comments) {
       for (const lineNumber in comments[filepath]) {
-        compiledComments += CommentCacheController.getCommentString(filepath, lineNumber);
+        compiledComments += CommentCacheController.getCommentString(
+          filepath,
+          lineNumber
+        );
       }
     }
     return compiledComments;

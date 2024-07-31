@@ -46,7 +46,7 @@ export class CommentController {
 
   /**
    * Copies the line number to clipboard.
-   * @returns 
+   * @returns
    */
   async copyLineNumber() {
     const editor = vscode.window.activeTextEditor;
@@ -54,8 +54,13 @@ export class CommentController {
       const document = editor.document;
       const selection = editor.selections[0];
       const range = RangeHelper.toString(RangeHelper.fromSelection(selection));
-      const { filepath } = await this.directoryController.splitUri(document.uri);
-      const commentString = CommentCacheController.getCommentString(filepath, range);
+      const { filepath } = await this.directoryController.splitUri(
+        document.uri
+      );
+      const commentString = CommentCacheController.getCommentString(
+        filepath,
+        range
+      );
       vscode.env.clipboard.writeText(commentString);
       vscode.window.showInformationMessage("Line number copied to clipboard.");
     } else {

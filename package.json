@@ -200,7 +200,12 @@
         {
           "command": "assay.addComment",
           "when": "editorTextFocus",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "assay.copyLineNumber",
+          "when": "editorTextFocus",
+          "group": "navigation@2"
         }
       ]
     },
@@ -278,6 +283,10 @@
       {
 				"command": "assay.addComment",
 				"title": "(Assay) Mark for Review"
+			},
+      {
+				"command": "assay.copyLineNumber",
+				"title": "(Assay) Copy Line Number"
 			},
 			{
 				"command": "assay.deleteComment",
