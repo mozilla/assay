@@ -31,6 +31,12 @@ export class CommentCacheController {
     return false;
   };
 
+  /**
+   * Formats a comment string to a bullet point (*) format.
+   * @param filepath 
+   * @param lineNumber 
+   * @returns formatted comment string.
+   */
   static getCommentString(filepath: string, lineNumber: string) {
     return `* ${filepath}${RangeHelper.truncate(lineNumber)}\n`;
   }

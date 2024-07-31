@@ -46,7 +46,6 @@ export class CommentController {
 
   /**
    * Copies the line number to clipboard.
-   * @returns
    */
   async copyLineNumber() {
     const editor = vscode.window.activeTextEditor;
