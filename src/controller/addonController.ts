@@ -93,7 +93,7 @@ export class AddonController {
         version: version,
         fileID: addonFileID,
         id: addonID,
-        isDirty: false
+        isDirty: false,
       });
 
       const writeStream = await this.downloadAddon(

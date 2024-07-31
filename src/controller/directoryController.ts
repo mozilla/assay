@@ -6,7 +6,6 @@ import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
 import { RootView } from "../views/rootView";
 
 export class DirectoryController {
-
   /**
    * Retrieve the line from uri.
    * @param uri The uri to retrieve the line from

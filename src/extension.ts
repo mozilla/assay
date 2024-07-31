@@ -16,7 +16,6 @@ import { UpdateHelper } from "./helper/updateHelper";
 import { AssayCache } from "./model/assayCache";
 import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
 import { AddonTreeItem } from "./model/sidebarTreeDataProvider";
-import { LintView } from "./views/lintView";
 import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -48,7 +47,8 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const diagnosticCollection = vscode.languages.createDiagnosticCollection("addons-linter");
+  const diagnosticCollection =
+    vscode.languages.createDiagnosticCollection("addons-linter");
 
   const lintController = new LintController(
     diagnosticCollection,
@@ -183,7 +183,6 @@ export async function activate(context: vscode.ExtensionContext) {
     commentCacheController.fileHasComment
   );
 
-
   const commentController = new CommentController(
     "assay-comments",
     "Assay",
@@ -200,6 +199,21 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const clearLintDisposable = vscode.workspace.onDidSaveTextDocument(
     lintController.clearLintsOnDirty,
+    lintController
+  );
+
+  const addDirtyOnDeleteDisposable = vscode.workspace.onDidDeleteFiles(
+    lintController.clearLintsOnDelete,
+    lintController
+  );
+
+  const addDirtyOnChangeDisposable = vscode.workspace.onDidChangeTextDocument(
+    lintController.addDirty,
+    lintController
+  );
+  
+  const removeDirtyDisposable = vscode.workspace.onDidCloseTextDocument(
+    lintController.removeDirty,
     lintController
   );
 
@@ -247,10 +261,6 @@ export async function activate(context: vscode.ExtensionContext) {
     commentController
   );
 
-  const addDirtyDisposable = vscode.workspace.onDidChangeTextDocument(lintController.addDirty, lintController);
-  const removeDirtyDisposable = vscode.workspace.onDidCloseTextDocument(lintController.removeDirty, lintController);
-
-
   context.subscriptions.push(
     updateStatusBarController,
     fileDecorationProviderDisposable,
@@ -262,7 +272,8 @@ export async function activate(context: vscode.ExtensionContext) {
     copyLinkFromThreadDisposable,
     deleteCommentsFolderDisposable,
     clearLintDisposable,
-    addDirtyDisposable,
+    addDirtyOnDeleteDisposable,
+    addDirtyOnChangeDisposable,
     removeDirtyDisposable
   );
 }

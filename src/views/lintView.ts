@@ -1,14 +1,12 @@
 import * as vscode from "vscode";
 
 export class LintView {
-
   /**
-   * Warn the user that saving will remove the lints. 
+   * Warn the user that saving will remove the lints.
    */
-  static async warnOnSave(){
+  static async warnOnSave() {
     await vscode.window.showInformationMessage(
-      '(Assay) Version modified. Lints cleared.'
+      "(Assay) Version modified. Lints cleared."
     );
   }
-
 }

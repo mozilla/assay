@@ -10,9 +10,8 @@ import { LintView } from "../views/lintView";
 import { NotificationView } from "../views/notificationView";
 
 export class LintController {
-
   private dirtyFiles: Set<string>;
-  
+
   constructor(
     private diagnosticCollection: vscode.DiagnosticCollection,
     private credentialController: CredentialController,
@@ -26,12 +25,11 @@ export class LintController {
    * Tracks currently dirtied files.
    * @param event A vscode event describing a document change.
    */
-  addDirty(event: vscode.TextDocumentChangeEvent){
+  addDirty(event: vscode.TextDocumentChangeEvent) {
     const document = event.document;
-    if(document.isDirty){
+    if (document.isDirty) {
       this.dirtyFiles.add(document.uri.fsPath);
-    }
-    else if(event.reason && event.contentChanges){
+    } else if (event.reason && event.contentChanges) {
       this.dirtyFiles.delete(document.uri.fsPath);
     }
   }
@@ -39,26 +37,51 @@ export class LintController {
   /**
    * Remove a dirtied file.
    */
-  removeDirty(document: vscode.TextDocument){
+  removeDirty(document: vscode.TextDocument) {
     this.dirtyFiles.delete(document.uri.fsPath);
   }
 
   /**
    * Clears existing lints if a document is saved when it was dirtied.
    */
-  clearLintsOnDirty(document: vscode.TextDocument){
+  clearLintsOnDirty(document: vscode.TextDocument) {
     console.log(this.dirtyFiles);
-    if(this.dirtyFiles.has(document.uri.fsPath)){
-      this.directoryController.splitUri(document.uri).then(result => {
-        const { guid, version } = result;
-        if( guid && version ){
-          this.addonCacheController.setDirty(guid, version);
-          this.diagnosticCollection.clear();
-          LintView.warnOnSave();
-        }
-      });
+    if (this.dirtyFiles.has(document.uri.fsPath)) {
+      this.clearLints(document.uri);
     }
     this.removeDirty(document);
+  }
+
+  /**
+   * If a file is deleted from a version, remove the version's lints.
+   * @param event A VS Code FileDeleteEvent
+   */
+  // Since lints only happen if the workspace is open directly to the version folder,
+  // the diagnosticCollection can be cleared without fear of edge cases.
+  clearLintsOnDelete(event: vscode.FileDeleteEvent) {
+    let warnUser = true;
+    for (const file of event.files) {
+      this.clearLints(vscode.Uri.parse(file.fsPath, warnUser));
+      warnUser = false;
+    }
+  }
+
+  /**
+   * Removes existing lints and sets the version as dirtied.
+   * @param uri
+   * @param warnUser whether to prompt the user that removal occurred
+   */
+  private clearLints(uri: vscode.Uri, warnUser = true) {
+    this.directoryController.splitUri(uri).then((result) => {
+      const { guid, version } = result;
+      if (guid && version) {
+        this.addonCacheController.setVersionAsDirty(guid, version);
+        this.diagnosticCollection.clear();
+        if (warnUser) {
+          LintView.warnOnSave();
+        }
+      }
+    });
   }
 
   /**
@@ -72,12 +95,12 @@ export class LintController {
 
     const { versionPath, guid, version } =
       await this.directoryController.splitUri(workspace.uri);
-      
+
     if (!versionPath) {
       return;
     }
 
-    if(await this.addonCacheController.isDirty(guid, version)){
+    if (await this.addonCacheController.isDirty(guid, version)) {
       return;
     }
 
