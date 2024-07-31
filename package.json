@@ -90,7 +90,7 @@
         "assay.diffTool": {
           "type": "string",
           "description": "Command to launch external tool to diff add-ons.",
-          "default": ""
+          "default": "bcompare"
         },
         "assay.deleteCommentsOnExport": {
           "type": "string",
