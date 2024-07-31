@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as path from "path";  
+import * as path from "path";
 import * as vscode from "vscode";
 
 import { AddonController } from "./addonController";
@@ -35,15 +35,12 @@ export class UrlController implements vscode.UriHandler {
 
     if (editor && lineNumber) {
       const { endLine } = RangeHelper.splitString(lineNumber);
-      const buffer = await this.directoryController.readFile(uri);
-      const content = buffer?.toString()?.split("\n");
-      const endCharacter = content?.at(endLine)?.length;
+      const endCharacter = (
+        await this.directoryController.getLineFromFile(uri, endLine)
+      )?.length;
 
       // highlight offending lines
-      const lineRange = await RangeHelper.fromString(
-        lineNumber,
-        endCharacter ?? 0
-      );
+      const lineRange = RangeHelper.fromString(lineNumber, endCharacter ?? 0);
       const selection = new vscode.Selection(lineRange.start, lineRange.end);
       editor.selections = [selection];
       // move editor to focus on line(s)
@@ -59,7 +56,7 @@ export class UrlController implements vscode.UriHandler {
     if (!result) {
       return;
     }
-    
+
     const { workspaceFolder, guid, version } = result;
     const versionPath = path.join(workspaceFolder, guid, version);
     this.openWorkspace(versionPath);

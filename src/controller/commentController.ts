@@ -3,9 +3,8 @@ import * as vscode from "vscode";
 import { CommentCacheController } from "./commentCacheController";
 import { DirectoryController } from "./directoryController";
 import { RangeHelper } from "../helper/rangeHelper";
-import { AssayComment, AssayReply, AssayThread } from "../model/assayComment";
+import { AssayComment, AssayThread } from "../model/assayComment";
 import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
-import { ContextValues } from "../types";
 export class CommentController {
   controller: vscode.CommentController;
 
@@ -16,7 +15,7 @@ export class CommentController {
     private directoryController: DirectoryController
   ) {
     this.controller = vscode.comments.createCommentController(id, label);
-    this.activateController();
+    this.loadCommentsFromCache();
   }
 
   /**
@@ -34,8 +33,10 @@ export class CommentController {
     list = list || [treeItem];
 
     for (const item of list) {
-        const promise = this.commentCacheController.deleteComments(item.uri).catch(() => failedUris.push(item.uri));
-        promises.push(promise);
+      const promise = this.commentCacheController
+        .deleteComments(item.uri)
+        .catch(() => failedUris.push(item.uri));
+      promises.push(promise);
     }
 
     await Promise.all(promises);
@@ -44,56 +45,22 @@ export class CommentController {
   }
 
   /**
-   * Adds a comment to the reply's thread.
-   * @param reply The thread location and text to add.
+   * Creates the comment thread.
+   * @returns the created comment.
    */
-  async addComment(reply: AssayReply) {
-    const contextValue = reply.text ? "comment" : "markForReview";
-    const body = new vscode.MarkdownString(
-      reply.text ? reply.text : "Marked for review."
-    );
-    const comment = await this.createComment(contextValue, body, reply.thread);
-    if (comment) {
+  async addComment() {
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+      const document = editor.document;
+      const selection = editor.selections[0];
+      const endCharacter = document.lineAt(selection.end).text.length;
+      const range = RangeHelper.fromSelection(selection, endCharacter);
+      const comment = await this.createComment(document.uri, range);
       await this.saveCommentToCache(comment);
+      return comment;
+    } else {
+      throw new Error("No active text editor found.");
     }
-    return comment;
-  }
-
-  /**
-   * Modify the body of the comment.
-   * @param comment The saved comment.
-   */
-  async saveComment(comment: AssayComment) {
-    comment.thread.comments = comment.thread.comments.map((cmt) => {
-      if (cmt.id === comment.id) {
-        cmt.savedBody = cmt.body;
-        cmt.mode = vscode.CommentMode.Preview;
-        if (cmt.body.value) {
-          cmt.contextValue = "comment";
-        } else {
-          cmt.contextValue = "markForReview";
-          cmt.body = new vscode.MarkdownString("Marked for review.");
-        }
-      }
-      return cmt;
-    });
-    if (comment) {
-      await this.saveCommentToCache(comment);
-    }
-  }
-
-  /**
-   * Cancel changes to the comment body.
-   * @param comment The cancelled comment.
-   */
-  async cancelSaveComment(comment: AssayComment) {
-    comment.thread.comments = comment.thread.comments.map((cmt) => {
-      if (cmt.id === comment.id) {
-        cmt.body = cmt.savedBody;
-        cmt.mode = vscode.CommentMode.Preview;
-      }
-      return cmt;
-    });
   }
 
   /**
@@ -108,23 +75,6 @@ export class CommentController {
   }
 
   /**
-   * Set a comment to edit.
-   * @param thread The associated thread containing the comment.
-   */
-  // Due to the associated button's placement, the entire thread is passed.
-  // this command sets 'all' the comments to edit.
-  // but since we only ever have one comment, it works out.
-  editComment(thread: AssayThread) {
-    thread.comments = thread.comments.map((cmt) => {
-      if (cmt.contextValue === "markForReview") {
-        cmt.body = new vscode.MarkdownString();
-      }
-      cmt.mode = vscode.CommentMode.Editing;
-      return cmt;
-    });
-  }
-
-  /**
    * Export comments from current version via menu.
    */
   async exportComments(item: AssayThread | AddonTreeItem) {
@@ -134,15 +84,6 @@ export class CommentController {
     if (didDelete) {
       this.refetchComments();
     }
-  }
-
-  /**
-   * Copies a link to the selected line(s) to the clipboard for sharing.
-   * @param reply Holds the thread location.
-   * @return the generated link.
-   */
-  async copyLinkFromReply(reply: AssayReply) {
-    this.copyLinkFromThread(reply.thread);
   }
 
   /**
@@ -179,17 +120,28 @@ export class CommentController {
   }
 
   /**
-   * Allows the commenting system to be visible in the gutter.
+   * Creates a comment on uri with the selected range.
+   * @param uri The file to create the comment on.
+   * @param range The range of the comment.
+   * @returns The created comment.
    */
-  private activateController() {
-    this.loadCommentsFromCache().then(() => {
-      this.controller.commentingRangeProvider = {
-        provideCommentingRanges: (document: vscode.TextDocument) => {
-          const lineCount = document.lineCount;
-          return [new vscode.Range(0, 0, lineCount - 1, 0)];
-        },
-      };
-    });
+  private async createComment(uri: vscode.Uri, range: vscode.Range) {
+    const comment = new AssayComment(
+      "Marked for review.",
+      vscode.CommentMode.Preview,
+      { name: "Notes:" }
+    );
+    const thread = this.controller.createCommentThread(uri, range, [comment]);
+    comment.thread = thread as AssayThread;
+    thread.collapsibleState = 1;
+    thread.canReply = false;
+
+    const { filepath, range: rangeString } = await this.getThreadLocation(
+      thread as AssayThread
+    );
+    thread.label = `${filepath}${RangeHelper.truncate(rangeString)}`;
+
+    return comment;
   }
 
   /**
@@ -204,7 +156,7 @@ export class CommentController {
       this.id,
       this.label
     );
-    this.activateController();
+    this.loadCommentsFromCache();
   }
 
   /**
@@ -225,35 +177,13 @@ export class CommentController {
   }
 
   /**
-   * Helper function to create a comment.
-   * @returns the newly created comment.
-   */
-  private async createComment(
-    contextValue: ContextValues,
-    body: vscode.MarkdownString,
-    thread: AssayThread | vscode.CommentThread
-  ) {
-    const { filepath, range } = await this.getThreadLocation(
-      thread as AssayThread
-    );
-    thread.label = `${filepath}${RangeHelper.truncate(range)}`;
-
-    const newComment = new AssayComment(
-      body,
-      vscode.CommentMode.Preview,
-      { name: "Notes:" },
-      thread as AssayThread,
-      contextValue
-    );
-    thread.comments = [...thread.comments, newComment];
-    return newComment;
-  }
-
-  /**
    * Save the given comment to cache.
    * @param comment
    */
   private async saveCommentToCache(comment: AssayComment) {
+    if (!comment.thread) {
+      throw new Error("No associated thread in comment.");
+    }
     const location = await this.getThreadLocation(comment.thread);
     const formattedComment = this.formatCacheComment(comment);
     this.commentCacheController.saveCommentToCache(location, formattedComment);
@@ -264,6 +194,9 @@ export class CommentController {
    * @param comment
    */
   private async deleteCommentFromCache(comment: AssayComment) {
+    if (!comment.thread) {
+      throw new Error("No associated thread in comment.");
+    }
     const location = await this.getThreadLocation(comment.thread);
     this.commentCacheController.deleteCommentFromCache(location);
   }
@@ -274,10 +207,12 @@ export class CommentController {
    * @returns Object with the necessary information for the comment.
    */
   private formatCacheComment(comment: AssayComment) {
+    if (!comment.thread) {
+      throw new Error("No associated thread in comment.");
+    }
     return {
       uri: comment.thread.uri,
-      body: comment.savedBody.value,
-      contextValue: comment.contextValue,
+      body: comment.body,
     };
   }
 
@@ -288,11 +223,18 @@ export class CommentController {
   private async loadCommentsFromCache() {
     const comments =
       await this.commentCacheController.getCachedCommentIterator();
+    const pairs = new Set<{ uri: vscode.Uri; range: vscode.Range }>();
     for (const comment of comments) {
-      const { uri, body, contextValue, lineNumber } = comment;
-      const range = await RangeHelper.fromString(lineNumber);
-      const thread = this.controller.createCommentThread(uri, range, []);
-      this.createComment(contextValue, new vscode.MarkdownString(body), thread);
+      const { uri, lineNumber } = comment;
+      const { startLine, endLine } = RangeHelper.splitString(lineNumber);
+      const endCharacter = (
+        await this.directoryController.getLineFromFile(uri, endLine)
+      ).length;
+      const range = RangeHelper.fromNumber(startLine, endLine, endCharacter);
+      pairs.add({ uri, range });
+    }
+    for (const { uri, range } of pairs) {
+      this.createComment(uri, range);
     }
   }
 }

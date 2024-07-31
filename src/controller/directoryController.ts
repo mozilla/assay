@@ -16,6 +16,18 @@ export class DirectoryController {
   }
 
   /**
+   * Retrieve the line from uri.
+   * @param uri The uri to retrieve the line from
+   * @param lineNumber the line number to retrieve.
+   * @returns the line, or empty string if none is read.
+   */
+  async getLineFromFile(uri: vscode.Uri, lineNumber: number) {
+    const buffer = await this.readFile(uri);
+    const content = buffer?.toString()?.split("\n");
+    return content?.at(lineNumber) ?? "";
+  }
+
+  /**
    * Gets the root folder stored in config.
    * @returns the root folder in config.
    */
@@ -60,7 +72,7 @@ export class DirectoryController {
     const fullPath = uri.fsPath;
     const rootFolder = await this.getRootFolderPath();
     const relativePath = fullPath.replace(rootFolder, "");
-    const [_, guid, version] = relativePath.split(path.sep);  
+    const [_, guid, version] = relativePath.split(path.sep);
     const filepath = relativePath.split(version)[1];
     const versionPath = version
       ? path.join(rootFolder, guid, version)
@@ -112,9 +124,13 @@ export class DirectoryController {
     const failedUris: vscode.Uri[] = [];
 
     for (const item of list) {
-      const thenable = vscode.workspace.fs.delete(item.uri, { recursive: true });
-        const promise = Promise.resolve(thenable).catch(() => failedUris.push(item.uri));
-        promises.push(promise);
+      const thenable = vscode.workspace.fs.delete(item.uri, {
+        recursive: true,
+      });
+      const promise = Promise.resolve(thenable).catch(() =>
+        failedUris.push(item.uri)
+      );
+      promises.push(promise);
     }
 
     await Promise.all(promises);

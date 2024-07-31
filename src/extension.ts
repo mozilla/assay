@@ -233,31 +233,8 @@ export async function activate(context: vscode.ExtensionContext) {
     commentController
   );
 
-  const cancelSaveCommentDisposable = vscode.commands.registerCommand(
-    "assay.cancelSaveComment",
-    commentController.cancelSaveComment,
-    commentController
-  );
-
-  const saveCommentDisposable = vscode.commands.registerCommand(
-    "assay.saveComment",
-    commentController.saveComment
-  );
-
-  const editCommentDisposable = vscode.commands.registerCommand(
-    "assay.editComment",
-    commentController.editComment,
-    commentController
-  );
-
-  const copyLinkFromReplyDisposable = vscode.commands.registerCommand(
-    "assay.copyLinkFromReply",
-    commentController.copyLinkFromReply,
-    commentController
-  );
-
   const copyLinkFromThreadDisposable = vscode.commands.registerCommand(
-    "assay.copyLinkFromThread",
+    "assay.copyLink",
     commentController.copyLinkFromThread,
     commentController
   );
@@ -274,12 +251,8 @@ export async function activate(context: vscode.ExtensionContext) {
     commentController.controller,
     addCommentDisposable,
     deleteCommentDisposable,
-    cancelSaveCommentDisposable,
-    saveCommentDisposable,
-    editCommentDisposable,
     exportCommentDisposable,
     disposeCommentDisposable,
-    copyLinkFromReplyDisposable,
     copyLinkFromThreadDisposable,
     deleteCommentsFolderDisposable
   );

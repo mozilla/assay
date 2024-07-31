@@ -46,16 +46,12 @@ export type ErrorMessages = {
   };
 };
 
-export type ContextValues = "markForReview" | "comment";
-
 export type CommentsCache = {
   [guid: string]: {
     [version: string]: {
       [filepath: string]: {
         [lineNumber: string]: {
           uri: Uri;
-          body: string;
-          contextValue: ContextValues;
         };
       };
     };
@@ -65,7 +61,6 @@ export type CommentsCache = {
 export type JSONComment = {
   uri: Uri;
   body: string;
-  contextValue: ContextValues;
 };
 
 export type JSONReview = {

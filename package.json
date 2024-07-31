@@ -119,27 +119,11 @@
           "when": "false"
         },
         {
-          "command": "assay.copyLinkFromReply",
-          "when": "false"
-        },
-        {
           "command": "assay.addComment",
           "when": "false"
         },
         {
-          "command": "assay.editComment",
-          "when": "false"
-        },
-        {
           "command": "assay.deleteComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.saveComment",
-          "when": "false"
-        },
-        {
-          "command": "assay.cancelSaveComment",
           "when": "false"
         },
         {
@@ -151,7 +135,7 @@
           "when": "false"
         },
         {
-          "command": "assay.copyLinkFromThread",
+          "command": "assay.copyLink",
           "when": "false"
         }
       ],
@@ -202,12 +186,7 @@
           "when": "assay.commentsEnabled && !commentThreadIsEmpty"
 				},
         {
-					"command": "assay.editComment",
-					"group": "inline@2",
-					"when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
-				},
-        {
-					"command": "assay.copyLinkFromThread",
+					"command": "assay.copyLink",
 					"group": "inline@3",
           "when": "assay.commentsEnabled && !commentThreadIsEmpty"
 				},
@@ -217,30 +196,13 @@
 					"when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
 				}
       ],
-      "comments/commentThread/context": [
+      "editor/context": [
         {
-					"command": "assay.addComment",
-					"group": "inline@1",
-					"when": "assay.commentsEnabled && commentController == assay-comments && commentThreadIsEmpty"
-				},
-        {
-					"command": "assay.copyLinkFromReply",
-					"group": "inline@2",
-					"when": "assay.commentsEnabled && commentController == assay-comments && commentThreadIsEmpty"
-				}
-			],
-			"comments/comment/context": [
-				{
-					"command": "assay.cancelSaveComment",
-					"group": "inline@3",
-					"when": "assay.commentsEnabled && commentController == assay-comments"
-				},
-				{
-					"command": "assay.saveComment",
-					"group": "inline@2",
-					"when": "assay.commentsEnabled && commentController == assay-comments"
-				}
-			]
+          "command": "assay.addComment",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        }
+      ]
     },
     "viewsContainers": {
       "activitybar": [
@@ -302,7 +264,7 @@
       },
       {
         "command": "assay.viewAddon",
-        "title": "View Addon in New Window",
+        "title": "View Addon",
         "icon": "$(assay-view)"
       },
       {
@@ -314,30 +276,13 @@
         "title": "(Assay) Enter Secret Key"
       },
       {
-				"command": "assay.copyLinkFromReply",
-				"title": "Copy Link"
-			},
-      {
 				"command": "assay.addComment",
-				"title": "Mark for Review"
-			},
-			{
-				"command": "assay.editComment",
-				"title": "Edit Comment",
-				"icon": "$(assay-edit)"
+				"title": "(Assay) Mark for Review"
 			},
 			{
 				"command": "assay.deleteComment",
 				"title": "Delete",
 				"icon": "$(assay-delete)"
-			},
-			{
-				"command": "assay.saveComment",
-				"title": "Save"
-			},
-			{
-				"command": "assay.cancelSaveComment",
-				"title": "Cancel"
 			},
 			{
 				"command": "assay.disposeComment",
@@ -349,7 +294,7 @@
         "icon": "$(assay-export)"
 			},
       {
-				"command": "assay.copyLinkFromThread",
+				"command": "assay.copyLink",
 				"title": "Copy Link",
 				"icon": "$(assay-share)"
 			}

@@ -17,6 +17,28 @@ describe("rangeHelper.ts", () => {
         sinon.restore();
     });
 
+    describe('fromNumber()', function() {
+        it('should create a Range from numbers.', function() {
+            const start = 5;
+            const end = 10;
+            const endCharacter = 15;
+            const range = RangeHelper.fromNumber(start, end, endCharacter);
+            expect(range.start).to.deep.equal(new vscode.Position(start, 0));
+            expect(range.end).to.deep.equal(new vscode.Position(end, endCharacter));
+        });
+      });
+    
+      describe('fromSelection()', function() {
+        it('should create a Range from a vscode Selection.', function() {
+          const selection = new vscode.Selection(5, 10, 15, 20);
+          const endCharacter = 15;
+    
+          const range = RangeHelper.fromSelection(selection, endCharacter);
+          expect(range.start).to.deep.equal(new vscode.Position(selection.start.line, 0));
+          expect(range.end).to.deep.equal(new vscode.Position(selection.end.line, endCharacter));
+        });
+      });
+
     describe("toString()", () => {
     it("should convert a single-line range correctly.", async () => {
         const range = RangeHelper.toString(rng);

@@ -1,7 +1,7 @@
 import * as extract from "extract-zip";
 import * as fs from "fs";
 import fetch from "node-fetch";
-import * as path from "path";  
+import * as path from "path";
 import * as vscode from "vscode";
 
 import { AddonCacheController } from "./addonCacheController";
@@ -83,7 +83,10 @@ export class AddonController {
 
       const workspaceFolder =
         await this.directoryController.getRootFolderPath();
-      const compressedFilePath = path.join(workspaceFolder, `${guid}_${version}.xpi`);
+      const compressedFilePath = path.join(
+        workspaceFolder,
+        `${guid}_${version}.xpi`
+      );
 
       this.addonCacheController.addAddonToCache(guid, {
         reviewUrl: json.review_url,
