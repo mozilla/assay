@@ -56,6 +56,24 @@ describe("CommentController.ts", () => {
     }
   });
 
+  describe("addComment", () => {
+
+    it("should create a comment.", async () => {
+       sinon.stub(vscode.window, 'activeTextEditor').value({
+        document: {
+          uri: 'test-uri',
+          lineAt: sinon.stub().returns({ text: 'Code Line' }),
+        },
+        selections: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 10 } }],
+      });
+      const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+      const result = await cmtController.addComment();
+      expect(commentCacheControllerStub.saveCommentToCache.called).to.be.true;
+      expect(result).to.exist;
+
+    });
+  });
+
   describe("deleteThread", () => {
     it("should delete the comment thread from a controller and its comments from cache.", async () => {
         const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
