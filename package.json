@@ -207,14 +207,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-            "id": "assay-menu",
+            "id": "explorer",
             "title": "Assay",
             "icon": "media/assay.svg"
         }
     ]
     },
     "views": {
-      "assay-menu": [
+      "explorer": [
         {
           "id": "assayCommands",
           "name": "Addons"
