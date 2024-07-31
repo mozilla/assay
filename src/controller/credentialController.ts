@@ -2,12 +2,12 @@ import * as jwt from "jsonwebtoken";
 import fetch from "node-fetch";
 import * as vscode from "vscode";
 
-import constants from "../config/config";
+import { Config } from "../config/config";
 import { CredentialView } from "../views/credentialView";
 import { NotificationView } from "../views/notificationView";
 
 export class CredentialController {
-  constructor(private secrets: vscode.SecretStorage) {}
+  constructor(private config: Config, private secrets: vscode.SecretStorage) {}
 
   /**
    * Retrieves the API key and secret from storage.
@@ -79,7 +79,7 @@ export class CredentialController {
    * @returns whether the credentials are validated or not.
    */
   async testApiCredentials() {
-    const url = `${constants.apiBaseURL}accounts/profile/`;
+    const url = `${this.config.constants.apiBaseURL}accounts/profile/`;
     const headers = await this.makeAuthHeader();
     const response = await fetch(url, { headers });
 

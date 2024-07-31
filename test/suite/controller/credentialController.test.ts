@@ -5,8 +5,11 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 
 
+import { Config } from "../../../src/config/config";
 import { CredentialController } from "../../../src/controller/credentialController";
 import { CredentialView } from "../../../src/views/credentialView";
+
+const config = new Config();
 
 const secretStorageStub = {
   get: async () => {
@@ -40,7 +43,7 @@ describe("credentialController.ts.", async () => {
 
     describe("getCredsFromStorage().", () => {
         it("should return the creds if they exist.", async () => {
-            const credentialController = new CredentialController(secretStorageStub);
+            const credentialController = new CredentialController(config, secretStorageStub);
             const result = await credentialController.getCredsFromStorage();
             expect(result.apiKey).to.equal("test");
             expect(result.secret).to.equal("test");
@@ -53,7 +56,7 @@ describe("credentialController.ts.", async () => {
                 return "";
             };
 
-            const credentialController = new CredentialController(secretStorageStubUndefined);
+            const credentialController = new CredentialController(config, secretStorageStubUndefined);
 
 
             const errorMessageWindowStub = sinon.stub(
@@ -72,7 +75,7 @@ describe("credentialController.ts.", async () => {
 
     describe("makeAuthHeader()", () => {
         it("should return the auth header.", async () => {
-          const credentialController = new CredentialController(secretStorageStub);
+          const credentialController = new CredentialController(config, secretStorageStub);
           sinon.stub(credentialController, "getCredsFromStorage").resolves(creds);
           const result = await credentialController.makeAuthHeader();
           expect(result).to.have.property("Authorization");
@@ -82,7 +85,7 @@ describe("credentialController.ts.", async () => {
     describe("getApiKeyfromUser()", () => {
 
       it("should return true when the new API key is successfully stored.", async () => {
-        const credentialController = new CredentialController(secretStorageStub);
+        const credentialController = new CredentialController(config, secretStorageStub);
         sinon.stub(credentialController, "getCredsFromStorage").resolves(creds);
         sinon.stub(CredentialView, "getApiKeyInputFromUser").resolves("newApiKey");
         const result = await credentialController.getApiKeyFromUser();
@@ -90,7 +93,7 @@ describe("credentialController.ts.", async () => {
       });
 
       it("should return false when the new API key is unsuccessfully stored.", async () => {
-        const credentialController = new CredentialController(secretStorageStub);
+        const credentialController = new CredentialController(config, secretStorageStub);
         sinon.stub(credentialController, "getCredsFromStorage").resolves(creds);
         sinon.stub(CredentialView, "getApiKeyInputFromUser").throws();
         const result = await credentialController.getApiKeyFromUser();
@@ -102,14 +105,14 @@ describe("credentialController.ts.", async () => {
     describe("getSecretFromUser()", () => {
 
       it("should return true when the new API secret is successfully stored.", async () => {
-        const credentialController = new CredentialController(secretStorageStub);
+        const credentialController = new CredentialController(config, secretStorageStub);
         sinon.stub(CredentialView, "getSecretInputFromUser").resolves("newApiSecret");
         const result = await credentialController.getSecretFromUser();
         expect(result).to.be.true;
       });
 
       it("should return false when the new API secret is unsuccessfully stored.", async () => {
-        const credentialController = new CredentialController(secretStorageStub);
+        const credentialController = new CredentialController(config, secretStorageStub);
         sinon.stub(CredentialView, "getSecretInputFromUser").throws();
         const result = await credentialController.getSecretFromUser();
         expect(result).to.be.false;
@@ -120,7 +123,7 @@ describe("credentialController.ts.", async () => {
     describe("testApiCredentials()", () => {
 
       it("should show an information message if successful.", async () => {
-        const credentialController = new CredentialController(secretStorageStub);
+        const credentialController = new CredentialController(config, secretStorageStub);
         const showInformationMessageStub = sinon.stub(vscode.window, "showInformationMessage");
         sinon.stub(credentialController, "makeAuthHeader").resolves();
         const fetchStub = sinon.stub();
@@ -139,7 +142,7 @@ describe("credentialController.ts.", async () => {
       });
 
       it("should show an error message if failed.", async () => {
-        const credentialController = new CredentialController(secretStorageStub);
+        const credentialController = new CredentialController(config, secretStorageStub);
         const showErrorMessageStub = sinon.stub(vscode.window, "showErrorMessage").resolves();
         sinon.stub(credentialController, "makeAuthHeader").resolves();
         const fetchStub = sinon.stub(global, "fetch");

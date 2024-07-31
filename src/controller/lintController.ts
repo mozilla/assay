@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { AddonCacheController } from "./addonCacheController";
 import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
-import constants from "../config/config";
+import { Config } from "../config/config";
 import { Message, MessageType, ErrorMessages } from "../types";
 import { LintView } from "../views/lintView";
 import { NotificationView } from "../views/notificationView";
@@ -13,6 +13,7 @@ export class LintController {
   private dirtyFiles: Set<string>;
 
   constructor(
+    private config: Config,
     private diagnosticCollection: vscode.DiagnosticCollection,
     private credentialController: CredentialController,
     private addonCacheController: AddonCacheController,
@@ -146,7 +147,7 @@ export class LintController {
       return;
     }
 
-    const url = `${constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;
+    const url = `${this.config.constants.apiBaseURL}reviewers/addon/${addonID}/file/${fileID}/validation/`;
 
     const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });

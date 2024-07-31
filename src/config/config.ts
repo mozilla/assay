@@ -1,14 +1,22 @@
 import { DEV, STAGE, PROD } from "./constants";
 import { ConfigConstants } from "../types";
 
-const environment = process.env.NODE_ENV;
+export class Config {
+  public constants: ConfigConstants;
 
-let constants: ConfigConstants;
-if (environment === "production") {
-  constants = PROD;
-} else if (environment === "staging") {
-  constants = STAGE;
-} else {
-  constants = DEV;
+  constructor() {
+    const environment = process.env.NODE_ENV;
+    this.constants = this.setEnvironment(environment);
+  }
+
+  setEnvironment(environment: string | undefined) {
+    if (environment === "production") {
+      this.constants = PROD;
+    } else if (environment === "staging") {
+      this.constants = STAGE;
+    } else {
+      this.constants = DEV;
+    }
+    return this.constants;
+  }
 }
-export default constants;

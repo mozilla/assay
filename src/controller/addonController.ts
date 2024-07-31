@@ -8,13 +8,14 @@ import { AddonCacheController } from "./addonCacheController";
 import { CredentialController } from "./credentialController";
 import { DirectoryController } from "./directoryController";
 import { SidebarController } from "./sidebarController";
-import constants from "../config/config";
+import { Config } from "../config/config";
 import { AddonInfoResponse, AddonVersion, ErrorMessages } from "../types";
 import { AddonView } from "../views/addonView";
 import { NotificationView } from "../views/notificationView";
 
 export class AddonController {
   constructor(
+    private config: Config,
     private credentialController: CredentialController,
     private addonCacheController: AddonCacheController,
     private directoryController: DirectoryController,
@@ -32,7 +33,7 @@ export class AddonController {
 
     const url = next
       ? next
-      : `${constants.apiBaseURL}addons/addon/${slug}/versions?filter=all_with_deleted`;
+      : `${this.config.constants.apiBaseURL}addons/addon/${slug}/versions?filter=all_with_deleted`;
 
     const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });
@@ -171,7 +172,7 @@ export class AddonController {
    */
   private async getAddonInfo(input: string): Promise<AddonInfoResponse> {
     const slug: string = this.getAddonSlug(input);
-    const url = `${constants.apiBaseURL}addons/addon/${slug}`;
+    const url = `${this.config.constants.apiBaseURL}addons/addon/${slug}`;
     const headers = await this.credentialController.makeAuthHeader();
 
     const response = await fetch(url, { headers: headers });
@@ -208,7 +209,7 @@ export class AddonController {
    * @returns The response given by the API.
    */
   private async fetchDownloadFile(fileId: string) {
-    const url = `${constants.downloadBaseURL}${fileId}`;
+    const url = `${this.config.constants.downloadBaseURL}${fileId}`;
     const headers = await this.credentialController.makeAuthHeader();
     const response = await fetch(url, { headers });
     if (!response.ok) {

@@ -7,7 +7,7 @@ import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
-import constants from "../../../src/config/config";
+import { Config } from "../../../src/config/config";
 import { AddonCacheController } from "../../../src/controller/addonCacheController";
 import { AddonController } from "../../../src/controller/addonController";
 import { CredentialController } from "../../../src/controller/credentialController";
@@ -93,6 +93,7 @@ const goodResponse = {
   },
 };
 
+let config: Config;
 let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
 addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
 directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
@@ -103,12 +104,13 @@ describe("addonController.ts", async () => {
 
   beforeEach(async () => {
 
+    config = new Config();
     credentialControllerStub = sinon.createStubInstance(CredentialController);
     credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
     addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
     sidebarControllerStub = {refresh: () => undefined} as SidebarController;
-    addonController = new AddonController(credentialControllerStub, addonCacheControllerStub, directoryControllerStub, sidebarControllerStub);
+    addonController = new AddonController(config, credentialControllerStub, addonCacheControllerStub, directoryControllerStub, sidebarControllerStub);
     if (!fs.existsSync(workspaceFolder)) {
       fs.promises.mkdir(workspaceFolder);
     }
@@ -138,10 +140,9 @@ describe("addonController.ts", async () => {
         },
         ok: true,
     });
-      
 
     const json = await addonController.getAddonVersions(
-      `${constants.apiBaseURL}addons/addon/slug/versions/`
+      `${config.constants.apiBaseURL}addons/addon/slug/versions/`
     );
     expect(json.results).to.be.an("array");
     expect(json.results).to.have.lengthOf(25);
@@ -280,12 +281,12 @@ describe("addonController.ts", async () => {
         json: () => expected,
       });
       sinon.replace(fetch, "default", fetchStub as any);
-  
+
       const actual = await (addonController as any).getAddonInfo(addonSlug);
       expect(actual).to.deep.equal(expected);
       expect(fetchStub.calledOnce).to.be.true;
       expect(
-        fetchStub.calledWith(`${constants.apiBaseURL}addons/addon/${addonSlug}`)
+        fetchStub.calledWith(`${config.constants.apiBaseURL}addons/addon/${addonSlug}`)
       ).to.be.true;
     });
   
@@ -296,12 +297,12 @@ describe("addonController.ts", async () => {
         ok: true,
       });
       sinon.replace(fetch, "default", fetchStub as any);
-  
+
       const actual = await (addonController as any).getAddonInfo(addonId);
       expect(actual).to.deep.equal(expected);
       expect(fetchStub.calledOnce).to.be.true;
       expect(
-        fetchStub.calledWith(`${constants.apiBaseURL}addons/addon/${addonId}`)
+        fetchStub.calledWith(`${config.constants.apiBaseURL}addons/addon/${addonId}`)
       ).to.be.true;
     });
   
@@ -312,13 +313,13 @@ describe("addonController.ts", async () => {
         ok: true,
       });
       sinon.replace(fetch, "default", fetchStub as any);
-  
+
       const actual = await (addonController as any).getAddonInfo(addonUrl);
       expect(actual).to.deep.equal(expected);
       expect(fetchStub.calledOnce).to.be.true;
       expect(
         fetchStub.calledWith(
-          `${constants.apiBaseURL}addons/addon/${expected.slug}`
+          `${config.constants.apiBaseURL}addons/addon/${expected.slug}`
         )
       ).to.be.true;
     });
@@ -356,7 +357,7 @@ describe("addonController.ts", async () => {
       sinon.restore();
 
       expect(fetchStub.calledOnce).to.be.true;
-      expect(fetchStub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
+      expect(fetchStub.calledWith(`${config.constants.downloadBaseURL}${addonId}`)).to.be
         .true;
 
       // wait for file to be written (there should be a better way to do this)
@@ -368,7 +369,7 @@ describe("addonController.ts", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves(badResponse);
       sinon.replace(fetch, "default", fetchStub as any);
-
+      
       const showErrorMessageStub = sinon.stub(vscode.window, "showErrorMessage");
       showErrorMessageStub.resolves({ title: "Cancel" });
 
@@ -377,7 +378,7 @@ describe("addonController.ts", async () => {
       } catch (e: any) {
         expect(e.message).to.equal("Download request failed");
         expect(fetchStub.calledOnce).to.be.true;
-        expect(fetchStub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to
+        expect(fetchStub.calledWith(`${config.constants.downloadBaseURL}${addonId}`)).to
           .be.true;
 
         await new Promise((resolve) => setTimeout(resolve, 200));

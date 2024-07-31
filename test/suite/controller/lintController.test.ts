@@ -3,16 +3,19 @@ import { afterEach, describe, it, beforeEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
+import { Config } from "../../../src/config/config";
 import { AddonCacheController } from "../../../src/controller/addonCacheController";
 import { CredentialController } from "../../../src/controller/credentialController";
 import { DirectoryController } from "../../../src/controller/directoryController";
 import { LintController } from "../../../src/controller/lintController";
 import { NotificationView } from "../../../src/views/notificationView";
+
 let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
 addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
 directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
 let lintController: LintController;
 let collection: vscode.DiagnosticCollection;
+const config = new Config();
 
 describe("lintController.ts", async () => {
 
@@ -45,7 +48,7 @@ describe("lintController.ts", async () => {
             filepath: ""
         });
 
-        lintController = new LintController(collection, credentialControllerStub, addonCacheControllerStub, directoryControllerStub);
+        lintController = new LintController(config, collection, credentialControllerStub, addonCacheControllerStub, directoryControllerStub);
 
     });
 

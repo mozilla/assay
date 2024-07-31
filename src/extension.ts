@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 
+import { Config } from "./config/config";
 import { AddonCacheController } from "./controller/addonCacheController";
 import { AddonController } from "./controller/addonController";
 import { CommentCacheController } from "./controller/commentCacheController";
@@ -21,10 +22,14 @@ import { WelcomeView } from "./views/welcomeView";
 export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
   const reviewsCache = new AssayCache("addonMeta", storagePath);
+  const config = new Config();
 
   // Menu Controllers
   const addonCacheController = new AddonCacheController(reviewsCache);
-  const credentialController = new CredentialController(context.secrets);
+  const credentialController = new CredentialController(
+    config,
+    context.secrets
+  );
   const directoryController = new DirectoryController();
 
   const rootFolderPath = await directoryController.getRootFolderPath();
@@ -51,6 +56,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.createDiagnosticCollection("addons-linter");
 
   const lintController = new LintController(
+    config,
     diagnosticCollection,
     credentialController,
     addonCacheController,
@@ -58,6 +64,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   const addonController = new AddonController(
+    config,
     credentialController,
     addonCacheController,
     directoryController,
