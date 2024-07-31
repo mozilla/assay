@@ -47,16 +47,28 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const diagnosticCollection =
+    vscode.languages.createDiagnosticCollection("addons-linter");
+
+  const lintController = new LintController(
+    diagnosticCollection,
+    credentialController,
+    addonCacheController,
+    directoryController
+  );
+
   const addonController = new AddonController(
     credentialController,
     addonCacheController,
     directoryController,
     sidebarController
   );
+
   const urlController = new UrlController(
     context,
     addonController,
-    directoryController
+    directoryController,
+    lintController
   );
   const diffController = new DiffController();
 
@@ -117,12 +129,6 @@ export async function activate(context: vscode.ExtensionContext) {
     urlController
   );
 
-  const handleRootConfigurationChangeDisposable =
-    vscode.workspace.onDidChangeConfiguration(
-      directoryController.handleRootConfigurationChange,
-      directoryController
-    );
-
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
@@ -136,8 +142,7 @@ export async function activate(context: vscode.ExtensionContext) {
     sidebarDeleteDisposable,
     viewAddonDisposable,
     diffDisposable,
-    assayUpdaterDisposable,
-    handleRootConfigurationChangeDisposable
+    assayUpdaterDisposable
   );
 
   await vscode.commands.executeCommand(
@@ -178,15 +183,6 @@ export async function activate(context: vscode.ExtensionContext) {
     commentCacheController.fileHasComment
   );
 
-  const diagnosticCollection =
-    vscode.languages.createDiagnosticCollection("addons-linter");
-
-  const lintController = new LintController(
-    diagnosticCollection,
-    credentialController,
-    addonCacheController,
-    directoryController
-  );
   const commentController = new CommentController(
     "assay-comments",
     "Assay",
@@ -200,6 +196,26 @@ export async function activate(context: vscode.ExtensionContext) {
 
   urlController.openCachedFile();
   lintController.lintWorkspace();
+
+  const clearLintDisposable = vscode.workspace.onDidSaveTextDocument(
+    lintController.clearLintsOnDirty,
+    lintController
+  );
+
+  const addDirtyOnDeleteDisposable = vscode.workspace.onDidDeleteFiles(
+    lintController.clearLintsOnDelete,
+    lintController
+  );
+
+  const addDirtyOnChangeDisposable = vscode.workspace.onDidChangeTextDocument(
+    lintController.toggleDirty,
+    lintController
+  );
+
+  const removeDirtyDisposable = vscode.workspace.onDidCloseTextDocument(
+    lintController.removeDirty,
+    lintController
+  );
 
   const fileDecorationProviderDisposable =
     vscode.window.registerFileDecorationProvider(fileDecorationProvider);
@@ -254,7 +270,11 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentDisposable,
     disposeCommentDisposable,
     copyLinkFromThreadDisposable,
-    deleteCommentsFolderDisposable
+    deleteCommentsFolderDisposable,
+    clearLintDisposable,
+    addDirtyOnDeleteDisposable,
+    addDirtyOnChangeDisposable,
+    removeDirtyDisposable
   );
 }
 

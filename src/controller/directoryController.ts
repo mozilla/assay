@@ -3,18 +3,9 @@ import * as path from "path";
 import * as vscode from "vscode";
 
 import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
-import { FilesReadonlyIncludeConfig } from "../types";
 import { RootView } from "../views/rootView";
 
 export class DirectoryController {
-  private cachedRootFolder: string | undefined;
-
-  constructor() {
-    const assayConfig = vscode.workspace.getConfiguration("assay");
-    const rootFolder = assayConfig.get<string>("rootFolder");
-    this.setCachedRootFolder(rootFolder);
-  }
-
   /**
    * Retrieve the line from uri.
    * @param uri The uri to retrieve the line from
@@ -42,25 +33,9 @@ export class DirectoryController {
         throw new Error("No root folder selected");
       }
       await this.storeRootFolderSetting(newRootFolder);
-      this.setRootToReadonly();
       return newRootFolder;
     }
     return rootFolder;
-  }
-
-  /**
-   * Whenever rootFolder or readonlyInclude is modified, ensures that:
-   * 1) the old root folder is removed from readonly, and
-   * 2) the new one is added.
-   * @param event The configuration change event.
-   */
-  async handleRootConfigurationChange(event: vscode.ConfigurationChangeEvent) {
-    if (
-      event.affectsConfiguration("assay.rootFolder") ||
-      event.affectsConfiguration("files.readonlyInclude")
-    ) {
-      await this.setRootToReadonly();
-    }
   }
 
   /**
@@ -138,33 +113,6 @@ export class DirectoryController {
   }
 
   /**
-   * Sets the root to read-only.
-   */
-  private async setRootToReadonly() {
-    const assayConfig = vscode.workspace.getConfiguration("assay");
-    const rootFolder = assayConfig.get<string>("rootFolder");
-
-    const fileConfig = vscode.workspace.getConfiguration("files");
-    const readOnlyFiles = fileConfig.get(
-      "readonlyInclude"
-    ) as FilesReadonlyIncludeConfig;
-
-    // remove the cachedRootFolder's readonly property.
-    const globInitialFolder = `${this.cachedRootFolder}/**`;
-    if (globInitialFolder in readOnlyFiles) {
-      readOnlyFiles[globInitialFolder] = false;
-    }
-    await fileConfig.update(
-      "readonlyInclude",
-      { ...readOnlyFiles, [`${rootFolder}/**`]: true },
-      vscode.ConfigurationTarget.Global
-    );
-
-    // update the cached root folder here and on launch
-    this.setCachedRootFolder(rootFolder);
-  }
-
-  /**
    * Updates the config's rootFolder.
    * @param rootFolder The location of the root folder.
    */
@@ -175,13 +123,5 @@ export class DirectoryController {
       rootFolder,
       vscode.ConfigurationTarget.Global
     );
-  }
-
-  /**
-   * Updates the cached root folder.
-   * @param filepath the location of the root folder.
-   */
-  private setCachedRootFolder(filepath: string | undefined) {
-    this.cachedRootFolder = filepath;
   }
 }

@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 
 import { AddonController } from "./addonController";
 import { DirectoryController } from "./directoryController";
+import { LintController } from "./lintController";
 import { RangeHelper } from "../helper/rangeHelper";
 import { AddonTreeItem } from "../model/sidebarTreeDataProvider";
 
@@ -11,7 +12,8 @@ export class UrlController implements vscode.UriHandler {
   constructor(
     private context: vscode.ExtensionContext,
     private addonController: AddonController,
-    private directoryController: DirectoryController
+    private directoryController: DirectoryController,
+    private lintController: LintController
   ) {}
 
   /**
@@ -142,12 +144,16 @@ export class UrlController implements vscode.UriHandler {
       vscode.commands
         .executeCommand("vscode.openFolder", versionUri)
         .then(() => {
-          this.revealFile(vscode.Uri.file(filePath), lineNumber);
+          this.revealFile(vscode.Uri.file(filePath), lineNumber).then(() => {
+            this.lintController.lintWorkspace();
+          });
         });
     }
     // If user already has the version folder opened, open the manifest.json
     else if (workspace[0].uri.fsPath === versionUri.fsPath) {
-      this.revealFile(vscode.Uri.file(filePath), lineNumber);
+      this.revealFile(vscode.Uri.file(filePath), lineNumber).then(() => {
+        this.lintController.lintWorkspace();
+      });
     }
     // Otherwise, store the filePath (since the extension must restart) to open on launch.
     else {

@@ -6,6 +6,7 @@ import * as vscode from "vscode";
 
 import { AddonController } from "../../../src/controller/addonController";
 import { DirectoryController } from "../../../src/controller/directoryController";
+import { LintController } from "../../../src/controller/lintController";
 import { UrlController } from "../../../src/controller/urlController";
 
 const context = {
@@ -15,7 +16,9 @@ const context = {
 } as any;
 
 let addonControllerStub: sinon.SinonStubbedInstance<AddonController>,
-directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
+directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
+lintControllerStub: sinon.SinonStubbedInstance<LintController>;
+
 
 let urlController: UrlController;
 
@@ -25,7 +28,8 @@ describe("urlController.ts", async () => {
     beforeEach(() => {
         addonControllerStub = sinon.createStubInstance(AddonController);
         directoryControllerStub = sinon.createStubInstance(DirectoryController);
-        urlController = new UrlController(context, addonControllerStub, directoryControllerStub);
+        lintControllerStub = sinon.createStubInstance(LintController);
+        urlController = new UrlController(context, addonControllerStub, directoryControllerStub, lintControllerStub);
     });
 
   afterEach(async () => {
