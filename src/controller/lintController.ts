@@ -25,10 +25,11 @@ export class LintController {
    * Tracks currently dirtied files.
    * @param event A vscode event describing a document change.
    */
-  addDirty(event: vscode.TextDocumentChangeEvent) {
+  toggleDirty(event: vscode.TextDocumentChangeEvent) {
     const document = event.document;
     if (document.isDirty) {
       this.dirtyFiles.add(document.uri.fsPath);
+      // if the change was an empty undo, it was reset to its natural state
     } else if (event.reason && event.contentChanges) {
       this.dirtyFiles.delete(document.uri.fsPath);
     }
@@ -45,7 +46,6 @@ export class LintController {
    * Clears existing lints if a document is saved when it was dirtied.
    */
   clearLintsOnDirty(document: vscode.TextDocument) {
-    console.log(this.dirtyFiles);
     if (this.dirtyFiles.has(document.uri.fsPath)) {
       this.clearLints(document.uri);
     }
@@ -100,7 +100,7 @@ export class LintController {
       return;
     }
 
-    if (await this.addonCacheController.isDirty(guid, version)) {
+    if (await this.addonCacheController.isVersionDirty(guid, version)) {
       return;
     }
 

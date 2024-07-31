@@ -33,7 +33,7 @@ export class AddonCacheController {
   /**
    * Check if guid, version is dirtied.
    */
-  async isDirty(guid: string, version: string) {
+  async isVersionDirty(guid: string, version: string) {
     return await this.cache.getFromCache([guid, version, "isDirty"]);
   }
 

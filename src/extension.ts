@@ -208,10 +208,10 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   const addDirtyOnChangeDisposable = vscode.workspace.onDidChangeTextDocument(
-    lintController.addDirty,
+    lintController.toggleDirty,
     lintController
   );
-  
+
   const removeDirtyDisposable = vscode.workspace.onDidCloseTextDocument(
     lintController.removeDirty,
     lintController

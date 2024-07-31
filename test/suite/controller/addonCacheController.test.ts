@@ -18,6 +18,21 @@ describe("addonCacheController.ts", () => {
     addonCacheController = new AddonCacheController(assayCacheStub);
   });
 
+  describe("isVersionDirty()", () => {
+    it("should return the result of whether the version is dirty from storage.", () => {
+      addonCacheController.isVersionDirty("test-guid", "version");
+      expect(assayCacheStub.getFromCache.calledWith(["test-guid", "version", "isDirty"])).to.be.true;
+    });
+  });
+
+  describe("setVersionAsDirty()", () => {
+    it("should set the versions dirty state to true.", () => {
+      addonCacheController.setVersionAsDirty("test-guid", "version");
+      expect(assayCacheStub.addToCache.calledWith(["test-guid", "version", "isDirty"], true)).to.be.true;
+    });
+  });
+
+
   describe("addAddonToCache()", () => {
     it("should add a new addon's information to cache.", async () => {
 

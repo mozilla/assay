@@ -25,7 +25,7 @@ describe("lintController.ts", async () => {
             },
         ]);
 
-         collection = vscode.languages.createDiagnosticCollection("test-linter");
+        collection = vscode.languages.createDiagnosticCollection("test-linter");
 
         credentialControllerStub = sinon.createStubInstance(CredentialController);
         credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
@@ -51,6 +51,49 @@ describe("lintController.ts", async () => {
 
   afterEach(async () => {
     sinon.restore();
+  });
+
+  describe("toggleDirty()", () => {
+    it("should add a file uri to the set of dirty files when the document is dirty", () => {
+        const uri = vscode.Uri.parse('/test/path/file.txt');
+        const event = { 
+          document: {
+            uri,
+            isDirty: true
+          }
+        };
+        lintController.toggleDirty(event as vscode.TextDocumentChangeEvent);
+        expect(lintController["dirtyFiles"].has(uri.fsPath)).to.be.true;
+      });
+  
+      it("should remove a file uri from the set of dirty files when the document is not dirty", () => {
+        const uri = vscode.Uri.parse('/test/path/file.txt');
+        lintController["dirtyFiles"].add(uri.fsPath);
+        const event = { document: 
+            {
+                uri,
+                isDirty: false
+            },
+            reason: 'ContentChange',
+            contentChanges: [{}]
+         };
+  
+        lintController.toggleDirty(event as unknown as vscode.TextDocumentChangeEvent);
+        expect(lintController["dirtyFiles"].has(uri.fsPath)).to.be.false;
+      });
+  });
+
+  describe("removeDirty()", () => {
+    it("should remove a file uri from the set of dirty files if it exists.", () => {
+        const uri = vscode.Uri.parse('/test/path/file.txt');
+        lintController["dirtyFiles"].add(uri.fsPath);
+        const document = {
+            uri
+        };
+        lintController["dirtyFiles"].add(uri.fsPath);
+        lintController.removeDirty(document as vscode.TextDocument);
+        expect(lintController["dirtyFiles"].has(uri.fsPath)).to.be.false;
+    });
   });
 
   describe("lintWorkspace()", () => {
