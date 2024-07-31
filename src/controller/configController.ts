@@ -1,4 +1,4 @@
-import { DEV, STAGE, PROD } from "../config/constants";
+import { DEV, STAGE, PROD } from "../constants";
 import { ConfigConstants } from "../types";
 import { ConfigView } from "../views/configView";
 
