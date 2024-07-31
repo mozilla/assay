@@ -204,20 +204,12 @@
         }
       ]
     },
-    "viewsContainers": {
-      "activitybar": [
-        {
-            "id": "explorer",
-            "title": "Assay",
-            "icon": "media/assay.svg"
-        }
-    ]
-    },
     "views": {
       "explorer": [
         {
           "id": "assayCommands",
-          "name": "Addons"
+          "name": "Addons",
+          "icon": "media/assay.svg"
         }
       ]
     },
