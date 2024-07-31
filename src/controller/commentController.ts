@@ -62,6 +62,7 @@ export class CommentController {
       );
       vscode.env.clipboard.writeText(commentString);
       vscode.window.showInformationMessage("Line number copied to clipboard.");
+      return commentString;
     } else {
       throw new Error("No active text editor found.");
     }

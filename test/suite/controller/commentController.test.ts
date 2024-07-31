@@ -56,6 +56,32 @@ describe("CommentController.ts", () => {
     }
   });
 
+  describe("copyLineNumber", () => {
+    it("should get the line number.", async () => {
+      sinon.stub(vscode.window, 'activeTextEditor').value({
+        document: {
+          uri: '/root/guid/version/filepath.py'
+        },
+        selections: [{ start: { line: 0, character: 0 }, end: { line: 0, character: 10 } }],
+      });
+      const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+      const result = await cmtController.copyLineNumber();
+      expect(result).to.equal("* filepath#L1\n");
+    });
+
+    it("should get the line numbers.", async () => {
+      sinon.stub(vscode.window, 'activeTextEditor').value({
+        document: {
+          uri: '/root/guid/version/filepath.py'
+        },
+        selections: [{ start: { line: 0, character: 0 }, end: { line: 4, character: 10 } }],
+      });
+      const cmtController = new CommentController("assay-tester", "Assay Tester", commentCacheControllerStub, directoryControllerStub);
+      const result = await cmtController.copyLineNumber();
+      expect(result).to.equal("* filepath#L1-5\n");
+    });
+  });
+
   describe("addComment", () => {
 
     it("should create a comment.", async () => {

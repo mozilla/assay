@@ -33,8 +33,8 @@ export class CommentCacheController {
 
   /**
    * Formats a comment string to a bullet point (*) format.
-   * @param filepath 
-   * @param lineNumber 
+   * @param filepath
+   * @param lineNumber
    * @returns formatted comment string.
    */
   static getCommentString(filepath: string, lineNumber: string) {
