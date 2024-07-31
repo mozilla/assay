@@ -14,6 +14,19 @@ describe("directoryController.ts", async () => {
     sinon.restore();
   });
 
+  describe("getLineFromFile()", async () => {
+
+    it("should fetch the desired line from the given line number and uri", async () => {
+        const uri = vscode.Uri.file('/test/path');
+        const buffer = Buffer.from("Line 0\nLine 1\nLine 2");
+        const directoryController = new DirectoryController();
+        const readFileStub = sinon.stub(directoryController, 'readFile').resolves(buffer);
+        const result = await directoryController.getLineFromFile(uri, 2);
+        expect(readFileStub.called).to.be.true;
+        expect(result).to.equal("Line 2");
+    });
+  });
+
   describe("getRootFolderPath()", async () => {
     it("should return the folder that is already set.", async () => {
         const configStub = sinon.stub(vscode.workspace, "getConfiguration");
