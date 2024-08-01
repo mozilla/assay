@@ -8,7 +8,6 @@
 
 You certainly need [Node](https://nodejs.org/en/). Development is done with [VSCode](https://code.visualstudio.com/).
 
-
 ## Setup
 
 1. Install Node
@@ -16,26 +15,27 @@ You certainly need [Node](https://nodejs.org/en/). Development is done with [VSC
 3. Run `npm install` in the root directory
 
 ## Building the Extension
+
 To build and package the extension, run `npm run build`. This will create a `.vsix` file in the root directory of the project.
 
 ## Running the Extension
+
 1. Navigate to the debug view in the sidebar of VSCode
 2. From the dropdown menu beside the green play button, select one of the following options:
-    - `Run Assay (Development)`
-    - `Run Assay (Staging)`
-    - `Run Assay (Production)`
+   - `Run Assay (Development)`
+   - `Run Assay (Staging)`
+   - `Run Assay (Production)`
 3. Click the green play button to run the extension
 
 Each of these options will run the extension with different constants defined in `src/config/constants.ts`.
 
 ## Testing the Extension
-- Run the following commands to test the extension with the different constants defined in `src/config/constants.ts`:
-    - `npm run test:dev`
-    - `npm run test:stage`
-    - `npm run test:prod`
 
-###### *Note: Any command not configured to run with a specific environment variable will run with the development constants.*
+- Run the following commands to test the extension with the different constants defined in `src/config/constants.ts`:
+  - `npm run test:dev`
+  - `npm run test:stage`
+  - `npm run test:prod`
+
+###### _Note: Any command not configured to run with a specific environment variable will run with the development constants._
 
 ---
-
-

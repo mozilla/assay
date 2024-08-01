@@ -15,7 +15,11 @@ import { DirectoryController } from "../../../src/controller/directoryController
 import { SidebarController } from "../../../src/controller/sidebarController";
 import { AddonInfoResponse, AddonVersion, QPOption } from "../../../src/types";
 
-const populateVersion = (version: AddonVersion[], start: number, end: number) => {
+const populateVersion = (
+  version: AddonVersion[],
+  start: number,
+  end: number
+) => {
   for (let i = start; i < end; i++) {
     version.push({
       version: i.toString(),
@@ -49,9 +53,7 @@ const addonUrl = `https://addons.mozilla.org/en-US/firefox/addon/${addonSlug}`;
 const downloadedFilePath = path.resolve(workspaceFolder, `${addonSlug}.xpi`);
 const compressedFilePath = path.resolve(workspaceFolder, "test-addon.xpi");
 const extractedworkspaceFolder = path.resolve(workspaceFolder, addonSlug);
-const extractedVersionFolder = path.resolve(
-  addonVersion
-);
+const extractedVersionFolder = path.resolve(addonVersion);
 
 const firstVersions: AddonVersion[] = [];
 const secondVersions: AddonVersion[] = [];
@@ -94,25 +96,27 @@ const goodResponse = {
 };
 
 let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
-addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
-directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
-sidebarControllerStub;
+  addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
+  directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>,
+  sidebarControllerStub;
 let addonController: AddonController;
 
 describe("addonController.ts", async () => {
-
   beforeEach(async () => {
-
     credentialControllerStub = sinon.createStubInstance(CredentialController);
     credentialControllerStub.makeAuthHeader.resolves({ Authorization: "test" });
     addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
-    sidebarControllerStub = {refresh: () => undefined} as SidebarController;
-    addonController = new AddonController(credentialControllerStub, addonCacheControllerStub, directoryControllerStub, sidebarControllerStub);
+    sidebarControllerStub = { refresh: () => undefined } as SidebarController;
+    addonController = new AddonController(
+      credentialControllerStub,
+      addonCacheControllerStub,
+      directoryControllerStub,
+      sidebarControllerStub
+    );
     if (!fs.existsSync(workspaceFolder)) {
       fs.promises.mkdir(workspaceFolder);
     }
-
   });
 
   afterEach(async () => {
@@ -129,7 +133,7 @@ describe("addonController.ts", async () => {
     it("should return a json if the input is a link.", async () => {
       const fetchStub = sinon.stub();
       sinon.replace(fetch, "default", fetchStub as any);
-      
+
       fetchStub.onCall(0).returns({
         json: () => {
           return {
@@ -137,15 +141,14 @@ describe("addonController.ts", async () => {
           };
         },
         ok: true,
-    });
-      
+      });
 
-    const json = await addonController.getAddonVersions(
-      `${constants.apiBaseURL}addons/addon/slug/versions/`
-    );
-    expect(json.results).to.be.an("array");
-    expect(json.results).to.have.lengthOf(25);
-  });
+      const json = await addonController.getAddonVersions(
+        `${constants.apiBaseURL}addons/addon/slug/versions/`
+      );
+      expect(json.results).to.be.an("array");
+      expect(json.results).to.have.lengthOf(25);
+    });
 
     it("should return a json if the input is a slug/guid.", async () => {
       const fetchStub = sinon.stub();
@@ -183,7 +186,6 @@ describe("addonController.ts", async () => {
 
       try {
         await addonController.getAddonVersions("addon-slug-or-guid");
-        
       } catch (e: any) {
         expect(e.message).to.equal("Failed to fetch versions");
       }
@@ -192,13 +194,12 @@ describe("addonController.ts", async () => {
 
   describe("downloadAndExtract()", () => {
     it("should use the guid parameter and not call getInput().", async () => {
-      
       const showQuickPickStub = sinon.stub();
       showQuickPickStub.onCall(0).returns(QPOption.No);
       sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
       const versionChoiceStub = sinon.stub(addonController, "getVersionChoice");
-      versionChoiceStub.resolves({fileID: "1", version: "1.0"});
+      versionChoiceStub.resolves({ fileID: "1", version: "1.0" });
       sinon.stub(addonController, <any>"downloadAddon");
 
       const getAddonInfoStub = sinon.stub(addonController, <any>"getAddonInfo");
@@ -224,16 +225,15 @@ describe("addonController.ts", async () => {
   });
 
   describe("getVersionChoice()", () => {
-
     it("should retrieve the next page and be able to select something from that page.", async () => {
       const fetchStub = sinon.stub(addonController, "getAddonVersions");
       fetchStub.onCall(0).resolves({
-            results: firstVersions,
-            next: "next-page-url",
-            });
+        results: firstVersions,
+        next: "next-page-url",
+      });
       fetchStub.onCall(1).resolves({
-            results: secondVersions
-            });
+        results: secondVersions,
+      });
 
       sinon.replace(fetch, "default", fetchStub as any);
 
@@ -243,10 +243,11 @@ describe("addonController.ts", async () => {
 
       sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-      const result = await addonController.getVersionChoice("addon-slug-or-guid");
+      const result = await addonController.getVersionChoice(
+        "addon-slug-or-guid"
+      );
       expect(result.fileID).to.equal("25");
       expect(result.version).to.equal("25");
-
     });
 
     it("should error if the user cancels the prompt.", async () => {
@@ -263,7 +264,10 @@ describe("addonController.ts", async () => {
       showErrorMessageStub.onCall(0).resolves({ title: "Cancel" });
 
       try {
-        await addonController.getAddonVersions("addon-slug-or-guid", "next-page-url");
+        await addonController.getAddonVersions(
+          "addon-slug-or-guid",
+          "next-page-url"
+        );
         expect(true).to.equal(false);
       } catch (e: any) {
         expect(e.message).to.equal("Failed to fetch versions");
@@ -271,8 +275,7 @@ describe("addonController.ts", async () => {
     });
   });
 
-   describe("getAddonInfo()", () => {
-
+  describe("getAddonInfo()", () => {
     it("should return a json object of type addonInfoResponse if input is a slug.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
@@ -280,7 +283,7 @@ describe("addonController.ts", async () => {
         json: () => expected,
       });
       sinon.replace(fetch, "default", fetchStub as any);
-  
+
       const actual = await (addonController as any).getAddonInfo(addonSlug);
       expect(actual).to.deep.equal(expected);
       expect(fetchStub.calledOnce).to.be.true;
@@ -288,7 +291,7 @@ describe("addonController.ts", async () => {
         fetchStub.calledWith(`${constants.apiBaseURL}addons/addon/${addonSlug}`)
       ).to.be.true;
     });
-  
+
     it("should return a json object of type addonInfoResponse if input is an id.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
@@ -296,7 +299,7 @@ describe("addonController.ts", async () => {
         ok: true,
       });
       sinon.replace(fetch, "default", fetchStub as any);
-  
+
       const actual = await (addonController as any).getAddonInfo(addonId);
       expect(actual).to.deep.equal(expected);
       expect(fetchStub.calledOnce).to.be.true;
@@ -304,7 +307,7 @@ describe("addonController.ts", async () => {
         fetchStub.calledWith(`${constants.apiBaseURL}addons/addon/${addonId}`)
       ).to.be.true;
     });
-  
+
     it("should return a json object of type addonInfoResponse if input is a url.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
@@ -312,7 +315,7 @@ describe("addonController.ts", async () => {
         ok: true,
       });
       sinon.replace(fetch, "default", fetchStub as any);
-  
+
       const actual = await (addonController as any).getAddonInfo(addonUrl);
       expect(actual).to.deep.equal(expected);
       expect(fetchStub.calledOnce).to.be.true;
@@ -322,7 +325,7 @@ describe("addonController.ts", async () => {
         )
       ).to.be.true;
     });
-  
+
     it("should throw an error if the response is not ok.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
@@ -330,10 +333,13 @@ describe("addonController.ts", async () => {
         json: () => expected,
       });
       sinon.replace(fetch, "default", fetchStub as any);
-  
-      const showErrorMessageStub = sinon.stub(vscode.window, "showErrorMessage");
+
+      const showErrorMessageStub = sinon.stub(
+        vscode.window,
+        "showErrorMessage"
+      );
       showErrorMessageStub.resolves({ title: "Cancel" });
-  
+
       try {
         await (addonController as any).getAddonInfo(addonSlug);
       } catch (e: any) {
@@ -343,7 +349,6 @@ describe("addonController.ts", async () => {
   });
 
   describe("downloadAddon()", async () => {
-
     it("should download the xpi of the addon.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves(goodResponse);
@@ -356,8 +361,8 @@ describe("addonController.ts", async () => {
       sinon.restore();
 
       expect(fetchStub.calledOnce).to.be.true;
-      expect(fetchStub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to.be
-        .true;
+      expect(fetchStub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to
+        .be.true;
 
       // wait for file to be written (there should be a better way to do this)
       await new Promise((resolve) => setTimeout(resolve, 200));
@@ -369,16 +374,22 @@ describe("addonController.ts", async () => {
       fetchStub.resolves(badResponse);
       sinon.replace(fetch, "default", fetchStub as any);
 
-      const showErrorMessageStub = sinon.stub(vscode.window, "showErrorMessage");
+      const showErrorMessageStub = sinon.stub(
+        vscode.window,
+        "showErrorMessage"
+      );
       showErrorMessageStub.resolves({ title: "Cancel" });
 
       try {
-        await (addonController as any).downloadAddon(addonId, downloadedFilePath);
+        await (addonController as any).downloadAddon(
+          addonId,
+          downloadedFilePath
+        );
       } catch (e: any) {
         expect(e.message).to.equal("Download request failed");
         expect(fetchStub.calledOnce).to.be.true;
-        expect(fetchStub.calledWith(`${constants.downloadBaseURL}${addonId}`)).to
-          .be.true;
+        expect(fetchStub.calledWith(`${constants.downloadBaseURL}${addonId}`))
+          .to.be.true;
 
         await new Promise((resolve) => setTimeout(resolve, 200));
         expect(fs.existsSync(downloadedFilePath)).to.be.false;
@@ -394,11 +405,17 @@ describe("addonController.ts", async () => {
       existsSyncStub.onFirstCall().returns(false);
       existsSyncStub.onSecondCall().returns(true);
 
-      const showErrorMessageStub = sinon.stub(vscode.window, "showErrorMessage");
+      const showErrorMessageStub = sinon.stub(
+        vscode.window,
+        "showErrorMessage"
+      );
       showErrorMessageStub.resolves({ title: "Cancel" });
 
       try {
-        await (addonController as any).downloadAddon(addonId, downloadedFilePath);
+        await (addonController as any).downloadAddon(
+          addonId,
+          downloadedFilePath
+        );
       } catch (e: any) {
         expect(e.message).to.equal("Download failed");
       }
@@ -406,13 +423,11 @@ describe("addonController.ts", async () => {
   });
 
   describe("extractAddon()", async () => {
-
     beforeEach(async () => {
       await createXPI();
     });
 
     it("should extract a new addon and remove the xpi.", async () => {
-
       const showQuickPickStub = sinon.stub();
       showQuickPickStub.onCall(0).returns(QPOption.Yes);
       sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
@@ -424,7 +439,6 @@ describe("addonController.ts", async () => {
 
       expect(fs.existsSync(extractedVersionFolder)).to.be.true;
       expect(fs.existsSync(compressedFilePath)).to.be.false;
-
     });
 
     it("should overwrite an existing addon.", async () => {
@@ -450,7 +464,7 @@ describe("addonController.ts", async () => {
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(fs.existsSync(extractedVersionFolder)).to.be.true;
       expect(fs.existsSync(compressedFilePath)).to.be.false;
-      
+
       const fileStats = fs.statSync(
         path.resolve(extractedVersionFolder, "test.txt")
       );
@@ -483,7 +497,6 @@ describe("addonController.ts", async () => {
           compressedFilePath,
           extractedVersionFolder
         );
-        
       } catch (e: any) {
         expect(e.message).to.equal("Extraction cancelled");
         expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
@@ -516,7 +529,6 @@ describe("addonController.ts", async () => {
           compressedFilePath,
           extractedVersionFolder
         );
-        
       } catch (e: any) {
         expect(e.message).to.equal("Extraction failed.");
       }
@@ -525,14 +537,18 @@ describe("addonController.ts", async () => {
 
   describe("dirExistsOrMake()", async () => {
     it("should create a directory if it does not exist.", async () => {
-      const res = await (addonController as any).dirExistsOrMake(extractedworkspaceFolder);
+      const res = await (addonController as any).dirExistsOrMake(
+        extractedworkspaceFolder
+      );
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(res).to.be.true;
     });
 
     it("should not create a directory if it exists.", async () => {
       await fs.promises.mkdir(extractedworkspaceFolder);
-      const res = await (addonController as any).dirExistsOrMake(extractedworkspaceFolder);
+      const res = await (addonController as any).dirExistsOrMake(
+        extractedworkspaceFolder
+      );
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(res).to.be.false;
     });
@@ -540,39 +556,44 @@ describe("addonController.ts", async () => {
 
   describe("getAddonSlug()", () => {
     it("should correctly return the AMO ID from a review url", async () => {
-        const url = "https://reviewers.addons.mozilla.org/en-US/reviewers/review/128";
-        const result = (addonController as any).getAddonSlug(url);
-        expect(result).to.equal("128");
+      const url =
+        "https://reviewers.addons.mozilla.org/en-US/reviewers/review/128";
+      const result = (addonController as any).getAddonSlug(url);
+      expect(result).to.equal("128");
     });
 
     it("should correctly return the AMO ID from a review url with nonsense afterward", async () => {
-        const url = "https://reviewers.addons.mozilla.org/en-US/reviewers/review/128/alot/of/nonsense";
-        const result = (addonController as any).getAddonSlug(url);
-        expect(result).to.equal("128");
+      const url =
+        "https://reviewers.addons.mozilla.org/en-US/reviewers/review/128/alot/of/nonsense";
+      const result = (addonController as any).getAddonSlug(url);
+      expect(result).to.equal("128");
     });
 
     it("should correctly return the AMO ID from an unlisted review url", async () => {
-        const url = "https://reviewers.addons.mozilla.org/en-US/reviewers/review-unlisted/256";
-        const result = (addonController as any).getAddonSlug(url);
-        expect(result).to.equal("256");
+      const url =
+        "https://reviewers.addons.mozilla.org/en-US/reviewers/review-unlisted/256";
+      const result = (addonController as any).getAddonSlug(url);
+      expect(result).to.equal("256");
     });
 
     it("should correctly return the AMO ID from an unlisted review url with nonsense afterward", async () => {
-        const url = "https://reviewers.addons.mozilla.org/en-US/reviewers/review-unlisted/256/alot/of/nonsense";
-        const result = (addonController as any).getAddonSlug(url);
-        expect(result).to.equal("256");
+      const url =
+        "https://reviewers.addons.mozilla.org/en-US/reviewers/review-unlisted/256/alot/of/nonsense";
+      const result = (addonController as any).getAddonSlug(url);
+      expect(result).to.equal("256");
     });
 
     it("should correctly return the slug from a addons url", async () => {
-        const url = "https://addons.mozilla.org/en-US/firefox/addon/adblock-plus";
-        const result = (addonController as any).getAddonSlug(url);
-        expect(result).to.equal("adblock-plus");
+      const url = "https://addons.mozilla.org/en-US/firefox/addon/adblock-plus";
+      const result = (addonController as any).getAddonSlug(url);
+      expect(result).to.equal("adblock-plus");
     });
 
     it("should correctly return the slug from a addons url with nonsense afterward", async () => {
-        const url = "https://addons.mozilla.org/en-US/firefox/addon/adblock-plus/alot/of/nonsense";
-        const result = (addonController as any).getAddonSlug(url);
-        expect(result).to.equal("adblock-plus");
+      const url =
+        "https://addons.mozilla.org/en-US/firefox/addon/adblock-plus/alot/of/nonsense";
+      const result = (addonController as any).getAddonSlug(url);
+      expect(result).to.equal("adblock-plus");
     });
 
     it("should just return the input if no delimiter is identified, regardless of whether it really is a slug or not.", () => {
@@ -580,7 +601,5 @@ describe("addonController.ts", async () => {
       const result = (addonController as any).getAddonSlug(url);
       expect(result).to.equal("nonsense-or-slug");
     });
-    
   });
-
 });

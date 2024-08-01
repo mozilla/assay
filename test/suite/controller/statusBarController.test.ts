@@ -33,30 +33,30 @@ const fakeWorkspaceFolder = {
 };
 
 let addonCacheControllerStub: sinon.SinonStubbedInstance<AddonCacheController>,
-directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
+  directoryControllerStub: sinon.SinonStubbedInstance<DirectoryController>;
 let statusBarController: StatusBarController;
 
 describe("statusBarController.ts", async () => {
-
-    beforeEach(() => {
-        addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
-        directoryControllerStub = sinon.createStubInstance(DirectoryController);
-        statusBarController = new StatusBarController(addonCacheControllerStub, directoryControllerStub);
-    });
+  beforeEach(() => {
+    addonCacheControllerStub = sinon.createStubInstance(AddonCacheController);
+    directoryControllerStub = sinon.createStubInstance(DirectoryController);
+    statusBarController = new StatusBarController(
+      addonCacheControllerStub,
+      directoryControllerStub
+    );
+  });
 
   afterEach(() => {
     sinon.restore();
   });
 
   describe("updateStatusBar()", () => {
-
     it("should return false if there is no activeTextEditor.", async () => {
-        sinon.stub(vscode.window, "activeTextEditor").value(undefined);
-        expect(await statusBarController.updateStatusBar()).to.be.false;
+      sinon.stub(vscode.window, "activeTextEditor").value(undefined);
+      expect(await statusBarController.updateStatusBar()).to.be.false;
     });
 
     it("should throw error if the folder is not in the root.", async () => {
-
       directoryControllerStub.getRootFolderPath.resolves("/different-root");
 
       const activeTextEditorStub = sinon.stub();
@@ -79,53 +79,52 @@ describe("statusBarController.ts", async () => {
     });
 
     it("should throw an error if there is no guid in the path.", async () => {
-        
-        directoryControllerStub.getRootFolderPath.resolves("/test");
+      directoryControllerStub.getRootFolderPath.resolves("/test");
 
-        const activeTextEditorStub = sinon.stub();
-        activeTextEditorStub.returns(fakeActiveEditor);
-        sinon.replaceGetter(
-            vscode.window,
-            "activeTextEditor",
-            activeTextEditorStub as any
-        );
+      const activeTextEditorStub = sinon.stub();
+      activeTextEditorStub.returns(fakeActiveEditor);
+      sinon.replaceGetter(
+        vscode.window,
+        "activeTextEditor",
+        activeTextEditorStub as any
+      );
 
-        const existsSyncStub = sinon.stub(fs, "existsSync");
-        existsSyncStub.returns(true);
+      const existsSyncStub = sinon.stub(fs, "existsSync");
+      existsSyncStub.returns(true);
 
-        try {
-            await statusBarController.updateStatusBar();
-            expect.fail("No error thrown");
-        } catch (err: any) {
-            expect(err.message).to.equal("No guid found.");
-        }
+      try {
+        await statusBarController.updateStatusBar();
+        expect.fail("No error thrown");
+      } catch (err: any) {
+        expect(err.message).to.equal("No guid found.");
+      }
     });
 
     it("should return true if the taskbar is updated.", async () => {
-        directoryControllerStub.getRootFolderPath.resolves("/root");
+      directoryControllerStub.getRootFolderPath.resolves("/root");
 
-        const activeTextEditorStub = sinon.stub();
-        activeTextEditorStub.returns(fakeActiveEditorWithGuid);
-        sinon.replaceGetter(
-            vscode.window,
-            "activeTextEditor",
-            activeTextEditorStub as any
-        );
+      const activeTextEditorStub = sinon.stub();
+      activeTextEditorStub.returns(fakeActiveEditorWithGuid);
+      sinon.replaceGetter(
+        vscode.window,
+        "activeTextEditor",
+        activeTextEditorStub as any
+      );
 
-        const existsSyncStub = sinon.stub(fs, "existsSync");
-        existsSyncStub.returns(true);
+      const existsSyncStub = sinon.stub(fs, "existsSync");
+      existsSyncStub.returns(true);
 
-        const workspaceFoldersStub = sinon.stub();
-        workspaceFoldersStub.returns(fakeWorkspaceFolder);
-        sinon.replaceGetter(
-            vscode.workspace,
-            "workspaceFolders",
-            workspaceFoldersStub as any
-        );
+      const workspaceFoldersStub = sinon.stub();
+      workspaceFoldersStub.returns(fakeWorkspaceFolder);
+      sinon.replaceGetter(
+        vscode.workspace,
+        "workspaceFolders",
+        workspaceFoldersStub as any
+      );
 
-        const result = await statusBarController.updateStatusBar();
-        expect(addonCacheControllerStub.getAddonFromCache.called).to.be.true;
-        expect(result).to.be.true;
+      const result = await statusBarController.updateStatusBar();
+      expect(addonCacheControllerStub.getAddonFromCache.called).to.be.true;
+      expect(result).to.be.true;
     });
   });
 });
