@@ -47,6 +47,10 @@ describe("extension.ts", () => {
       "getRootFolderPath"
     );
     directoryControllerStub.resolves("test");
+
+    const inRootStub = sinon.stub(DirectoryController.prototype, "inRoot");
+    inRootStub.resolves(true);
+
     const existsSyncStub = sinon.stub(fs, "existsSync");
     existsSyncStub.returns(true);
 
