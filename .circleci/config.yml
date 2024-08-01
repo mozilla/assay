@@ -12,6 +12,7 @@ jobs:
     steps:
       - checkout
       - run: npm ci
+      - run: npm run prettier-ci
       - run: npm run test
       - codecov/upload:
           file: ./coverage/lcov.info
