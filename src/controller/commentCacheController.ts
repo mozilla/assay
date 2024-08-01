@@ -32,6 +32,16 @@ export class CommentCacheController {
   };
 
   /**
+   * Formats a comment string to a bullet point (*) format.
+   * @param filepath
+   * @param lineNumber
+   * @returns formatted comment string.
+   */
+  static getCommentString(filepath: string, lineNumber: string) {
+    return `* ${filepath}${RangeHelper.truncate(lineNumber)}\n`;
+  }
+
+  /**
    * Save the given comment to cache.
    * @param comment
    */
@@ -90,9 +100,10 @@ export class CommentCacheController {
 
     for (const filepath in comments) {
       for (const lineNumber in comments[filepath]) {
-        compiledComments += `* ${filepath}${RangeHelper.truncate(
+        compiledComments += CommentCacheController.getCommentString(
+          filepath,
           lineNumber
-        )}\n`;
+        );
       }
     }
     return compiledComments;

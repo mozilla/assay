@@ -243,6 +243,12 @@ export async function activate(context: vscode.ExtensionContext) {
     commentController
   );
 
+  const copyLineNumberDisposable = vscode.commands.registerCommand(
+    "assay.copyLineNumber",
+    commentController.copyLineNumber,
+    commentController
+  );
+
   const deleteCommentDisposable = vscode.commands.registerCommand(
     "assay.deleteComment",
     commentController.deleteThread,
@@ -266,6 +272,7 @@ export async function activate(context: vscode.ExtensionContext) {
     fileDecorationProviderDisposable,
     commentController.controller,
     addCommentDisposable,
+    copyLineNumberDisposable,
     deleteCommentDisposable,
     exportCommentDisposable,
     disposeCommentDisposable,
