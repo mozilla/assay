@@ -2,7 +2,7 @@
 
 # Welcome to **Assay**!
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/mozilla/assay/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mozilla/assay/tree/main)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/mozilla/assay/tree/main.png)](https://dl.circleci.com/status-badge/redirect/gh/mozilla/assay/tree/main)
 
 > Assay: The testing of a metal (Addon) or ore (Addon) to determine its ingredients (functionalities) and quality (quality).
 
