@@ -11,8 +11,12 @@ let fileDecoratorController: FileDecoratorController;
 
 describe("fileDecoratorController.ts", async () => {
   beforeEach(() => {
-    customFileDecorationProviderStub = sinon.createStubInstance(CustomFileDecorationProvider);
-    fileDecoratorController = new FileDecoratorController(customFileDecorationProviderStub);
+    customFileDecorationProviderStub = sinon.createStubInstance(
+      CustomFileDecorationProvider
+    );
+    fileDecoratorController = new FileDecoratorController(
+      customFileDecorationProviderStub
+    );
   });
 
   afterEach(async () => {
@@ -21,9 +25,11 @@ describe("fileDecoratorController.ts", async () => {
 
   describe("loadFileDecoratorByUri()", async () => {
     it("should call the fileDecorationProvider.", async () => {
-        const uri = vscode.Uri.parse("test-uri");
-        await fileDecoratorController.loadFileDecoratorByUri(uri);
-        expect(customFileDecorationProviderStub.updateDecorations.calledOnceWith(uri)).to.be.true;
+      const uri = vscode.Uri.parse("test-uri");
+      await fileDecoratorController.loadFileDecoratorByUri(uri);
+      expect(
+        customFileDecorationProviderStub.updateDecorations.calledOnceWith(uri)
+      ).to.be.true;
     });
   });
 });

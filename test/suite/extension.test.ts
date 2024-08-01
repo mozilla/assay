@@ -18,17 +18,20 @@ function makeContext() {
     },
   } as unknown as vscode.ExtensionContext;
 }
- 
+
 describe("extension.ts", () => {
   beforeEach(() => {
-      const workspaceFoldersStub = sinon.stub(vscode.workspace, "workspaceFolders");
-      workspaceFoldersStub.value([
-        {
-          uri: vscode.Uri.parse("test-root-uri"),
-        },
-      ]);
+    const workspaceFoldersStub = sinon.stub(
+      vscode.workspace,
+      "workspaceFolders"
+    );
+    workspaceFoldersStub.value([
+      {
+        uri: vscode.Uri.parse("test-root-uri"),
+      },
+    ]);
   });
-  
+
   afterEach(() => {
     sinon.restore();
   });
@@ -39,24 +42,31 @@ describe("extension.ts", () => {
   });
 
   it("should load the manifest if launched with the intention to do so.", async () => {
-    
-    const directoryControllerStub = sinon.stub(DirectoryController.prototype, 'getRootFolderPath');
-    directoryControllerStub.resolves('test');
+    const directoryControllerStub = sinon.stub(
+      DirectoryController.prototype,
+      "getRootFolderPath"
+    );
+    directoryControllerStub.resolves("test");
     const existsSyncStub = sinon.stub(fs, "existsSync");
     existsSyncStub.returns(true);
 
-    sinon.stub(vscode.window, 'createTreeView').returns({dispose: () => undefined} as any);
+    sinon
+      .stub(vscode.window, "createTreeView")
+      .returns({ dispose: () => undefined } as any);
 
     const context = makeContext();
-    sinon.stub(context.globalState, 'get').withArgs("filePath").returns("test");
+    sinon.stub(context.globalState, "get").withArgs("filePath").returns("test");
 
     context.globalState.update = sinon.stub();
-    const openCachedFileStub = sinon.stub(UrlController.prototype, "openCachedFile");    
+    const openCachedFileStub = sinon.stub(
+      UrlController.prototype,
+      "openCachedFile"
+    );
 
     sinon.stub(vscode.window, "registerUriHandler");
     sinon.stub(vscode.commands, "registerCommand");
     await activate(context);
     expect(openCachedFileStub.calledOnce).to.be.true;
-    expect(context.subscriptions.length).to.be.greaterThan(10);    
+    expect(context.subscriptions.length).to.be.greaterThan(10);
   });
 });

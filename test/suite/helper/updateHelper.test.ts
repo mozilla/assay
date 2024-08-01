@@ -9,7 +9,6 @@ import * as vscode from "vscode";
 
 import { UpdateHelper } from "../../../src/helper/updateHelper";
 
-
 describe("updateHelper.ts", () => {
   afterEach(() => {
     sinon.restore();
@@ -17,8 +16,10 @@ describe("updateHelper.ts", () => {
 
   describe("updateAssay()", () => {
     it("should return false if the version is up to date.", async () => {
-        sinon.stub(UpdateHelper, <any>"checkAndGetNewVersion").resolves(undefined);
-        expect(await UpdateHelper.updateAssay()).to.equal(false);
+      sinon
+        .stub(UpdateHelper, <any>"checkAndGetNewVersion")
+        .resolves(undefined);
+      expect(await UpdateHelper.updateAssay()).to.equal(false);
     });
   });
 
@@ -57,11 +58,12 @@ describe("updateHelper.ts", () => {
       );
       showInformationMessageStub.resolves();
 
-      try{
+      try {
         await UpdateHelper["checkAndGetNewVersion"]();
-      }
-      catch(e: any){
-        expect(e.message).to.contain("Could not fetch latest version from Github");
+      } catch (e: any) {
+        expect(e.message).to.contain(
+          "Could not fetch latest version from Github"
+        );
       }
 
       expect(showInformationMessageStub.calledOnce).to.equal(true);
@@ -74,7 +76,9 @@ describe("updateHelper.ts", () => {
         json: () => {
           return {
             tag_name: "1.0.1",
-            assets: [{ browser_download_url: "https://github.com/release/test" }],
+            assets: [
+              { browser_download_url: "https://github.com/release/test" },
+            ],
           };
         },
       } as any);
@@ -136,7 +140,10 @@ describe("updateHelper.ts", () => {
       );
       showInformationMessageStub.resolves();
 
-      await UpdateHelper["installNewVersion"]("https://github.com/release/test", "1.0.0");
+      await UpdateHelper["installNewVersion"](
+        "https://github.com/release/test",
+        "1.0.0"
+      );
       expect(spawnStub.calledOnce).to.equal(true);
       expect(
         spawnStub.calledWith("code", [
@@ -172,7 +179,10 @@ describe("updateHelper.ts", () => {
         "showErrorMessage"
       );
       showErrorMessageStub.resolves();
-      await UpdateHelper["installNewVersion"]("https://github.com/release/test", "1.0.0");
+      await UpdateHelper["installNewVersion"](
+        "https://github.com/release/test",
+        "1.0.0"
+      );
       expect(showErrorMessageStub.calledOnce).to.equal(true);
       expect(
         showErrorMessageStub.calledWith(
@@ -212,7 +222,9 @@ describe("updateHelper.ts", () => {
       getExtensionStub.returns(undefined);
 
       try {
-        await UpdateHelper["downloadVersion"]("https://github.com/release/test");
+        await UpdateHelper["downloadVersion"](
+          "https://github.com/release/test"
+        );
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal("Could not find extension path");
@@ -236,10 +248,14 @@ describe("updateHelper.ts", () => {
       createWriteStreamStub.throws(new Error("error message"));
 
       try {
-        await UpdateHelper["downloadVersion"]("https://github.com/release/test");
+        await UpdateHelper["downloadVersion"](
+          "https://github.com/release/test"
+        );
         expect.fail("Should have thrown an error");
       } catch (err: any) {
-        expect(err.message).to.equal("Could not write version file: error message");
+        expect(err.message).to.equal(
+          "Could not write version file: error message"
+        );
       }
     });
 
@@ -260,7 +276,9 @@ describe("updateHelper.ts", () => {
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns({ extensionPath: workspaceFolder } as any);
 
-      const returnedPath = await UpdateHelper["downloadVersion"]("https://github.com/release/test");
+      const returnedPath = await UpdateHelper["downloadVersion"](
+        "https://github.com/release/test"
+      );
       expect(returnedPath).to.equal(
         path.resolve(workspaceFolder, "version.vsix")
       );

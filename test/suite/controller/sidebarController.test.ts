@@ -18,10 +18,13 @@ describe("fileDecoratorController.ts", async () => {
 
   describe("SidebarController.ts", async () => {
     it("should construct the treeView and refresh function.", async () => {
-        expect(sidebarController.treeView).to.not.be.undefined;
-        const refreshStub = sinon.stub(AddonTreeDataProvider.prototype, "refresh");
-        sidebarController.refresh();
-        expect(refreshStub.called).to.be.true;
+      expect(sidebarController.treeView).to.not.be.undefined;
+      const refreshStub = sinon.stub(
+        AddonTreeDataProvider.prototype,
+        "refresh"
+      );
+      sidebarController.refresh();
+      expect(refreshStub.called).to.be.true;
     });
   });
 });

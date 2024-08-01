@@ -15,7 +15,6 @@ let cache: AssayCache;
 
 describe("addonCache.ts", async () => {
   beforeEach(() => {
-
     cache = new AssayCache("test-cache", storagePath);
 
     if (!fs.existsSync(workspaceFolder)) {
@@ -35,7 +34,6 @@ describe("addonCache.ts", async () => {
 
   describe("addToCache()", async () => {
     it("should create the cache folder, file, and add data if it does not exist.", async () => {
-
       await cache.addToCache(["test-key"], "test-value");
 
       expect(fs.existsSync(storagePath)).to.be.true;
@@ -48,7 +46,6 @@ describe("addonCache.ts", async () => {
     });
 
     it("should modify the data in the cache file if it does exist.", async () => {
-
       if (!fs.existsSync(cachePath)) {
         fs.mkdirSync(cachePath);
       }
@@ -102,7 +99,5 @@ describe("addonCache.ts", async () => {
       const data = JSON.parse(json);
       expect(data).to.deep.equal({});
     });
-
-    
   });
 });

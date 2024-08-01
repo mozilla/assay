@@ -6,32 +6,35 @@ import * as vscode from "vscode";
 import { RootView } from "../../../src/views/rootView";
 
 describe("rootView.ts", () => {
-
-    afterEach(async () => {
+  afterEach(async () => {
     sinon.restore();
+  });
+
+  describe("selectRootFolder()", async () => {
+    it("should return undefined if no folder is chosen.", async () => {
+      const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
+      const showInformationMessageStub = sinon
+        .stub(vscode.window, "showInformationMessage")
+        .resolves();
+      showOpenDialogStub.resolves(undefined);
+
+      const result = await RootView.selectRootFolder();
+      expect(showInformationMessageStub.called).to.be.true;
+      expect(result).to.be.undefined;
     });
 
-    describe("selectRootFolder()", async () => {
-        it("should return undefined if no folder is chosen.", async () => { 
-            const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
-            const showInformationMessageStub = sinon.stub(vscode.window, 'showInformationMessage').resolves();
-            showOpenDialogStub.resolves(undefined);
+    it("should return the chosen folder.", async () => {
+      const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
+      const showInformationMessageStub = sinon
+        .stub(vscode.window, "showInformationMessage")
+        .resolves();
 
-            const result = await RootView.selectRootFolder();
-            expect(showInformationMessageStub.called).to.be.true;
-            expect(result).to.be.undefined;
-        });
+      const uri = vscode.Uri.file("test");
+      showOpenDialogStub.resolves([uri]);
 
-        it("should return the chosen folder.", async () => {
-            const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
-            const showInformationMessageStub = sinon.stub(vscode.window, 'showInformationMessage').resolves();
-        
-            const uri = vscode.Uri.file("test");
-            showOpenDialogStub.resolves([uri]);
-
-            const result = await RootView.selectRootFolder();
-            expect(showInformationMessageStub.called).to.be.true;
-            expect(result).to.equal("/test");
-        });
+      const result = await RootView.selectRootFolder();
+      expect(showInformationMessageStub.called).to.be.true;
+      expect(result).to.equal("/test");
     });
+  });
 });
