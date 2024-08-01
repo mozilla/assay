@@ -2,23 +2,32 @@
 
 # Welcome to **Assay**!
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/mozilla/assay/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mozilla/assay/tree/main)
+
 > Assay: The testing of a metal (Addon) or ore (Addon) to determine its ingredients (functionalities) and quality (quality).
 
 ## Requirements
 
-You certainly need [Node](https://nodejs.org/en/). Development is done with [VSCode](https://code.visualstudio.com/).
+You certainly need [Node](https://nodejs.org/en/) (LTS). Development is done with [VSCode](https://code.visualstudio.com/).
 
-## Setup
+## Get started
 
-1. Install Node
-2. Clone the repository
-3. Run `npm install` in the root directory
+1. Clone the repository
+2. Run `npm install` in the root directory to install all the dependencies
 
-## Building the Extension
+Note: Any command not configured to run with a specific environment variable will run with the development constants.
 
-To build and package the extension, run `npm run build`. This will create a `.vsix` file in the root directory of the project.
+## Testing the extension
 
-## Running the Extension
+The easiest way to run all the checks for this extension is to execute `npm test` in the project's root directory.
+
+You can also run the following commands to test the extension with the different constants defined in `src/config/constants.ts`:
+
+- `npm run test:dev`
+- `npm run test:stage`
+- `npm run test:prod`
+
+## Running the extension
 
 1. Navigate to the debug view in the sidebar of VSCode
 2. From the dropdown menu beside the green play button, select one of the following options:
@@ -29,13 +38,12 @@ To build and package the extension, run `npm run build`. This will create a `.vs
 
 Each of these options will run the extension with different constants defined in `src/config/constants.ts`.
 
-## Testing the Extension
+## Building the extension
 
-- Run the following commands to test the extension with the different constants defined in `src/config/constants.ts`:
-  - `npm run test:dev`
-  - `npm run test:stage`
-  - `npm run test:prod`
+To build and package the extension (optimized/production build), run `npm run build`. This will create a `.vsix` file in the root directory of the project.
 
-###### _Note: Any command not configured to run with a specific environment variable will run with the development constants._
+## Prettier
 
----
+We use [Prettier][] to automatically format our JavaScript code and stop all the on-going debates over styles. As a developer, you have to run it (with `npm run prettier`) before submitting a Pull Request.
+
+[prettier]: https://prettier.io/
