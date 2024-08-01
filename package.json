@@ -96,7 +96,11 @@
           "type": "string",
           "description": "Whether or not to delete comments after exporting.",
           "default": "No Preference",
-          "enum": ["Yes", "No", "Ask Every Time"]
+          "enum": [
+            "Yes",
+            "No",
+            "Ask Every Time"
+          ]
         }
       }
     },
@@ -150,7 +154,6 @@
           "group": "navigation@1",
           "when": "view == assayCommands"
         }
-
       ],
       "view/item/context": [
         {
@@ -181,20 +184,20 @@
       ],
       "comments/commentThread/title": [
         {
-					"command": "assay.exportComments",
-					"group": "inline@1",
+          "command": "assay.exportComments",
+          "group": "inline@1",
           "when": "assay.commentsEnabled && !commentThreadIsEmpty"
-				},
+        },
         {
-					"command": "assay.copyLink",
-					"group": "inline@3",
+          "command": "assay.copyLink",
+          "group": "inline@3",
           "when": "assay.commentsEnabled && !commentThreadIsEmpty"
-				},
-				{
-					"command": "assay.deleteComment",
-					"group": "inline@5",
-					"when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
-				}
+        },
+        {
+          "command": "assay.deleteComment",
+          "group": "inline@5",
+          "when": "assay.commentsEnabled && commentController == assay-comments && !commentThreadIsEmpty"
+        }
       ],
       "editor/context": [
         {
@@ -220,8 +223,8 @@
     },
     "viewsWelcome": [
       {
-          "view": "assayCommands",
-          "contents": "You do not have any addons installed.\n[+ Review New Addon](command:assay.get)\n In order to use Assay, you must generate an API key and secret in the [Reviewer Tools](https://addons.mozilla.org/en-US/firefox/) section of AMO. \n[Enter API Key](command:assay.getApiKey)\n[Enter Secret](command:assay.getSecret)\nYou can [Test API Credentials](command:assay.testApiCredentials) if needed.\nNew to Assay? [View Instructions](command:assay.welcome)"
+        "view": "assayCommands",
+        "contents": "You do not have any addons installed.\n[+ Review New Addon](command:assay.get)\n In order to use Assay, you must generate an API key and secret in the [Reviewer Tools](https://addons.mozilla.org/en-US/firefox/) section of AMO. \n[Enter API Key](command:assay.getApiKey)\n[Enter Secret](command:assay.getSecret)\nYou can [Test API Credentials](command:assay.testApiCredentials) if needed.\nNew to Assay? [View Instructions](command:assay.welcome)"
       }
     ],
     "commands": [
@@ -273,32 +276,32 @@
         "title": "(Assay) Enter Secret Key"
       },
       {
-				"command": "assay.addComment",
-				"title": "(Assay) Mark for Review"
-			},
+        "command": "assay.addComment",
+        "title": "(Assay) Mark for Review"
+      },
       {
-				"command": "assay.copyLineNumber",
-				"title": "(Assay) Copy Line Number"
-			},
-			{
-				"command": "assay.deleteComment",
-				"title": "Delete",
-				"icon": "$(assay-delete)"
-			},
-			{
-				"command": "assay.disposeComment",
-				"title": "Remove All Comments"
-			},
+        "command": "assay.copyLineNumber",
+        "title": "(Assay) Copy Line Number"
+      },
       {
-				"command": "assay.exportComments",
-				"title": "Export Comments",
+        "command": "assay.deleteComment",
+        "title": "Delete",
+        "icon": "$(assay-delete)"
+      },
+      {
+        "command": "assay.disposeComment",
+        "title": "Remove All Comments"
+      },
+      {
+        "command": "assay.exportComments",
+        "title": "Export Comments",
         "icon": "$(assay-export)"
-			},
+      },
       {
-				"command": "assay.copyLink",
-				"title": "Copy Link",
-				"icon": "$(assay-share)"
-			}
+        "command": "assay.copyLink",
+        "title": "Copy Link",
+        "icon": "$(assay-share)"
+      }
     ]
   },
   "scripts": {
