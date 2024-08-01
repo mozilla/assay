@@ -202,12 +202,12 @@
       "editor/context": [
         {
           "command": "assay.addComment",
-          "when": "editorTextFocus",
+          "when": "editorTextFocus && assay.commentsEnabled",
           "group": "navigation@0"
         },
         {
           "command": "assay.copyLineNumber",
-          "when": "editorTextFocus",
+          "when": "editorTextFocus && assay.commentsEnabled",
           "group": "navigation@0"
         }
       ]
