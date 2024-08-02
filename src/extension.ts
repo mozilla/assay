@@ -156,7 +156,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const workspace = vscode.workspace.workspaceFolders;
   if (workspace) {
     const uri = workspace[0].uri;
-    if (!directoryController.inRoot(uri)) {
+    if (!(await directoryController.inRoot(uri))) {
       return;
     }
   }
