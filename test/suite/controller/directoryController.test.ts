@@ -77,8 +77,6 @@ describe("directoryController.ts", async () => {
       configStub.withArgs("assay").returns(assayConfig);
       configStub.withArgs("files").returns(fileConfig);
 
-      const directoryController = new DirectoryController();
-
       const existsSyncStub = sinon.stub(fs, "existsSync");
       existsSyncStub.returns(true);
 
@@ -110,8 +108,6 @@ describe("directoryController.ts", async () => {
 
       configStub.withArgs("assay").returns(assayConfig);
       configStub.withArgs("files").returns(fileConfig);
-
-      const directoryController = new DirectoryController();
 
       const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
       showOpenDialogStub.resolves(undefined);
@@ -152,8 +148,6 @@ describe("directoryController.ts", async () => {
 
       configStub.withArgs("assay").returns(assayConfig);
       configStub.withArgs("files").returns(fileConfig);
-
-      const directoryController = new DirectoryController();
 
       const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
       const uri = vscode.Uri.file("test");
