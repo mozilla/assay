@@ -28,7 +28,8 @@ export class StatusBarController {
     const doc = activeEditor.document;
     const filePath = doc.uri.fsPath;
     const rootFolder = await this.directoryController.getRootFolderPath();
-    if (!filePath.startsWith(rootFolder)) {
+
+    if (!(await this.directoryController.inRoot(doc.uri))) {
       this.reviewItem.hide();
       throw new Error("File is not in the root folder.");
     }

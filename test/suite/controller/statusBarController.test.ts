@@ -79,8 +79,8 @@ describe("statusBarController.ts", async () => {
     });
 
     it("should throw an error if there is no guid in the path.", async () => {
+      directoryControllerStub.inRoot.resolves(true);
       directoryControllerStub.getRootFolderPath.resolves("/test");
-
       const activeTextEditorStub = sinon.stub();
       activeTextEditorStub.returns(fakeActiveEditor);
       sinon.replaceGetter(
@@ -101,6 +101,7 @@ describe("statusBarController.ts", async () => {
     });
 
     it("should return true if the taskbar is updated.", async () => {
+      directoryControllerStub.inRoot.resolves(true);
       directoryControllerStub.getRootFolderPath.resolves("/root");
 
       const activeTextEditorStub = sinon.stub();

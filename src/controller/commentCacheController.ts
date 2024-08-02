@@ -181,9 +181,8 @@ export class CommentCacheController {
    * Error-checking for uris that are passed into the controller.
    */
   private async checkUri(uri: vscode.Uri, strict?: boolean) {
-    const { rootFolder, fullPath, guid, version } =
-      await this.directoryController.splitUri(uri);
-    if (!fullPath.startsWith(rootFolder)) {
+    const { guid, version } = await this.directoryController.splitUri(uri);
+    if (!(await this.directoryController.inRoot(uri))) {
       vscode.window.showErrorMessage(
         "(Assay) File is not in the Addons root folder."
       );

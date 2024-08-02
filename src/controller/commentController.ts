@@ -189,9 +189,10 @@ export class CommentController {
    * @returns The guid, version, and filepath of the thread.
    */
   private async getFilepathInfo(thread: AssayThread) {
-    const { rootFolder, fullPath, guid, version, filepath } =
-      await this.directoryController.splitUri(thread.uri);
-    if (!fullPath.startsWith(rootFolder)) {
+    const { guid, version, filepath } = await this.directoryController.splitUri(
+      thread.uri
+    );
+    if (!(await this.directoryController.inRoot(thread.uri))) {
       vscode.window.showErrorMessage(
         "(Assay) File is not in the Addons root folder."
       );

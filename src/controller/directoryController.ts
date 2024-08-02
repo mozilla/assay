@@ -70,7 +70,8 @@ export class DirectoryController {
    */
   async inRoot(uri: vscode.Uri) {
     const { rootFolder, fullPath } = await this.splitUri(uri);
-    if (fullPath.startsWith(rootFolder)) {
+    const rel = path.relative(rootFolder, fullPath);
+    if (!rel.startsWith("..")) {
       return true;
     }
     return false;

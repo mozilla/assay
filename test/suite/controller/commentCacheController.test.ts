@@ -65,6 +65,7 @@ describe("commentCacheController.ts", () => {
     });
 
     it("should throw an error if there is no guid or version.", async () => {
+      directoryControllerStub.inRoot.resolves(true);
       directoryControllerStub.splitUri.resolves({
         rootFolder: "/test-root",
         fullPath: "/test-root",
