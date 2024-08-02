@@ -19,7 +19,7 @@ export class DirectoryController {
   }
 
   /**
-   * Error-checking for uris that are passed into the controller.
+   * Check whether a given uri is in the root folder and prompt the user accordingly.
    */
   async checkUri(uri: vscode.Uri, strict?: boolean) {
     const { guid, version } = await this.splitUri(uri);
