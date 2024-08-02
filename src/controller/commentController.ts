@@ -192,12 +192,7 @@ export class CommentController {
     const { guid, version, filepath } = await this.directoryController.splitUri(
       thread.uri
     );
-    if (!(await this.directoryController.inRoot(thread.uri))) {
-      vscode.window.showErrorMessage(
-        "(Assay) File is not in the Addons root folder."
-      );
-      throw new Error("File is not in the root folder.");
-    }
+    await this.commentCacheController.checkUri(thread.uri);
     return { guid, version, filepath };
   }
 

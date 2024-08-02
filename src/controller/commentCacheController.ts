@@ -180,7 +180,7 @@ export class CommentCacheController {
   /**
    * Error-checking for uris that are passed into the controller.
    */
-  private async checkUri(uri: vscode.Uri, strict?: boolean) {
+  async checkUri(uri: vscode.Uri, strict?: boolean) {
     const { guid, version } = await this.directoryController.splitUri(uri);
     if (!(await this.directoryController.inRoot(uri))) {
       vscode.window.showErrorMessage(
