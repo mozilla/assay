@@ -203,12 +203,12 @@
         {
           "command": "assay.addComment",
           "when": "editorTextFocus",
-          "group": "navigation@1"
+          "group": "navigation@0"
         },
         {
           "command": "assay.copyLineNumber",
           "when": "editorTextFocus",
-          "group": "navigation@2"
+          "group": "navigation@0"
         }
       ]
     },
