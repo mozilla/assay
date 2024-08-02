@@ -17,7 +17,7 @@ export class StatusBarController {
 
   /**
    * Updates the status bar.
-   * @returns whether the status bar was updated.
+   * @returns whether the status bar is updated and shown.
    */
   async updateStatusBar() {
     const activeEditor = vscode.window.activeTextEditor;
@@ -26,20 +26,16 @@ export class StatusBarController {
     }
 
     const doc = activeEditor.document;
-    const filePath = doc.uri.fsPath;
-    const rootFolder = await this.directoryController.getRootFolderPath();
-
     if (!(await this.directoryController.inRoot(doc.uri))) {
       this.reviewItem.hide();
-      throw new Error("File is not in the root folder.");
+      return false;
     }
 
-    const relativePath = filePath.replace(rootFolder, "");
-    const guid = relativePath.split(path.sep)[1];
+    const { guid } = await this.directoryController.splitUri(doc.uri);
 
     if (!guid) {
       this.reviewItem.hide();
-      throw new Error("No guid found.");
+      return false;
     }
 
     const reviewUrl = await this.addonCacheController.getAddonFromCache([

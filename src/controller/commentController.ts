@@ -192,7 +192,7 @@ export class CommentController {
     const { guid, version, filepath } = await this.directoryController.splitUri(
       thread.uri
     );
-    await this.commentCacheController.checkUri(thread.uri);
+    await this.directoryController.checkUri(thread.uri);
     return { guid, version, filepath };
   }
 

@@ -19,6 +19,26 @@ export class DirectoryController {
   }
 
   /**
+   * Error-checking for uris that are passed into the controller.
+   */
+  async checkUri(uri: vscode.Uri, strict?: boolean) {
+    const { guid, version } = await this.splitUri(uri);
+    if (!(await this.inRoot(uri))) {
+      vscode.window.showErrorMessage(
+        "(Assay) File is not in the Addons root folder."
+      );
+      throw new Error("File is not in the root folder");
+    }
+
+    if (strict && (!guid || !version)) {
+      vscode.window.showErrorMessage(
+        "Not a valid path. Ensure you are at least as deep as the version folder."
+      );
+      throw new Error("No guid or version found");
+    }
+  }
+
+  /**
    * Gets the root folder stored in config.
    * @returns the root folder in config.
    */

@@ -51,33 +51,6 @@ describe("commentCacheController.ts", () => {
     });
   });
 
-  describe("checkUri()", () => {
-    it("should throw an error if the file is not in the root folder.", async () => {
-      directoryControllerStub.splitUri.resolves({
-        rootFolder: "/test-root",
-        fullPath: "/not-root",
-      } as any);
-      try {
-        await commentCacheController["checkUri"](vscode.Uri.file("/not-root"));
-      } catch (err: any) {
-        expect(err.message).to.equal("File is not in the root folder");
-      }
-    });
-
-    it("should throw an error if there is no guid or version.", async () => {
-      directoryControllerStub.inRoot.resolves(true);
-      directoryControllerStub.splitUri.resolves({
-        rootFolder: "/test-root",
-        fullPath: "/test-root",
-      } as any);
-      try {
-        await commentCacheController["checkUri"](vscode.Uri.file("/test-root"));
-      } catch (err: any) {
-        expect(err.message).to.equal("No guid or version found");
-      }
-    });
-  });
-
   describe("deleteComments", () => {
     it("should delete all comments in the URI's GUID and version.", async () => {
       directoryControllerStub.splitUri.resolves({
