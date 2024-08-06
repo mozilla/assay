@@ -19,6 +19,26 @@ export class DirectoryController {
   }
 
   /**
+   * Check whether a given uri is in the root folder and prompt the user accordingly.
+   */
+  async checkUri(uri: vscode.Uri, strict?: boolean) {
+    const { guid, version } = await this.splitUri(uri);
+    if (!(await this.inRoot(uri))) {
+      vscode.window.showErrorMessage(
+        "(Assay) File is not in the Addons root folder."
+      );
+      throw new Error("(Assay) File is not in the root folder");
+    }
+
+    if (strict && (!guid || !version)) {
+      vscode.window.showErrorMessage(
+        "Not a valid path. Ensure you have the workspace open to the add-ons root folder."
+      );
+      throw new Error("No guid or version found");
+    }
+  }
+
+  /**
    * Gets the root folder stored in config.
    * @returns the root folder in config.
    */
@@ -70,10 +90,8 @@ export class DirectoryController {
    */
   async inRoot(uri: vscode.Uri) {
     const { rootFolder, fullPath } = await this.splitUri(uri);
-    if (fullPath.startsWith(rootFolder)) {
-      return true;
-    }
-    return false;
+    const rel = path.relative(rootFolder, fullPath);
+    return !rel.startsWith("..");
   }
 
   /**

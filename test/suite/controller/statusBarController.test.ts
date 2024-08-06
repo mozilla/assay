@@ -56,7 +56,7 @@ describe("statusBarController.ts", async () => {
       expect(await statusBarController.updateStatusBar()).to.be.false;
     });
 
-    it("should throw error if the folder is not in the root.", async () => {
+    it("should return false if the folder is not in the root.", async () => {
       directoryControllerStub.getRootFolderPath.resolves("/different-root");
 
       const activeTextEditorStub = sinon.stub();
@@ -70,16 +70,15 @@ describe("statusBarController.ts", async () => {
       const existsSyncStub = sinon.stub(fs, "existsSync");
       existsSyncStub.returns(true);
 
-      try {
-        await statusBarController.updateStatusBar();
-        expect.fail("No error thrown");
-      } catch (err: any) {
-        expect(err.message).to.equal("File is not in the root folder.");
-      }
+      const result = await statusBarController.updateStatusBar();
+      expect(result).to.be.false;
     });
 
-    it("should throw an error if there is no guid in the path.", async () => {
-      directoryControllerStub.getRootFolderPath.resolves("/test");
+    it("should return false if there is no guid in the path.", async () => {
+      directoryControllerStub.inRoot.resolves(true);
+      directoryControllerStub.splitUri.resolves({
+        guid: undefined,
+      } as any);
 
       const activeTextEditorStub = sinon.stub();
       activeTextEditorStub.returns(fakeActiveEditor);
@@ -92,16 +91,15 @@ describe("statusBarController.ts", async () => {
       const existsSyncStub = sinon.stub(fs, "existsSync");
       existsSyncStub.returns(true);
 
-      try {
-        await statusBarController.updateStatusBar();
-        expect.fail("No error thrown");
-      } catch (err: any) {
-        expect(err.message).to.equal("No guid found.");
-      }
+      const result = await statusBarController.updateStatusBar();
+      expect(result).to.be.false;
     });
 
     it("should return true if the taskbar is updated.", async () => {
-      directoryControllerStub.getRootFolderPath.resolves("/root");
+      directoryControllerStub.inRoot.resolves(true);
+      directoryControllerStub.splitUri.resolves({
+        guid: "guid",
+      } as any);
 
       const activeTextEditorStub = sinon.stub();
       activeTextEditorStub.returns(fakeActiveEditorWithGuid);

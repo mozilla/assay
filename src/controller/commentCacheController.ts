@@ -72,7 +72,7 @@ export class CommentCacheController {
   // To avoid iterating by each individual comment, we can knit together
   // the uri when iterating by file.
   async deleteComments(uri: vscode.Uri) {
-    this.checkUri(uri);
+    this.directoryController.checkUri(uri);
     const { guid, version } = await this.directoryController.splitUri(uri);
     const rootPath = await this.directoryController.getRootFolderPath();
     const comments = await this.cache.getFromCache([guid, version]);
@@ -128,7 +128,7 @@ export class CommentCacheController {
    * @returns whether comments were deleted from uri.
    */
   async exportVersionComments(uri: vscode.Uri) {
-    this.checkUri(uri, true);
+    this.directoryController.checkUri(uri, true);
     const { guid, version } = await this.directoryController.splitUri(uri);
     const comments = await this.compileComments(guid, version);
     return await this.exportCommentsToDocument(comments, uri);
@@ -175,27 +175,6 @@ export class CommentCacheController {
       await this.deleteComments(uri);
     }
     return deleteCachedComments;
-  }
-
-  /**
-   * Error-checking for uris that are passed into the controller.
-   */
-  private async checkUri(uri: vscode.Uri, strict?: boolean) {
-    const { rootFolder, fullPath, guid, version } =
-      await this.directoryController.splitUri(uri);
-    if (!fullPath.startsWith(rootFolder)) {
-      vscode.window.showErrorMessage(
-        "(Assay) File is not in the Addons root folder."
-      );
-      throw new Error("File is not in the root folder");
-    }
-
-    if (strict && (!guid || !version)) {
-      vscode.window.showErrorMessage(
-        "Not a valid path. Ensure you are at least as deep as the version folder."
-      );
-      throw new Error("No guid or version found");
-    }
   }
 
   /**

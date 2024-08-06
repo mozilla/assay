@@ -6,6 +6,8 @@ import * as vscode from "vscode";
 
 import { DirectoryController } from "../../../src/controller/directoryController";
 
+const directoryController = new DirectoryController();
+
 describe("directoryController.ts", async () => {
   afterEach(() => {
     sinon.restore();
@@ -15,13 +17,39 @@ describe("directoryController.ts", async () => {
     it("should fetch the desired line from the given line number and uri", async () => {
       const uri = vscode.Uri.file("/test/path");
       const buffer = Buffer.from("Line 0\nLine 1\nLine 2");
-      const directoryController = new DirectoryController();
       const readFileStub = sinon
         .stub(directoryController, "readFile")
         .resolves(buffer);
       const result = await directoryController.getLineFromFile(uri, 2);
       expect(readFileStub.called).to.be.true;
       expect(result).to.equal("Line 2");
+    });
+  });
+
+  describe("checkUri()", () => {
+    it("should throw an error if the file is not in the root folder.", async () => {
+      sinon.stub(directoryController, "splitUri").resolves({
+        rootFolder: "/test-root",
+        fullPath: "/test-root",
+      } as any);
+      try {
+        await directoryController.checkUri(vscode.Uri.file("/not-root"));
+      } catch (err: any) {
+        expect(err.message).to.equal("File is not in the root folder");
+      }
+    });
+
+    it("should throw an error if there is no guid or version.", async () => {
+      sinon.stub(directoryController, "inRoot").resolves(true);
+      sinon.stub(directoryController, "splitUri").resolves({
+        rootFolder: "/test-root",
+        fullPath: "/test-root",
+      } as any);
+      try {
+        await directoryController.checkUri(vscode.Uri.file("/test-root"));
+      } catch (err: any) {
+        expect(err.message).to.equal("No guid or version found");
+      }
     });
   });
 
@@ -48,8 +76,6 @@ describe("directoryController.ts", async () => {
 
       configStub.withArgs("assay").returns(assayConfig);
       configStub.withArgs("files").returns(fileConfig);
-
-      const directoryController = new DirectoryController();
 
       const existsSyncStub = sinon.stub(fs, "existsSync");
       existsSyncStub.returns(true);
@@ -82,8 +108,6 @@ describe("directoryController.ts", async () => {
 
       configStub.withArgs("assay").returns(assayConfig);
       configStub.withArgs("files").returns(fileConfig);
-
-      const directoryController = new DirectoryController();
 
       const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
       showOpenDialogStub.resolves(undefined);
@@ -124,8 +148,6 @@ describe("directoryController.ts", async () => {
 
       configStub.withArgs("assay").returns(assayConfig);
       configStub.withArgs("files").returns(fileConfig);
-
-      const directoryController = new DirectoryController();
 
       const showOpenDialogStub = sinon.stub(vscode.window, "showOpenDialog");
       const uri = vscode.Uri.file("test");

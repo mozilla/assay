@@ -97,6 +97,7 @@ describe("CommentController.ts", () => {
 
   describe("addComment", () => {
     it("should create a comment.", async () => {
+      directoryControllerStub.inRoot.resolves(true);
       sinon.stub(vscode.window, "activeTextEditor").value({
         document: {
           uri: "test-uri",
@@ -120,6 +121,7 @@ describe("CommentController.ts", () => {
 
   describe("deleteThread", () => {
     it("should delete the comment thread from a controller and its comments from cache.", async () => {
+      directoryControllerStub.inRoot.resolves(true);
       const cmtController = new CommentController(
         "assay-tester",
         "Assay Tester",
@@ -267,6 +269,7 @@ describe("CommentController.ts", () => {
 
   describe("getThreadLocation()", () => {
     it("should return the thread's Uri guid, version, filepath and range.", async () => {
+      directoryControllerStub.inRoot.resolves(true);
       const cmtController = new CommentController(
         "assay-tester",
         "Assay Tester",
