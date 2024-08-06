@@ -27,12 +27,12 @@ export class DirectoryController {
       vscode.window.showErrorMessage(
         "(Assay) File is not in the Addons root folder."
       );
-      throw new Error("File is not in the root folder");
+      throw new Error("(Assay) File is not in the root folder");
     }
 
     if (strict && (!guid || !version)) {
       vscode.window.showErrorMessage(
-        "Not a valid path. Ensure you are at least as deep as the version folder."
+        "Not a valid path. Ensure you have the workspace open to the add-ons root folder."
       );
       throw new Error("No guid or version found");
     }
@@ -91,10 +91,7 @@ export class DirectoryController {
   async inRoot(uri: vscode.Uri) {
     const { rootFolder, fullPath } = await this.splitUri(uri);
     const rel = path.relative(rootFolder, fullPath);
-    if (!rel.startsWith("..")) {
-      return true;
-    }
-    return false;
+    return !rel.startsWith("..");
   }
 
   /**
