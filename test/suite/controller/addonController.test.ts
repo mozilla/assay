@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import * as fs from "fs";
 import * as jszip from "jszip";
-import { describe, it, afterEach, beforeEach } from "mocha";
+import { describe, it, afterEach, beforeEach, after } from "mocha";
 import * as fetch from "node-fetch";
 import path = require("path");
 import * as sinon from "sinon";
@@ -126,6 +126,12 @@ describe("addonController.ts", async () => {
     }
     if (fs.existsSync(downloadedFilePath)) {
       await fs.promises.rm(downloadedFilePath, { recursive: true });
+    }
+  });
+
+  after(async () => {
+    if (fs.existsSync(extractedVersionFolder)) {
+      await fs.promises.rm(extractedVersionFolder, { recursive: true });
     }
   });
 
