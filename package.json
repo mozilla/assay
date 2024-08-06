@@ -3,7 +3,7 @@
   "displayName": "assay",
   "publisher": "mozilla",
   "description": "A Firefox Addons review tool disguised as a VSCode exention.",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/mozilla/assay"
