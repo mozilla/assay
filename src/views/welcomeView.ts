@@ -267,10 +267,9 @@ export class WelcomeView {
               <li>Right click and select <code>Open Versions in Diff Tool.</code></li>
             </ol>
 
-            If this is your first time diff-ing, Assay will prompt you for a diff command.
-            Enter the command that would launch your preferred tool from the cli
-            (ex. "bcomp" for Beyond Compare). This will open your desired diff tool with the
-            two folders as arguments.
+            <b>NOTE</b>: <code>bcompare</code> is set as the diff command by default.
+
+            <br><br>
 
             <div class="img-wrapper">
               <img src="${mediaFolderSrc}/diff.png" />
