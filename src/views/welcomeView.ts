@@ -189,7 +189,9 @@ export class WelcomeView {
             When open to a specific version, Assay will highlight any lines flagged by addons-linter.
             To view a summary of the messages and to jump between them, navigate to the Problems pane of VS Code.
 
-            <b>Note</b>: Any local changes you make to the add-on will clear the lints for that version!
+            <br><br>
+
+            <b>NOTE</b>: Any local changes you make to the add-on will clear the lints for that version!
             To fetch them again, install a fresh copy of the add-on version.
 
             <br><br>
