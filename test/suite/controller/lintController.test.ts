@@ -114,7 +114,7 @@ describe("lintController.ts", async () => {
           {
             type: "error",
             code: "no file",
-            message: "i have no file!",
+            message: "i am a general message",
             description: "description",
             line: 1,
           },
