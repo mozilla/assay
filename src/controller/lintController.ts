@@ -225,11 +225,12 @@ export class LintController {
 
   /**
    * Returns a lint's filepath's location on disk.
+   * If filepath is undefined, returns the versionPath.
    * @param versionPath The path to the version folder.
    * @param filepath The filepath within the version.
    * @returns the URI location.
    */
   private getUriFromVersionPath(versionPath: string, filepath: string) {
-    return vscode.Uri.file(path.join(versionPath, filepath));
+    return vscode.Uri.file(path.join(versionPath, filepath ?? ""));
   }
 }

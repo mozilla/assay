@@ -113,6 +113,13 @@ describe("lintController.ts", async () => {
         messages: [
           {
             type: "error",
+            code: "no file",
+            message: "i am a general message",
+            description: "description",
+            line: 1,
+          },
+          {
+            type: "error",
             code: "error code",
             message: "error message",
             description: "description",
@@ -152,6 +159,9 @@ describe("lintController.ts", async () => {
       } as unknown as Response);
 
       await lintController.lintWorkspace();
+
+      const versionUri = vscode.Uri.parse("version");
+      expect(collection.get(versionUri)?.length).to.be.equal(1);
 
       const errorUri = vscode.Uri.parse("version/file1.js");
       expect(collection.has(errorUri)).to.be.equal(true);
