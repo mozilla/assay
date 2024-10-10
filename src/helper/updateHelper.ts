@@ -8,21 +8,24 @@ export class UpdateHelper {
   /**
    * Checks whether a new version of Assay is available.
    * Prompts the user for the option to update.
+   * @param confirmLatest Whether to prompt that the version is up to date.
    */
-  static async updateAssay() {
-    const downloadInfo = await UpdateHelper.checkAndGetNewVersion();
-    if (downloadInfo) {
-      const { downloadLink, currentVersion, version } = downloadInfo;
+  static async updateAssay(confirmLatest = true) {
+    const { downloadLink, currentVersion, version } =
+      await UpdateHelper.checkAndGetNewVersion();
+    if (downloadLink) {
       vscode.window
         .showInformationMessage(
           `A new version of Assay is available (${version}) from your current version (${currentVersion}). Would you like to update?`,
           "Update Assay"
         )
         .then((value) => {
-          if(value){
+          if (value) {
             UpdateHelper.installNewVersion(downloadLink, version);
           }
         });
+    } else if (confirmLatest) {
+      vscode.window.showInformationMessage(`Assay is up to date (${version}).`);
     }
   }
 
@@ -118,7 +121,8 @@ export class UpdateHelper {
     const json = await response.json();
     const latestVersion = json.tag_name;
     const currentVersion =
-      'v' + vscode.extensions.getExtension("mozilla.assay")?.packageJSON.version;
+      "v" +
+      vscode.extensions.getExtension("mozilla.assay")?.packageJSON.version;
 
     if (latestVersion !== currentVersion) {
       return {
@@ -128,8 +132,9 @@ export class UpdateHelper {
       };
     }
 
-    vscode.window.showInformationMessage(
-      `Assay is up to date (${currentVersion}).`
-    );
+    return {
+      version: latestVersion,
+      currentVersion,
+    };
   }
 }

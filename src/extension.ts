@@ -145,7 +145,7 @@ export async function activate(context: vscode.ExtensionContext) {
     assayUpdaterDisposable
   );
 
-  UpdateHelper.updateAssay();
+  UpdateHelper.updateAssay(false);
 
   await vscode.commands.executeCommand(
     "setContext",
