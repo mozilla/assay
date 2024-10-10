@@ -185,7 +185,6 @@ export async function activate(context: vscode.ExtensionContext) {
     true
   );
 
-
   // Review Controllers
   fileDecorationProvider.setProvideDecorationClause(
     commentCacheController.fileHasComment
