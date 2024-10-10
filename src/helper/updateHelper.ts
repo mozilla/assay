@@ -9,10 +9,11 @@ export class UpdateHelper {
    * Checks whether a new version of Assay is available.
    * Prompts the user for the option to update.
    * @param confirmLatest Whether to prompt that the version is up to date.
+   * @returns whether Assay is outdated.
    */
   static async updateAssay(confirmLatest = true) {
     const { downloadLink, currentVersion, version } =
-      await UpdateHelper.checkAndGetNewVersion();
+      (await UpdateHelper.checkAndGetNewVersion()) || {};
     if (downloadLink) {
       vscode.window
         .showInformationMessage(
@@ -24,8 +25,10 @@ export class UpdateHelper {
             UpdateHelper.installNewVersion(downloadLink, version);
           }
         });
+      return true;
     } else if (confirmLatest) {
       vscode.window.showInformationMessage(`Assay is up to date (${version}).`);
+      return false;
     }
   }
 
