@@ -124,15 +124,13 @@ export class UpdateHelper {
       "v" +
       vscode.extensions.getExtension("mozilla.assay")?.packageJSON.version;
 
-    if (latestVersion !== currentVersion) {
-      return {
-        downloadLink: json.assets[0].browser_download_url,
-        version: latestVersion,
-        currentVersion,
-      };
-    }
+    const downloadLink =
+      latestVersion !== currentVersion
+        ? json.assets[0].browser_download_url
+        : undefined;
 
     return {
+      downloadLink,
       version: latestVersion,
       currentVersion,
     };
