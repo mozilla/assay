@@ -145,6 +145,8 @@ export async function activate(context: vscode.ExtensionContext) {
     assayUpdaterDisposable
   );
 
+  UpdateHelper.updateAssay();
+
   await vscode.commands.executeCommand(
     "setContext",
     "assay.commentsEnabled",
