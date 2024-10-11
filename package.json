@@ -141,6 +141,10 @@
         {
           "command": "assay.copyLink",
           "when": "false"
+        },
+        {
+          "command": "assay.copyLinkFromContext",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -207,6 +211,11 @@
         },
         {
           "command": "assay.copyLineNumber",
+          "when": "editorTextFocus && assay.commentsEnabled",
+          "group": "navigation@0"
+        },
+        {
+          "command": "assay.copyLinkFromContext",
           "when": "editorTextFocus && assay.commentsEnabled",
           "group": "navigation@0"
         }
@@ -299,7 +308,12 @@
       },
       {
         "command": "assay.copyLink",
-        "title": "Copy Link",
+        "title": "Share Link",
+        "icon": "$(assay-share)"
+      },
+      {
+        "command": "assay.copyLinkFromContext",
+        "title": "(Assay) Share Link",
         "icon": "$(assay-share)"
       }
     ]

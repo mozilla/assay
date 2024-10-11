@@ -261,6 +261,12 @@ export async function activate(context: vscode.ExtensionContext) {
     commentController
   );
 
+  const copyLinkFromContextDisposable = vscode.commands.registerCommand(
+    "assay.copyLinkFromContext",
+    commentController.copyLinkFromContext,
+    commentController
+  );
+
   const disposeCommentDisposable = vscode.commands.registerCommand(
     "assay.disposeComment",
     commentController.dispose,
@@ -277,6 +283,7 @@ export async function activate(context: vscode.ExtensionContext) {
     exportCommentDisposable,
     disposeCommentDisposable,
     copyLinkFromThreadDisposable,
+    copyLinkFromContextDisposable,
     deleteCommentsFolderDisposable,
     clearLintDisposable,
     addDirtyOnDeleteDisposable,
