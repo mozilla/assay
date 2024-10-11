@@ -147,18 +147,6 @@ export class CommentController {
     return this.createLink(guid, version, filepath, range);
   }
 
-  private createLink(
-    guid: string,
-    version: string,
-    filepath: string,
-    range: string
-  ) {
-    const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
-    vscode.env.clipboard.writeText(link);
-    vscode.window.showInformationMessage("Link copied to clipboard.");
-    return link;
-  }
-
   /**
    * Fetches the location of a thread.
    * @param thread The thread to locate.
@@ -175,6 +163,22 @@ export class CommentController {
    */
   dispose() {
     this.controller.dispose();
+  }
+
+  /**
+   * Compiles and sets the clipboard to an Assay link to a specific line.
+   * @returns the generated link.
+   */
+  private createLink(
+    guid: string,
+    version: string,
+    filepath: string,
+    range: string
+  ) {
+    const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
+    vscode.env.clipboard.writeText(link);
+    vscode.window.showInformationMessage("Link copied to clipboard.");
+    return link;
   }
 
   /**

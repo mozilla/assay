@@ -140,6 +140,32 @@ describe("CommentController.ts", () => {
     });
   });
 
+  describe("copyLinkFromContext()", () => {
+    it("should copy the correctly formatted link to clipboard and show the info message", async () => {
+      sinon.stub(vscode.window, "activeTextEditor").value({
+        document: {
+          uri: cmt.uri,
+          lineAt: sinon.stub().returns({ text: "Code Line" }),
+        },
+        selections: [rng],
+      });
+      const cmtController = new CommentController(
+        "assay-tester",
+        "Assay Tester",
+        commentCacheControllerStub,
+        directoryControllerStub
+      );
+      const expectedLink = `vscode://mozilla.assay/review/guid/version?path=filepath#L1`;
+      const showInformationMessageStub = sinon.stub(
+        vscode.window,
+        "showInformationMessage"
+      );
+      const link = await cmtController.copyLinkFromContext();
+      expect(showInformationMessageStub.calledOnce).to.be.true;
+      expect(link).to.equal(expectedLink);
+    });
+  });
+
   describe("copyLinkFromThread", () => {
     it("should copy the correctly formatted link to clipboard and show the info message", async () => {
       const cmtController = new CommentController(
