@@ -73,28 +73,11 @@ describe("extension.ts", () => {
   });
 
   it("should return early if no workspace is available", async () => {
-    return;
-  });
-
-  it("should return early if the workspace is not in root", async () => {
-    const workspaceFoldersStub = sinon.stub(
-      vscode.workspace,
-      "workspaceFolders"
-    );
-    workspaceFoldersStub.value([
-      {
-        uri: vscode.Uri.parse("test-root-uri"),
-      },
-    ]);
-
     const directoryControllerStub = sinon.stub(
       DirectoryController.prototype,
       "getRootFolderPath"
     );
     directoryControllerStub.resolves("test");
-
-    const inRootStub = sinon.stub(DirectoryController.prototype, "inRoot");
-    inRootStub.resolves(false);
 
     const context = makeContext();
     sinon.stub(context.globalState, "get").withArgs("filePath").returns("test");
