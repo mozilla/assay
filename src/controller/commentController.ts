@@ -119,13 +119,17 @@ export class CommentController {
     const editor = vscode.window.activeTextEditor;
     if (editor) {
       const document = editor.document;
-      const { guid, version, filepath } = await this.directoryController.splitUri(
-        document.uri
-      );
+      const { guid, version, filepath } =
+        await this.directoryController.splitUri(document.uri);
       const selection = editor.selections[0];
       const endCharacter = document.lineAt(selection.end).text.length;
       const range = RangeHelper.fromSelection(selection, endCharacter);
-      return this.createLink(guid, version, filepath,  RangeHelper.toString(range));
+      return this.createLink(
+        guid,
+        version,
+        filepath,
+        RangeHelper.toString(range)
+      );
     } else {
       throw new Error("No active text editor found.");
     }
@@ -143,7 +147,12 @@ export class CommentController {
     return this.createLink(guid, version, filepath, range);
   }
 
-  private createLink(guid: string, version: string, filepath: string, range: string){
+  private createLink(
+    guid: string,
+    version: string,
+    filepath: string,
+    range: string
+  ) {
     const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
     vscode.env.clipboard.writeText(link);
     vscode.window.showInformationMessage("Link copied to clipboard.");
