@@ -216,7 +216,7 @@
       "explorer": [
         {
           "id": "assayCommands",
-          "name": "Addons",
+          "name": "Assay",
           "icon": "media/assay.svg"
         }
       ]
