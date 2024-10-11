@@ -154,11 +154,9 @@ export async function activate(context: vscode.ExtensionContext) {
   // Do not launch commenting system if not in the rootFolder.
   // Still allows Assay to be launched to use other commands (setup, installs).
   const workspace = vscode.workspace.workspaceFolders;
-  if (workspace) {
-    const uri = workspace[0].uri;
-    if (!(await directoryController.inRoot(uri))) {
-      return;
-    }
+  
+  if(!workspace || !(await directoryController.inRoot(workspace[0].uri))){
+    return;
   }
 
   await vscode.commands.executeCommand(
