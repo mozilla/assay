@@ -118,7 +118,7 @@ export class WelcomeView {
 
             <h3>1. API Keys</h3>
             <div class="img-wrapper">
-              <img src="${mediaFolderSrc}/commands.png" />
+              <img src="${mediaFolderSrc}/sidebarLocation.png" />
               <div class="subtitle">Assay's Primary Sidebar.</div>
             </div>
             You will need a JWT Issuer and a JWT Secret to use Assay. Both of these can be
@@ -126,7 +126,7 @@ export class WelcomeView {
             <a href="https://addons.mozilla.org/en-US/developers/addon/api/key/">Mozilla Developer Hub</a>.<br><br>
             To add them to Assay for the first time --
             <ol>
-              <li>Navigate to the Assay sidebar.</li>
+              <li>Navigate to the 'Assay' menu under the 'Explorer' section.</li>
               <li>Press <code>'Enter API Key'</code> and enter the API key.</li>
               <li>Press <code>'Enter Secret'</code> and enter the API's secret.</li>
             </ol>
