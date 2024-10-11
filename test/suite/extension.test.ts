@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import * as fs from "fs";
-import { describe, it, afterEach, beforeEach } from "mocha";
+import { describe, it, afterEach } from "mocha";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
@@ -20,18 +20,6 @@ function makeContext() {
 }
 
 describe("extension.ts", () => {
-  beforeEach(() => {
-    const workspaceFoldersStub = sinon.stub(
-      vscode.workspace,
-      "workspaceFolders"
-    );
-    workspaceFoldersStub.value([
-      {
-        uri: vscode.Uri.parse("test-root-uri"),
-      },
-    ]);
-  });
-
   afterEach(() => {
     sinon.restore();
   });
@@ -42,6 +30,16 @@ describe("extension.ts", () => {
   });
 
   it("should load the manifest if launched with the intention to do so.", async () => {
+    const workspaceFoldersStub = sinon.stub(
+      vscode.workspace,
+      "workspaceFolders"
+    );
+    workspaceFoldersStub.value([
+      {
+        uri: vscode.Uri.parse("test-root-uri"),
+      },
+    ]);
+
     const directoryControllerStub = sinon.stub(
       DirectoryController.prototype,
       "getRootFolderPath"
@@ -72,5 +70,37 @@ describe("extension.ts", () => {
     await activate(context);
     expect(openCachedFileStub.calledOnce).to.be.true;
     expect(context.subscriptions.length).to.be.greaterThan(10);
+  });
+
+  it("should return early if no workspace is available", async () => {
+    return;
+  });
+
+  it("should return early if the workspace is not in root", async () => {
+    const workspaceFoldersStub = sinon.stub(
+      vscode.workspace,
+      "workspaceFolders"
+    );
+    workspaceFoldersStub.value([
+      {
+        uri: vscode.Uri.parse("test-root-uri"),
+      },
+    ]);
+
+    const directoryControllerStub = sinon.stub(
+      DirectoryController.prototype,
+      "getRootFolderPath"
+    );
+    directoryControllerStub.resolves("test");
+
+    const inRootStub = sinon.stub(DirectoryController.prototype, "inRoot");
+    inRootStub.resolves(false);
+
+    const context = makeContext();
+    sinon.stub(context.globalState, "get").withArgs("filePath").returns("test");
+
+    const executeCommandStub = sinon.stub(vscode.commands, "executeCommand");
+    await activate(context);
+    expect(executeCommandStub.calledOnce).to.be.true;
   });
 });
