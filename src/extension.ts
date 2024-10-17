@@ -27,6 +27,24 @@ export async function activate(context: vscode.ExtensionContext) {
   const credentialController = new CredentialController(context.secrets);
   const directoryController = new DirectoryController();
 
+  const fileDecorationProvider = new CustomFileDecorationProvider();
+  const fileDecoratorController = new FileDecoratorController(
+    fileDecorationProvider
+  );
+
+  const commentsCache = new AssayCache("comments", storagePath);
+  const commentCacheController = new CommentCacheController(
+    commentsCache,
+    directoryController,
+    fileDecoratorController
+  );
+  const commentController = new CommentController(
+    "assay-comments",
+    "Assay",
+    commentCacheController,
+    directoryController
+  );
+
   const rootFolderPath = await directoryController.getRootFolderPath();
   const sidebarController = new SidebarController(
     "assayCommands",
@@ -169,28 +187,11 @@ export async function activate(context: vscode.ExtensionContext) {
     true
   );
 
-  const commentsCache = new AssayCache("comments", storagePath);
-
   // Review Controllers
-  const fileDecorationProvider = new CustomFileDecorationProvider();
-  const fileDecoratorController = new FileDecoratorController(
-    fileDecorationProvider
-  );
-  const commentCacheController = new CommentCacheController(
-    commentsCache,
-    directoryController,
-    fileDecoratorController
-  );
   fileDecorationProvider.setProvideDecorationClause(
     commentCacheController.fileHasComment
   );
 
-  const commentController = new CommentController(
-    "assay-comments",
-    "Assay",
-    commentCacheController,
-    directoryController
-  );
   const statusBarController = new StatusBarController(
     addonCacheController,
     directoryController
