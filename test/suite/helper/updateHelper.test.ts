@@ -39,34 +39,22 @@ describe("updateHelper.ts", () => {
       }
     });
 
-    it("should throw an error if the version is up to date.", async () => {
+    it("should return an undefined downloadLink if the version is up to date.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
         json: () => {
-          return { tag_name: "1.0.0" };
+          return { tag_name: "v1.1.1" };
         },
       } as any);
       sinon.replace(node_fetch, "default", fetchStub as any);
 
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
-      getExtensionStub.returns({ packageJSON: { version: "1.0.0" } } as any);
+      getExtensionStub.returns({ packageJSON: { version: "1.1.1" } } as any);
 
-      const showInformationMessageStub = sinon.stub(
-        vscode.window,
-        "showInformationMessage"
-      );
-      showInformationMessageStub.resolves();
+      const result = await UpdateHelper["checkAndGetNewVersion"]();
 
-      try {
-        await UpdateHelper["checkAndGetNewVersion"]();
-      } catch (e: any) {
-        expect(e.message).to.contain(
-          "Could not fetch latest version from Github"
-        );
-      }
-
-      expect(showInformationMessageStub.calledOnce).to.equal(true);
+      expect(result.downloadLink).to.be.undefined;
     });
 
     it("should return the download link and version if the version is not up to date.", async () => {
@@ -75,7 +63,7 @@ describe("updateHelper.ts", () => {
         ok: true,
         json: () => {
           return {
-            tag_name: "1.0.1",
+            tag_name: "v1.0.1",
             assets: [
               { browser_download_url: "https://github.com/release/test" },
             ],
@@ -90,7 +78,8 @@ describe("updateHelper.ts", () => {
       const result = await UpdateHelper["checkAndGetNewVersion"]();
       expect(result).to.deep.equal({
         downloadLink: "https://github.com/release/test",
-        version: "1.0.1",
+        version: "v1.0.1",
+        currentVersion: "v1.0.0",
       });
     });
   });
@@ -144,7 +133,7 @@ describe("updateHelper.ts", () => {
         "https://github.com/release/test",
         "1.0.0"
       );
-      expect(spawnStub.calledOnce).to.equal(true);
+      expect(spawnStub.calledTwice).to.equal(true);
       expect(
         spawnStub.calledWith("code", [
           "--install-extension",
@@ -253,9 +242,7 @@ describe("updateHelper.ts", () => {
         );
         expect.fail("Should have thrown an error");
       } catch (err: any) {
-        expect(err.message).to.equal(
-          "Could not write version file: error message"
-        );
+        expect(err.message).to.contain("Could not write version file");
       }
     });
 

@@ -6,17 +6,30 @@ import * as vscode from "vscode";
 
 export class UpdateHelper {
   /**
-   * Updates Assay.
-   * @returns Whether Assay was updated.
+   * Checks whether a new version of Assay is available.
+   * Prompts the user for the option to update.
+   * @param confirmLatest Whether to prompt that the version is up to date.
+   * @returns whether Assay is outdated.
    */
-  static async updateAssay() {
-    const downloadInfo = await UpdateHelper.checkAndGetNewVersion();
-    if (!downloadInfo) {
+  static async updateAssay(confirmLatest = true) {
+    const { downloadLink, currentVersion, version } =
+      (await UpdateHelper.checkAndGetNewVersion()) || {};
+    if (downloadLink) {
+      vscode.window
+        .showInformationMessage(
+          `A new version of Assay is available (${version}) from your current version (${currentVersion}). Would you like to update?`,
+          "Update Assay"
+        )
+        .then((value) => {
+          if (value) {
+            UpdateHelper.installNewVersion(downloadLink, version);
+          }
+        });
+      return true;
+    } else if (confirmLatest) {
+      vscode.window.showInformationMessage(`Assay is up to date (${version}).`);
       return false;
     }
-    const { downloadLink, version } = downloadInfo.downloadLink;
-    UpdateHelper.installNewVersion(downloadLink, version);
-    return true;
   }
 
   /**
@@ -25,6 +38,13 @@ export class UpdateHelper {
    * @param version The version installed.
    */
   private static async installNewVersion(downloadUrl: string, version: string) {
+    const versionProcess = spawn("code", ["--version"]);
+    versionProcess.on("error", () => {
+      vscode.window.showErrorMessage(
+        "'code' command not found in PATH. Please add it via the VS Code Command Palette and try again."
+      );
+    });
+
     const savePath = await UpdateHelper.downloadVersion(downloadUrl);
     const downloadProcess = spawn("code", ["--install-extension", savePath]);
 
@@ -73,15 +93,16 @@ export class UpdateHelper {
         }
         const savePath = path.join(extensionPath, "version.vsix");
 
-        try {
-          const dest = fs.createWriteStream(savePath, { flags: "w" });
-          dest.write(await response.buffer());
-          dest.close();
-        } catch (err: any) {
-          throw new Error(`Could not write version file: ${err.message}`);
-        }
-
-        return savePath;
+        const buffer = await response.buffer();
+        return new Promise<string>((resolve, reject) => {
+          fs.writeFile(savePath, buffer, { flag: "w" }, (err) => {
+            if (err) {
+              reject(new Error(`Could not write version file: ${err.message}`));
+            } else {
+              resolve(savePath);
+            }
+          });
+        });
       }
     );
   }
@@ -103,17 +124,18 @@ export class UpdateHelper {
     const json = await response.json();
     const latestVersion = json.tag_name;
     const currentVersion =
+      "v" +
       vscode.extensions.getExtension("mozilla.assay")?.packageJSON.version;
 
-    if (latestVersion !== currentVersion) {
-      return {
-        downloadLink: json.assets[0].browser_download_url,
-        version: latestVersion,
-      };
-    }
+    const downloadLink =
+      latestVersion !== currentVersion
+        ? json.assets[0].browser_download_url
+        : undefined;
 
-    vscode.window.showInformationMessage(
-      `Assay is up to date (version ${currentVersion})`
-    );
+    return {
+      downloadLink,
+      version: latestVersion,
+      currentVersion,
+    };
   }
 }
