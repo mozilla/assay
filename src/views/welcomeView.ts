@@ -118,7 +118,7 @@ export class WelcomeView {
 
             <h3>1. API Keys</h3>
             <div class="img-wrapper">
-              <img src="${mediaFolderSrc}/commands.png" />
+              <img src="${mediaFolderSrc}/sidebarLocation.png" />
               <div class="subtitle">Assay's Primary Sidebar.</div>
             </div>
             You will need a JWT Issuer and a JWT Secret to use Assay. Both of these can be
@@ -126,7 +126,7 @@ export class WelcomeView {
             <a href="https://addons.mozilla.org/en-US/developers/addon/api/key/">Mozilla Developer Hub</a>.<br><br>
             To add them to Assay for the first time --
             <ol>
-              <li>Navigate to the Assay sidebar.</li>
+              <li>Navigate to the 'Assay' menu under the 'Explorer' section.</li>
               <li>Press <code>'Enter API Key'</code> and enter the API key.</li>
               <li>Press <code>'Enter Secret'</code> and enter the API's secret.</li>
             </ol>
@@ -191,35 +191,44 @@ export class WelcomeView {
 
             <br><br>
 
+            <b>NOTE</b>: Any local changes you make to the add-on will clear the lints for that version!
+            To fetch them again, install a fresh copy of the add-on version.
+
+            <br><br>
+
             <h3>3. Reviewing Versions</h3>
             <h4>A. Reviewing Code</h4>
             <div class="img-wrapper">
               <img src="${mediaFolderSrc}/commenting.gif" />
+              <div class="subtitle">Directly copying line numbers.</div>
+            </div>
+            <div class="img-wrapper">
+              <img src="${mediaFolderSrc}/commenting2.gif" />
+              <div class="subtitle">Marking lines in bulk and exporting. You can also export from the Assay sidebar.</div>
             </div>
 
             To mark or share offending lines:
 
             <ol>
-              <li>Hover over or select multiple lines and press the '+' popup in the gutter.</li>
+              <li>Hover over or select multiple lines and right click to open the context menu.</li>
               <li>Here, you can:
                 <ol type="a">
-                  <li>Optionally leave a comment and mark the line for review, or</li>
-                  <li>Copy a link to the offending lines.</li>
+                  <li>Directly copy the file and line number, or</li>
+                  <li>Store the line to export in bulk.</li>
                 </ol>
               </li>
-              <li>Once submitted, you have similar options in the top-right corner:
+              <li>With the latter, you have more options in the top-right corner:
                 <ol type="a">
                   <li>Export the comments to your clipboard,</li>
-                  <li>Add or edit the comment,</li>
                   <li>Copy a link to the lines,</li>
-                  <li>Delete the annotation entirely.</li>
+                  <li>Delete the comment entirely.</li>
                 </ol>
               </li>
             </ol>
 
             <div class="img-wrapper">
               <img src="${mediaFolderSrc}/buttons.png" />
-              <div class="subtitle">In order: Export, edit, copy, and delete.</div>
+              <div class="subtitle">In order: Export, copy link, and delete.</div>
             </div>
             <h4>B. Exporting Comments</h4>
             To export the comments to a text format, you can:
@@ -258,10 +267,9 @@ export class WelcomeView {
               <li>Right click and select <code>Open Versions in Diff Tool.</code></li>
             </ol>
 
-            If this is your first time diff-ing, Assay will prompt you for a diff command.
-            Enter the command that would launch your preferred tool from the cli
-            (ex. "bcomp" for Beyond Compare). This will open your desired diff tool with the
-            two folders as arguments.
+            <b>NOTE</b>: <code>bcompare</code> is set as the diff command by default.
+
+            <br><br>
 
             <div class="img-wrapper">
               <img src="${mediaFolderSrc}/diff.png" />
