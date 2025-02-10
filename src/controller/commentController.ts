@@ -111,6 +111,31 @@ export class CommentController {
   }
 
   /**
+   * Copies a link to the selected line(s) to the clipboard for sharing from a context menu.
+   * @param thread The thread containing the selected lines
+   * @return the generated link.
+   */
+  async copyLinkFromContext() {
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+      const document = editor.document;
+      const { guid, version, filepath } =
+        await this.directoryController.splitUri(document.uri);
+      const selection = editor.selections[0];
+      const endCharacter = document.lineAt(selection.end).text.length;
+      const range = RangeHelper.fromSelection(selection, endCharacter);
+      return this.createLink(
+        guid,
+        version,
+        filepath,
+        RangeHelper.toString(range)
+      );
+    } else {
+      throw new Error("No active text editor found.");
+    }
+  }
+
+  /**
    * Copies a link to the selected line(s) to the clipboard for sharing.
    * @param thread The thread containing the selected lines
    * @return the generated link.
@@ -119,10 +144,7 @@ export class CommentController {
     const { guid, version, filepath, range } = await this.getThreadLocation(
       thread
     );
-    const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
-    vscode.env.clipboard.writeText(link);
-    vscode.window.showInformationMessage("Link copied to clipboard.");
-    return link;
+    return this.createLink(guid, version, filepath, range);
   }
 
   /**
@@ -141,6 +163,22 @@ export class CommentController {
    */
   dispose() {
     this.controller.dispose();
+  }
+
+  /**
+   * Compiles and sets the clipboard to an Assay link to a specific line.
+   * @returns the generated link.
+   */
+  private createLink(
+    guid: string,
+    version: string,
+    filepath: string,
+    range: string
+  ) {
+    const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
+    vscode.env.clipboard.writeText(link);
+    vscode.window.showInformationMessage("Link copied to clipboard.");
+    return link;
   }
 
   /**
