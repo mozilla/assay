@@ -233,14 +233,10 @@
     "viewsWelcome": [
       {
         "view": "assayCommands",
-        "contents": "You do not have any addons installed.\n[+ Review New Addon](command:assay.get)\n In order to use Assay, you must generate an API key and secret in the [Reviewer Tools](https://addons.mozilla.org/en-US/firefox/) section of AMO. \n[Enter API Key](command:assay.getApiKey)\n[Enter Secret](command:assay.getSecret)\nYou can [Test API Credentials](command:assay.testApiCredentials) if needed.\nNew to Assay? [View Instructions](command:assay.welcome)"
+        "contents": "You do not have any addons installed.\n[+ Review New Addon](command:assay.get)\n In order to use Assay, you must generate an API key and secret in the [Reviewer Tools](https://addons.mozilla.org/en-US/firefox/) section of AMO. \n[Enter API Key](command:assay.getApiKey)\n[Enter Secret](command:assay.getSecret)\nYou can [Test API Credentials](command:assay.testApiCredentials) if needed.\nNew to Assay? [View Instructions](https://mozilla-hub.atlassian.net/wiki/x/5YAbGw)"
       }
     ],
     "commands": [
-      {
-        "command": "assay.welcome",
-        "title": "(Assay) Show Instructions"
-      },
       {
         "command": "assay.openInDiffTool",
         "title": "(Assay) Open in Diff Tool"

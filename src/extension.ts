@@ -16,7 +16,6 @@ import { UpdateHelper } from "./helper/updateHelper";
 import { AssayCache } from "./model/assayCache";
 import { CustomFileDecorationProvider } from "./model/fileDecorationProvider";
 import { AddonTreeItem } from "./model/sidebarTreeDataProvider";
-import { WelcomeView } from "./views/welcomeView";
 
 export async function activate(context: vscode.ExtensionContext) {
   const storagePath: string = context.globalStorageUri.fsPath;
@@ -108,14 +107,6 @@ export async function activate(context: vscode.ExtensionContext) {
     UpdateHelper.updateAssay
   );
 
-  const welcomeDisposable = vscode.commands.registerCommand(
-    "assay.welcome",
-    () => {
-      WelcomeView.createOrShow(context.extensionUri);
-    },
-    WelcomeView
-  );
-
   const apiKeyDisposable = vscode.commands.registerCommand(
     "assay.getApiKey",
     credentialController.getApiKeyFromUser,
@@ -150,7 +141,6 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     UriHandlerDisposable,
     reviewDisposable,
-    welcomeDisposable,
     getDisposable,
     apiKeyDisposable,
     apiSecretDisposable,
