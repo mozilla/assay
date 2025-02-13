@@ -8,9 +8,9 @@ if (environment === "production") {
   constants = PROD;
 } else if (environment === "staging") {
   constants = STAGE;
-} else if (environment === "development") {
-  constants = DEV;
-} else {
+} else if (environment === "local") {
   constants = LOCAL;
+} else {
+  constants = DEV;
 }
 export default constants;
