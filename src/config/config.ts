@@ -8,7 +8,7 @@ if (environment === "production") {
   constants = PROD;
 } else if (environment === "staging") {
   constants = STAGE;
-} else if (environment === "dev") {
+} else if (environment === "development") {
   constants = DEV;
 } else {
   constants = LOCAL;
