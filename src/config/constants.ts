@@ -1,3 +1,9 @@
+export const LOCAL = {
+  apiBaseURL: "http://olympia.test/api/v5/",
+  reviewBaseURL: "http://olympia.test/en-US/reviewers/review/",
+  downloadBaseURL: "http://olympia.test/firefox/downloads/file/",
+};
+
 export const DEV = {
   apiBaseURL: "https://addons-dev.allizom.org/api/v5/",
   reviewBaseURL:
