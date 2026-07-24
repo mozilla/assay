@@ -367,7 +367,7 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
     "vsce": "^1.97.0",
-    "webpack": "^5.81.0",
+    "webpack": "^5.108.4",
     "webpack-cli": "^5.0.2",
     "jszip": "^3.10.1"
   },
