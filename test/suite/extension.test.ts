@@ -32,7 +32,7 @@ describe("extension.ts", () => {
   it("should load the manifest if launched with the intention to do so.", async () => {
     const workspaceFoldersStub = sinon.stub(
       vscode.workspace,
-      "workspaceFolders"
+      "workspaceFolders",
     );
     workspaceFoldersStub.value([
       {
@@ -42,7 +42,7 @@ describe("extension.ts", () => {
 
     const directoryControllerStub = sinon.stub(
       DirectoryController.prototype,
-      "getRootFolderPath"
+      "getRootFolderPath",
     );
     directoryControllerStub.resolves("test");
 
@@ -62,7 +62,7 @@ describe("extension.ts", () => {
     context.globalState.update = sinon.stub();
     const openCachedFileStub = sinon.stub(
       UrlController.prototype,
-      "openCachedFile"
+      "openCachedFile",
     );
 
     sinon.stub(vscode.window, "registerUriHandler");
@@ -75,7 +75,7 @@ describe("extension.ts", () => {
   it("should return early if no workspace is available", async () => {
     const directoryControllerStub = sinon.stub(
       DirectoryController.prototype,
-      "getRootFolderPath"
+      "getRootFolderPath",
     );
     directoryControllerStub.resolves("test");
 

@@ -12,7 +12,7 @@ export class CommentCacheController {
   constructor(
     public cache: AssayCache,
     private directoryController: DirectoryController,
-    private fileDecoratorController: FileDecoratorController
+    private fileDecoratorController: FileDecoratorController,
   ) {}
 
   /**
@@ -21,9 +21,8 @@ export class CommentCacheController {
    * @returns whether the uri has comments.
    */
   fileHasComment = async (uri: vscode.Uri) => {
-    const { guid, version, filepath } = await this.directoryController.splitUri(
-      uri
-    );
+    const { guid, version, filepath } =
+      await this.directoryController.splitUri(uri);
     const comments = await this.cache.getFromCache();
     if (comments?.[guid]?.[version]?.[filepath]) {
       return true;
@@ -82,7 +81,7 @@ export class CommentCacheController {
       await this.cache.removeFromCache([guid, version, filepath]);
       // Update the file's decorator.
       const commentUri = vscode.Uri.file(
-        path.join(rootPath, guid, version, filepath)
+        path.join(rootPath, guid, version, filepath),
       );
       this.fileDecoratorController.loadFileDecoratorByUri(commentUri);
     }
@@ -102,7 +101,7 @@ export class CommentCacheController {
       for (const lineNumber in comments[filepath]) {
         compiledComments += CommentCacheController.getCommentString(
           filepath,
-          lineNumber
+          lineNumber,
         );
       }
     }
@@ -151,7 +150,7 @@ export class CommentCacheController {
    */
   private async exportCommentsToDocument(
     compiledComments: string,
-    uri: vscode.Uri
+    uri: vscode.Uri,
   ) {
     if (compiledComments.length < 1) {
       vscode.window.showInformationMessage("No comments to export.");

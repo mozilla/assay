@@ -33,7 +33,7 @@ export class CredentialController {
           },
         },
         "other",
-        this.getCredsFromStorage
+        this.getCredsFromStorage,
       );
     }
 
@@ -61,12 +61,11 @@ export class CredentialController {
    */
   async getSecretFromUser() {
     const placeHolder = this.truncateSecret(
-      (await this.secrets.get("amoApiSecret")) || ""
+      (await this.secrets.get("amoApiSecret")) || "",
     );
     try {
-      const apiSecret = await CredentialView.getSecretInputFromUser(
-        placeHolder
-      );
+      const apiSecret =
+        await CredentialView.getSecretInputFromUser(placeHolder);
       await this.secrets.store("amoApiSecret", apiSecret);
       return true;
     } catch {
@@ -85,13 +84,13 @@ export class CredentialController {
 
     if (response.status === 200) {
       vscode.window.showInformationMessage(
-        "Success! Assay API Key and Secret validated."
+        "Success! Assay API Key and Secret validated.",
       );
       return true;
     } else {
       vscode.window.showErrorMessage(
         `Credential test failed: ${response.status} (${response.statusText})`,
-        { title: "Close", isCloseAffordance: true }
+        { title: "Close", isCloseAffordance: true },
       );
       return false;
     }

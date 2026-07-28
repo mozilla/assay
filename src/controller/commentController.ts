@@ -12,7 +12,7 @@ export class CommentController {
     public id: string,
     public label: string,
     private commentCacheController: CommentCacheController,
-    private directoryController: DirectoryController
+    private directoryController: DirectoryController,
   ) {
     this.controller = vscode.comments.createCommentController(id, label);
     this.loadCommentsFromCache();
@@ -26,7 +26,7 @@ export class CommentController {
    */
   async deleteCommentsFromMenu(
     treeItem: AddonTreeItem,
-    list: AddonTreeItem[] | undefined
+    list: AddonTreeItem[] | undefined,
   ) {
     const promises = [];
     const failedUris: vscode.Uri[] = [];
@@ -54,11 +54,11 @@ export class CommentController {
       const selection = editor.selections[0];
       const range = RangeHelper.toString(RangeHelper.fromSelection(selection));
       const { filepath } = await this.directoryController.splitUri(
-        document.uri
+        document.uri,
       );
       const commentString = CommentCacheController.getCommentString(
         filepath,
-        range
+        range,
       );
       vscode.env.clipboard.writeText(commentString);
       vscode.window.showInformationMessage("Line number copied to clipboard.");
@@ -103,7 +103,7 @@ export class CommentController {
    */
   async exportComments(item: AssayThread | AddonTreeItem) {
     const didDelete = await this.commentCacheController.exportVersionComments(
-      item.uri
+      item.uri,
     );
     if (didDelete) {
       this.refetchComments();
@@ -128,7 +128,7 @@ export class CommentController {
         guid,
         version,
         filepath,
-        RangeHelper.toString(range)
+        RangeHelper.toString(range),
       );
     } else {
       throw new Error("No active text editor found.");
@@ -141,9 +141,8 @@ export class CommentController {
    * @return the generated link.
    */
   async copyLinkFromThread(thread: AssayThread) {
-    const { guid, version, filepath, range } = await this.getThreadLocation(
-      thread
-    );
+    const { guid, version, filepath, range } =
+      await this.getThreadLocation(thread);
     return this.createLink(guid, version, filepath, range);
   }
 
@@ -173,7 +172,7 @@ export class CommentController {
     guid: string,
     version: string,
     filepath: string,
-    range: string
+    range: string,
   ) {
     const link = `vscode://mozilla.assay/review/${guid}/${version}?path=${filepath}${range}`;
     vscode.env.clipboard.writeText(link);
@@ -191,7 +190,7 @@ export class CommentController {
     const comment = new AssayComment(
       "Marked for review.",
       vscode.CommentMode.Preview,
-      { name: "Notes:" }
+      { name: "Notes:" },
     );
     const thread = this.controller.createCommentThread(uri, range, [comment]);
     comment.thread = thread as AssayThread;
@@ -199,7 +198,7 @@ export class CommentController {
     thread.canReply = false;
 
     const { filepath, range: rangeString } = await this.getThreadLocation(
-      thread as AssayThread
+      thread as AssayThread,
     );
     thread.label = `${filepath}${RangeHelper.truncate(rangeString)}`;
 
@@ -216,7 +215,7 @@ export class CommentController {
     this.controller.dispose();
     this.controller = vscode.comments.createCommentController(
       this.id,
-      this.label
+      this.label,
     );
     this.loadCommentsFromCache();
   }
@@ -228,7 +227,7 @@ export class CommentController {
    */
   private async getFilepathInfo(thread: AssayThread) {
     const { guid, version, filepath } = await this.directoryController.splitUri(
-      thread.uri
+      thread.uri,
     );
     await this.directoryController.checkUri(thread.uri);
     return { guid, version, filepath };

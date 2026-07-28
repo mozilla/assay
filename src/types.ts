@@ -22,7 +22,7 @@ export type AddonInfoResponse = {
 
 export type AddonVersion = {
   map(
-    arg0: (version: any) => any
+    arg0: (version: any) => any,
   ): readonly string[] | Thenable<readonly string[]>;
   id: string;
   version: string;

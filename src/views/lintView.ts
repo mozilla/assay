@@ -6,7 +6,7 @@ export class LintView {
    */
   static async warnOnSave() {
     await vscode.window.showInformationMessage(
-      "(Assay) Version modified. Lints cleared."
+      "(Assay) Version modified. Lints cleared.",
     );
   }
 }

@@ -33,10 +33,10 @@ describe("rangeHelper.ts", () => {
 
       const range = RangeHelper.fromSelection(selection, endCharacter);
       expect(range.start).to.deep.equal(
-        new vscode.Position(selection.start.line, 0)
+        new vscode.Position(selection.start.line, 0),
       );
       expect(range.end).to.deep.equal(
-        new vscode.Position(selection.end.line, endCharacter)
+        new vscode.Position(selection.end.line, endCharacter),
       );
     });
   });

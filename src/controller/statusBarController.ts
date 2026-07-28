@@ -10,7 +10,7 @@ export class StatusBarController {
 
   constructor(
     private addonCacheController: AddonCacheController,
-    private directoryController: DirectoryController
+    private directoryController: DirectoryController,
   ) {
     this.reviewItem = new ReviewStatusBarItem();
   }

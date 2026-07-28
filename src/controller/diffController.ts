@@ -36,7 +36,7 @@ export class DiffController {
     const diffProcess = spawn(diffCommand, [leftPath, rightPath]);
     diffProcess.on("error", (err) => {
       vscode.window.showErrorMessage(
-        `External Diff Tool failed to launch: ${err.message}`
+        `External Diff Tool failed to launch: ${err.message}`,
       );
       return false;
     });

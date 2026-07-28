@@ -10,7 +10,10 @@ export class SidebarController {
   public refresh: () => void;
   public treeView: vscode.TreeView<vscode.TreeItem>;
 
-  constructor(public id: string, rootFolderPath: string) {
+  constructor(
+    public id: string,
+    rootFolderPath: string,
+  ) {
     const treeProvider = new AddonTreeDataProvider(rootFolderPath);
 
     this.refresh = () => {

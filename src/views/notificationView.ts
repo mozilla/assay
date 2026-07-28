@@ -17,7 +17,7 @@ export class NotificationView {
           message: message,
         });
         await task();
-      }
+      },
     );
   }
 
@@ -33,7 +33,7 @@ export class NotificationView {
     errorMessages: ErrorMessages,
     status: keyof ErrorMessages["window"] | keyof ErrorMessages["thrown"],
     tryAgainFunction?: (...args: any[]) => Promise<any>,
-    tryAgainFunctionParams: any[] = []
+    tryAgainFunctionParams: any[] = [],
   ) {
     const tryAgainButton = { title: "Try Again" };
     const fetchNewAddonButton = { title: "Fetch New Addon" };
@@ -47,7 +47,7 @@ export class NotificationView {
         message,
         { modal: true },
         tryAgainButton,
-        fetchNewAddonButton
+        fetchNewAddonButton,
       )
       .then((action) => {
         if (action?.title === tryAgainButton.title) {

@@ -9,7 +9,7 @@ export class AddonTreeItem extends vscode.TreeItem {
   constructor(
     public readonly label: string,
     public readonly uri: vscode.Uri,
-    isGuidFolder?: boolean
+    isGuidFolder?: boolean,
   ) {
     const collapsibleState = isGuidFolder
       ? vscode.TreeItemCollapsibleState.Expanded
@@ -23,9 +23,7 @@ export class AddonTreeItem extends vscode.TreeItem {
   }
 }
 
-export class AddonTreeDataProvider
-  implements vscode.TreeDataProvider<AddonTreeItem>
-{
+export class AddonTreeDataProvider implements vscode.TreeDataProvider<AddonTreeItem> {
   private _onDidChangeTreeData: vscode.EventEmitter<AddonTreeItem | undefined> =
     new vscode.EventEmitter<AddonTreeItem | undefined>();
   readonly onDidChangeTreeData: vscode.Event<AddonTreeItem | undefined> =
@@ -53,7 +51,7 @@ export class AddonTreeDataProvider
           if (isDirectory) {
             const isGuidFolder = depth < 2;
             children.push(
-              new AddonTreeItem(file, vscode.Uri.file(filePath), isGuidFolder)
+              new AddonTreeItem(file, vscode.Uri.file(filePath), isGuidFolder),
             );
           }
         });

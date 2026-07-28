@@ -18,7 +18,7 @@ import { AddonInfoResponse, AddonVersion, QPOption } from "../../../src/types";
 const populateVersion = (
   version: AddonVersion[],
   start: number,
-  end: number
+  end: number,
 ) => {
   for (let i = start; i < end; i++) {
     version.push({
@@ -28,7 +28,7 @@ const populateVersion = (
         id: i.toString(),
       },
       map(
-        arg0: (version: any) => any
+        arg0: (version: any) => any,
       ): readonly string[] | Thenable<readonly string[]> {
         throw new Error("Method not implemented.");
       },
@@ -112,7 +112,7 @@ describe("addonController.ts", async () => {
       credentialControllerStub,
       addonCacheControllerStub,
       directoryControllerStub,
-      sidebarControllerStub
+      sidebarControllerStub,
     );
     if (!fs.existsSync(workspaceFolder)) {
       fs.promises.mkdir(workspaceFolder);
@@ -150,7 +150,7 @@ describe("addonController.ts", async () => {
       });
 
       const json = await addonController.getAddonVersions(
-        `${constants.apiBaseURL}addons/addon/slug/versions/`
+        `${constants.apiBaseURL}addons/addon/slug/versions/`,
       );
       expect(json.results).to.be.an("array");
       expect(json.results).to.have.lengthOf(25);
@@ -186,7 +186,7 @@ describe("addonController.ts", async () => {
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
-        "showErrorMessage"
+        "showErrorMessage",
       );
       showErrorMessageStub.onCall(0).resolves({ title: "Cancel" });
 
@@ -249,9 +249,8 @@ describe("addonController.ts", async () => {
 
       sinon.replace(vscode.window, "showQuickPick", showQuickPickStub);
 
-      const result = await addonController.getVersionChoice(
-        "addon-slug-or-guid"
-      );
+      const result =
+        await addonController.getVersionChoice("addon-slug-or-guid");
       expect(result.fileID).to.equal("25");
       expect(result.version).to.equal("25");
     });
@@ -265,14 +264,14 @@ describe("addonController.ts", async () => {
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
-        "showErrorMessage"
+        "showErrorMessage",
       );
       showErrorMessageStub.onCall(0).resolves({ title: "Cancel" });
 
       try {
         await addonController.getAddonVersions(
           "addon-slug-or-guid",
-          "next-page-url"
+          "next-page-url",
         );
         expect(true).to.equal(false);
       } catch (e: any) {
@@ -294,7 +293,9 @@ describe("addonController.ts", async () => {
       expect(actual).to.deep.equal(expected);
       expect(fetchStub.calledOnce).to.be.true;
       expect(
-        fetchStub.calledWith(`${constants.apiBaseURL}addons/addon/${addonSlug}`)
+        fetchStub.calledWith(
+          `${constants.apiBaseURL}addons/addon/${addonSlug}`,
+        ),
       ).to.be.true;
     });
 
@@ -310,7 +311,7 @@ describe("addonController.ts", async () => {
       expect(actual).to.deep.equal(expected);
       expect(fetchStub.calledOnce).to.be.true;
       expect(
-        fetchStub.calledWith(`${constants.apiBaseURL}addons/addon/${addonId}`)
+        fetchStub.calledWith(`${constants.apiBaseURL}addons/addon/${addonId}`),
       ).to.be.true;
     });
 
@@ -327,8 +328,8 @@ describe("addonController.ts", async () => {
       expect(fetchStub.calledOnce).to.be.true;
       expect(
         fetchStub.calledWith(
-          `${constants.apiBaseURL}addons/addon/${expected.slug}`
-        )
+          `${constants.apiBaseURL}addons/addon/${expected.slug}`,
+        ),
       ).to.be.true;
     });
 
@@ -342,7 +343,7 @@ describe("addonController.ts", async () => {
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
-        "showErrorMessage"
+        "showErrorMessage",
       );
       showErrorMessageStub.resolves({ title: "Cancel" });
 
@@ -382,14 +383,14 @@ describe("addonController.ts", async () => {
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
-        "showErrorMessage"
+        "showErrorMessage",
       );
       showErrorMessageStub.resolves({ title: "Cancel" });
 
       try {
         await (addonController as any).downloadAddon(
           addonId,
-          downloadedFilePath
+          downloadedFilePath,
         );
       } catch (e: any) {
         expect(e.message).to.equal("Download request failed");
@@ -413,14 +414,14 @@ describe("addonController.ts", async () => {
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
-        "showErrorMessage"
+        "showErrorMessage",
       );
       showErrorMessageStub.resolves({ title: "Cancel" });
 
       try {
         await (addonController as any).downloadAddon(
           addonId,
-          downloadedFilePath
+          downloadedFilePath,
         );
       } catch (e: any) {
         expect(e.message).to.equal("Download failed");
@@ -440,7 +441,7 @@ describe("addonController.ts", async () => {
 
       await (addonController as any).extractAddon(
         compressedFilePath,
-        extractedVersionFolder
+        extractedVersionFolder,
       );
 
       expect(fs.existsSync(extractedVersionFolder)).to.be.true;
@@ -454,7 +455,7 @@ describe("addonController.ts", async () => {
       // create a file in the version folder
       fs.writeFileSync(
         path.resolve(extractedVersionFolder, "test.txt"),
-        "replace me"
+        "replace me",
       );
 
       // make a stub for the quickpick and force it to say yes
@@ -464,7 +465,7 @@ describe("addonController.ts", async () => {
 
       await (addonController as any).extractAddon(
         compressedFilePath,
-        extractedVersionFolder
+        extractedVersionFolder,
       );
 
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
@@ -472,13 +473,13 @@ describe("addonController.ts", async () => {
       expect(fs.existsSync(compressedFilePath)).to.be.false;
 
       const fileStats = fs.statSync(
-        path.resolve(extractedVersionFolder, "test.txt")
+        path.resolve(extractedVersionFolder, "test.txt"),
       );
       // expect(fileStats.mode).to.equal(0o100444);
 
       const fileContent = fs.readFileSync(
         path.resolve(extractedVersionFolder, "test.txt"),
-        "utf-8"
+        "utf-8",
       );
       expect(fileContent).to.equal("test data inside txt");
     });
@@ -490,7 +491,7 @@ describe("addonController.ts", async () => {
       // create a file in the version folder
       fs.writeFileSync(
         path.resolve(extractedVersionFolder, "test.txt"),
-        "replace me"
+        "replace me",
       );
 
       // make a stub for the quickpick and force it to say no
@@ -501,7 +502,7 @@ describe("addonController.ts", async () => {
       try {
         await (addonController as any).extractAddon(
           compressedFilePath,
-          extractedVersionFolder
+          extractedVersionFolder,
         );
       } catch (e: any) {
         expect(e.message).to.equal("Extraction cancelled");
@@ -511,7 +512,7 @@ describe("addonController.ts", async () => {
 
         const fileContent = fs.readFileSync(
           path.resolve(extractedVersionFolder, "test.txt"),
-          "utf-8"
+          "utf-8",
         );
         expect(fileContent).to.equal("replace me");
       }
@@ -533,7 +534,7 @@ describe("addonController.ts", async () => {
       try {
         await (addonController as any).extractAddon(
           compressedFilePath,
-          extractedVersionFolder
+          extractedVersionFolder,
         );
       } catch (e: any) {
         expect(e.message).to.equal("Extraction failed.");
@@ -544,7 +545,7 @@ describe("addonController.ts", async () => {
   describe("dirExistsOrMake()", async () => {
     it("should create a directory if it does not exist.", async () => {
       const res = await (addonController as any).dirExistsOrMake(
-        extractedworkspaceFolder
+        extractedworkspaceFolder,
       );
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(res).to.be.true;
@@ -553,7 +554,7 @@ describe("addonController.ts", async () => {
     it("should not create a directory if it exists.", async () => {
       await fs.promises.mkdir(extractedworkspaceFolder);
       const res = await (addonController as any).dirExistsOrMake(
-        extractedworkspaceFolder
+        extractedworkspaceFolder,
       );
       expect(fs.existsSync(extractedworkspaceFolder)).to.be.true;
       expect(res).to.be.false;

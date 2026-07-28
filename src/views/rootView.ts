@@ -21,7 +21,7 @@ export class RootView {
           detail: "Select the folder where add-ons should be installed.",
           modal: true,
         },
-        selectButton
+        selectButton,
       )
       .then(async () => {
         selectedFolders = await vscode.window.showOpenDialog(options);

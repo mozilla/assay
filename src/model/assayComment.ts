@@ -9,7 +9,7 @@ export class AssayThread implements vscode.CommentThread {
     public collapsibleState: vscode.CommentThreadCollapsibleState,
     public dispose: () => void,
     public label?: string | undefined,
-    public state?: vscode.CommentThreadState | undefined
+    public state?: vscode.CommentThreadState | undefined,
   ) {}
 }
 
@@ -18,6 +18,6 @@ export class AssayComment implements vscode.Comment {
     public body: string,
     public mode: vscode.CommentMode,
     public author: vscode.CommentAuthorInformation,
-    public thread?: AssayThread
+    public thread?: AssayThread,
   ) {}
 }

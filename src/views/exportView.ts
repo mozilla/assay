@@ -19,14 +19,14 @@ export class ExportView {
 
   private static async promptdeleteComments(
     config: vscode.WorkspaceConfiguration,
-    savedPreference: string
+    savedPreference: string,
   ) {
     const selectedPreference = await vscode.window.showQuickPick(
       [QPOption.Yes, QPOption.No],
       {
         title: "Delete version comments after exporting?",
         ignoreFocusOut: true,
-      }
+      },
     );
 
     if (!selectedPreference) {
@@ -43,7 +43,7 @@ export class ExportView {
 
   private static async setDeleteCommentsPreference(
     config: vscode.WorkspaceConfiguration,
-    selectedPreference: string
+    selectedPreference: string,
   ) {
     const input = await vscode.window.showQuickPick(
       [QPOption.Save, QPOption.Ask],
@@ -53,7 +53,7 @@ export class ExportView {
             ? "Delete comments on every export?"
             : "Keep comments on every export?",
         ignoreFocusOut: true,
-      }
+      },
     );
 
     if (!input) {
@@ -63,7 +63,7 @@ export class ExportView {
     await config.update(
       "deleteCommentsOnExport",
       input === QPOption.Save ? selectedPreference : QPOption.Ask,
-      true
+      true,
     );
   }
 }

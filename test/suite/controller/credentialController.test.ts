@@ -20,7 +20,7 @@ const secretStorageStub = {
   onDidChange: function (
     listener: (e: vscode.SecretStorageChangeEvent) => any,
     thisArgs?: any,
-    disposables?: vscode.Disposable[] | undefined
+    disposables?: vscode.Disposable[] | undefined,
   ): vscode.Disposable {
     throw new Error("Function not implemented.");
   },
@@ -51,12 +51,12 @@ describe("credentialController.ts.", async () => {
       };
 
       const credentialController = new CredentialController(
-        secretStorageStubUndefined
+        secretStorageStubUndefined,
       );
 
       const errorMessageWindowStub = sinon.stub(
         vscode.window,
-        "showErrorMessage"
+        "showErrorMessage",
       );
       errorMessageWindowStub.resolves({ title: "Cancel" });
 
@@ -120,7 +120,7 @@ describe("credentialController.ts.", async () => {
       const credentialController = new CredentialController(secretStorageStub);
       const showInformationMessageStub = sinon.stub(
         vscode.window,
-        "showInformationMessage"
+        "showInformationMessage",
       );
       sinon.stub(credentialController, "makeAuthHeader").resolves();
       const fetchStub = sinon.stub();

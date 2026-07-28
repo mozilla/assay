@@ -34,7 +34,7 @@ describe("updateHelper.ts", () => {
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal(
-          "Could not fetch latest version from GitHub: error message"
+          "Could not fetch latest version from GitHub: error message",
         );
       }
     });
@@ -125,30 +125,30 @@ describe("updateHelper.ts", () => {
 
       const showInformationMessageStub = sinon.stub(
         vscode.window,
-        "showInformationMessage"
+        "showInformationMessage",
       );
       showInformationMessageStub.resolves();
 
       await UpdateHelper["installNewVersion"](
         "https://github.com/release/test",
-        "1.0.0"
+        "1.0.0",
       );
       expect(spawnStub.calledTwice).to.equal(true);
       expect(
         spawnStub.calledWith("code", [
           "--install-extension",
           `${workspaceFolder}/version.vsix`,
-        ])
+        ]),
       ).to.equal(true);
       expect(unlinkSyncStub.calledOnce).to.equal(true);
       expect(
-        unlinkSyncStub.calledWith(`${workspaceFolder}/version.vsix`)
+        unlinkSyncStub.calledWith(`${workspaceFolder}/version.vsix`),
       ).to.equal(true);
       expect(showInformationMessageStub.calledOnce).to.equal(true);
       expect(
         showInformationMessageStub.calledWith(
-          "Assay updated to version 1.0.0. Please reload VSCode."
-        )
+          "Assay updated to version 1.0.0. Please reload VSCode.",
+        ),
       ).to.equal(true);
     });
 
@@ -165,18 +165,18 @@ describe("updateHelper.ts", () => {
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
-        "showErrorMessage"
+        "showErrorMessage",
       );
       showErrorMessageStub.resolves();
       await UpdateHelper["installNewVersion"](
         "https://github.com/release/test",
-        "1.0.0"
+        "1.0.0",
       );
       expect(showErrorMessageStub.calledOnce).to.equal(true);
       expect(
         showErrorMessageStub.calledWith(
-          "Assay could not be updated to version 1.0.0. Please try again."
-        )
+          "Assay could not be updated to version 1.0.0. Please try again.",
+        ),
       ).to.equal(true);
     });
   });
@@ -192,7 +192,7 @@ describe("updateHelper.ts", () => {
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal(
-          "Could not fetch version file from GitHub: error message"
+          "Could not fetch version file from GitHub: error message",
         );
       }
     });
@@ -212,7 +212,7 @@ describe("updateHelper.ts", () => {
 
       try {
         await UpdateHelper["downloadVersion"](
-          "https://github.com/release/test"
+          "https://github.com/release/test",
         );
         expect.fail("Should have thrown an error");
       } catch (err: any) {
@@ -238,7 +238,7 @@ describe("updateHelper.ts", () => {
 
       try {
         await UpdateHelper["downloadVersion"](
-          "https://github.com/release/test"
+          "https://github.com/release/test",
         );
         expect.fail("Should have thrown an error");
       } catch (err: any) {
@@ -264,10 +264,10 @@ describe("updateHelper.ts", () => {
       getExtensionStub.returns({ extensionPath: workspaceFolder } as any);
 
       const returnedPath = await UpdateHelper["downloadVersion"](
-        "https://github.com/release/test"
+        "https://github.com/release/test",
       );
       expect(returnedPath).to.equal(
-        path.resolve(workspaceFolder, "version.vsix")
+        path.resolve(workspaceFolder, "version.vsix"),
       );
       await new Promise((resolve) => setTimeout(resolve, 200));
       expect(fs.existsSync(returnedPath)).to.equal(true);

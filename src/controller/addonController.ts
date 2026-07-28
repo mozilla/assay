@@ -18,7 +18,7 @@ export class AddonController {
     private credentialController: CredentialController,
     private addonCacheController: AddonCacheController,
     private directoryController: DirectoryController,
-    private sidebarController: SidebarController
+    private sidebarController: SidebarController,
   ) {}
 
   /**
@@ -58,7 +58,7 @@ export class AddonController {
         errorMessages,
         response.status,
         this.getAddonVersions,
-        [input, next]
+        [input, next],
       );
     }
     const json = await response.json();
@@ -85,7 +85,7 @@ export class AddonController {
         await this.directoryController.getRootFolderPath();
       const compressedFilePath = path.join(
         workspaceFolder,
-        `${guid}_${version}.xpi`
+        `${guid}_${version}.xpi`,
       );
 
       this.addonCacheController.addAddonToCache(guid, {
@@ -98,13 +98,13 @@ export class AddonController {
 
       const writeStream = await this.downloadAddon(
         addonFileID,
-        compressedFilePath
+        compressedFilePath,
       );
       await new Promise((resolve) => writeStream.on("finish", resolve));
 
       await this.extractAddon(
         compressedFilePath,
-        path.join(workspaceFolder, guid, version)
+        path.join(workspaceFolder, guid, version),
       );
 
       this.sidebarController.refresh();
@@ -145,7 +145,7 @@ export class AddonController {
         continue;
       } else if (choice) {
         const chosenVersion = versions.find(
-          (version) => version.version === choice
+          (version) => version.version === choice,
         );
 
         if (chosenVersion) {
@@ -195,7 +195,7 @@ export class AddonController {
         errorMessages,
         response.status,
         this.getAddonInfo,
-        [input]
+        [input],
       );
     }
     const json = await response.json();
@@ -231,7 +231,7 @@ export class AddonController {
         errorMessages,
         response.status,
         this.fetchDownloadFile,
-        [fileId]
+        [fileId],
       );
     }
     return response;
@@ -257,7 +257,7 @@ export class AddonController {
         errorMessages,
         "other",
         this.downloadAddon,
-        [fileID, filepath]
+        [fileID, filepath],
       );
       dest.close();
     };
@@ -284,7 +284,7 @@ export class AddonController {
    */
   private async extractAddon(
     compressedFilePath: string,
-    addonVersionFolderPath: string
+    addonVersionFolderPath: string,
   ) {
     // if the directory exists, ask to overwrite.
     if (!(await this.dirExistsOrMake(addonVersionFolderPath))) {
@@ -315,7 +315,7 @@ export class AddonController {
         errorMessages,
         "other",
         this.extractAddon,
-        [compressedFilePath, addonVersionFolderPath]
+        [compressedFilePath, addonVersionFolderPath],
       );
     }
 

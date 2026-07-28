@@ -42,7 +42,7 @@ describe("statusBarController.ts", async () => {
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
     statusBarController = new StatusBarController(
       addonCacheControllerStub,
-      directoryControllerStub
+      directoryControllerStub,
     );
   });
 
@@ -64,7 +64,7 @@ describe("statusBarController.ts", async () => {
       sinon.replaceGetter(
         vscode.window,
         "activeTextEditor",
-        activeTextEditorStub as any
+        activeTextEditorStub as any,
       );
 
       const existsSyncStub = sinon.stub(fs, "existsSync");
@@ -85,7 +85,7 @@ describe("statusBarController.ts", async () => {
       sinon.replaceGetter(
         vscode.window,
         "activeTextEditor",
-        activeTextEditorStub as any
+        activeTextEditorStub as any,
       );
 
       const existsSyncStub = sinon.stub(fs, "existsSync");
@@ -106,7 +106,7 @@ describe("statusBarController.ts", async () => {
       sinon.replaceGetter(
         vscode.window,
         "activeTextEditor",
-        activeTextEditorStub as any
+        activeTextEditorStub as any,
       );
 
       const existsSyncStub = sinon.stub(fs, "existsSync");
@@ -117,7 +117,7 @@ describe("statusBarController.ts", async () => {
       sinon.replaceGetter(
         vscode.workspace,
         "workspaceFolders",
-        workspaceFoldersStub as any
+        workspaceFoldersStub as any,
       );
 
       const result = await statusBarController.updateStatusBar();

@@ -18,7 +18,7 @@ describe("fileDecorationProvider.ts", async () => {
       (filePath: fs.PathLike) =>
         ({
           isDirectory: () => filePath.toString().includes("Dir"),
-        } as unknown as fs.Stats)
+        }) as unknown as fs.Stats,
     );
   });
 
@@ -31,7 +31,7 @@ describe("fileDecorationProvider.ts", async () => {
       it("should return the element passed to it.", () => {
         const item = new AddonTreeItem(
           "file",
-          vscode.Uri.parse("path/to/file")
+          vscode.Uri.parse("path/to/file"),
         );
         const result = addonTreeDataProvider.getTreeItem(item);
         expect(result).to.equal(item);
@@ -67,7 +67,7 @@ describe("fileDecorationProvider.ts", async () => {
         const item = new AddonTreeItem(
           "guid1",
           vscode.Uri.parse("test-root/guid1"),
-          true
+          true,
         );
         const children = await addonTreeDataProvider.getChildren(item);
         expect(children).to.have.lengthOf(4);
@@ -86,7 +86,7 @@ describe("fileDecorationProvider.ts", async () => {
 
         const item = new AddonTreeItem(
           "version1",
-          vscode.Uri.parse("test-root/guid1/version1")
+          vscode.Uri.parse("test-root/guid1/version1"),
         );
         const children = await addonTreeDataProvider.getChildren(item);
         expect(children).to.have.lengthOf(0);
