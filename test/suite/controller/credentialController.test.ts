@@ -14,17 +14,7 @@ const secretStorageStub = {
   store: async () => {
     return;
   },
-  delete: function (key: string): Thenable<void> {
-    throw new Error("Function not implemented.");
-  },
-  onDidChange: function (
-    listener: (e: vscode.SecretStorageChangeEvent) => any,
-    thisArgs?: any,
-    disposables?: vscode.Disposable[] | undefined,
-  ): vscode.Disposable {
-    throw new Error("Function not implemented.");
-  },
-};
+} satisfies Partial<vscode.SecretStorage> as unknown as vscode.SecretStorage;
 
 const creds = {
   apiKey: "test",
