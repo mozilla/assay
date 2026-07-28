@@ -1,4 +1,4 @@
-import { DEV, STAGE, PROD } from "./constants";
+import { LOCAL, DEV, STAGE, PROD } from "./constants";
 import { ConfigConstants } from "../types";
 
 const environment = process.env.NODE_ENV;
@@ -8,6 +8,8 @@ if (environment === "production") {
   constants = PROD;
 } else if (environment === "staging") {
   constants = STAGE;
+} else if (environment === "local") {
+  constants = LOCAL;
 } else {
   constants = DEV;
 }
