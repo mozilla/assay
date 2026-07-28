@@ -351,7 +351,7 @@
     "@vscode/test-electron": "^2.3.9",
     "@vscode/vsce": "^2.23.0",
     "c8": "^7.14.0",
-    "chai": "^4.3.7",
+    "chai": "^6.2.2",
     "cross-env": "^10.1.0",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^10.1.8",
