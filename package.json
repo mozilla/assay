@@ -364,7 +364,7 @@
     "prettier": "^2.8.8",
     "sinon": "^15.1.0",
     "ts-loader": "^9.4.2",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.0.4",
     "vsce": "^2.15.0",
     "webpack": "^5.81.0",
