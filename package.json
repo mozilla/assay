@@ -355,7 +355,7 @@
     "cross-env": "^10.1.0",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-import-resolver-node": "^0.3.7",
+    "eslint-import-resolver-node": "^0.4.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^4.2.1",
     "glob": "^8.1.0",
