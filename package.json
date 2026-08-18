@@ -360,7 +360,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "glob": "^8.1.0",
     "mocha": "^11.8.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.3.2",
     "prettier": "^2.8.8",
     "sinon": "^22.1.0",
     "ts-loader": "^9.6.2",
