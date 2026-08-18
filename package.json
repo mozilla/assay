@@ -337,7 +337,7 @@
     "build": "vsce package"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.5",
+    "@types/chai": "^5.2.3",
     "@types/glob": "^8.1.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mocha": "^10.0.10",
