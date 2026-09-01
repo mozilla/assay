@@ -1,6 +1,5 @@
 import * as extract from "extract-zip";
 import * as fs from "fs";
-import fetch from "node-fetch";
 import * as path from "path";
 import * as vscode from "vscode";
 
@@ -268,7 +267,7 @@ export class AddonController {
     NotificationView.promptProgress("Downloading Addon", async () => {
       try {
         const response = await this.fetchDownloadFile(fileID);
-        const buffer = await response.buffer();
+        const buffer = Buffer.from(await response.arrayBuffer());
         dest.write(buffer);
         dest.end();
       } catch (error) {

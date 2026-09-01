@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { describe, it, afterEach } from "mocha";
-import * as fetch from "node-fetch";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 
@@ -114,7 +113,7 @@ describe("credentialController.ts.", async () => {
       );
       sinon.stub(credentialController, "makeAuthHeader").resolves();
       const fetchStub = sinon.stub();
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       fetchStub.resolves({
         status: 200,

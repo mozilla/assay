@@ -1,6 +1,5 @@
 import { spawn } from "child_process";
 import * as fs from "fs";
-import fetch from "node-fetch";
 import * as path from "path";
 import * as vscode from "vscode";
 
@@ -93,7 +92,7 @@ export class UpdateHelper {
         }
         const savePath = path.join(extensionPath, "version.vsix");
 
-        const buffer = await response.buffer();
+        const buffer = Buffer.from(await response.arrayBuffer());
         return new Promise<string>((resolve, reject) => {
           fs.writeFile(savePath, buffer, { flag: "w" }, (err) => {
             if (err) {

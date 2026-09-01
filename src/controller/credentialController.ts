@@ -1,5 +1,4 @@
 import * as jwt from "jsonwebtoken";
-import fetch from "node-fetch";
 import * as vscode from "vscode";
 
 import constants from "../config/config";

@@ -2,7 +2,6 @@ import { expect } from "chai";
 import * as fs from "fs";
 import * as jszip from "jszip";
 import { describe, it, afterEach, beforeEach, after } from "mocha";
-import * as fetch from "node-fetch";
 import path = require("path");
 import * as sinon from "sinon";
 import * as vscode from "vscode";
@@ -83,16 +82,12 @@ const expected: AddonInfoResponse = {
 
 const badResponse = {
   ok: false,
-  buffer: () => {
-    return "test data";
-  },
+  arrayBuffer: () => new TextEncoder().encode("test data").buffer,
 };
 
 const goodResponse = {
   ok: true,
-  buffer: () => {
-    return "test data";
-  },
+  arrayBuffer: () => new TextEncoder().encode("test data").buffer,
 };
 
 let credentialControllerStub: sinon.SinonStubbedInstance<CredentialController>,
@@ -138,7 +133,7 @@ describe("addonController.ts", async () => {
   describe("getAddonVersions()", () => {
     it("should return a json if the input is a link.", async () => {
       const fetchStub = sinon.stub();
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       fetchStub.onCall(0).returns({
         json: () => {
@@ -166,7 +161,7 @@ describe("addonController.ts", async () => {
         },
         ok: true,
       });
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const json = await addonController.getAddonVersions("addon-slug-or-guid");
       expect(json.results).to.be.an("array");
@@ -182,7 +177,7 @@ describe("addonController.ts", async () => {
           };
         },
       });
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
@@ -241,7 +236,7 @@ describe("addonController.ts", async () => {
         results: secondVersions,
       });
 
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const showQuickPickStub = sinon.stub();
       showQuickPickStub.onCall(0).returns("More");
@@ -260,7 +255,7 @@ describe("addonController.ts", async () => {
       fetchStub.onCall(0).returns({
         ok: false,
       });
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
@@ -287,7 +282,7 @@ describe("addonController.ts", async () => {
         ok: true,
         json: () => expected,
       });
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const actual = await (addonController as any).getAddonInfo(addonSlug);
       expect(actual).to.deep.equal(expected);
@@ -305,7 +300,7 @@ describe("addonController.ts", async () => {
         json: () => expected,
         ok: true,
       });
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const actual = await (addonController as any).getAddonInfo(addonId);
       expect(actual).to.deep.equal(expected);
@@ -321,7 +316,7 @@ describe("addonController.ts", async () => {
         json: () => expected,
         ok: true,
       });
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const actual = await (addonController as any).getAddonInfo(addonUrl);
       expect(actual).to.deep.equal(expected);
@@ -339,7 +334,7 @@ describe("addonController.ts", async () => {
         ok: false,
         json: () => expected,
       });
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
@@ -359,7 +354,7 @@ describe("addonController.ts", async () => {
     it("should download the xpi of the addon.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves(goodResponse);
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const existsSyncStub = sinon.stub(fs, "existsSync");
       existsSyncStub.onFirstCall().returns(true);
@@ -379,7 +374,7 @@ describe("addonController.ts", async () => {
     it("should not make a file if the request failed.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves(badResponse);
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
@@ -406,7 +401,7 @@ describe("addonController.ts", async () => {
     it("should throw an error if the user cancels.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves(goodResponse);
-      sinon.replace(fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const existsSyncStub = sinon.stub(fs, "existsSync");
       existsSyncStub.onFirstCall().returns(false);
