@@ -136,7 +136,9 @@ export class AddonController {
       }
 
       const versionItems = versions.map((version) => version.version);
-      next ? versionItems.push("More") : null;
+      if (next) {
+        versionItems.push("More");
+      }
 
       // if opened from a vscode:// link, use the version from the link
       const choice =
