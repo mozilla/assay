@@ -340,7 +340,7 @@
     "@types/chai": "^5.2.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mocha": "^10.0.10",
-    "@types/node": "16.x",
+    "@types/node": "^26.3.0",
     "@types/node-fetch": "^2.6.4",
     "@types/request": "^2.48.13",
     "@types/sinon": "^22.0.0",

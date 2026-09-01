@@ -100,7 +100,9 @@ export class AddonController {
         addonFileID,
         compressedFilePath,
       );
-      await new Promise((resolve) => writeStream.on("finish", resolve));
+      await new Promise<void>((resolve) =>
+        writeStream.on("finish", () => resolve()),
+      );
 
       await this.extractAddon(
         compressedFilePath,
@@ -198,7 +200,7 @@ export class AddonController {
         [input],
       );
     }
-    const json = await response.json();
+    const json = (await response.json()) as AddonInfoResponse;
     return json;
   }
 

@@ -121,7 +121,10 @@ export class UpdateHelper {
       );
     }
 
-    const json = await response.json();
+    const json = (await response.json()) as {
+      tag_name: string;
+      assets: { browser_download_url: string }[];
+    };
     const latestVersion = json.tag_name;
     const currentVersion =
       "v" +
