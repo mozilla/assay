@@ -2,7 +2,6 @@ import { expect } from "chai";
 import * as child_process from "child_process";
 import * as fs from "fs";
 import { describe, it, afterEach, beforeEach } from "mocha";
-import * as node_fetch from "node-fetch";
 import * as path from "path";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
@@ -27,14 +26,14 @@ describe("updateHelper.ts", () => {
     it("should throw an error if the request fails.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({ ok: false, statusText: "error message" } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       try {
         await UpdateHelper["checkAndGetNewVersion"]();
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal(
-          "Could not fetch latest version from GitHub: error message"
+          "Could not fetch latest version from GitHub: error message",
         );
       }
     });
@@ -47,7 +46,7 @@ describe("updateHelper.ts", () => {
           return { tag_name: "v1.1.1" };
         },
       } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns({ packageJSON: { version: "1.1.1" } } as any);
@@ -70,7 +69,7 @@ describe("updateHelper.ts", () => {
           };
         },
       } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns({ packageJSON: { version: "1.0.0" } } as any);
@@ -93,11 +92,9 @@ describe("updateHelper.ts", () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
-        buffer: () => {
-          return "file contents";
-        },
+        arrayBuffer: () => new TextEncoder().encode("file contents").buffer,
       } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns({ extensionPath: workspaceFolder } as any);
@@ -105,7 +102,7 @@ describe("updateHelper.ts", () => {
 
     afterEach(() => {
       if (fs.existsSync(workspaceFolder)) {
-        fs.rmdirSync(workspaceFolder, { recursive: true });
+        fs.rmSync(workspaceFolder, { recursive: true });
       }
     });
 
@@ -125,30 +122,30 @@ describe("updateHelper.ts", () => {
 
       const showInformationMessageStub = sinon.stub(
         vscode.window,
-        "showInformationMessage"
+        "showInformationMessage",
       );
       showInformationMessageStub.resolves();
 
       await UpdateHelper["installNewVersion"](
         "https://github.com/release/test",
-        "1.0.0"
+        "1.0.0",
       );
       expect(spawnStub.calledTwice).to.equal(true);
       expect(
         spawnStub.calledWith("code", [
           "--install-extension",
           `${workspaceFolder}/version.vsix`,
-        ])
+        ]),
       ).to.equal(true);
       expect(unlinkSyncStub.calledOnce).to.equal(true);
       expect(
-        unlinkSyncStub.calledWith(`${workspaceFolder}/version.vsix`)
+        unlinkSyncStub.calledWith(`${workspaceFolder}/version.vsix`),
       ).to.equal(true);
       expect(showInformationMessageStub.calledOnce).to.equal(true);
       expect(
         showInformationMessageStub.calledWith(
-          "Assay updated to version 1.0.0. Please reload VSCode."
-        )
+          "Assay updated to version 1.0.0. Please reload VSCode.",
+        ),
       ).to.equal(true);
     });
 
@@ -165,18 +162,18 @@ describe("updateHelper.ts", () => {
 
       const showErrorMessageStub = sinon.stub(
         vscode.window,
-        "showErrorMessage"
+        "showErrorMessage",
       );
       showErrorMessageStub.resolves();
       await UpdateHelper["installNewVersion"](
         "https://github.com/release/test",
-        "1.0.0"
+        "1.0.0",
       );
       expect(showErrorMessageStub.calledOnce).to.equal(true);
       expect(
         showErrorMessageStub.calledWith(
-          "Assay could not be updated to version 1.0.0. Please try again."
-        )
+          "Assay could not be updated to version 1.0.0. Please try again.",
+        ),
       ).to.equal(true);
     });
   });
@@ -185,14 +182,14 @@ describe("updateHelper.ts", () => {
     it("should throw an error if the request fails.", async () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({ ok: false, statusText: "error message" } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       try {
         await UpdateHelper["downloadVersion"]("test");
         expect.fail("Should have thrown an error");
       } catch (err: any) {
         expect(err.message).to.equal(
-          "Could not fetch version file from GitHub: error message"
+          "Could not fetch version file from GitHub: error message",
         );
       }
     });
@@ -201,18 +198,16 @@ describe("updateHelper.ts", () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
-        buffer: () => {
-          return "file contents";
-        },
+        arrayBuffer: () => new TextEncoder().encode("file contents").buffer,
       } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns(undefined);
 
       try {
         await UpdateHelper["downloadVersion"](
-          "https://github.com/release/test"
+          "https://github.com/release/test",
         );
         expect.fail("Should have thrown an error");
       } catch (err: any) {
@@ -224,11 +219,9 @@ describe("updateHelper.ts", () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
-        buffer: () => {
-          return "file contents";
-        },
+        arrayBuffer: () => new TextEncoder().encode("file contents").buffer,
       } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns({ extensionPath: "test/path/" } as any);
@@ -238,7 +231,7 @@ describe("updateHelper.ts", () => {
 
       try {
         await UpdateHelper["downloadVersion"](
-          "https://github.com/release/test"
+          "https://github.com/release/test",
         );
         expect.fail("Should have thrown an error");
       } catch (err: any) {
@@ -254,24 +247,22 @@ describe("updateHelper.ts", () => {
       const fetchStub = sinon.stub();
       fetchStub.resolves({
         ok: true,
-        buffer: () => {
-          return "file contents";
-        },
+        arrayBuffer: () => new TextEncoder().encode("file contents").buffer,
       } as any);
-      sinon.replace(node_fetch, "default", fetchStub as any);
+      sinon.replace(global, "fetch", fetchStub as any);
 
       const getExtensionStub = sinon.stub(vscode.extensions, "getExtension");
       getExtensionStub.returns({ extensionPath: workspaceFolder } as any);
 
       const returnedPath = await UpdateHelper["downloadVersion"](
-        "https://github.com/release/test"
+        "https://github.com/release/test",
       );
       expect(returnedPath).to.equal(
-        path.resolve(workspaceFolder, "version.vsix")
+        path.resolve(workspaceFolder, "version.vsix"),
       );
       await new Promise((resolve) => setTimeout(resolve, 200));
       expect(fs.existsSync(returnedPath)).to.equal(true);
-      fs.rmdirSync(workspaceFolder, { recursive: true });
+      fs.rmSync(workspaceFolder, { recursive: true });
     });
   });
 });

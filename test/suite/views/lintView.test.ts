@@ -14,7 +14,7 @@ describe("lintView.ts", () => {
     it("should give the user a prompt.", async () => {
       const showInformationMessageStub = sinon.stub(
         vscode.window,
-        "showInformationMessage"
+        "showInformationMessage",
       );
       LintView.warnOnSave();
       expect(showInformationMessageStub.called).to.be.true;

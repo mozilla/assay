@@ -4,7 +4,10 @@ import * as path from "path";
 export class AssayCache {
   cacheFolderPath: string;
   cacheFilePath: string;
-  constructor(public cacheName: string, public storagePath: string) {
+  constructor(
+    public cacheName: string,
+    public storagePath: string,
+  ) {
     this.cacheFolderPath = path.join(storagePath, ".cache");
     this.cacheFilePath = path.join(this.cacheFolderPath, `${cacheName}.json`);
   }
@@ -52,7 +55,7 @@ export class AssayCache {
 
     await fs.promises.writeFile(
       this.cacheFilePath,
-      JSON.stringify(cacheFileJSON, null, 2)
+      JSON.stringify(cacheFileJSON, null, 2),
     );
   }
 

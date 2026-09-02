@@ -18,7 +18,7 @@ describe("lintController.ts", async () => {
   beforeEach(() => {
     const workspaceFoldersStub = sinon.stub(
       vscode.workspace,
-      "workspaceFolders"
+      "workspaceFolders",
     );
     workspaceFoldersStub.value([
       {
@@ -53,7 +53,7 @@ describe("lintController.ts", async () => {
       collection,
       credentialControllerStub,
       addonCacheControllerStub,
-      directoryControllerStub
+      directoryControllerStub,
     );
   });
 
@@ -87,7 +87,7 @@ describe("lintController.ts", async () => {
       };
 
       lintController.toggleDirty(
-        event as unknown as vscode.TextDocumentChangeEvent
+        event as unknown as vscode.TextDocumentChangeEvent,
       );
       expect(lintController["dirtyFiles"].has(uri.fsPath)).to.be.false;
     });
@@ -175,14 +175,14 @@ describe("lintController.ts", async () => {
 
       expect(errorDiagnostic?.range).to.deep.equal(errorRange);
       expect(errorDiagnostic?.severity).to.be.equal(
-        vscode.DiagnosticSeverity.Error
+        vscode.DiagnosticSeverity.Error,
       );
       expect(errorDiagnostic?.message).to.be.equal("error message");
       expect(errorDiagnostic?.code).to.be.equal("error code");
 
       expect(errorDiagnosticTwo?.range).to.deep.equal(errorRange);
       expect(errorDiagnosticTwo?.severity).to.be.equal(
-        vscode.DiagnosticSeverity.Error
+        vscode.DiagnosticSeverity.Error,
       );
       expect(errorDiagnosticTwo?.message).to.be.equal("error message 2");
       expect(errorDiagnosticTwo?.code).to.be.equal("error code 2");
@@ -198,7 +198,7 @@ describe("lintController.ts", async () => {
 
       expect(noticeDiagnostic?.range).to.deep.equal(noticeRange);
       expect(noticeDiagnostic?.severity).to.be.equal(
-        vscode.DiagnosticSeverity.Information
+        vscode.DiagnosticSeverity.Information,
       );
       expect(noticeDiagnostic?.message).to.be.equal("notice message");
       expect(noticeDiagnostic?.code).to.be.equal("notice code");
@@ -214,7 +214,7 @@ describe("lintController.ts", async () => {
 
       expect(warningDiagnostic?.range).to.deep.equal(warningRange);
       expect(warningDiagnostic?.severity).to.be.equal(
-        vscode.DiagnosticSeverity.Warning
+        vscode.DiagnosticSeverity.Warning,
       );
       expect(warningDiagnostic?.message).to.be.equal("warning message");
       expect(warningDiagnostic?.code).to.be.equal("warning code");
@@ -223,7 +223,7 @@ describe("lintController.ts", async () => {
     it("should show an error message when fetch fails with a 404", async () => {
       const showErrorMessageStub = sinon.stub(
         NotificationView,
-        "showErrorMessage"
+        "showErrorMessage",
       );
 
       const data = {

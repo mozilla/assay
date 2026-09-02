@@ -23,12 +23,12 @@ describe("commentCacheController.ts", () => {
     assayCacheStub = sinon.createStubInstance(AssayCache);
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
     fileDecoratorControllerStub = sinon.createStubInstance(
-      FileDecoratorController
+      FileDecoratorController,
     );
     commentCacheController = new CommentCacheController(
       assayCacheStub,
       directoryControllerStub,
-      fileDecoratorControllerStub
+      fileDecoratorControllerStub,
     );
 
     directoryControllerStub.getRootFolderPath.resolves("/test-root");
@@ -44,7 +44,7 @@ describe("commentCacheController.ts", () => {
 
       const result = await commentCacheController.compileComments(
         "guid",
-        "version"
+        "version",
       );
       expect(result).to.contain("test-filepath");
       expect(result).to.contain("#L2");
@@ -62,7 +62,7 @@ describe("commentCacheController.ts", () => {
       sinon.stub(Object, "entries").returns([["filepath", "comments"]]);
 
       await commentCacheController.deleteComments(
-        vscode.Uri.file("/test-root/guid/version")
+        vscode.Uri.file("/test-root/guid/version"),
       );
       expect(assayCacheStub.removeFromCache.called).to.be.true;
       expect(fileDecoratorControllerStub.loadFileDecoratorByUri.called).to.be
@@ -86,17 +86,17 @@ describe("commentCacheController.ts", () => {
 
       const showInformationMessageStub = sinon.stub(
         vscode.window,
-        "showInformationMessage"
+        "showInformationMessage",
       );
 
       const getPreferenceStub = sinon.stub(
         ExportView,
-        "getDeleteCommentsPreference"
+        "getDeleteCommentsPreference",
       );
       getPreferenceStub.resolves(false);
 
       await commentCacheController.exportVersionComments(
-        vscode.Uri.file("guid")
+        vscode.Uri.file("guid"),
       );
       vscode.commands.executeCommand("workbench.action.closeActiveEditor");
       expect(showInformationMessageStub.called).to.be.true;
@@ -111,7 +111,7 @@ describe("commentCacheController.ts", () => {
             "filepath-one": {
               "#L1": {
                 uri: vscode.Uri.file(
-                  "test-root-folder-path/test-guid/test-version-1/filepath-one"
+                  "test-root-folder-path/test-guid/test-version-1/filepath-one",
                 ),
               },
             },
@@ -120,7 +120,7 @@ describe("commentCacheController.ts", () => {
             "filepath-two": {
               "#L1": {
                 uri: vscode.Uri.file(
-                  "test-root-folder-path/test-guid/test-version-2/filepath-two"
+                  "test-root-folder-path/test-guid/test-version-2/filepath-two",
                 ),
               },
             },
@@ -135,8 +135,8 @@ describe("commentCacheController.ts", () => {
 
       const result = await commentCacheController.fileHasComment(
         vscode.Uri.file(
-          "test-root-folder-path/test-guid/test-version/test-filepath"
-        )
+          "test-root-folder-path/test-guid/test-version/test-filepath",
+        ),
       );
 
       expect(result).to.be.false;
@@ -149,7 +149,7 @@ describe("commentCacheController.ts", () => {
             "test-filepath": {
               "#L1": {
                 uri: vscode.Uri.file(
-                  "test-root-folder-path/test-guid/test-version/test-filepath"
+                  "test-root-folder-path/test-guid/test-version/test-filepath",
                 ),
               },
             },
@@ -164,8 +164,8 @@ describe("commentCacheController.ts", () => {
 
       const result = await commentCacheController.fileHasComment(
         vscode.Uri.file(
-          "test-root-folder-path/test-guid/test-version/test-filepath"
-        )
+          "test-root-folder-path/test-guid/test-version/test-filepath",
+        ),
       );
 
       expect(result).to.be.true;

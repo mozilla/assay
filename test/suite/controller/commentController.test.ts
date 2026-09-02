@@ -26,7 +26,7 @@ const rng = new vscode.Range(pos, pos);
 describe("CommentController.ts", () => {
   beforeEach(() => {
     commentCacheControllerStub = sinon.createStubInstance(
-      CommentCacheController
+      CommentCacheController,
     );
     directoryControllerStub = sinon.createStubInstance(DirectoryController);
 
@@ -69,7 +69,7 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       const result = await cmtController.copyLineNumber();
       expect(result).to.equal("* filepath#L1\n");
@@ -88,7 +88,7 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       const result = await cmtController.copyLineNumber();
       expect(result).to.equal("* filepath#L1-5\n");
@@ -111,7 +111,7 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       const result = await cmtController.addComment();
       expect(commentCacheControllerStub.saveCommentToCache.called).to.be.true;
@@ -126,7 +126,7 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
 
       const comment = await cmtController["createComment"](cmt.uri, rng);
@@ -153,12 +153,12 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       const expectedLink = `vscode://mozilla.assay/review/guid/version?path=filepath#L1`;
       const showInformationMessageStub = sinon.stub(
         vscode.window,
-        "showInformationMessage"
+        "showInformationMessage",
       );
       const link = await cmtController.copyLinkFromContext();
       expect(showInformationMessageStub.calledOnce).to.be.true;
@@ -172,24 +172,24 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       const thread = cmtController.controller.createCommentThread(
         cmt.uri,
         rng,
-        []
+        [],
       ) as AssayThread;
       const expectedLink = `vscode://mozilla.assay/review/guid/version?path=filepath/with/slashes.py#range`;
 
       const showInformationMessageStub = sinon.stub(
         vscode.window,
-        "showInformationMessage"
+        "showInformationMessage",
       );
       const getThreadLocationStub = sinon
         .stub(cmtController, "getThreadLocation")
         .resolves({
           uri: vscode.Uri.parse(
-            "/test-root/guid/version/filepath/with/slashes.py"
+            "/test-root/guid/version/filepath/with/slashes.py",
           ),
           guid: "guid",
           version: "version",
@@ -212,7 +212,7 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       commentCacheControllerStub.deleteComments.resolves();
       const result = await cmtController.deleteCommentsFromMenu(
@@ -220,7 +220,7 @@ describe("CommentController.ts", () => {
           label: "",
           uri: uri,
         },
-        undefined
+        undefined,
       );
       expect(commentCacheControllerStub.deleteComments.calledWith(uri)).to.be
         .true;
@@ -236,7 +236,7 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       commentCacheControllerStub.deleteComments.resolves();
       const result = await cmtController.deleteCommentsFromMenu(
@@ -257,7 +257,7 @@ describe("CommentController.ts", () => {
             label: "",
             uri: uriThree,
           },
-        ]
+        ],
       );
       expect(commentCacheControllerStub.deleteComments.calledWith(uriOne)).to.be
         .true;
@@ -278,13 +278,13 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       const initController = cmtController.controller;
       const thread = cmtController.controller.createCommentThread(
         vscode.Uri.file("guid"),
         rng,
-        []
+        [],
       ) as AssayThread;
       await cmtController.exportComments(thread);
       const newController = cmtController.controller;
@@ -300,12 +300,12 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       const thread = cmtController.controller.createCommentThread(
         cmt.uri,
         rng,
-        []
+        [],
       ) as AssayThread;
       const { guid, version, filepath, range } =
         await cmtController.getThreadLocation(thread);
@@ -321,12 +321,12 @@ describe("CommentController.ts", () => {
         "assay-tester",
         "Assay Tester",
         commentCacheControllerStub,
-        directoryControllerStub
+        directoryControllerStub,
       );
       const thread = cmtController.controller.createCommentThread(
         cmt.uri,
         rng,
-        []
+        [],
       ) as AssayThread;
 
       try {

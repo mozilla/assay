@@ -6,7 +6,7 @@ export class ReviewStatusBarItem {
 
   statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
-    100
+    100,
   );
   text = "Assay";
 

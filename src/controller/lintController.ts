@@ -16,7 +16,7 @@ export class LintController {
     private diagnosticCollection: vscode.DiagnosticCollection,
     private credentialController: CredentialController,
     private addonCacheController: AddonCacheController,
-    private directoryController: DirectoryController
+    private directoryController: DirectoryController,
   ) {
     this.dirtyFiles = new Set();
   }
@@ -171,7 +171,7 @@ export class LintController {
         errorMessages,
         response.status,
         this.fetchLints,
-        [guid]
+        [guid],
       );
 
       return;

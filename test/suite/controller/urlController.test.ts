@@ -30,7 +30,7 @@ describe("urlController.ts", async () => {
       context,
       addonControllerStub,
       directoryControllerStub,
-      lintControllerStub
+      lintControllerStub,
     );
   });
 
@@ -57,7 +57,7 @@ describe("urlController.ts", async () => {
       };
 
       directoryControllerStub.getRootFolderPath.resolves(
-        "test-root-folder-path"
+        "test-root-folder-path",
       );
       addonControllerStub.downloadAndExtract.resolves();
 
@@ -66,7 +66,7 @@ describe("urlController.ts", async () => {
 
       const showTextDocumentStub = sinon.stub(
         vscode.window,
-        "showTextDocument"
+        "showTextDocument",
       );
       showTextDocumentStub.resolves();
 
@@ -82,7 +82,7 @@ describe("urlController.ts", async () => {
         path: "/review/test-guid/test-version",
       };
       directoryControllerStub.getRootFolderPath.resolves(
-        "test-root-folder-path"
+        "test-root-folder-path",
       );
 
       const fsStatStub = sinon.stub(fs.promises, "stat");
@@ -90,7 +90,7 @@ describe("urlController.ts", async () => {
 
       const showTextDocumentStub = sinon.stub(
         vscode.window,
-        "showTextDocument"
+        "showTextDocument",
       );
       showTextDocumentStub.resolves();
 
@@ -110,7 +110,7 @@ describe("urlController.ts", async () => {
 
       const workspaceFoldersStub = sinon.stub(
         vscode.workspace,
-        "workspaceFolders"
+        "workspaceFolders",
       );
       workspaceFoldersStub.value([
         {
@@ -120,7 +120,7 @@ describe("urlController.ts", async () => {
 
       const showTextDocumentStub = sinon.stub(
         vscode.window,
-        "showTextDocument"
+        "showTextDocument",
       );
       showTextDocumentStub.resolves();
 
@@ -146,7 +146,7 @@ describe("urlController.ts", async () => {
     it("should reveal the document located at URI.", async () => {
       const showTextDocumentStub = sinon.stub(
         vscode.window,
-        "showTextDocument"
+        "showTextDocument",
       );
       const URI = vscode.Uri.parse("index.html");
 
@@ -159,7 +159,7 @@ describe("urlController.ts", async () => {
     it("should reveal the document located at URI and correctly highlight and reveal the desired range", async () => {
       const range = new vscode.Range(
         new vscode.Position(25, 0),
-        new vscode.Position(25, 0)
+        new vscode.Position(25, 0),
       );
       const revealRangeStub = sinon.stub();
 
@@ -173,7 +173,7 @@ describe("urlController.ts", async () => {
 
       const showTextDocumentStub = sinon.stub(
         vscode.window,
-        "showTextDocument"
+        "showTextDocument",
       );
       showTextDocumentStub.resolves(fakeEditor);
 

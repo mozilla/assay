@@ -79,7 +79,7 @@ describe("exportView.ts", () => {
       expect(result).to.be.true;
       expect(updateStub.calledOnce).to.be.true;
       expect(
-        updateStub.calledWith("deleteCommentsOnExport", QPOption.Yes, true)
+        updateStub.calledWith("deleteCommentsOnExport", QPOption.Yes, true),
       ).to.be.true;
     });
 
@@ -94,7 +94,7 @@ describe("exportView.ts", () => {
       expect(result).to.be.true;
       expect(updateStub.calledOnce).to.be.true;
       expect(
-        updateStub.calledWith("deleteCommentsOnExport", QPOption.Ask, true)
+        updateStub.calledWith("deleteCommentsOnExport", QPOption.Ask, true),
       ).to.be.true;
     });
 
@@ -123,7 +123,7 @@ describe("exportView.ts", () => {
       expect(result).to.be.false;
       expect(updateStub.calledOnce).to.be.true;
       expect(
-        updateStub.calledWith("deleteCommentsOnExport", QPOption.Ask, true)
+        updateStub.calledWith("deleteCommentsOnExport", QPOption.Ask, true),
       ).to.be.true;
     });
 

@@ -1,6 +1,5 @@
 import { spawn } from "child_process";
 import * as fs from "fs";
-import fetch from "node-fetch";
 import * as path from "path";
 import * as vscode from "vscode";
 
@@ -18,7 +17,7 @@ export class UpdateHelper {
       vscode.window
         .showInformationMessage(
           `A new version of Assay is available (${version}) from your current version (${currentVersion}). Would you like to update?`,
-          "Update Assay"
+          "Update Assay",
         )
         .then((value) => {
           if (value) {
@@ -41,7 +40,7 @@ export class UpdateHelper {
     const versionProcess = spawn("code", ["--version"]);
     versionProcess.on("error", () => {
       vscode.window.showErrorMessage(
-        "'code' command not found in PATH. Please add it via the VS Code Command Palette and try again."
+        "'code' command not found in PATH. Please add it via the VS Code Command Palette and try again.",
       );
     });
 
@@ -52,14 +51,14 @@ export class UpdateHelper {
       console.log(`Download process exited with code ${code}`);
       if (code !== 0) {
         vscode.window.showErrorMessage(
-          `Assay could not be updated to version ${version}. Please try again.`
+          `Assay could not be updated to version ${version}. Please try again.`,
         );
         return false;
       }
       fs.unlinkSync(savePath);
 
       vscode.window.showInformationMessage(
-        `Assay updated to version ${version}. Please reload VSCode.`
+        `Assay updated to version ${version}. Please reload VSCode.`,
       );
 
       return true;
@@ -82,7 +81,7 @@ export class UpdateHelper {
         const response = await fetch(downloadUrl);
         if (!response.ok) {
           throw new Error(
-            `Could not fetch version file from GitHub: ${response.statusText}`
+            `Could not fetch version file from GitHub: ${response.statusText}`,
           );
         }
 
@@ -93,7 +92,7 @@ export class UpdateHelper {
         }
         const savePath = path.join(extensionPath, "version.vsix");
 
-        const buffer = await response.buffer();
+        const buffer = Buffer.from(await response.arrayBuffer());
         return new Promise<string>((resolve, reject) => {
           fs.writeFile(savePath, buffer, { flag: "w" }, (err) => {
             if (err) {
@@ -103,7 +102,7 @@ export class UpdateHelper {
             }
           });
         });
-      }
+      },
     );
   }
 
@@ -117,11 +116,14 @@ export class UpdateHelper {
 
     if (!response.ok) {
       throw new Error(
-        `Could not fetch latest version from GitHub: ${response.statusText}`
+        `Could not fetch latest version from GitHub: ${response.statusText}`,
       );
     }
 
-    const json = await response.json();
+    const json = (await response.json()) as {
+      tag_name: string;
+      assets: { browser_download_url: string }[];
+    };
     const latestVersion = json.tag_name;
     const currentVersion =
       "v" +

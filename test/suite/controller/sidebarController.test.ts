@@ -21,7 +21,7 @@ describe("fileDecoratorController.ts", async () => {
       expect(sidebarController.treeView).to.not.be.undefined;
       const refreshStub = sinon.stub(
         AddonTreeDataProvider.prototype,
-        "refresh"
+        "refresh",
       );
       sidebarController.refresh();
       expect(refreshStub.called).to.be.true;

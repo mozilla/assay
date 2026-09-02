@@ -27,7 +27,7 @@ describe("diffController.ts", async () => {
       const diffController = new DiffController();
       const getDiffCommandStub = sinon.stub(
         diffController,
-        <any>"getDiffCommand"
+        <any>"getDiffCommand",
       );
       getDiffCommandStub.returns(undefined);
       const treeItemOne = {
@@ -58,7 +58,7 @@ describe("diffController.ts", async () => {
       const diffController = new DiffController();
       const getDiffCommandStub = sinon.stub(
         diffController,
-        <any>"getDiffCommand"
+        <any>"getDiffCommand",
       );
       getDiffCommandStub.returns("diff");
 

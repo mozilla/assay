@@ -26,7 +26,7 @@ describe("addonCacheController.ts", () => {
           "test-guid",
           "version",
           "isDirty",
-        ])
+        ]),
       ).to.be.true;
     });
   });
@@ -37,8 +37,8 @@ describe("addonCacheController.ts", () => {
       expect(
         assayCacheStub.addToCache.calledWith(
           ["test-guid", "version", "isDirty"],
-          true
-        )
+          true,
+        ),
       ).to.be.true;
     });
   });
@@ -63,7 +63,7 @@ describe("addonCacheController.ts", () => {
           version: "version",
           fileIDs: { version: "file-id" },
           id: "id",
-        })
+        }),
       );
     });
 
@@ -91,7 +91,7 @@ describe("addonCacheController.ts", () => {
           version: "version",
           fileIDs: { version: "file-id", "version-two": "file-id-two" },
           id: "id",
-        })
+        }),
       );
     });
   });

@@ -39,7 +39,7 @@ export class AddonView {
       [QPOption.Yes, QPOption.No],
       {
         placeHolder: "Addon already exists. Overwrite?",
-      }
+      },
     );
     if (choice === QPOption.No || !choice) {
       throw new Error("Extraction cancelled");

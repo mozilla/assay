@@ -13,7 +13,7 @@ export class UrlController implements vscode.UriHandler {
     private context: vscode.ExtensionContext,
     private addonController: AddonController,
     private directoryController: DirectoryController,
-    private lintController: LintController
+    private lintController: LintController,
   ) {}
 
   /**
@@ -80,7 +80,7 @@ export class UrlController implements vscode.UriHandler {
         guid,
         version,
         filepath || undefined,
-        lineNumber
+        lineNumber,
       );
     }
   }
@@ -112,7 +112,7 @@ export class UrlController implements vscode.UriHandler {
     guid: string,
     version: string,
     filepath?: string,
-    lineNumber?: string
+    lineNumber?: string,
   ) {
     const rootPath = await this.directoryController.getRootFolderPath();
     const versionPath = path.join(rootPath, guid, version);
@@ -133,7 +133,7 @@ export class UrlController implements vscode.UriHandler {
   private openWorkspace(
     versionPath: string,
     filepath?: string,
-    lineNumber?: string
+    lineNumber?: string,
   ) {
     const versionUri = vscode.Uri.file(versionPath);
     const filePath = path.join(versionPath, filepath ?? "manifest.json");

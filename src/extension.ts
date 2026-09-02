@@ -28,32 +28,32 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const fileDecorationProvider = new CustomFileDecorationProvider();
   const fileDecoratorController = new FileDecoratorController(
-    fileDecorationProvider
+    fileDecorationProvider,
   );
 
   const commentsCache = new AssayCache("comments", storagePath);
   const commentCacheController = new CommentCacheController(
     commentsCache,
     directoryController,
-    fileDecoratorController
+    fileDecoratorController,
   );
   const commentController = new CommentController(
     "assay-comments",
     "Assay",
     commentCacheController,
-    directoryController
+    directoryController,
   );
 
   const rootFolderPath = await directoryController.getRootFolderPath();
   const sidebarController = new SidebarController(
     "assayCommands",
-    rootFolderPath
+    rootFolderPath,
   );
   const sidebarTreeViewDisposable = sidebarController.treeView;
 
   const sidebarRefreshDisposable = vscode.commands.registerCommand(
     "assay.refresh",
-    sidebarController.refresh
+    sidebarController.refresh,
   );
 
   const sidebarDeleteDisposable = vscode.commands.registerCommand(
@@ -61,7 +61,7 @@ export async function activate(context: vscode.ExtensionContext) {
     (treeItem: AddonTreeItem, list: AddonTreeItem[]) => {
       commentController.deleteCommentsFromMenu(treeItem, list);
       sidebarController.delete(treeItem, list);
-    }
+    },
   );
 
   const diagnosticCollection =
@@ -71,21 +71,21 @@ export async function activate(context: vscode.ExtensionContext) {
     diagnosticCollection,
     credentialController,
     addonCacheController,
-    directoryController
+    directoryController,
   );
 
   const addonController = new AddonController(
     credentialController,
     addonCacheController,
     directoryController,
-    sidebarController
+    sidebarController,
   );
 
   const urlController = new UrlController(
     context,
     addonController,
     directoryController,
-    lintController
+    lintController,
   );
   const diffController = new DiffController();
 
@@ -94,48 +94,48 @@ export async function activate(context: vscode.ExtensionContext) {
   const viewAddonDisposable = vscode.commands.registerCommand(
     "assay.viewAddon",
     urlController.viewAddon,
-    urlController
+    urlController,
   );
 
   const diffDisposable = vscode.commands.registerCommand(
     "assay.sidebarDiff",
     diffController.diffFromSidebar,
-    diffController
+    diffController,
   );
   const assayUpdaterDisposable = vscode.commands.registerCommand(
     "assay.checkForUpdates",
-    UpdateHelper.updateAssay
+    UpdateHelper.updateAssay,
   );
 
   const apiKeyDisposable = vscode.commands.registerCommand(
     "assay.getApiKey",
     credentialController.getApiKeyFromUser,
-    credentialController
+    credentialController,
   );
 
   const apiSecretDisposable = vscode.commands.registerCommand(
     "assay.getSecret",
     credentialController.getSecretFromUser,
-    credentialController
+    credentialController,
   );
 
   const apiCredentialsTestDisposable = vscode.commands.registerCommand(
     "assay.testApiCredentials",
     credentialController.testApiCredentials,
-    credentialController
+    credentialController,
   );
 
   const reviewDisposable = vscode.commands.registerCommand(
     "assay.review",
     (url: string) => {
       vscode.env.openExternal(vscode.Uri.parse(url));
-    }
+    },
   );
 
   const getDisposable = vscode.commands.registerCommand(
     "assay.get",
     urlController.getAddonByUrl,
-    urlController
+    urlController,
   );
 
   context.subscriptions.push(
@@ -150,7 +150,7 @@ export async function activate(context: vscode.ExtensionContext) {
     sidebarDeleteDisposable,
     viewAddonDisposable,
     diffDisposable,
-    assayUpdaterDisposable
+    assayUpdaterDisposable,
   );
 
   UpdateHelper.updateAssay(false);
@@ -158,7 +158,7 @@ export async function activate(context: vscode.ExtensionContext) {
   await vscode.commands.executeCommand(
     "setContext",
     "assay.commentsEnabled",
-    false
+    false,
   );
 
   // Do not launch commenting system if not in the rootFolder.
@@ -172,17 +172,17 @@ export async function activate(context: vscode.ExtensionContext) {
   await vscode.commands.executeCommand(
     "setContext",
     "assay.commentsEnabled",
-    true
+    true,
   );
 
   // Review Controllers
   fileDecorationProvider.setProvideDecorationClause(
-    commentCacheController.fileHasComment
+    commentCacheController.fileHasComment,
   );
 
   const statusBarController = new StatusBarController(
     addonCacheController,
-    directoryController
+    directoryController,
   );
 
   urlController.openCachedFile();
@@ -190,22 +190,22 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const clearLintDisposable = vscode.workspace.onDidSaveTextDocument(
     lintController.clearLintsOnDirty,
-    lintController
+    lintController,
   );
 
   const addDirtyOnDeleteDisposable = vscode.workspace.onDidDeleteFiles(
     lintController.clearLintsOnDelete,
-    lintController
+    lintController,
   );
 
   const addDirtyOnChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     lintController.toggleDirty,
-    lintController
+    lintController,
   );
 
   const removeDirtyDisposable = vscode.workspace.onDidCloseTextDocument(
     lintController.removeDirty,
-    lintController
+    lintController,
   );
 
   const fileDecorationProviderDisposable =
@@ -213,55 +213,55 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const updateStatusBarController = vscode.window.onDidChangeActiveTextEditor(
     statusBarController.updateStatusBar,
-    statusBarController
+    statusBarController,
   );
 
   const deleteCommentsFolderDisposable = vscode.commands.registerCommand(
     "assay.deleteCommentsFromContext",
     commentController.deleteCommentsFromMenu,
-    commentController
+    commentController,
   );
 
   const exportCommentDisposable = vscode.commands.registerCommand(
     "assay.exportComments",
     commentController.exportComments,
-    commentController
+    commentController,
   );
 
   const addCommentDisposable = vscode.commands.registerCommand(
     "assay.addComment",
     commentController.addComment,
-    commentController
+    commentController,
   );
 
   const copyLineNumberDisposable = vscode.commands.registerCommand(
     "assay.copyLineNumber",
     commentController.copyLineNumber,
-    commentController
+    commentController,
   );
 
   const deleteCommentDisposable = vscode.commands.registerCommand(
     "assay.deleteComment",
     commentController.deleteThread,
-    commentController
+    commentController,
   );
 
   const copyLinkFromThreadDisposable = vscode.commands.registerCommand(
     "assay.copyLink",
     commentController.copyLinkFromThread,
-    commentController
+    commentController,
   );
 
   const copyLinkFromContextDisposable = vscode.commands.registerCommand(
     "assay.copyLinkFromContext",
     commentController.copyLinkFromContext,
-    commentController
+    commentController,
   );
 
   const disposeCommentDisposable = vscode.commands.registerCommand(
     "assay.disposeComment",
     commentController.dispose,
-    commentController
+    commentController,
   );
 
   context.subscriptions.push(
@@ -279,7 +279,7 @@ export async function activate(context: vscode.ExtensionContext) {
     clearLintDisposable,
     addDirtyOnDeleteDisposable,
     addDirtyOnChangeDisposable,
-    removeDirtyDisposable
+    removeDirtyDisposable,
   );
 }
 
