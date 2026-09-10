@@ -344,7 +344,7 @@
     "@types/node": "^26.4.1",
     "@types/request": "^2.48.13",
     "@types/sinon": "^22.0.0",
-    "@types/vscode": "^1.134.0",
+    "@types/vscode": "^1.136.0",
     "@typescript-eslint/eslint-plugin": "^8.68.0",
     "@typescript-eslint/parser": "^8.68.0",
     "@vscode/test-electron": "^3.1.0",
