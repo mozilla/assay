@@ -1,6 +1,7 @@
 # exclude everything by default
 *.*
 LICENSE
+CODEOWNERS
 # safe-list files we want to process
 !*.ts
 !*.md
